@@ -423,3 +423,4 @@ ch.eugster.events.documents.odfdom/templates/Teilnahmebestätigung.odt -text
 ch.eugster.events.documents.poi/lib/commons-logging-1.1.jar -text
 ch.eugster.events.documents.poi/lib/dom4j-1.6.1.jar -text
 ch.eugster.events.documents.poi/lib/geronimo-stax-api_1.0_spec-1.0.jar -text
+ch.eugster.events.documents.poi/lib/log4j-1.2.13.jar -text
