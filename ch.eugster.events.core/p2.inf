@@ -1,0 +1,6 @@
+instructions.configure=\
+    addRepository(type:0,location:http${#58}//localhost/administrator/repository/);
+    addRepository(type:1,location:http${#58}//localhost/administrator/repository/);
+    addRepository(type:0,location:http${#58}//localhost/administrator/updates/);
+    addRepository(type:1,location:http${#58}//localhost/administrator/updates/);
+    
