@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Odfdom Plugin
+Bundle-SymbolicName: ch.eugster.events.documents.odfdom;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: ch.eugster.events.documents.odfdom.internal.Activator
+Bundle-Vendor: Christian Eugster
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: lib/odfdom.jar,
+ lib/resolver.jar,
+ lib/serializer.jar,
+ lib/xercesImpl.jar,
+ lib/xml-apis.jar,
+ .
+Import-Package: ch.eugster.events.documents.maps,
+ ch.eugster.events.documents.services,
+ org.eclipse.core.runtime;version="3.4.0",
+ org.eclipse.core.runtime.preferences;version="3.3.0",
+ org.eclipse.ui.plugin,
+ org.osgi.framework;version="1.5.0"
+Service-Component: OSGI-INF/document-builder-service.xml
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui
