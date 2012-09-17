@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="ch.eugster.events.importer.handlers.StartWwfWizard"
+            id="ch.eugster.events.import.command.startWizard"
+            name="Start WWF CH Wizard">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:file?after=additions">
+         <command
+               commandId="ch.eugster.events.import.command.startWizard"
+               label="WWF Adressen abgleichen"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
