@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="ch.eugster.events.persistence.provider">
+   <implementation class="org.eclipse.persistence.jpa.osgi.PersistenceProvider"/>
+   <service>
+      <provide interface="javax.persistence.spi.PersistenceProvider"/>
+   </service>
+</scr:component>
