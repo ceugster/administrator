@@ -426,6 +426,7 @@ ch.eugster.events.documents.poi/lib/geronimo-stax-api_1.0_spec-1.0.jar -text
 ch.eugster.events.documents.poi/lib/log4j-1.2.13.jar -text
 ch.eugster.events.documents.poi/lib/ooxml-schemas-1.0.jar -text
 ch.eugster.events.documents.poi/lib/poi-3.7-20101029.jar -text
+ch.eugster.events.documents.poi/lib/poi-examples-3.7-20101029.jar -text
 ch.eugster.events.documents.poi/lib/poi-ooxml-3.7-20101029.jar -text
 ch.eugster.events.documents.poi/lib/poi-ooxml-schemas-3.7-20101029.jar -text
 ch.eugster.events.documents.poi/lib/poi-scratchpad-3.7-20101029.jar -text
