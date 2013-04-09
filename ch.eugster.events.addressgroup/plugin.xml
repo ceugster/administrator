@@ -146,18 +146,6 @@
             name="Adressen">
       </category>
       <command
-            categoryId="category.member"
-            defaultHandler="ch.eugster.events.addressgroup.handlers.GenerateAddressListHandler"
-            id="ch.eugster.events.addressgroup.command.generateAddressList"
-            name="Adressliste">
-      </command>
-      <command
-            categoryId="category.member"
-            defaultHandler="ch.eugster.events.addressgroup.handlers.GenerateFormLetterHandler"
-            id="ch.eugster.events.addressgroup.command.generateFormLetter"
-            name="Serienbrief...">
-      </command>
-      <command
             description="Öffnet das Emailprogramm für das Versenden einer Email"
             id="ch.eugster.events.addressgroup.command.sendEmail"
             name="Email senden">
@@ -184,10 +172,6 @@
             defaultHandler="ch.eugster.events.addressgroup.handlers.ActivateAddressGroupMemberViewHandler"
             id="ch.eugster.events.addressgroup.command.activateDetailsView"
             name="Details">
-      </command>
-      <command
-            id="ch.eugster.events.course.commands.sendEmail"
-            name="Email senden">
       </command>
       <command
             categoryId="category.person"
@@ -699,46 +683,6 @@
                </and>
             </visibleWhen>
          </command>
-         <separator
-               name="ch.eugster.events.addressgroup.separator3"
-               visible="true">
-         </separator>
-         <command
-               commandId="ch.eugster.events.addressgroup.command.sendEmail"
-               disabledIcon="icons/email_grey_16.png"
-               hoverIcon="icons/email_16.png"
-               icon="icons/email_16.png"
-               label="Email senden"
-               style="push"
-               tooltip="Schreiben und Senden eines Emails an die ausgewählten Adressen">
-         </command>
-         <separator
-               name="ch.eugster.events.addressgroup.separator4"
-               visible="true">
-         </separator>
-         <menu
-               icon="icons/work_16.png"
-               label="Generieren"
-               tooltip="Generieren von Berichten">
-            <command
-                  commandId="ch.eugster.events.addressgroup.command.generateAddressList"
-                  disabledIcon="icons/work_grey_16.png"
-                  hoverIcon="icons/work_16.png"
-                  icon="icons/work_16.png"
-                  label="Adressliste..."
-                  style="push"
-                  tooltip="Generieren einer Adressliste im Excelformat">
-            </command>
-            <command
-                  commandId="ch.eugster.events.addressgroup.command.generateFormLetter"
-                  disabledIcon="icons/work_grey_16.png"
-                  hoverIcon="icons/work_16.png"
-                  icon="icons/work_16.png"
-                  label="Serienbrief..."
-                  style="push"
-                  tooltip="Generieren eines Serienbriefs">
-            </command>
-         </menu>
       </menuContribution>
       <menuContribution
             locationURI="popup:ch.eugster.events.person.view?after=ch.eugster.events.person.separator4">
