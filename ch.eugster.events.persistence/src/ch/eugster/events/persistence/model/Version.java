@@ -32,7 +32,7 @@ public class Version extends AbstractEntity
 {
 	public static final int DATA_VERSION = 2;
 
-	public static final int STRUCTURE_VERSION = 14;
+	public static final int STRUCTURE_VERSION = 15;
 
 	@Id
 	@Column(name = "version_id")

@@ -40,6 +40,10 @@ public class AddressGroupMember extends AbstractEntity
 	@JoinColumn(name = "address_group_member_pa_link_id", referencedColumnName = "pa_link_id")
 	private LinkPersonAddress link = null;
 
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "address_group_member_copied_from", referencedColumnName = "address_group_id")
+	private AddressGroup copiedFrom = null;
+
 	/**
 	 * Data
 	 */
@@ -81,6 +85,7 @@ public class AddressGroupMember extends AbstractEntity
 	{
 		AddressGroupMember copy = AddressGroupMember.newInstance(addressGroup);
 		copy.setParent(this.getLink(), this.getAddress());
+		copy.setCopiedFrom(this.addressGroup);
 		return copy;
 	}
 
@@ -92,6 +97,11 @@ public class AddressGroupMember extends AbstractEntity
 	public AddressGroup getAddressGroup()
 	{
 		return this.addressGroup;
+	}
+
+	public AddressGroup getCopiedFrom()
+	{
+		return this.copiedFrom;
 	}
 
 	@Override
@@ -109,6 +119,11 @@ public class AddressGroupMember extends AbstractEntity
 	{
 		this.propertyChangeSupport.firePropertyChange("addressGroup", this.addressGroup,
 				this.addressGroup = addressGroup);
+	}
+
+	public void setCopiedFrom(final AddressGroup source)
+	{
+		this.copiedFrom = source;
 	}
 
 	@Override
