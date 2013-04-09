@@ -6,6 +6,7 @@ import java.util.Currency;
 import java.util.Locale;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -53,26 +54,25 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 
 	private TableViewer viewer;
 
+	private IDialogSettings settings;
+
 	public LinkDonationView()
 	{
 	}
 
-	@Override
-	public void init(IViewSite site) throws PartInitException
+	private void createContextMenu()
 	{
-		super.init(site);
-		EntityMediator.addListener(LinkPersonAddress.class, this);
-		EntityMediator.addListener(Donation.class, this);
-		EntityMediator.addListener(Person.class, this);
-		site.getPage().addSelectionListener(PersonView.ID, this);
+		MenuManager menuManager = new MenuManager();
+		menuManager.setRemoveAllWhenShown(true);
 
-		numberFormat = NumberFormat.getInstance();
-		numberFormat.setMinimumFractionDigits(Currency.getInstance(Locale.getDefault()).getDefaultFractionDigits());
-		numberFormat.setMaximumFractionDigits(Currency.getInstance(Locale.getDefault()).getDefaultFractionDigits());
+		Menu menu = menuManager.createContextMenu(this.viewer.getControl());
+		this.viewer.getControl().setMenu(menu);
+
+		this.getSite().registerContextMenu(menuManager, this.viewer);
 	}
 
 	@Override
-	public void createPartControl(Composite parent)
+	public void createPartControl(final Composite parent)
 	{
 		TableLayout layout = new TableLayout();
 
@@ -88,7 +88,7 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 		this.viewer.addDoubleClickListener(new IDoubleClickListener()
 		{
 			@Override
-			public void doubleClick(DoubleClickEvent event)
+			public void doubleClick(final DoubleClickEvent event)
 			{
 				StructuredSelection ssel = (StructuredSelection) event.getSelection();
 				if (ssel.getFirstElement() instanceof Donation)
@@ -114,7 +114,7 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				Object object = cell.getElement();
 				if (object instanceof Donation)
@@ -133,7 +133,7 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				Object object = cell.getElement();
 				if (object instanceof Donation)
@@ -151,7 +151,7 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				Object object = cell.getElement();
 				if (object instanceof Donation)
@@ -198,13 +198,45 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 		}
 	}
 
-	public void setInput(Object inputElement)
+	@Override
+	public void dispose()
 	{
-		if (this.viewer != null)
+		EntityMediator.removeListener(LinkPersonAddress.class, this);
+		EntityMediator.removeListener(Donation.class, this);
+		EntityMediator.removeListener(Person.class, this);
+		this.getSite().getPage().removeSelectionListener(PersonView.ID, this);
+	}
+
+	@Override
+	@SuppressWarnings("rawtypes")
+	public Object getAdapter(final Class adaptable)
+	{
+		if (adaptable.equals(this.viewer.getClass()))
 		{
-			this.viewer.setInput(inputElement);
-			this.packColumns();
+			return this.viewer;
 		}
+		return null;
+	}
+
+	@Override
+	public void init(final IViewSite site) throws PartInitException
+	{
+		super.init(site);
+
+		settings = Activator.getDefault().getDialogSettings().getSection("donation.view");
+		if (settings == null)
+		{
+			settings = Activator.getDefault().getDialogSettings().addNewSection("donation.view");
+		}
+
+		EntityMediator.addListener(LinkPersonAddress.class, this);
+		EntityMediator.addListener(Donation.class, this);
+		EntityMediator.addListener(Person.class, this);
+		site.getPage().addSelectionListener(PersonView.ID, this);
+
+		numberFormat = NumberFormat.getInstance();
+		numberFormat.setMinimumFractionDigits(Currency.getInstance(Locale.getDefault()).getDefaultFractionDigits());
+		numberFormat.setMaximumFractionDigits(Currency.getInstance(Locale.getDefault()).getDefaultFractionDigits());
 	}
 
 	public void packColumns()
@@ -214,19 +246,17 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 			column.pack();
 	}
 
-	private void createContextMenu()
+	@Override
+	public void postDelete(final AbstractEntity entity)
 	{
-		MenuManager menuManager = new MenuManager();
-		menuManager.setRemoveAllWhenShown(true);
-
-		Menu menu = menuManager.createContextMenu(this.viewer.getControl());
-		this.viewer.getControl().setMenu(menu);
-
-		this.getSite().registerContextMenu(menuManager, this.viewer);
+		if (entity instanceof Donation)
+		{
+			this.viewer.refresh();
+		}
 	}
 
 	@Override
-	public void postPersist(AbstractEntity entity)
+	public void postPersist(final AbstractEntity entity)
 	{
 		if (entity instanceof Donation)
 		{
@@ -248,7 +278,7 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 	}
 
 	@Override
-	public void postUpdate(AbstractEntity entity)
+	public void postUpdate(final AbstractEntity entity)
 	{
 		if (entity instanceof Donation)
 		{
@@ -264,43 +294,7 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 	}
 
 	@Override
-	public void postDelete(AbstractEntity entity)
-	{
-		if (entity instanceof Donation)
-		{
-			this.viewer.refresh();
-		}
-	}
-
-	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class adaptable)
-	{
-		if (adaptable.equals(this.viewer.getClass()))
-		{
-			return this.viewer;
-		}
-		return null;
-	}
-
-	@Override
-	public void setFocus()
-	{
-		if (this.viewer != null)
-			this.viewer.getTable().setFocus();
-	}
-
-	@Override
-	public void dispose()
-	{
-		EntityMediator.removeListener(LinkPersonAddress.class, this);
-		EntityMediator.removeListener(Donation.class, this);
-		EntityMediator.removeListener(Person.class, this);
-		this.getSite().getPage().removeSelectionListener(PersonView.ID, this);
-	}
-
-	@Override
-	public void selectionChanged(IWorkbenchPart part, ISelection selection)
+	public void selectionChanged(final IWorkbenchPart part, final ISelection selection)
 	{
 		if (selection.isEmpty())
 			this.setInput(null);
@@ -314,6 +308,22 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 					this.setInput(ssel.getFirstElement());
 				}
 			}
+		}
+	}
+
+	@Override
+	public void setFocus()
+	{
+		if (this.viewer != null)
+			this.viewer.getTable().setFocus();
+	}
+
+	public void setInput(final Object inputElement)
+	{
+		if (this.viewer != null)
+		{
+			this.viewer.setInput(inputElement);
+			this.packColumns();
 		}
 	}
 
