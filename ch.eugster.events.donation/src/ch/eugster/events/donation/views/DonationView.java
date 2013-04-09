@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -27,10 +28,13 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.nebula.widgets.cdatetime.CDT;
+import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -73,6 +77,12 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 
 	private ConnectionService connectionService;
 
+	private IDialogSettings settings;
+
+	private CDateTime startSelectionDate;
+
+	private CDateTime endSelectionDate;
+
 	public DonationView()
 	{
 	}
@@ -92,6 +102,41 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 	@Override
 	public void createPartControl(final Composite parent)
 	{
+		Composite composite = new Composite(parent, SWT.NULL);
+		composite.setLayout(new RowLayout(SWT.HORIZONTAL));
+
+		Calendar calendar = GregorianCalendar.getInstance();
+		long timeInMillis = settings.getLong("start.selection.date");
+		if (timeInMillis == 0)
+		{
+			calendar.set(Calendar.MONTH, Calendar.JANUARY);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			timeInMillis = calendar.getTimeInMillis();
+		}
+		calendar.setTimeInMillis(timeInMillis);
+		startSelectionDate = new CDateTime(composite, CDT.DATE_MEDIUM);
+		startSelectionDate.setSelection(calendar.getTime());
+
+		calendar = GregorianCalendar.getInstance();
+		timeInMillis = settings.getLong("end.selection.date");
+		if (timeInMillis == 0)
+		{
+			calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+			calendar.set(Calendar.DAY_OF_MONTH, 31);
+			calendar.set(Calendar.HOUR_OF_DAY, 23);
+			calendar.set(Calendar.MINUTE, 59);
+			calendar.set(Calendar.SECOND, 59);
+			calendar.set(Calendar.MILLISECOND, 999);
+			timeInMillis = calendar.getTimeInMillis();
+		}
+		calendar.setTimeInMillis(timeInMillis);
+		endSelectionDate = new CDateTime(composite, CDT.DATE_MEDIUM);
+		endSelectionDate.setSelection(calendar.getTime());
+
 		final Tree tree = new Tree(parent, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tree.setHeaderVisible(true);
