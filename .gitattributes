@@ -761,7 +761,6 @@ ch.eugster.events.persistence/lib/mysql-connector-java-3.0.11-stable-bin.jar -te
 ch.eugster.events.persistence/lib/postgresql-8.4-701.jdbc4.jar -text
 ch.eugster.events.persistence/lib/sqljdbc4.jar -text
 ch.eugster.events.persistence/plugin.xml -text
-ch.eugster.events.persistence/src/META-INF/MANIFEST.MF -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/Activator.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/database/Connection.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/database/DatabaseConfigurer.java -text

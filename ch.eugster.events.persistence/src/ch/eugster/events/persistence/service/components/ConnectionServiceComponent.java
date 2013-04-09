@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.log.LogService;
 
 import ch.eugster.events.persistence.Activator;
 import ch.eugster.events.persistence.database.DatabaseConfigurer;
@@ -133,9 +134,12 @@ public class ConnectionServiceComponent implements ConnectionService
 	@Override
 	public void connect()
 	{
+		log(LogService.LOG_INFO, "Starting entity manager");
 		IStatus status = this.startEntityManager();
 		if (status.getSeverity() == IStatus.ERROR)
 		{
+			String error = status.getException() == null ? "" : ": " + status.getException().getMessage();
+			log(LogService.LOG_ERROR, "Error starting entity manager" + error);
 			final IStatus s = status;
 			UIJob job = new UIJob("Fehlermeldung")
 			{
@@ -456,6 +460,11 @@ public class ConnectionServiceComponent implements ConnectionService
 			return jpaEntityManager.getActiveSession();
 		}
 		return null;
+	}
+
+	private void log(final int level, final String message)
+	{
+		Activator.log(level, message);
 	}
 
 	protected void setPersistenceProvider(final PersistenceProvider persistenceProvider)

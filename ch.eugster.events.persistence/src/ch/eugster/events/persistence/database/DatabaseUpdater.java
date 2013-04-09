@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.osgi.service.log.LogService;
 
 import ch.eugster.events.persistence.Activator;
 import ch.eugster.events.persistence.Activator.ResultType;
@@ -167,6 +168,11 @@ public abstract class DatabaseUpdater
 
 	protected abstract String getClobTypeName();
 
+	private void log(final int level, final String message)
+	{
+		Activator.log(level, message);
+	}
+
 	protected IStatus readProperties()
 	{
 		Display display = Display.getDefault();
@@ -236,7 +242,9 @@ public abstract class DatabaseUpdater
 		ResultSet rst = null;
 		try
 		{
+			log(LogService.LOG_INFO, "Connecting to database.");
 			stm = con.createStatement();
+			log(LogService.LOG_INFO, "Obtaining version record.");
 			rst = stm.executeQuery("SELECT * FROM events_version");
 			rst.next();
 			int structureVersion = rst.getInt("version_structure");
@@ -253,6 +261,7 @@ public abstract class DatabaseUpdater
 					boolean ok = true;
 					if (structureVersion == 2)
 					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
 						if (!columnExists(con, "events_global_settings", "global_settings_simple_person"))
 						{
 							ok = executeSqlQuery(con,
@@ -261,6 +270,7 @@ public abstract class DatabaseUpdater
 					}
 					if (structureVersion == 3)
 					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
 						if (!columnExists(con, "events_address_group_member", "address_group_member_copied_from"))
 						{
 							ok = executeSqlQuery(con,
@@ -269,6 +279,7 @@ public abstract class DatabaseUpdater
 					}
 					if (structureVersion == 4)
 					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
 						if (!tableExists(con, "events_visit_settings"))
 						{
 							ok = executeSqlQuery(
@@ -558,6 +569,7 @@ public abstract class DatabaseUpdater
 					}
 					if (structureVersion == 5)
 					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
 						if (!tableExists(con, "events_email_account"))
 						{
 							ok = executeSqlQuery(
@@ -590,6 +602,7 @@ public abstract class DatabaseUpdater
 					}
 					if (structureVersion == 6)
 					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
 						if (!tableExists(con, "events_person_settings"))
 						{
 							ok = executeSqlQuery(
@@ -747,6 +760,7 @@ public abstract class DatabaseUpdater
 					}
 					if (structureVersion == 7)
 					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
 						if (!tableExists(con, "events_user_property"))
 						{
 							ok = executeSqlQuery(
@@ -774,6 +788,7 @@ public abstract class DatabaseUpdater
 					}
 					if (structureVersion == 8)
 					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
 						if (!tableExists(con, "events_address_group_link"))
 						{
 							ok = executeSqlQuery(
@@ -800,6 +815,7 @@ public abstract class DatabaseUpdater
 					}
 					if (structureVersion == 9)
 					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
 						if (!columnExists(con, "events_field_extension", "field_extension_searchable"))
 						{
 							ok = executeSqlQuery(
@@ -812,6 +828,7 @@ public abstract class DatabaseUpdater
 					}
 					if (structureVersion == 10)
 					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
 						if (!columnExists(con, "events_person_settings", "person_settings_editor_section_behaviour"))
 						{
 							ok = executeSqlQuery(
@@ -823,6 +840,7 @@ public abstract class DatabaseUpdater
 					}
 					if (structureVersion == 11)
 					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
 						if (columnExists(con, "events_pa_link", "pa_link_mailing_address"))
 						{
 							ok = executeSqlQuery(con, "ALTER TABLE events_pa_link DROP COLUMN pa_link_mailing_address");
@@ -835,6 +853,7 @@ public abstract class DatabaseUpdater
 					}
 					if (structureVersion == 12)
 					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
 						if (columnExists(con, "events_category", "category_desc"))
 						{
 							ok = executeSqlQuery(con, "ALTER TABLE events_category DROP COLUMN category_desc");
@@ -846,6 +865,7 @@ public abstract class DatabaseUpdater
 					}
 					if (structureVersion == 13)
 					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
 						stm.execute("DELETE FROM events_address_group_member WHERE ISNULL(address_group_member_address_group_id)");
 						stm.execute("DELETE FROM events_address_group_member WHERE ISNULL(address_group_member_address_id)");
 

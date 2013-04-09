@@ -19,7 +19,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
 import org.osgi.service.prefs.Preferences;
+import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.database.DatabaseUpdater;
 import ch.eugster.events.persistence.model.Version;
@@ -32,7 +34,11 @@ public class Activator extends AbstractUIPlugin
 
 	public static final String PERSISTENCE_UNIT_NAME = "ch.eugster.events.persistence";
 
+	private static LogService log;
+
 	private static Activator activator;
+
+	private ServiceTracker logTracker;
 
 	public Activator()
 	{
@@ -51,14 +57,19 @@ public class Activator extends AbstractUIPlugin
 		{
 			try
 			{
+				log(LogService.LOG_INFO, "Start creating JDBC connection");
 				result = this.createJdbcConnection();
-
+				log(LogService.LOG_INFO, "End creating JDBC connection.");
 			}
 			catch (Exception e)
 			{
+				log(LogService.LOG_INFO,
+						"JDBC connection could not be created. Reading connection properties from user");
 				IStatus status = this.readProperties();
+				log(LogService.LOG_INFO, "JDBC connection properties provided.");
 				if (status.equals(Status.CANCEL_STATUS))
 				{
+					log(LogService.LOG_INFO, "User canceled providing JDBC connection properties.");
 					result = ResultType.EXIT_PROGRAM;
 				}
 			}
@@ -130,6 +141,7 @@ public class Activator extends AbstractUIPlugin
 	{
 		ResultType result = null;
 
+		log(LogService.LOG_INFO, "Read connection properties from file");
 		Map<String, Object> properties = getProperties();
 		String driverName = (String) properties.get(PersistenceUnitProperties.JDBC_DRIVER);
 		if (driverName.equals(com.mysql.jdbc.Driver.class.getName()))
@@ -141,9 +153,11 @@ public class Activator extends AbstractUIPlugin
 		String pwd = (String) properties.get(PersistenceUnitProperties.JDBC_PASSWORD);
 		java.sql.Connection con = DriverManager.getConnection(url, usr, pwd);
 
+		log(LogService.LOG_INFO, "Check data version");
 		Version version = this.checkVersion(con);
 		if (version == null)
 		{
+			log(LogService.LOG_INFO, "No version table found");
 			/*
 			 * Es wird davon ausgegangen, dass die Datenbank noch nicht
 			 * initialisiert worden ist. Daher ist kein Update notwendig, die
@@ -154,12 +168,16 @@ public class Activator extends AbstractUIPlugin
 		}
 		else if (version.getStructureVersion() == Version.STRUCTURE_VERSION)
 		{
+			log(LogService.LOG_INFO, "Database structure version is actual (" + Version.STRUCTURE_VERSION + ".");
 			result = ResultType.CONNECT_NORMAL;
 		}
 		else
 		{
+			log(LogService.LOG_INFO, "Database structure version is: " + version.getStructureVersion()
+					+ "; current version should be: " + Version.STRUCTURE_VERSION + ". Updating database structure.");
 			DatabaseUpdater updater = DatabaseUpdater.newInstance(driverName);
 			result = updater.updateStructure(con);
+			log(LogService.LOG_INFO, "Database updated to structure version " + Version.STRUCTURE_VERSION);
 		}
 
 		if (result.getStatus() != null)
@@ -190,12 +208,16 @@ public class Activator extends AbstractUIPlugin
 				prefs.get(PersistenceUnitProperties.JDBC_PASSWORD, "events"));
 
 		properties.put(PersistenceUnitProperties.CLASSLOADER, this.getClass().getClassLoader());
-
-		properties.put(PersistenceUnitProperties.DDL_GENERATION, PersistenceUnitProperties.CREATE_ONLY);
-		properties.put(PersistenceUnitProperties.DDL_GENERATION_MODE, PersistenceUnitProperties.DDL_BOTH_GENERATION);
-		properties.put(PersistenceUnitProperties.CREATE_JDBC_DDL_FILE, "create_tables.sql");
-		properties.put(PersistenceUnitProperties.CREATE_JDBC_DDL_FILE, "drop_tables.sql");
-
+		/*
+		 * properties.put(PersistenceUnitProperties.DDL_GENERATION,
+		 * PersistenceUnitProperties.CREATE_ONLY);
+		 * properties.put(PersistenceUnitProperties.DDL_GENERATION_MODE,
+		 * PersistenceUnitProperties.DDL_BOTH_GENERATION);
+		 * properties.put(PersistenceUnitProperties.CREATE_JDBC_DDL_FILE,
+		 * "create_tables.sql");
+		 * properties.put(PersistenceUnitProperties.CREATE_JDBC_DDL_FILE,
+		 * "drop_tables.sql");
+		 */
 		properties.put(PersistenceUnitProperties.LOGGING_LEVEL, Level.FINEST.getName());
 
 		// properties.put(PersistenceUnitProperties.SESSION_CUSTOMIZER,
@@ -226,6 +248,10 @@ public class Activator extends AbstractUIPlugin
 		super.start(context);
 		Activator.activator = this;
 
+		logTracker = new ServiceTracker(context, LogService.class.getName(), null);
+		logTracker.open();
+		log = (LogService) logTracker.getService();
+
 		ResultType result = checkConnection();
 		if (result.equals(ResultType.EXIT_PROGRAM))
 		{
@@ -244,6 +270,7 @@ public class Activator extends AbstractUIPlugin
 	@Override
 	public void stop(final BundleContext context) throws Exception
 	{
+		logTracker.close();
 		Activator.activator = null;
 		super.stop(context);
 	}
@@ -251,6 +278,14 @@ public class Activator extends AbstractUIPlugin
 	public static Activator getDefault()
 	{
 		return Activator.activator;
+	}
+
+	public static void log(final int level, final String message)
+	{
+		if (log instanceof LogService)
+		{
+			log.log(level, message);
+		}
 	}
 
 	public enum ResultType
