@@ -10,6 +10,7 @@ Bundle-ActivationPolicy: lazy
 Import-Package: ch.eugster.events.persistence.events,
  ch.eugster.events.persistence.exceptions,
  ch.eugster.events.persistence.filters,
+ ch.eugster.events.persistence.formatters,
  ch.eugster.events.persistence.model,
  ch.eugster.events.persistence.queries,
  ch.eugster.events.persistence.service,
