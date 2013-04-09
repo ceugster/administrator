@@ -234,6 +234,7 @@ litigation.
       <import plugin="org.eclipse.ui.workbench"/>
       <import plugin="org.eclipse.ui.forms" version="3.5.2" match="compatible"/>
       <import plugin="org.eclipse.osgi"/>
+      <import plugin="ch.eugster.events.report"/>
    </requires>
 
    <plugin
@@ -242,5 +243,11 @@ litigation.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="ch.eugster.events.addressgroup.report"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
