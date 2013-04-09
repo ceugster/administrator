@@ -81,14 +81,50 @@ public class AddressGroupMemberSorter extends ViewerSorter
 			}
 			case 2:
 			{
-				v1 = member1.getLink().getAddress().getAddress();
-				v2 = member2.getLink().getAddress().getAddress();
+				if (member1.getLink() == null && member2.getLink() == null)
+				{
+					v1 = member1.getAddress().getAddress();
+					v2 = member2.getAddress().getAddress();
+				}
+				else if (member1.getLink() == null)
+				{
+					v1 = member1.getAddress().getAddress();
+					v2 = member2.getLink().getAddress().getAddress();
+				}
+				else if (member2.getLink() == null)
+				{
+					v1 = member1.getLink().getAddress().getAddress();
+					v2 = member2.getAddress().getAddress();
+				}
+				else
+				{
+					v1 = member1.getLink().getAddress().getAddress();
+					v2 = member2.getLink().getAddress().getAddress();
+				}
 				break;
 			}
 			case 3:
 			{
-				v1 = member1.getLink().getAddress().getCity();
-				v2 = member2.getLink().getAddress().getCity();
+				if (member1.getLink() == null && member2.getLink() == null)
+				{
+					v1 = member1.getAddress().getCity();
+					v2 = member2.getAddress().getCity();
+				}
+				else if (member1.getLink() == null)
+				{
+					v1 = member1.getAddress().getCity();
+					v2 = member2.getLink().getAddress().getCity();
+				}
+				else if (member2.getLink() == null)
+				{
+					v1 = member1.getLink().getAddress().getCity();
+					v2 = member2.getAddress().getCity();
+				}
+				else
+				{
+					v1 = member1.getLink().getAddress().getCity();
+					v2 = member2.getLink().getAddress().getCity();
+				}
 				break;
 			}
 			case 4:
