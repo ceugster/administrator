@@ -49,8 +49,6 @@ ch.eugster.events.addressgroup/icons/save_16.png -text
 ch.eugster.events.addressgroup/icons/save_grey_16.png -text
 ch.eugster.events.addressgroup/icons/view_16.png -text
 ch.eugster.events.addressgroup/icons/view_grey_16.png -text
-ch.eugster.events.addressgroup/icons/work_16.png -text
-ch.eugster.events.addressgroup/icons/work_grey_16.png -text
 ch.eugster.events.addressgroup/plugin.xml -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/Activator.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/AddressGroupFormatter.java -text
