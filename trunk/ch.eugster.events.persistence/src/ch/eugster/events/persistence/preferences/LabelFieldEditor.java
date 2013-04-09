@@ -13,24 +13,23 @@ import org.eclipse.swt.widgets.Label;
 public class LabelFieldEditor extends FieldEditor
 {
 	private Label label;
-	
+
 	private String errorMessage;
-	
-	public LabelFieldEditor(String name, String labelText, Composite parent)
+
+	public LabelFieldEditor(final String name, final String labelText, final Composite parent)
 	{
 		init(name, labelText);
 		this.errorMessage = JFaceResources.getString("StringFieldEditor.errorMessage");//$NON-NLS-1$
 		createControl(parent);
 	}
-	
+
 	@Override
-	protected void adjustForNumColumns(int numColumns)
+	protected void adjustForNumColumns(final int numColumns)
 	{
 		GridData gd = (GridData) getLabelControl().getLayoutData();
 		gd.horizontalSpan = numColumns;
-		gd.grabExcessHorizontalSpace = gd.horizontalSpan == 1;
 	}
-	
+
 	/**
 	 * Fills this field editor's basic controls into the given parent.
 	 * <p>
@@ -40,15 +39,53 @@ public class LabelFieldEditor extends FieldEditor
 	 * </p>
 	 */
 	@Override
-	protected void doFillIntoGrid(Composite parent, int numColumns)
+	protected void doFillIntoGrid(final Composite parent, final int numColumns)
 	{
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = numColumns;
 		gd.grabExcessHorizontalSpace = true;
-		gd.grabExcessVerticalSpace = true;
+		gd.grabExcessVerticalSpace = false;
 		getLabelControl(parent).setLayoutData(gd);
 	}
-	
+
+	@Override
+	protected void doLoad()
+	{
+	}
+
+	@Override
+	protected void doLoadDefault()
+	{
+	}
+
+	@Override
+	protected void doStore()
+	{
+	}
+
+	/**
+	 * Returns the error message that will be displayed when and if an error
+	 * occurs.
+	 * 
+	 * @return the error message, or <code>null</code> if none
+	 */
+	public String getErrorMessage()
+	{
+		return this.errorMessage;
+	}
+
+	/**
+	 * Returns the label control.
+	 * 
+	 * @return the label control, or <code>null</code> if no label control has
+	 *         been created
+	 */
+	@Override
+	protected Label getLabelControl()
+	{
+		return this.label;
+	}
+
 	/**
 	 * Returns this field editor's label component.
 	 * <p>
@@ -60,7 +97,7 @@ public class LabelFieldEditor extends FieldEditor
 	 * @return the label control
 	 */
 	@Override
-	public Label getLabelControl(Composite parent)
+	public Label getLabelControl(final Composite parent)
 	{
 		if (this.label == null)
 		{
@@ -73,7 +110,8 @@ public class LabelFieldEditor extends FieldEditor
 			}
 			this.label.addDisposeListener(new DisposeListener()
 			{
-				public void widgetDisposed(DisposeEvent event)
+				@Override
+				public void widgetDisposed(final DisposeEvent event)
 				{
 					LabelFieldEditor.this.label = null;
 				}
@@ -85,19 +123,13 @@ public class LabelFieldEditor extends FieldEditor
 		}
 		return this.label;
 	}
-	
-	/**
-	 * Returns the label control.
-	 * 
-	 * @return the label control, or <code>null</code> if no label control has
-	 *         been created
-	 */
+
 	@Override
-	protected Label getLabelControl()
+	public int getNumberOfControls()
 	{
-		return this.label;
+		return 1;
 	}
-	
+
 	/**
 	 * Sets this field editor's label text. The label is typically presented to
 	 * the left of the entry field.
@@ -106,7 +138,7 @@ public class LabelFieldEditor extends FieldEditor
 	 *            the label text
 	 */
 	@Override
-	public void setLabelText(String text)
+	public void setLabelText(final String text)
 	{
 		Assert.isNotNull(text);
 		super.setLabelText(text);
@@ -114,37 +146,5 @@ public class LabelFieldEditor extends FieldEditor
 		{
 			this.label.setText(text);
 		}
-	}
-	
-	@Override
-	protected void doLoad()
-	{
-	}
-	
-	@Override
-	protected void doLoadDefault()
-	{
-	}
-	
-	@Override
-	protected void doStore()
-	{
-	}
-	
-	@Override
-	public int getNumberOfControls()
-	{
-		return 1;
-	}
-	
-	/**
-	 * Returns the error message that will be displayed when and if an error
-	 * occurs.
-	 * 
-	 * @return the error message, or <code>null</code> if none
-	 */
-	public String getErrorMessage()
-	{
-		return this.errorMessage;
 	}
 }
