@@ -61,8 +61,6 @@ ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/dialogs/Addres
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/dialogs/AddressGroupMemberSorter.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/dialogs/AddressGroupMemberTreeContentProvider.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/dialogs/AddressGroupMemberTreeLabelProvider.java -text
-ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/dialogs/AddressListDialog.java -text
-ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/dialogs/FormLetterDialog.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/dnd/AddressGroupMemberTransfer.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/dnd/AddressGroupTransfer.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/dnd/AddressGroupViewerDropAdapter.java -text
@@ -84,8 +82,6 @@ ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/Delet
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/EditAddressGroupHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/EditAddressGroupMembers.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/EditCategoryHandler.java -text
-ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/GenerateAddressListHandler.java -text
-ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/GenerateFormLetterHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/OpenWebsiteHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/PasteHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/ResetPersonAddressGroupMemberHandler.java -text
