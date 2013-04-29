@@ -74,7 +74,7 @@ public class AddPersonHandler extends AbstractHandler implements IHandler
 		address.setCountry(GlobalSettings.getInstance().getCountry());
 		LinkPersonAddress link = LinkPersonAddress.newInstance(person, address);
 		link.setAddressType(addressType);
-		person.setDefaultLink(link);
+		// person.setDefaultLink(link);
 		person.addLink(link);
 
 		IWorkbenchWindow window = (IWorkbenchWindow) context.getParent().getVariable("activeWorkbenchWindow");
