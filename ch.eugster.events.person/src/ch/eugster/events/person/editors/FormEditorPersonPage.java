@@ -249,7 +249,6 @@ public class FormEditorPersonPage extends FormPage
 						{
 							getEditor().setActivePage(id);
 						}
-
 					}
 				});
 			}
@@ -281,6 +280,10 @@ public class FormEditorPersonPage extends FormPage
 							{
 								pie.printStackTrace();
 							}
+						}
+						else
+						{
+							getEditor().setActivePage(id);
 						}
 					}
 				});
@@ -1069,9 +1072,13 @@ public class FormEditorPersonPage extends FormPage
 				this.domainViewer.setSelection(new StructuredSelection(person.getDomain()));
 			else if (PersonSettings.getInstance().isPersonDomainMandatory())
 			{
-				Domain[] domains = (Domain[]) this.domainViewer.getInput();
-				if (domains.length > 0)
-					this.domainViewer.setSelection(new StructuredSelection(domains[0]));
+				ConnectionService service = (ConnectionService) this.domainViewer.getInput();
+				DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
+				Collection<Domain> domains = query.selectAll();
+				if (domains.size() > 0)
+				{
+					this.domainViewer.setSelection(new StructuredSelection(domains.iterator().next()));
+				}
 			}
 		}
 
