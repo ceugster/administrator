@@ -61,7 +61,7 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 		catch (PartInitException e)
 		{
 		}
-		this.setActivePage(this.getPageCount() > 1 ? 1 : 0);
+		this.setActivePage(this.getPageCount() > 1 ? 0 : 0);
 		setDirty(false);
 	}
 
@@ -94,7 +94,7 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 	{
 		super.init(site, input);
 		Person person = getPerson();
-		setPartName(person.getId() == null ? "P" : "P" + PersonFormatter.getInstance().formatId(person));
+		setPartName(person.getId() == null ? "Neu" : PersonFormatter.getInstance().formatFirstnameLastname(person));
 	}
 
 	@Override

@@ -66,7 +66,8 @@ public class EditHandler extends AbstractHandler implements IHandler
 							}
 							else if (ssel.getFirstElement() instanceof LinkPersonAddress)
 							{
-								openPersonEditor(window, (LinkPersonAddress) ssel.getFirstElement());
+								LinkPersonAddress link = (LinkPersonAddress) ssel.getFirstElement();
+								openPersonEditor(window, link.getPerson().getDefaultLink());
 							}
 							else if (ssel.getFirstElement() instanceof Address)
 							{
