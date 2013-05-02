@@ -159,6 +159,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			{
 				AbstractEntity[] entities = event.getResult();
 				PersonView.this.viewer.setInput(new ContentRoot(entities));
+				PersonView.this.viewer.expandAll();
 				PersonView.this.packColumns();
 				PersonView.this.found.setText("Gefunden: " + event.getResult().length);
 			}
@@ -262,7 +263,6 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 						}
 						cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 					}
-					cell.setImage(link.getAddressType() == null ? null : link.getAddressType().getImage());
 				}
 			}
 		});
@@ -472,20 +472,21 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					Person person = (Person) object;
 					cell.setText(person.getDefaultLink() == null ? "" : AddressFormatter.getInstance()
 							.formatAddressLine(person.getDefaultLink().getAddress()));
-					cell.setImage(null);
+					cell.setImage(person.getDefaultLink().getAddressType().getImage());
 					deleted = person.isDeleted();
 				}
 				else if (object instanceof Address)
 				{
 					Address address = (Address) object;
 					cell.setText(AddressFormatter.getInstance().formatAddressLine(address));
-					cell.setImage(null);
+					cell.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_ADDRESS));
 					deleted = address.isDeleted();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
 					cell.setText(AddressFormatter.getInstance().formatAddressLine(link.getAddress()));
+					cell.setImage(link.getAddressType().getImage());
 					deleted = link.isDeleted();
 				}
 				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
@@ -932,7 +933,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 		else if (object instanceof LinkPersonAddress)
 		{
 			LinkPersonAddress link = (LinkPersonAddress) object;
-			this.editLink(link);
+			this.editLink(link.getPerson().getDefaultLink());
 		}
 		else if (object instanceof Address)
 		{

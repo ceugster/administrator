@@ -75,7 +75,7 @@ public class AddPersonHandler extends AbstractHandler implements IHandler
 		LinkPersonAddress link = LinkPersonAddress.newInstance(person, address);
 		link.setAddressType(addressType);
 		// person.setDefaultLink(link);
-		person.addLink(link);
+		// person.addLink(link);
 
 		IWorkbenchWindow window = (IWorkbenchWindow) context.getParent().getVariable("activeWorkbenchWindow");
 		IViewReference[] references = window.getActivePage().getViewReferences();
