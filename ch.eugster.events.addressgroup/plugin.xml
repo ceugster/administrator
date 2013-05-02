@@ -382,28 +382,6 @@
          </enabledWhen>
       </handler>
       <handler
-            class="ch.eugster.events.addressgroup.handlers.SendEmailHandler"
-            commandId="ch.eugster.events.addressgroup.command.sendEmail">
-         <enabledWhen>
-            <with
-                  variable="selection">
-               <iterate>
-                  <or>
-                     <instanceof
-                           value="ch.eugster.events.persistence.model.AddressGroupCategory">
-                     </instanceof>
-                     <instanceof
-                           value="ch.eugster.events.persistence.model.AddressGroup">
-                     </instanceof>
-                     <instanceof
-                           value="ch.eugster.events.persistence.model.AddressGroupMember">
-                     </instanceof>
-                  </or>
-               </iterate>
-            </with>
-         </enabledWhen>
-      </handler>
-      <handler
             class="ch.eugster.events.addressgroup.handlers.OpenWebsiteHandler"
             commandId="ch.eugster.events.addressgroup.command.openWebsite">
          <enabledWhen>
