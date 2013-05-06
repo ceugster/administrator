@@ -57,6 +57,10 @@ public class Participant extends AbstractEntity
 	@Column(name = "participant_date")
 	private Calendar date;
 
+	@Basic
+	@Column(name = "participant_count")
+	private int count = 1;
+
 	private Participant()
 	{
 		super();
@@ -85,6 +89,11 @@ public class Participant extends AbstractEntity
 		return this.bookingType;
 	}
 
+	public int getCount()
+	{
+		return count;
+	}
+
 	public Calendar getDate()
 	{
 		return this.date;
@@ -101,11 +110,6 @@ public class Participant extends AbstractEntity
 		return this.link;
 	}
 
-	public void setBooking(final Booking booking)
-	{
-		this.propertyChangeSupport.firePropertyChange("booking", this.booking, this.booking = booking);
-	}
-
 	// public boolean isCorrespondent() {
 	// if (this.booking.getParticipant() == null) return false;
 	// if (this.booking.getParticipant().getId() == null || this.getId() ==
@@ -120,9 +124,19 @@ public class Participant extends AbstractEntity
 	// this.booking.setParticipant(this);
 	// }
 
+	public void setBooking(final Booking booking)
+	{
+		this.propertyChangeSupport.firePropertyChange("booking", this.booking, this.booking = booking);
+	}
+
 	public void setBookingType(final BookingType bookingType)
 	{
 		this.propertyChangeSupport.firePropertyChange("bookingType", this.bookingType, this.bookingType = bookingType);
+	}
+
+	public void setCount(final int count)
+	{
+		this.propertyChangeSupport.firePropertyChange("count", this.count, this.count = count);
 	}
 
 	public void setDate(final Calendar date)
@@ -145,6 +159,7 @@ public class Participant extends AbstractEntity
 	{
 		target.setBooking(source.getBooking());
 		target.setBookingType(source.getBookingType());
+		target.setCount(source.getCount());
 		target.setDate(source.getDate());
 		target.setDeleted(source.isDeleted());
 		target.setId(source.getId());
