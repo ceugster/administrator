@@ -46,9 +46,47 @@ public class Domain extends AbstractEntity
 	@Column(name = "domain_desc")
 	private String description = "";
 
+	@Basic
+	@Column(name = "domain_organization_name")
+	private String organization = "";
+
+	@Basic
+	@Column(name = "domain_organization_address")
+	private String address = "";
+
+	@Basic
+	@Column(name = "domain_organization_city")
+	private String city = "";
+
+	@Basic
+	@Column(name = "domain_organization_phone")
+	private String phone = "";
+
+	@Basic
+	@Column(name = "domain_organization_fax")
+	private String fax = "";
+
+	@Basic
+	@Column(name = "domain_organization_email")
+	private String email = "";
+
+	@Basic
+	@Column(name = "domain_organization_website")
+	private String website = "";
+
 	private Domain()
 	{
 		super();
+	}
+
+	public String getAddress()
+	{
+		return stringValueOf(address);
+	}
+
+	public String getCity()
+	{
+		return stringValueOf(city);
 	}
 
 	public String getCode()
@@ -59,6 +97,16 @@ public class Domain extends AbstractEntity
 	public String getDescription()
 	{
 		return AbstractEntity.stringValueOf(this.description);
+	}
+
+	public String getEmail()
+	{
+		return stringValueOf(email);
+	}
+
+	public String getFax()
+	{
+		return stringValueOf(fax);
 	}
 
 	@Override
@@ -72,6 +120,31 @@ public class Domain extends AbstractEntity
 		return AbstractEntity.stringValueOf(this.name);
 	}
 
+	public String getOrganization()
+	{
+		return stringValueOf(organization);
+	}
+
+	public String getPhone()
+	{
+		return stringValueOf(phone);
+	}
+
+	public String getWebsite()
+	{
+		return stringValueOf(website);
+	}
+
+	public void setAddress(final String address)
+	{
+		this.propertyChangeSupport.firePropertyChange("address", this.address, this.address = address);
+	}
+
+	public void setCity(final String city)
+	{
+		this.propertyChangeSupport.firePropertyChange("city", this.city, this.city = city);
+	}
+
 	public void setCode(final String code)
 	{
 		this.propertyChangeSupport.firePropertyChange("code", this.code, this.code = code);
@@ -80,6 +153,16 @@ public class Domain extends AbstractEntity
 	public void setDescription(final String description)
 	{
 		this.propertyChangeSupport.firePropertyChange("description", this.description, this.description = description);
+	}
+
+	public void setEmail(final String email)
+	{
+		this.propertyChangeSupport.firePropertyChange("email", this.email, this.email = email);
+	}
+
+	public void setFax(final String fax)
+	{
+		this.propertyChangeSupport.firePropertyChange("fax", this.fax, this.fax = fax);
 	}
 
 	@Override
@@ -91,6 +174,22 @@ public class Domain extends AbstractEntity
 	public void setName(final String name)
 	{
 		this.propertyChangeSupport.firePropertyChange("name", this.name, this.name = name);
+	}
+
+	public void setOrganization(final String organization)
+	{
+		this.propertyChangeSupport.firePropertyChange("organization", this.organization,
+				this.organization = organization);
+	}
+
+	public void setPhone(final String phone)
+	{
+		this.propertyChangeSupport.firePropertyChange("phone", this.phone, this.phone = phone);
+	}
+
+	public void setWebsite(final String website)
+	{
+		this.propertyChangeSupport.firePropertyChange("website", this.website, this.website = website);
 	}
 
 	public static Domain newInstance()

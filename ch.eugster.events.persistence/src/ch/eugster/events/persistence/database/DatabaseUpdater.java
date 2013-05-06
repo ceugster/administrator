@@ -919,6 +919,79 @@ public abstract class DatabaseUpdater
 							upd.close();
 						}
 					}
+					if (structureVersion == 16)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						if (!columnExists(con, "events_participant", "participant_count"))
+						{
+							ok = executeSqlQuery(
+									con,
+									new StringBuilder("ALTER TABLE events_participant ").append(
+											"ADD COLUMN participant_count INTEGER DEFAULT 1").toString());
+							ok = executeSqlQuery(con,
+									"UPDATE events_participant SET participant_count = 1 WHERE participant_count = 0");
+						}
+						if (!columnExists(con, "events_domain", "domain_organization_name"))
+						{
+							ok = executeSqlQuery(
+									con,
+									new StringBuilder("ALTER TABLE events_domain ").append(
+											"ADD COLUMN domain_organization_name VARCHAR(255) DEFAULT \"\"").toString());
+						}
+						if (!columnExists(con, "events_domain", "domain_organization_address"))
+						{
+							ok = executeSqlQuery(
+									con,
+									new StringBuilder("ALTER TABLE events_domain ").append(
+											"ADD COLUMN domain_organization_address VARCHAR(255) DEFAULT \"\"")
+											.toString());
+						}
+						if (!columnExists(con, "events_domain", "domain_organization_city"))
+						{
+							ok = executeSqlQuery(
+									con,
+									new StringBuilder("ALTER TABLE events_domain ").append(
+											"ADD COLUMN domain_organization_city VARCHAR(255) DEFAULT \"\"").toString());
+						}
+						if (!columnExists(con, "events_domain", "domain_organization_phone"))
+						{
+							ok = executeSqlQuery(
+									con,
+									new StringBuilder("ALTER TABLE events_domain ").append(
+											"ADD COLUMN domain_organization_phone VARCHAR(255) DEFAULT \"\"")
+											.toString());
+						}
+						if (!columnExists(con, "events_domain", "domain_organization_fax"))
+						{
+							ok = executeSqlQuery(
+									con,
+									new StringBuilder("ALTER TABLE events_domain ").append(
+											"ADD COLUMN domain_organization_fax VARCHAR(255) DEFAULT \"\"").toString());
+						}
+						if (!columnExists(con, "events_domain", "domain_organization_email"))
+						{
+							ok = executeSqlQuery(
+									con,
+									new StringBuilder("ALTER TABLE events_domain ").append(
+											"ADD COLUMN domain_organization_email VARCHAR(255) DEFAULT \"\"")
+											.toString());
+						}
+						if (!columnExists(con, "events_domain", "domain_organization_website"))
+						{
+							ok = executeSqlQuery(
+									con,
+									new StringBuilder("ALTER TABLE events_domain ").append(
+											"ADD COLUMN domain_organization_website VARCHAR(255) DEFAULT \"\"")
+											.toString());
+						}
+					}
+					if (structureVersion == 17)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						ok = executeSqlQuery(con,
+								"UPDATE events_participant SET participant_count = 1 WHERE participant_count = 0");
+					}
+
 					stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);
 				}
 			}
