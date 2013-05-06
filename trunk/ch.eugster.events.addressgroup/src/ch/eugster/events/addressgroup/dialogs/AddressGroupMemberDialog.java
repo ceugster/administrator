@@ -23,8 +23,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -197,10 +200,36 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		this.domainViewer.setSorter(new DomainSorter());
 		this.domainViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
 
-		Tree tree = new Tree(composite, SWT.BORDER | SWT.SINGLE | SWT.CHECK | SWT.HIDE_SELECTION);
+		final Tree tree = new Tree(composite, SWT.BORDER | SWT.SINGLE | SWT.CHECK | SWT.HIDE_SELECTION);
 		tree.setHeaderVisible(false);
 		tree.setLinesVisible(false);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tree.addListener(SWT.Selection, new Listener()
+		{
+			@Override
+			public void handleEvent(final Event event)
+			{
+				if (event.detail == SWT.CHECK)
+				{
+					if (!(event.item.getData() instanceof AddressGroup))
+					{
+						event.detail = SWT.NONE;
+						event.type = SWT.None;
+						event.doit = false;
+						try
+						{
+							tree.setRedraw(false);
+							TreeItem item = (TreeItem) event.item;
+							item.setChecked(!item.getChecked());
+						}
+						finally
+						{
+							tree.setRedraw(true);
+						}
+					}
+				}
+			}
+		});
 
 		this.addressGroupViewer = new ContainerCheckedTreeViewer(tree);
 		this.addressGroupViewer.setContentProvider(new AddressGroupMemberTreeContentProvider());
