@@ -37,21 +37,21 @@ public class ExternalPathPreferencePage extends FieldEditorPreferencePage implem
 	@Override
 	protected void createFieldEditors()
 	{
-		FileFieldEditor bookingEditor = new FileFieldEditor(PreferenceInitializer.KEY_BOOKING_TEMPLATE,
+		FileFieldEditor bookingEditor = new FileFieldEditor(PreferenceConstants.KEY_BOOKING_TEMPLATE,
 				"Vorlage Anmeldebestätigung", this.getFieldEditorParent());
 		bookingEditor.setChangeButtonText("...");
 		bookingEditor.setFileExtensions(new String[] { "*.odt" });
 		bookingEditor.setErrorMessage("Die Vorlage für die Anmeldebestätigungen existiert nicht im angegebenen Pfad.");
 		this.addField(bookingEditor);
 
-		FileFieldEditor invitationEditor = new FileFieldEditor(PreferenceInitializer.KEY_INVITATION_TEMPLATE,
+		FileFieldEditor invitationEditor = new FileFieldEditor(PreferenceConstants.KEY_INVITATION_TEMPLATE,
 				"Vorlage Kurseinladung", this.getFieldEditorParent());
 		invitationEditor.setChangeButtonText("...");
 		invitationEditor.setFileExtensions(new String[] { "*.odt" });
 		invitationEditor.setErrorMessage("Die Vorlage für die Kurseinladungen existiert nicht im angegebenen Pfad.");
 		this.addField(invitationEditor);
 
-		FileFieldEditor participationEditor = new FileFieldEditor(PreferenceInitializer.KEY_PARTICIPATION_TEMPLATE,
+		FileFieldEditor participationEditor = new FileFieldEditor(PreferenceConstants.KEY_PARTICIPATION_TEMPLATE,
 				"Vorlage Teilnahmebestätigung", this.getFieldEditorParent());
 		participationEditor.setChangeButtonText("...");
 		participationEditor.setFileExtensions(new String[] { "*.odt" });
