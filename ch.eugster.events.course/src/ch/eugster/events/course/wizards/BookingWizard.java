@@ -68,13 +68,16 @@ public class BookingWizard extends Wizard
 		}
 
 		IStatus status = saveBooking();
-		if (status.isOK() && bookingPage.printBookingConfirmation())
+		if (bookingPage != null)
 		{
-			printBookingConfirmation(bookingPage);
-		}
-		if (status.isOK() && bookingPage.printInvitation())
-		{
-			printInvitation(bookingPage);
+			if (status.isOK() && bookingPage.printBookingConfirmation())
+			{
+				printBookingConfirmation(bookingPage);
+			}
+			if (status.isOK() && bookingPage.printInvitation())
+			{
+				printInvitation(bookingPage);
+			}
 		}
 		return true;
 	}
@@ -165,7 +168,7 @@ public class BookingWizard extends Wizard
 				ConnectionService connectionService = (ConnectionService) service;
 				BookingQuery query = (BookingQuery) connectionService.getQuery(Booking.class);
 				this.booking = query.merge(this.booking);
-				this.booking.getCourse().addBooking(this.booking);
+				// this.booking.getCourse().addBooking(this.booking);
 			}
 			else
 			{

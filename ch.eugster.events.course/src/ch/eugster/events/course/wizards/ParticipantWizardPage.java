@@ -1,5 +1,6 @@
 package ch.eugster.events.course.wizards;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -21,6 +22,7 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -28,6 +30,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
@@ -147,11 +150,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		while (iterator.hasNext())
 		{
 			LinkPersonAddress link = iterator.next();
-			if (!this.root.isAlreadyParticipant(link))
-			{
-				Participant participant = Participant.newInstance(link, this.booking);
-				this.root.addParticipant(participant);
-			}
+			Participant participant = Participant.newInstance(link, this.booking);
+			this.root.addParticipant(participant);
 		}
 	}
 
@@ -322,8 +322,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 						Collection<LinkPersonAddress> links = person.getLinks();
 						for (LinkPersonAddress link : links)
 						{
-							if (!root.isAlreadyParticipant(link))
-								revisedLinks.add(link);
+							// if (!root.isAlreadyParticipant(link))
+							revisedLinks.add(link);
 						}
 					}
 				}
@@ -1026,6 +1026,75 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			}
 		});
 
+		tableViewerColumn = new TableViewerColumn(this.participantViewer, SWT.RIGHT);
+		tableViewerColumn.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public void update(final ViewerCell cell)
+			{
+				Object element = cell.getElement();
+				if (element instanceof Participant)
+				{
+					Participant participant = (Participant) element;
+					cell.setText(DecimalFormat.getIntegerInstance().format(participant.getCount()));
+				}
+			}
+		});
+		tableViewerColumn.setEditingSupport(new EditingSupport(this.participantViewer)
+		{
+			@Override
+			protected boolean canEdit(final Object element)
+			{
+				return true;
+			}
+
+			@Override
+			protected CellEditor getCellEditor(final Object element)
+			{
+				CellEditor editor = new TextCellEditor(ParticipantWizardPage.this.participantViewer.getTable(),
+						SWT.RIGHT);
+				editor.setValidator(new ICellEditorValidator()
+				{
+					@Override
+					public String isValid(final Object value)
+					{
+						String val = value.toString();
+						val = val.isEmpty() ? "0" : val;
+						try
+						{
+							Integer.valueOf(val);
+						}
+						catch (NumberFormatException e)
+						{
+							return "Ungültige Eingabe";
+						}
+						return null;
+					}
+				});
+				return editor;
+			}
+
+			@Override
+			protected Object getValue(final Object element)
+			{
+				Participant participant = (Participant) element;
+				return DecimalFormat.getIntegerInstance().format(participant.getCount());
+			}
+
+			@Override
+			protected void setValue(final Object element, final Object value)
+			{
+				Participant participant = (Participant) element;
+				participant.setCount(Integer.valueOf(value.toString()).intValue());
+				participantViewer.update(participant, null);
+				setPageComplete(true);
+			}
+
+		});
+		tableColumn = tableViewerColumn.getColumn();
+		tableColumn.setText("Teilnehmer");
+		tableColumn.setResizable(true);
+
 		transfers = new Transfer[] { EntityTransfer.getTransfer() };
 		ops = DND.DROP_COPY;
 		this.participantViewer.addDropSupport(ops, transfers, new ParticipantViewerDropAdapter(this.participantViewer,
@@ -1182,6 +1251,12 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			if (participant.getBookingType() == null)
 			{
 				complete = false;
+				break;
+			}
+			else if (participant.getCount() < 1)
+			{
+				complete = false;
+				break;
 			}
 		}
 		super.setPageComplete(items.length == 0 ? false : complete);
@@ -1208,7 +1283,9 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			}
 		}
 		if (this.root.getDefaultParticipant() != null)
+		{
 			booking.setParticipant(this.root.getDefaultParticipant());
+		}
 	}
 
 	private class ParticipantContentProvider implements IStructuredContentProvider
@@ -1388,14 +1465,14 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 
 		public void addParticipant(final Participant participant)
 		{
-			if (!this.isAlreadyParticipant(participant.getLink()))
-			{
-				int count = this.countParticipants();
-				this.participants.add(participant);
-				if (count == 0)
-					this.defaultParticipant = participant;
-				this.fireSelectionChanged();
-			}
+			// if (!this.isAlreadyParticipant(participant.getLink()))
+			// {
+			int count = this.countParticipants();
+			this.participants.add(participant);
+			if (count == 0)
+				this.defaultParticipant = participant;
+			this.fireSelectionChanged();
+			// }
 
 		}
 

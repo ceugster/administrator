@@ -37,10 +37,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import ch.eugster.events.course.Activator;
-import ch.eugster.events.course.views.BookingEditorContentOutlinePage;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.exceptions.PersistenceException;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
@@ -411,11 +409,11 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 	@Override
 	public Object getAdapter(final Class adapter)
 	{
-		if (IContentOutlinePage.class.equals(adapter))
-		{
-			this.contentOutlinePage = new BookingEditorContentOutlinePage(this);
-			return this.contentOutlinePage;
-		}
+		// if (IContentOutlinePage.class.equals(adapter))
+		// {
+		// this.contentOutlinePage = new BookingEditorContentOutlinePage(this);
+		// return this.contentOutlinePage;
+		// }
 		return super.getAdapter(adapter);
 	}
 

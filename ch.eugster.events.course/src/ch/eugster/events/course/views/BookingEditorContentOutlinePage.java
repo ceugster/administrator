@@ -2,6 +2,7 @@ package ch.eugster.events.course.views;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -454,7 +455,8 @@ public class BookingEditorContentOutlinePage extends ContentOutlinePage implemen
 				String bookingType = null;
 				if (participant.getBookingType() != null)
 					bookingType = " - " + CourseFormatter.getInstance().formatComboEntry(participant.getBookingType());
-				return id + " - " + name + ", " + address + (bookingType == null ? "" : " - " + bookingType);
+				return id + " - " + name + ", " + address + (bookingType == null ? "" : " - " + bookingType) + " ("
+						+ DecimalFormat.getIntegerInstance().format(participant.getCount()) + ")";
 			}
 
 			return super.getText(element);
@@ -556,7 +558,7 @@ public class BookingEditorContentOutlinePage extends ContentOutlinePage implemen
 		@Override
 		public String toString()
 		{
-			return "Teilnehmer";
+			return "Teilnehmer (" + DecimalFormat.getIntegerInstance().format(booking.getParticipantCount()) + ")";
 		}
 
 		public void updateBooking(final Participant participant)
@@ -615,6 +617,5 @@ public class BookingEditorContentOutlinePage extends ContentOutlinePage implemen
 		{
 			return this.participantGroup;
 		}
-
 	}
 }

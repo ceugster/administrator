@@ -364,6 +364,7 @@ ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteBookingType
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteCourseDetailHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteCourseGuideHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteCourseHandler.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteParticipantHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/EditBookingHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/EditBookingTypeHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/EditCourseDetailHandler.java -text
