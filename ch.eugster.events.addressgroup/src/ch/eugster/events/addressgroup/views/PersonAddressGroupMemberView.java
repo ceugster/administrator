@@ -20,7 +20,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
@@ -148,10 +151,36 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		this.domainViewer.setSorter(new DomainSorter());
 		this.domainViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
 
-		Tree tree = new Tree(composite, SWT.BORDER | SWT.SINGLE | SWT.CHECK | SWT.HIDE_SELECTION);
+		final Tree tree = new Tree(composite, SWT.BORDER | SWT.SINGLE | SWT.CHECK | SWT.HIDE_SELECTION);
 		tree.setHeaderVisible(false);
 		tree.setLinesVisible(false);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tree.addListener(SWT.Selection, new Listener()
+		{
+			@Override
+			public void handleEvent(final Event event)
+			{
+				if (event.detail == SWT.CHECK)
+				{
+					if (!(event.item.getData() instanceof AddressGroup))
+					{
+						event.detail = SWT.NONE;
+						event.type = SWT.None;
+						event.doit = false;
+						try
+						{
+							tree.setRedraw(false);
+							TreeItem item = (TreeItem) event.item;
+							item.setChecked(!item.getChecked());
+						}
+						finally
+						{
+							tree.setRedraw(true);
+						}
+					}
+				}
+			}
+		});
 
 		this.addressGroupViewer = new ContainerCheckedTreeViewer(tree);
 		this.addressGroupViewer.setContentProvider(new AddressGroupMemberTreeContentProvider());
@@ -365,168 +394,6 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		}
 	}
 
-	// @Override
-	// public void postPersist(AbstractEntity entity)
-	// {
-	// AddressGroup root = (AddressGroup) this.viewer.getInput();
-	// if (root != null)
-	// {
-	// if (entity instanceof AddressGroupMember)
-	// {
-	// AddressGroupMember member = (AddressGroupMember) entity;
-	// if (member.getAddressGroup().getId().equals(root.getId()))
-	// {
-	// Collection<Object> selected = new ArrayList<Object>();
-	// StructuredSelection ssel = (StructuredSelection)
-	// this.getViewer().getSelection();
-	// Iterator<?> iterator = ssel.iterator();
-	// while (iterator.hasNext())
-	// {
-	// Object next = iterator.next();
-	// selected.add(next);
-	// }
-	// if (!selected.contains(entity))
-	// selected.add(entity);
-	// ssel = new StructuredSelection(selected);
-	// this.refresh();
-	// this.getViewer().setSelection(ssel);
-	// }
-	// }
-	// }
-	// }
-	//
-	// @Override
-	// public void postUpdate(AbstractEntity entity)
-	// {
-	// AddressGroup root = (AddressGroup) this.viewer.getInput();
-	// if (root != null)
-	// {
-	// if (entity instanceof AddressGroupMember)
-	// {
-	// AddressGroupMember member = (AddressGroupMember) entity;
-	// if (member.getAddressGroup().getId().equals(root.getId()))
-	// {
-	// Collection<Object> selected = new ArrayList<Object>();
-	// StructuredSelection ssel = (StructuredSelection)
-	// this.getViewer().getSelection();
-	// Iterator<?> iterator = ssel.iterator();
-	// while (iterator.hasNext())
-	// {
-	// Object next = iterator.next();
-	// selected.add(next);
-	// }
-	// if (!selected.contains(entity))
-	// selected.add(entity);
-	// ssel = new StructuredSelection(selected);
-	// this.refresh();
-	// this.getViewer().setSelection(ssel);
-	// }
-	// }
-	// else if (entity instanceof AddressGroup)
-	// {
-	// if (((AddressGroup) entity).getId().equals(root.getId()))
-	// {
-	// this.refresh();
-	// }
-	// }
-	// else if (entity instanceof Address)
-	// {
-	// Address address = (Address) entity;
-	// for (AddressGroupMember member : address.getAddressGroupMembers())
-	// {
-	// if (member.getAddressGroup().getId().equals(root.getId()))
-	// {
-	// this.viewer.refresh(member);
-	// }
-	// }
-	// }
-	// else if (entity instanceof LinkPersonAddress)
-	// {
-	// LinkPersonAddress link = (LinkPersonAddress) entity;
-	// for (AddressGroupMember member : link.getAddressGroupMembers())
-	// {
-	// if (member.getAddressGroup().getId().equals(root.getId()))
-	// {
-	// this.viewer.refresh(member);
-	// }
-	// }
-	// }
-	// else if (entity instanceof Person)
-	// {
-	// Person person = (Person) entity;
-	// for (LinkPersonAddress link : person.getLinks())
-	// {
-	// for (AddressGroupMember member : link.getAddressGroupMembers())
-	// {
-	// if (member.getAddressGroup().getId().equals(root.getId()))
-	// {
-	// this.viewer.refresh(member);
-	// }
-	// }
-	// }
-	// }
-	// }
-	// }
-	//
-	// @Override
-	// public void postDelete(AbstractEntity entity)
-	// {
-	// AddressGroup root = (AddressGroup) this.viewer.getInput();
-	// if (root != null)
-	// {
-	// if (entity instanceof AddressGroupMember)
-	// {
-	// if (((AddressGroupMember)
-	// entity).getAddressGroup().getId().equals(root.getId()))
-	// this.viewer.refresh();
-	// }
-	// else if (entity instanceof AddressGroup)
-	// {
-	// if (((AddressGroup) entity).getId().equals(root.getId()))
-	// this.refresh();
-	// }
-	// else if (entity instanceof Address)
-	// {
-	// Address address = (Address) entity;
-	// for (AddressGroupMember member : address.getAddressGroupMembers())
-	// {
-	// if (member.getAddressGroup().getId().equals(root.getId()))
-	// {
-	// this.viewer.refresh();
-	// break;
-	// }
-	// }
-	// }
-	// else if (entity instanceof LinkPersonAddress)
-	// {
-	// LinkPersonAddress link = (LinkPersonAddress) entity;
-	// for (AddressGroupMember member : link.getAddressGroupMembers())
-	// {
-	// if (member.getAddressGroup().getId().equals(root.getId()))
-	// {
-	// this.viewer.refresh();
-	// break;
-	// }
-	// }
-	// }
-	// else if (entity instanceof Person)
-	// {
-	// Person person = (Person) entity;
-	// for (LinkPersonAddress link : person.getLinks())
-	// {
-	// for (AddressGroupMember member : link.getAddressGroupMembers())
-	// {
-	// if (member.getAddressGroup().getId().equals(root.getId()))
-	// {
-	// this.viewer.refresh();
-	// break;
-	// }
-	// }
-	// }
-	// }
-	// }
-	// }
-
 	public void updateAddressGroupMembers()
 	{
 		Long[] addressGroupIds = this.monitors.keySet().toArray(new Long[0]);
@@ -583,6 +450,47 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		this.monitors.put(addressGroup.getId(), monitor);
 	}
 
+	// private class AddressGroupContainerCheckedTreeViewer extends
+	// ContainerCheckedTreeViewer
+	// {
+	//
+	// public AddressGroupContainerCheckedTreeViewer(final Tree tree)
+	// {
+	// super(tree);
+	// }
+	//
+	// /*
+	// * (non-Javadoc) Method declared on StructuredViewer.
+	// */
+	// @Override
+	// protected void handleSelect(final SelectionEvent event)
+	// {
+	// if (event.detail == SWT.CHECK)
+	// {
+	// TreeItem item = (TreeItem) event.item;
+	// Object data = item.getData();
+	// if (data instanceof AddressGroup)
+	// {
+	// super.handleSelect(event);
+	// if (data != null)
+	// {
+	// fireCheckStateChanged(new CheckStateChangedEvent(this, data,
+	// item.getChecked()));
+	// }
+	// }
+	// else
+	// {
+	// event.doit = false;
+	// }
+	// }
+	// else
+	// {
+	// super.handleSelect(event);
+	// }
+	// }
+	//
+	// }
+
 	private class Monitor
 	{
 		// public boolean update = false;
@@ -602,5 +510,4 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 			this.checked = checked;
 		}
 	}
-
 }
