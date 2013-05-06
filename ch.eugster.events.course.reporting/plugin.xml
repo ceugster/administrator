@@ -46,6 +46,11 @@
             id="ch.eugster.events.course.reporting.command.generateParticipationConfirmation"
             name="Teilnahmebestätigung">
       </command>
+      <command
+            defaultHandler="ch.eugster.events.course.reporting.handlers.GenerateParticipantListReportHandler"
+            id="ch.eugster.events.course.reporting.command.printParticipantReport"
+            name="Teilnehmerliste drucken">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -186,50 +191,45 @@
       </menuContribution>
       <menuContribution
             locationURI="popup:ch.eugster.events.course.views.courseView?after=ch.eugster.events.course.separator2">
-         <menu
+         <separator
+               name="ch.eugster.events.course.reporting.separator1">
+         </separator>
+         <command
+               commandId="ch.eugster.events.course.reporting.command.printParticipantReport"
+               disabledIcon="icons/work_grey_16.png"
+               hoverIcon="icons/work_16.png"
                icon="icons/work_16.png"
-               id="popup.course.view.generate"
-               label="Generieren">
-            <command
-                  commandId="ch.eugster.events.course.reporting.command.generateParticipantList"
-                  disabledIcon="icons/work_grey_16.png"
-                  hoverIcon="icons/work_16.png"
-                  icon="icons/work_16.png"
-                  label="Teilnahmeliste"
-                  style="push"
-                  tooltip="Generieren der Teilnahmeliste">
-            </command>
-            <separator
-                  name="ch.eugster.events.course.reporting.separator1">
-            </separator>
-            <command
-                  commandId="ch.eugster.events.course.reporting.command.generateBookingConfirmation"
-                  disabledIcon="icons/work_grey_16.png"
-                  hoverIcon="icons/work_16.png"
-                  icon="icons/work_16.png"
-                  label="Buchungsbestätigung"
-                  style="push"
-                  tooltip="Generieren der Buchungsbestätigungen">
-            </command>
-            <command
-                  commandId="ch.eugster.events.course.reporting.command.generateInvitation"
-                  disabledIcon="icons/work_grey_16.png"
-                  hoverIcon="icons/work_16.png"
-                  icon="icons/work_16.png"
-                  label="Kurseinladung"
-                  style="push"
-                  tooltip="Generieren der Kurseinladungen">
-            </command>
-            <command
-                  commandId="ch.eugster.events.course.reporting.command.generateParticipationConfirmation"
-                  disabledIcon="icons/work_grey_16.png"
-                  hoverIcon="icons/work_16.png"
-                  icon="icons/work_16.png"
-                  label="Teilnahmebestätigung"
-                  style="push"
-                  tooltip="Generieren der Teilnahmebestätigung">
-            </command>
-         </menu>
+               label="Teilnehmerliste drucken"
+               style="push"
+               tooltip="Generieren der Teilnahmeliste">
+         </command>
+         <command
+               commandId="ch.eugster.events.course.reporting.command.generateBookingConfirmation"
+               disabledIcon="icons/work_grey_16.png"
+               hoverIcon="icons/work_16.png"
+               icon="icons/work_16.png"
+               label="Buchungsbestätigung"
+               style="push"
+               tooltip="Generieren der Buchungsbestätigungen">
+         </command>
+         <command
+               commandId="ch.eugster.events.course.reporting.command.generateInvitation"
+               disabledIcon="icons/work_grey_16.png"
+               hoverIcon="icons/work_16.png"
+               icon="icons/work_16.png"
+               label="Kurseinladung"
+               style="push"
+               tooltip="Generieren der Kurseinladungen">
+         </command>
+         <command
+               commandId="ch.eugster.events.course.reporting.command.generateParticipationConfirmation"
+               disabledIcon="icons/work_grey_16.png"
+               hoverIcon="icons/work_16.png"
+               icon="icons/work_16.png"
+               label="Teilnahmebestätigung"
+               style="push"
+               tooltip="Generieren der Teilnahmebestätigung">
+         </command>
       </menuContribution>
    </extension>
    <extension

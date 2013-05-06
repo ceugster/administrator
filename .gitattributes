@@ -258,6 +258,7 @@ ch.eugster.events.course.feature/build.properties -text
 ch.eugster.events.course.feature/feature.xml -text
 ch.eugster.events.course.reporting/.classpath -text
 ch.eugster.events.course.reporting/.project -text
+ch.eugster.events.course.reporting/.settings/org.eclipse.core.resources.prefs -text
 ch.eugster.events.course.reporting/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.course.reporting/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.course.reporting/META-INF/MANIFEST.MF -text
@@ -265,7 +266,10 @@ ch.eugster.events.course.reporting/build.properties -text
 ch.eugster.events.course.reporting/icons/work_16.png -text
 ch.eugster.events.course.reporting/icons/work_grey_16.png -text
 ch.eugster.events.course.reporting/plugin.xml -text
+ch.eugster.events.course.reporting/reports/participant_list.jrxml -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/Activator.java -text
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/ParticipantListFactory.java -text
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/ParticipantListReportItem.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/BookingConfirmationDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/CourseInvitationDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/ParticipantListDialog.java -text
@@ -274,8 +278,10 @@ ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialog
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateBookingConfirmationHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateInvitationHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateParticipantListHandler.java -text
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateParticipantListReportHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateParticipationConfirmationHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/preferences/ExternalPathPreferencePage.java -text
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/preferences/PreferenceConstants.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/preferences/PreferenceInitializer.java -text
 ch.eugster.events.course/.classpath -text
 ch.eugster.events.course/.project -text
