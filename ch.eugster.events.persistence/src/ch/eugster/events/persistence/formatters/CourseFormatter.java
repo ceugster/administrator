@@ -252,9 +252,9 @@ public class CourseFormatter
 		if (details.length == 0)
 			return "";
 
-		dates = dates.append(sdf.format(details[0].getStart()));
+		dates = dates.append(sdf.format(details[0].getStart().getTime()));
 		dates = dates.append(" bis ");
-		dates = dates.append(sdf.format(details[details.length - 1].getEnd()));
+		dates = dates.append(sdf.format(details[details.length - 1].getEnd().getTime()));
 		return dates.toString();
 	}
 

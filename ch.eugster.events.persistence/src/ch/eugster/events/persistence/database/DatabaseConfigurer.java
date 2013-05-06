@@ -6,6 +6,8 @@
  */
 package ch.eugster.events.persistence.database;
 
+import java.util.GregorianCalendar;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -16,8 +18,10 @@ import org.osgi.service.prefs.Preferences;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.Activator;
+import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.Version;
 import ch.eugster.events.persistence.preferences.PreferenceInitializer;
+import ch.eugster.events.persistence.queries.DomainQuery;
 import ch.eugster.events.persistence.queries.VersionQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
@@ -70,6 +74,14 @@ public class DatabaseConfigurer
 						version.setDataVersion(version.getDataVersion() + 1);
 						version = query.merge(version);
 					}
+				}
+				DomainQuery domainQuery = (DomainQuery) service.getQuery(Domain.class);
+				if (domainQuery.selectAll().isEmpty())
+				{
+					Domain domain = Domain.newInstance();
+					domain.setDeleted(false);
+					domain.setInserted(GregorianCalendar.getInstance());
+					domainQuery.merge(domain);
 				}
 			}
 			tracker.close();

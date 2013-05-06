@@ -30,9 +30,9 @@ import javax.persistence.TableGenerator;
 @NamedQuery(name = "findVersion", query = "SELECT OBJECT(version) FROM Version version WHERE version.id = 1")
 public class Version extends AbstractEntity
 {
-	public static final int DATA_VERSION = 2;
+	public static final int DATA_VERSION = 3;
 
-	public static final int STRUCTURE_VERSION = 15;
+	public static final int STRUCTURE_VERSION = 18;
 
 	@Id
 	@Column(name = "version_id")
