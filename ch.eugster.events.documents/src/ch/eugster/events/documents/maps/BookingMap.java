@@ -23,7 +23,7 @@ public class BookingMap extends AbstractDataMap
 {
 	private static NumberFormat amountFormatter = null;
 
-	private static DateFormat dateFormatter = SimpleDateFormat.getDateInstance();
+	private static DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
 	private static NumberFormat integerFormatter = DecimalFormat.getIntegerInstance();
 

@@ -18,7 +18,7 @@ import ch.eugster.events.persistence.model.User;
 
 public class CourseMap extends AbstractDataMap
 {
-	private static DateFormat dateFormatter = SimpleDateFormat.getDateInstance();
+	private static DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
 	private static NumberFormat integerFormatter = DecimalFormat.getIntegerInstance();
 
