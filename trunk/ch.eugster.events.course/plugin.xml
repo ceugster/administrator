@@ -227,8 +227,14 @@
       </command>
       <command
             categoryId="category.editor.booking"
+            defaultHandler="ch.eugster.events.course.handlers.AddParticipantHandler"
             id="ch.eugster.events.course.command.addParticipant"
             name="Teilnehmer hinzufügen">
+      </command>
+      <command
+            defaultHandler="ch.eugster.events.course.handlers.DeleteParticipantHandler"
+            id="ch.eugster.events.course.command.removeParticipant"
+            name="Teilnehmer entfernen">
       </command>
       <category
             id="category.editor.course"
@@ -613,25 +619,6 @@
                               value="ch.eugster.events.course.views.CourseEditorContentOutlinePage$CourseGuideGroup">
                         </instanceof>
                      </or>
-                  </iterate>
-               </and>
-            </with>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="ch.eugster.events.course.handlers.AddParticipantHandler"
-            commandId="ch.eugster.events.course.command.addParticipant">
-         <enabledWhen>
-            <with
-                  variable="selection">
-               <and>
-                  <count
-                        value="1">
-                  </count>
-                  <iterate>
-                     <instanceof
-                           value="ch.eugster.events.persistence.model.Booking">
-                     </instanceof>
                   </iterate>
                </and>
             </with>
@@ -1060,22 +1047,15 @@
                label="Teilnehmer hinzufügen"
                style="push"
                tooltip="Teilnehmer der ausgewählten Buchung hinzufügen">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <and>
-                     <count
-                           value="1">
-                     </count>
-                     <iterate>
-                        <instanceof
-                              value="ch.eugster.events.persistence.model.Booking">
-                        </instanceof>
-                     </iterate>
-                  </and>
-               </with>
-            </visibleWhen>
+         </command>
+         <command
+               commandId="ch.eugster.events.course.command.removeParticipant"
+               disabledIcon="icons/delete_grey_16.png"
+               hoverIcon="icons/delete_16.png"
+               icon="icons/delete_16.png"
+               label="Teilnehmer entfernen"
+               style="push"
+               tooltip="Ausgewählten Teilnehmer entfernen">
          </command>
          <separator
                name="ch.eugster.events.course.separator3"

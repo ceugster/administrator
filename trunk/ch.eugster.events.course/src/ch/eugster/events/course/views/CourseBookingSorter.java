@@ -1,5 +1,7 @@
 package ch.eugster.events.course.views;
 
+import java.util.Calendar;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
@@ -63,10 +65,44 @@ public class CourseBookingSorter extends ViewerSorter
 
 	private int compareDate(final Participant participant1, final Participant participant2)
 	{
+		Calendar date1 = participant1.getDate();
+		Calendar date2 = participant2.getDate();
 		if (this.order.equals(Order.ASCENDING))
-			return participant1.getDate().compareTo(participant2.getDate());
+		{
+			if (date1 == null && date2 == null)
+			{
+				return 0;
+			}
+			else if (date1 == null)
+			{
+				return 1;
+			}
+			else if (date2 == null)
+			{
+				return -1;
+			}
+			else
+			{
+				return date1.compareTo(date2);
+			}
+		}
 		else if (this.order.equals(Order.DESCENDING))
-			return participant2.getDate().compareTo(participant1.getDate());
+			if (date1 == null && date2 == null)
+			{
+				return 0;
+			}
+			else if (date1 == null)
+			{
+				return -1;
+			}
+			else if (date2 == null)
+			{
+				return 1;
+			}
+			else
+			{
+				return date2.compareTo(date1);
+			}
 		else
 			return 0;
 	}
