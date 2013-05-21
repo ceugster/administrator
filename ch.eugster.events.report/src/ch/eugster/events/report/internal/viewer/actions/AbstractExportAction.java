@@ -25,11 +25,13 @@ import java.text.MessageFormat;
 import net.sf.jasperreports.engine.export.JRExportProgressMonitor;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 
 import ch.eugster.events.report.internal.viewer.IReportViewer;
 
@@ -106,6 +108,18 @@ public abstract class AbstractExportAction extends AbstractReportViewerAction
 					}
 					catch (Throwable e)
 					{
+						if (e instanceof NoClassDefFoundError)
+						{
+							Display.getDefault().syncExec(new Runnable()
+							{
+								@Override
+								public void run()
+								{
+									MessageDialog.openInformation(new Shell(), "Export nicht möglich",
+											"Diese Exportart ist nicht verfügbar.");
+								}
+							});
+						}
 						throw new InvocationTargetException(e);
 					}
 					finally
