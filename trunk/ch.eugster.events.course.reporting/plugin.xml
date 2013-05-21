@@ -51,6 +51,11 @@
             id="ch.eugster.events.course.reporting.command.printParticipantReport"
             name="Teilnehmerliste drucken">
       </command>
+      <command
+            defaultHandler="ch.eugster.events.course.reporting.handlers.GenerateBookingListReportHandler"
+            id="ch.eugster.events.course.reporting.command.printBookingListReport"
+            name="Kursliste mit Buchungsstand drucken">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -202,6 +207,15 @@
                label="Teilnehmerliste drucken"
                style="push"
                tooltip="Generieren der Teilnahmeliste">
+         </command>
+         <command
+               commandId="ch.eugster.events.course.reporting.command.printBookingListReport"
+               disabledIcon="icons/work_grey_16.png"
+               hoverIcon="icons/work_16.png"
+               icon="icons/work_16.png"
+               label="Kursliste mit Buchungsstand drucken"
+               style="push"
+               tooltip="Drucken der Kursliste">
          </command>
          <command
                commandId="ch.eugster.events.course.reporting.command.generateBookingConfirmation"
