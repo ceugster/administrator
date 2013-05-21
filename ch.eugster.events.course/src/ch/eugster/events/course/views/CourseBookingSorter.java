@@ -55,10 +55,44 @@ public class CourseBookingSorter extends ViewerSorter
 
 	private int compareDate(final Booking booking1, final Booking booking2)
 	{
+		Calendar date1 = booking1.getDate();
+		Calendar date2 = booking2.getDate();
 		if (this.order.equals(Order.ASCENDING))
-			return booking1.getDate().compareTo(booking2.getDate());
+		{
+			if (date1 == null && date2 == null)
+			{
+				return 0;
+			}
+			else if (date1 == null)
+			{
+				return 1;
+			}
+			else if (date2 == null)
+			{
+				return -1;
+			}
+			else
+			{
+				return date1.compareTo(date2);
+			}
+		}
 		else if (this.order.equals(Order.DESCENDING))
-			return booking2.getDate().compareTo(booking1.getDate());
+			if (date1 == null && date2 == null)
+			{
+				return 0;
+			}
+			else if (date1 == null)
+			{
+				return -1;
+			}
+			else if (date2 == null)
+			{
+				return 1;
+			}
+			else
+			{
+				return date2.compareTo(date1);
+			}
 		else
 			return 0;
 	}
