@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Addressgroup Plugin
+Bundle-Name: Adressgruppen
 Bundle-SymbolicName: ch.eugster.events.addressgroup;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1
 Bundle-Activator: ch.eugster.events.addressgroup.Activator
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
