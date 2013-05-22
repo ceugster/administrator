@@ -237,7 +237,7 @@ public abstract class DatabaseUpdater
 
 	public ResultType updateStructure(final java.sql.Connection con)
 	{
-		ResultType result = ResultType.EXIT_PROGRAM;
+		ResultType result = ResultType.CONNECT_NORMAL;
 		Statement stm = null;
 		ResultSet rst = null;
 		try
