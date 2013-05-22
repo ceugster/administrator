@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version last-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="phone-list" language="javascript" columnCount="2" pageWidth="842" pageHeight="595" columnWidth="322" columnSpacing="99" leftMargin="56" rightMargin="42" topMargin="56" bottomMargin="56" uuid="629fe3b2-9d43-4618-92ae-166697b28508">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="name" class="java.lang.String"/>
+	<field name="address" class="java.lang.String"/>
+	<field name="city" class="java.lang.String"/>
+	<field name="phonePrivate" class="java.lang.String"/>
+	<field name="phoneMobile" class="java.lang.String"/>
+	<field name="phoneBusiness" class="java.lang.String"/>
+	<field name="email" class="java.lang.String"/>
+	<field name="website" class="java.lang.String"/>
+	<field name="id" class="java.lang.String"/>
+	<sortField name="name"/>
+	<group name="Group1">
+		<groupExpression><![CDATA[$F{id}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="27" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="105" splitType="Prevent">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="2dfabd83-f406-45bb-a7aa-0f518c7b2a5a" x="0" y="25" width="152" height="15">
+					<property name="local_mesure_unitheight" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{address}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="215eadd7-48b9-4e79-aa9b-d282b5ef6293" x="200" y="25" width="125" height="17">
+					<property name="local_mesure_unitx" value="mm"/>
+					<property name="local_mesure_unitwidth" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{phonePrivate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="bea07d82-0be4-43e8-9d3c-809d9e34b544" positionType="Float" x="150" y="24" width="52" height="18">
+					<property name="local_mesure_unitheight" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Privat]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="215eadd7-48b9-4e79-aa9b-d282b5ef6293" x="200" y="40" width="125" height="17">
+					<property name="local_mesure_unitheight" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{phoneMobile}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="bea07d82-0be4-43e8-9d3c-809d9e34b544" x="150" y="40" width="52" height="17">
+					<property name="local_mesure_unitheight" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Mobile]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bea07d82-0be4-43e8-9d3c-809d9e34b544" x="150" y="55" width="52" height="17">
+					<property name="local_mesure_unitheight" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Arbeit]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="215eadd7-48b9-4e79-aa9b-d282b5ef6293" x="200" y="55" width="125" height="17">
+					<property name="local_mesure_unitwidth" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{phoneBusiness}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="bea07d82-0be4-43e8-9d3c-809d9e34b544" x="150" y="70" width="52" height="17">
+					<property name="local_mesure_unitheight" value="mm"/>
+					<property name="local_mesure_unitx" value="mm"/>
+					<property name="local_mesure_unitwidth" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Email]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="215eadd7-48b9-4e79-aa9b-d282b5ef6293" x="200" y="70" width="125" height="17">
+					<property name="local_mesure_unitheight" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="bea07d82-0be4-43e8-9d3c-809d9e34b544" x="150" y="85" width="52" height="17">
+					<property name="local_mesure_unitheight" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Website]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="215eadd7-48b9-4e79-aa9b-d282b5ef6293" x="200" y="85" width="125" height="17">
+					<property name="local_mesure_unitheight" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{website}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="2dfabd83-f406-45bb-a7aa-0f518c7b2a5a" x="0" y="40" width="152" height="17">
+					<property name="local_mesure_unitheight" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4cc27f64-a445-4dfa-81ab-8a37d9e921ea" mode="Opaque" x="0" y="11" width="325" height="13" forecolor="#FFFFFF" backcolor="#000000">
+					<property name="local_mesure_unitheight" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
