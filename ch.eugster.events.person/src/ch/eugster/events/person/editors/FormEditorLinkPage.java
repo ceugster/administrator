@@ -2,6 +2,7 @@ package ch.eugster.events.person.editors;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -15,15 +16,15 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.nebula.widgets.formattedtext.FormattedText;
-import org.eclipse.nebula.widgets.formattedtext.MaskFormatter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,6 +39,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
@@ -49,6 +51,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.ColumnLayoutData;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
@@ -82,6 +85,11 @@ import ch.eugster.events.person.preferences.PreferenceInitializer;
 import ch.eugster.events.ui.dialogs.Message;
 import ch.eugster.events.ui.helpers.BrowseHelper;
 import ch.eugster.events.ui.helpers.EmailHelper;
+
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 public class FormEditorLinkPage extends FormPage implements IContentProposalListener, IPropertyChangeListener
 {
@@ -123,11 +131,11 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 
 	private Text phonePrefix;
 
-	private FormattedText phone;
+	private Text phone;
 
 	private Text faxPrefix;
 
-	private FormattedText fax;
+	private Text fax;
 
 	private Text website;
 
@@ -135,7 +143,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 
 	private Text linkPhonePrefix;
 
-	private FormattedText linkPhone;
+	private Text linkPhone;
 
 	private Link linkSendEmail;
 
@@ -169,6 +177,8 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 
 	private Label groupLabel;
 
+	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+
 	public FormEditorLinkPage(final FormEditor editor, final FormEditorPersonPage personPage, final String id,
 			final LinkPersonAddress link)
 	{
@@ -182,6 +192,33 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		this.personPage = personPage;
 		this.link = link;
 		this.setTitleImage(link.getAddressType().getImage());
+	}
+
+	private void addAddressPage(final AddressType addressType, final String id)
+	{
+		try
+		{
+			FormEditorPersonPage personPage = null;
+			for (IFormPage formPage : getEditor().getPages())
+			{
+				if (formPage instanceof FormEditorPersonPage)
+				{
+					personPage = (FormEditorPersonPage) formPage;
+					break;
+				}
+			}
+			LinkPersonAddress l = ((PersonEditorInput) getEditor().getEditorInput()).getEntity();
+			Person person = l.getPerson();
+			Address address = Address.newInstance();
+			LinkPersonAddress link = LinkPersonAddress.newInstance(person, address);
+			link.setAddressType(addressType);
+			FormEditorLinkPage page = new FormEditorLinkPage(getEditor(), personPage, id, link);
+			getEditor().addPage(page);
+			getEditor().setActivePage(page.getId());
+		}
+		catch (PartInitException pie)
+		{
+		}
 	}
 
 	private void createAddressContactsSectionPart(final IManagedForm managedForm, final String title,
@@ -202,9 +239,9 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		phonePrefix.setLayoutData(gridData);
 		phonePrefix.setEnabled(false);
 
-		Text phoneControl = toolkit.createText(client, "");
-		phoneControl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		phoneControl.addModifyListener(new ModifyListener()
+		phone = toolkit.createText(client, "");
+		phone.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		phone.addModifyListener(new ModifyListener()
 		{
 			@Override
 			public void modifyText(final ModifyEvent e)
@@ -212,34 +249,20 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 				setDirty(true);
 			}
 		});
-		phoneControl.addFocusListener(new FocusAdapter()
+		phone.addFocusListener(new FocusListener()
 		{
 			@Override
 			public void focusGained(final FocusEvent e)
 			{
-				Text text = (Text) e.getSource();
-				text.setSelection(0, text.getText().length());
+				phone.setText(removeSpaces(phone.getText()));
+			}
+
+			@Override
+			public void focusLost(final FocusEvent e)
+			{
+				phone.setText(formatPhoneNumber(phone.getText()));
 			}
 		});
-
-		this.phone = new FormattedText(phoneControl);
-		if (countryViewer.getSelection() != null)
-		{
-			StructuredSelection ssel = (StructuredSelection) countryViewer.getSelection();
-			if (ssel.getFirstElement() instanceof Country)
-			{
-				Country country = (Country) ssel.getFirstElement();
-				if (country.getPhonePattern().isEmpty())
-				{
-					phone.setFormatter(null);
-				}
-				else
-				{
-					phone.setFormatter(new MaskFormatter(country.getPhonePattern()));
-				}
-				phone.setValue(this.link.getAddress().getPhone());
-			}
-		}
 
 		label = toolkit.createLabel(client, "Fax", SWT.NONE);
 		label.setLayoutData(new GridData());
@@ -251,9 +274,9 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		faxPrefix.setLayoutData(gridData);
 		faxPrefix.setEnabled(false);
 
-		phoneControl = toolkit.createText(client, "");
-		phoneControl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		phoneControl.addModifyListener(new ModifyListener()
+		this.fax = toolkit.createText(client, "");
+		fax.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fax.addModifyListener(new ModifyListener()
 		{
 			@Override
 			public void modifyText(final ModifyEvent e)
@@ -261,26 +284,20 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 				setDirty(true);
 			}
 		});
-		phoneControl.addFocusListener(new FocusAdapter()
+		fax.addFocusListener(new FocusListener()
 		{
 			@Override
 			public void focusGained(final FocusEvent e)
 			{
-				Text text = (Text) e.getSource();
-				text.setSelection(0, text.getText().length());
+				fax.setText(removeSpaces(fax.getText()));
+			}
+
+			@Override
+			public void focusLost(final FocusEvent e)
+			{
+				fax.setText(formatPhoneNumber(fax.getText()));
 			}
 		});
-
-		this.fax = new FormattedText(phoneControl);
-		if (countryViewer.getSelection() != null)
-		{
-			StructuredSelection ssel = (StructuredSelection) countryViewer.getSelection();
-			if (ssel.getFirstElement() instanceof Country)
-			{
-				Country country = (Country) ssel.getFirstElement();
-				this.fax.setFormatter(new MaskFormatter(country.getPhonePattern()));
-			}
-		}
 
 		sendEmail = new Link(client, SWT.NONE);
 		sendEmail.setText(FormEditorLinkPage.EMAIL_LABEL);
@@ -624,30 +641,24 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 				{
 					Country country = (Country) ssel.getFirstElement();
 					countryViewer.setData("country", country);
+
 					linkPhonePrefix.setText(country.getPhonePrefix());
 					phonePrefix.setText(country.getPhonePrefix());
 					faxPrefix.setText(country.getPhonePrefix());
-					if (country.getPhonePattern().isEmpty())
-					{
-						linkPhone.setFormatter(null);
-						phone.setFormatter(null);
-						fax.setFormatter(null);
-					}
-					else
-					{
-						linkPhone.setFormatter(new MaskFormatter(country.getPhonePattern()));
-						phone.setFormatter(new MaskFormatter(country.getPhonePattern()));
-						fax.setFormatter(new MaskFormatter(country.getPhonePattern()));
-					}
+
+					phone.setText(formatPhoneNumber(phone.getText()));
+					fax.setText(formatPhoneNumber(fax.getText()));
+					linkPhone.setText(formatPhoneNumber(linkPhone.getText()));
+
 					String p = FormEditorLinkPage.this.link.getAddress().getPhone();
 					p = p.startsWith(phonePrefix.getText()) ? p.substring(phonePrefix.getText().length()) : p;
-					FormEditorLinkPage.this.phone.setValue(p);
+					FormEditorLinkPage.this.phone.setText(formatPhoneNumber(p));
 					p = FormEditorLinkPage.this.link.getAddress().getFax();
 					p = p.startsWith(faxPrefix.getText()) ? p.substring(faxPrefix.getText().length()) : p;
-					FormEditorLinkPage.this.fax.setValue(p);
+					FormEditorLinkPage.this.fax.setText(formatPhoneNumber(p));
 					p = FormEditorLinkPage.this.link.getPhone();
 					p = p.startsWith(linkPhonePrefix.getText()) ? p.substring(linkPhonePrefix.getText().length()) : p;
-					FormEditorLinkPage.this.linkPhone.setValue(p);
+					FormEditorLinkPage.this.linkPhone.setText(formatPhoneNumber(p));
 
 					String[] states = selectProvinceCodes(country);
 					provinceViewer.setInput(states);
@@ -706,13 +717,29 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 				setDirty(true);
 			}
 		});
-		this.city.addFocusListener(new FocusAdapter()
+		this.city.addFocusListener(new FocusListener()
 		{
 			@Override
 			public void focusGained(final FocusEvent e)
 			{
 				Text text = (Text) e.getSource();
 				text.setSelection(0, text.getText().length());
+			}
+
+			@Override
+			public void focusLost(final FocusEvent e)
+			{
+				Text text = (Text) e.getSource();
+				String value = text.getText();
+				if (value.contains("."))
+				{
+					if (!value.contains(". "))
+					{
+						value = value.replaceAll(".", ". ");
+						text.setText(value);
+					}
+				}
+
 			}
 		});
 
@@ -755,12 +782,14 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 
 	private void createButtons(final IManagedForm managedForm)
 	{
+		final AddressType[] addressTypes = getAddressTypes();
+
 		ScrolledForm scrolledForm = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 
 		final Composite composite = toolkit.createComposite(scrolledForm.getBody());
 		composite.setLayoutData(new ColumnLayoutData(ColumnLayoutData.FILL));
-		composite.setLayout(new GridLayout(4, false));
+		composite.setLayout(new GridLayout(4 + addressTypes.length - 1, false));
 
 		Label label = toolkit.createLabel(composite, "");
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -780,62 +809,95 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			}
 		});
 
+		for (final AddressType addressType : addressTypes)
+		{
+			if (!this.getLink().getAddressType().getId().equals(addressType.getId()))
+			{
+				if (addressType.getImage() == null)
+				{
+					Hyperlink link = toolkit.createHyperlink(composite, addressType.getName(), SWT.NONE);
+					link.addHyperlinkListener(new HyperlinkAdapter()
+					{
+						@Override
+						public void linkActivated(final HyperlinkEvent e)
+						{
+							String id = "link.page." + addressType.getId().toString();
+							IFormPage page = getEditor().findPage(id);
+							if (page == null)
+							{
+								addAddressPage(addressType, id);
+							}
+							else
+							{
+								getEditor().setActivePage(id);
+							}
+						}
+					});
+				}
+				else
+				{
+					hyperlink = toolkit.createImageHyperlink(composite, SWT.NONE);
+					hyperlink.setImage(addressType.getImage());
+					hyperlink.addHyperlinkListener(new HyperlinkAdapter()
+					{
+						@Override
+						public void linkActivated(final HyperlinkEvent e)
+						{
+							String id = "link.page." + addressType.getId().toString();
+							IFormPage page = getEditor().findPage(id);
+							if (page == null)
+							{
+								addAddressPage(addressType, id);
+							}
+							else
+							{
+								getEditor().setActivePage(id);
+							}
+						}
+					});
+				}
+			}
+		}
+
 		changeAddressTypeHyperlink = toolkit.createImageHyperlink(composite, SWT.NONE);
 		changeAddressTypeHyperlink.addHyperlinkListener(new HyperlinkAdapter()
 		{
 			@Override
 			public void linkActivated(final HyperlinkEvent e)
 			{
-				ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-						ConnectionService.class.getName(), null);
-				tracker.open();
-				try
+				List<AddressType> unusedAddressTypes = new ArrayList<AddressType>();
+				Collection<IFormPage> usedPages = getEditor().getPages();
+				for (AddressType addressType : addressTypes)
 				{
-					ConnectionService service = (ConnectionService) tracker.getService();
-					if (service != null)
+					boolean found = false;
+					for (IFormPage usedPage : usedPages)
 					{
-						Collection<AddressType> unusedAddressTypes = new ArrayList<AddressType>();
-						AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
-						Collection<AddressType> allAddressTypes = query.selectAll();
-
-						Collection<IFormPage> usedPages = getEditor().getPages();
-						for (AddressType addressType : allAddressTypes)
+						if (usedPage instanceof FormEditorLinkPage)
 						{
-							boolean found = false;
-							for (IFormPage usedPage : usedPages)
+							FormEditorLinkPage page = (FormEditorLinkPage) usedPage;
+							if (page.getLink().getAddressType().getId().equals(addressType.getId()))
 							{
-								if (usedPage instanceof FormEditorLinkPage)
-								{
-
-									FormEditorLinkPage page = (FormEditorLinkPage) usedPage;
-									if (page.getLink().getAddressType().getId().equals(addressType))
-									{
-										found = true;
-									}
-								}
+								found = true;
 							}
-							if (!found)
-							{
-								unusedAddressTypes.add(addressType);
-							}
-						}
-						if (unusedAddressTypes.size() > 0)
-						{
-							ChangeAddressTypeDialog dialog = new ChangeAddressTypeDialog(composite.getShell(),
-									FormEditorLinkPage.this, unusedAddressTypes.toArray(new AddressType[0]));
-							dialog.open();
 						}
 					}
+					if (!found)
+					{
+						unusedAddressTypes.add(addressType);
+					}
 				}
-				finally
+				if (unusedAddressTypes.size() > 0)
 				{
-					tracker.close();
+					ChangeAddressTypeDialog dialog = new ChangeAddressTypeDialog(composite.getShell(),
+							FormEditorLinkPage.this, unusedAddressTypes.toArray(new AddressType[0]));
+					dialog.open();
 				}
 			}
 		});
 		changeAddressTypeHyperlink.setEnabled(true);
 		Image image = Activator.getDefault().getImageRegistry().get(Activator.KEY_CHANGE_ADDRESS);
 		changeAddressTypeHyperlink.setImage(image);
+		changeAddressTypeHyperlink.setEnabled(!getUnusedAddressTypes(addressTypes).isEmpty());
 
 		deleteHyperlink = toolkit.createImageHyperlink(composite, SWT.NONE);
 		deleteHyperlink.addHyperlinkListener(new HyperlinkAdapter()
@@ -948,9 +1010,9 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		linkPhonePrefix.setLayoutData(gridData);
 		linkPhonePrefix.setEnabled(false);
 
-		Text phoneControl = toolkit.createText(client, "");
-		phoneControl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		phoneControl.addModifyListener(new ModifyListener()
+		this.linkPhone = toolkit.createText(client, "");
+		this.linkPhone.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.linkPhone.addModifyListener(new ModifyListener()
 		{
 			@Override
 			public void modifyText(final ModifyEvent e)
@@ -958,26 +1020,20 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 				setDirty(true);
 			}
 		});
-		phoneControl.addFocusListener(new FocusAdapter()
+		this.linkPhone.addFocusListener(new FocusAdapter()
 		{
 			@Override
 			public void focusGained(final FocusEvent e)
 			{
-				Text text = (Text) e.getSource();
-				text.setSelection(0, text.getText().length());
+				linkPhone.setText(removeSpaces(linkPhone.getText()));
+			}
+
+			@Override
+			public void focusLost(final FocusEvent e)
+			{
+				linkPhone.setText(formatPhoneNumber(linkPhone.getText()));
 			}
 		});
-
-		this.linkPhone = new FormattedText(phoneControl);
-		if (countryViewer.getSelection() != null)
-		{
-			StructuredSelection ssel = (StructuredSelection) countryViewer.getSelection();
-			if (ssel.getFirstElement() instanceof Country)
-			{
-				Country country = (Country) ssel.getFirstElement();
-				this.linkPhone.setFormatter(new MaskFormatter(country.getPhonePattern()));
-			}
-		}
 
 		linkSendEmail = new Link(client, SWT.NONE);
 		linkSendEmail.setText(FormEditorLinkPage.EMAIL_LABEL);
@@ -1088,9 +1144,50 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		return null;
 	}
 
+	private String formatPhoneNumber(String value)
+	{
+		if (!FormEditorLinkPage.this.countryViewer.getSelection().isEmpty())
+		{
+			IStructuredSelection ssel = (IStructuredSelection) FormEditorLinkPage.this.countryViewer.getSelection();
+			if (ssel.getFirstElement() instanceof Country)
+			{
+				if (!value.isEmpty())
+				{
+					Country country = (Country) ssel.getFirstElement();
+					try
+					{
+						PhoneNumber phoneNumber = phoneUtil.parse(value, country.getIso3166alpha2());
+						value = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
+					}
+					catch (NumberParseException ex)
+					{
+
+					}
+				}
+			}
+		}
+		return value;
+	}
+
 	public String getAddress()
 	{
 		return this.address.getText();
+	}
+
+	private AddressType[] getAddressTypes()
+	{
+		Collection<AddressType> addressTypes = null;
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		tracker.open();
+		ConnectionService service = (ConnectionService) tracker.getService();
+		if (service != null)
+		{
+			AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
+			addressTypes = query.selectAll(false);
+		}
+		tracker.close();
+		return addressTypes == null ? new AddressType[0] : addressTypes.toArray(new AddressType[0]);
 	}
 
 	@Override
@@ -1153,6 +1250,32 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 	{
 		PersonEditorInput input = (PersonEditorInput) this.getEditor().getEditorInput();
 		return input.getName();
+	}
+
+	private List<AddressType> getUnusedAddressTypes(final AddressType[] addressTypes)
+	{
+		List<AddressType> unusedAddressTypes = new ArrayList<AddressType>();
+		Collection<IFormPage> usedPages = getEditor().getPages();
+		for (AddressType addressType : addressTypes)
+		{
+			boolean found = false;
+			for (IFormPage usedPage : usedPages)
+			{
+				if (usedPage instanceof FormEditorLinkPage)
+				{
+					FormEditorLinkPage page = (FormEditorLinkPage) usedPage;
+					if (page.getLink().getAddressType().getId().equals(addressType.getId()))
+					{
+						found = true;
+					}
+				}
+			}
+			if (!found)
+			{
+				unusedAddressTypes.add(addressType);
+			}
+		}
+		return unusedAddressTypes;
 	}
 
 	@Override
@@ -1245,12 +1368,8 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 
 	private void loadAddressContactsValues()
 	{
-		phone.setFormatter(link.getAddress().getCountry() == null ? null : new MaskFormatter(link.getAddress()
-				.getCountry().getPhonePattern()));
-		phone.setValue(selectedAddress.getPhone());
-		fax.setFormatter(link.getAddress().getCountry() == null ? null : new MaskFormatter(link.getAddress()
-				.getCountry().getPhonePattern()));
-		fax.setValue(selectedAddress.getFax());
+		phone.setText(formatPhoneNumber(selectedAddress.getPhone()));
+		fax.setText(formatPhoneNumber(selectedAddress.getFax()));
 		this.website.setText(selectedAddress.getWebsite());
 	}
 
@@ -1277,9 +1396,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 	private void loadLinkValues()
 	{
 		this.linkFunction.setText(link.getFunction());
-		this.linkPhone.setFormatter(link.getAddress().getCountry() == null ? null : new MaskFormatter(link.getAddress()
-				.getCountry().getPhonePattern()));
-		this.linkPhone.setValue(link.getPhone());
+		linkPhone.setText(formatPhoneNumber(link.getPhone()));
 		this.linkEmail.setText(link.getEmail());
 
 	}
@@ -1316,10 +1433,24 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		}
 	}
 
+	private String removeSpaces(final String value)
+	{
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < value.length(); i++)
+		{
+			if ("0123456789".contains(value.substring(i, i + 1)))
+			{
+				builder = builder.append(value.substring(i, i + 1));
+			}
+		}
+		return builder.toString();
+	}
+
 	private void saveAddressContactsValues()
 	{
-		selectedAddress.setPhone((String) this.phone.getValue());
-		selectedAddress.setFax((String) this.fax.getValue());
+		selectedAddress.setPhone(removeSpaces(this.phone.getText()));
+		selectedAddress.setFax(removeSpaces(this.fax.getText()));
+		selectedAddress.setEmail(this.email.getText());
 		selectedAddress.setWebsite(this.website.getText());
 	}
 
@@ -1354,7 +1485,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 	private void saveLinkValues()
 	{
 		link.setFunction(linkFunction.getText());
-		link.setPhone((String) this.linkPhone.getValue());
+		link.setPhone(removeSpaces(this.linkPhone.getText()));
 		link.setEmail(this.linkEmail.getText());
 		link.setAddress(selectedAddress);
 	}

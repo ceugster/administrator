@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Member Plugin
 Bundle-SymbolicName: ch.eugster.events.member;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1
 Bundle-Activator: ch.eugster.events.member.Activator
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -32,6 +32,7 @@ Import-Package: ch.eugster.events.persistence.events,
  org.eclipse.jface.wizard,
  org.eclipse.swt,
  org.eclipse.swt.events,
+ org.eclipse.swt.graphics,
  org.eclipse.swt.layout,
  org.eclipse.swt.widgets,
  org.eclipse.ui,

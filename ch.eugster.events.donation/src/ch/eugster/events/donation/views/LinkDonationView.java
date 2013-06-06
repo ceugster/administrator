@@ -58,6 +58,7 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 
 	public LinkDonationView()
 	{
+		System.out.println();
 	}
 
 	private void createContextMenu()

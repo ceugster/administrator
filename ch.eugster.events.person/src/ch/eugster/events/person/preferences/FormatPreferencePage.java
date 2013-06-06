@@ -66,7 +66,7 @@ public class FormatPreferencePage extends FieldEditorPreferencePage implements I
 	@Override
 	public void init(final IWorkbench workbench)
 	{
-		IPreferenceStore store = new PersonPreferenceStore();
+		IPreferenceStore store = PersonPreferenceStore.getInstance();
 		this.setPreferenceStore(store);
 		this.setDescription("");
 	}
