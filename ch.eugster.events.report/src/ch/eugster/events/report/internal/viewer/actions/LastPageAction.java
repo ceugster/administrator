@@ -35,8 +35,8 @@ public class LastPageAction extends AbstractReportViewerAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("LastPageAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("LastPageAction.tooltip")); //$NON-NLS-1$
+		setText("Letzte Seite"); //$NON-NLS-1$
+		setToolTipText("Letzte Seite"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("last"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("lastd"));
 	}

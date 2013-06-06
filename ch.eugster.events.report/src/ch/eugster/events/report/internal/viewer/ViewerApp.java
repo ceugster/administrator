@@ -88,7 +88,7 @@ public class ViewerApp extends ApplicationWindow
 	protected void configureShell(final Shell shell)
 	{
 		super.configureShell(shell);
-		shell.setText(Messages.getString("ViewerApp.title")); //$NON-NLS-1$
+		shell.setText("Auswertung"); //$NON-NLS-1$
 		shell.setImage(new Image(null, JasperViewer.class.getResourceAsStream("images/jricon.GIF"))); //$NON-NLS-1$
 	}
 
@@ -130,7 +130,7 @@ public class ViewerApp extends ApplicationWindow
 	{
 		MenuManager mm = getMenuBarManager();
 
-		MenuManager export = new MenuManager(Messages.getString("ViewerApp.exportMenuLabel")); //$NON-NLS-1$
+		MenuManager export = new MenuManager("&Export"); //$NON-NLS-1$
 		export.add(new ExportAsPdfAction(reportViewer));
 		export.add(new ExportAsRtfAction(reportViewer));
 		export.add(new ExportAsJasperReportsAction(reportViewer));
@@ -141,7 +141,7 @@ public class ViewerApp extends ApplicationWindow
 		export.add(new ExportAsXmlAction(reportViewer));
 		export.add(new ExportAsXmlWithImagesAction(reportViewer));
 
-		MenuManager file = new MenuManager(Messages.getString("ViewerApp.fileMenuLabel")); //$NON-NLS-1$
+		MenuManager file = new MenuManager("&Datei"); //$NON-NLS-1$
 		file.add(new ReloadAction(reportViewer));
 		file.add(new Separator());
 		file.add(export);
@@ -149,7 +149,7 @@ public class ViewerApp extends ApplicationWindow
 		file.add(new PrintAction(reportViewer));
 		mm.add(file);
 
-		MenuManager view = new MenuManager(Messages.getString("ViewerApp.viewMenuLabel")); //$NON-NLS-1$
+		MenuManager view = new MenuManager("&Ansicht"); //$NON-NLS-1$
 		view.add(new ZoomOutAction(reportViewer));
 		view.add(new ZoomInAction(reportViewer));
 		view.add(new Separator());
@@ -158,7 +158,7 @@ public class ViewerApp extends ApplicationWindow
 		view.add(new ZoomFitPageWidthAction(reportViewer));
 		mm.add(view);
 
-		MenuManager nav = new MenuManager(Messages.getString("ViewerApp.navigateMenuLabel")); //$NON-NLS-1$
+		MenuManager nav = new MenuManager("&Navigation"); //$NON-NLS-1$
 		nav.add(new FirstPageAction(reportViewer));
 		nav.add(new PreviousPageAction(reportViewer));
 		nav.add(new NextPageAction(reportViewer));
@@ -251,7 +251,7 @@ public class ViewerApp extends ApplicationWindow
 
 	private static void usage()
 	{
-		System.out.println(Messages.getString("ViewerApp.usageLabel")); //$NON-NLS-1$
-		System.out.println(Messages.getString("ViewerApp.usage")); //$NON-NLS-1$
+		System.out.println("Verwendung:"); //$NON-NLS-1$
+		System.out.println("\tjava Viewer -XML -Ffile"); //$NON-NLS-1$
 	}
 }

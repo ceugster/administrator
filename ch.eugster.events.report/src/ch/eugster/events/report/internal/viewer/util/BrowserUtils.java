@@ -117,8 +117,8 @@ public class BrowserUtils
 			@Override
 			public void run()
 			{
-				MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages
-						.getString("BrowserUtils.error.title"), Messages.getString("BrowserUtils.error.message")); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openError(Display.getCurrent().getActiveShell(),
+						"Fehler", "Browser kann nicht geöffnet werden"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
 	}

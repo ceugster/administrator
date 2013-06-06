@@ -35,8 +35,8 @@ public class ReloadAction extends AbstractReportViewerAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("ReloadAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("ReloadAction.tooltip")); //$NON-NLS-1$
+		setText("Neu laden"); //$NON-NLS-1$
+		setToolTipText("Neu laden"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("reload"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("reloadd"));
 	}

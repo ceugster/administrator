@@ -1,18 +1,20 @@
 package ch.eugster.events.report.engine;
 
 import java.io.File;
-import java.io.InputStream;
+import java.net.URL;
 import java.util.Map;
 
 public interface ReportService
 {
-	void export(final InputStream report, final Comparable[] beanArray, final Map<String, Object> parameters,
-			Format format, File file) throws IllegalArgumentException;
+	void export(URL report, final Comparable<?>[] beanArray, final Map<String, Object> parameters, Format format,
+			File file) throws IllegalArgumentException;
 
-	void print(InputStream report, Comparable[] beanArray, Map<String, Object> parameters, boolean doNotShowPrintDialog)
+	void print(URL report, Comparable<?>[] beanArray, Map<String, Object> parameters, boolean doNotShowPrintDialog)
 			throws IllegalArgumentException;
 
-	void view(final InputStream report, final Comparable[] beanArray, final Map<String, Object> parameters)
+	void processLabels(final Comparable<?>[] beanArray, Map<String, Object> parameters, Destination[] destinations);
+
+	void view(final URL report, final Comparable<?>[] beanArray, final Map<String, Object> parameters)
 			throws IllegalArgumentException;
 
 	public enum Destination

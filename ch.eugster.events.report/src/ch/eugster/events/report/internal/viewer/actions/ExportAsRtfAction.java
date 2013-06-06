@@ -25,13 +25,13 @@ public class ExportAsRtfAction extends AbstractExportAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("ExportAsRtfAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("ExportAsRtfAction.tooltip")); //$NON-NLS-1$
+		setText("Export als RTF"); //$NON-NLS-1$
+		setToolTipText("Export als RTF"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("save"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("saved"));
 
 		setFileExtensions(new String[] { "*.rtf" }); //$NON-NLS-1$
-		setFilterNames(new String[] { Messages.getString("ExportAsRtfAction.filterName") }); //$NON-NLS-1$
+		setFilterNames(new String[] { "RTF (*.rtf)" }); //$NON-NLS-1$
 		setDefaultFileExtension("rtf"); //$NON-NLS-1$
 	}
 

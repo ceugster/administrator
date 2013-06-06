@@ -206,7 +206,7 @@ public class ViewerComposite extends Composite
 			display = new Display();
 		}
 		Shell shell = new Shell(display);
-		shell.setText(Messages.getString("ViewerComposite.label")); //$NON-NLS-1$
+		shell.setText("Auswertung"); //$NON-NLS-1$
 		shell.setLayout(new FillLayout());
 		shell.setImage(new Image(null, JasperViewer.class.getResourceAsStream("images/jricon.GIF"))); //$NON-NLS-1$
 		ViewerComposite viewer = new ViewerComposite(shell, SWT.NONE);
@@ -224,7 +224,7 @@ public class ViewerComposite extends Composite
 
 	private static void usage()
 	{
-		System.out.println(Messages.getString("ViewerComposite.usageLabel")); //$NON-NLS-1$
-		System.out.println(Messages.getString("ViewerComposite.usage")); //$NON-NLS-1$
+		System.out.println("ViewerComposite.usageLabel"); //$NON-NLS-1$
+		System.out.println("ViewerComposite.usage"); //$NON-NLS-1$
 	}
 }

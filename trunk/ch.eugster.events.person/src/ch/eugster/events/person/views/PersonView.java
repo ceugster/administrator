@@ -41,6 +41,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 
+import ch.eugster.events.persistence.events.EntityAdapter;
+import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedPersonAndAddressFilter;
 import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
@@ -912,11 +914,8 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 	{
 		IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
 		ctxService.deactivateContext(ctxActivation);
-
 		deletedColor.dispose();
-
 		searcher.dispose();
-
 		super.dispose();
 	}
 
@@ -1038,6 +1037,70 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 		}
 
 		deletedColor = new Color(Display.getCurrent(), 255, 180, 180);
+
+		EntityMediator.addListener(Person.class, new EntityAdapter()
+		{
+			@Override
+			public void postDelete(final AbstractEntity entity)
+			{
+				viewer.refresh(entity);
+			}
+
+			@Override
+			public void postPersist(final AbstractEntity entity)
+			{
+				ContentRoot root = (ContentRoot) viewer.getInput();
+				viewer.add(root, entity);
+			}
+
+			@Override
+			public void postUpdate(final AbstractEntity entity)
+			{
+				viewer.refresh(entity);
+			}
+		});
+		EntityMediator.addListener(LinkPersonAddress.class, new EntityAdapter()
+		{
+			@Override
+			public void postDelete(final AbstractEntity entity)
+			{
+				viewer.refresh(entity);
+			}
+
+			@Override
+			public void postPersist(final AbstractEntity entity)
+			{
+				LinkPersonAddress link = (LinkPersonAddress) entity;
+				viewer.add(link.getPerson(), link);
+			}
+
+			@Override
+			public void postUpdate(final AbstractEntity entity)
+			{
+				viewer.refresh(entity);
+			}
+		});
+		EntityMediator.addListener(Address.class, new EntityAdapter()
+		{
+			@Override
+			public void postDelete(final AbstractEntity entity)
+			{
+				viewer.refresh(entity);
+			}
+
+			@Override
+			public void postPersist(final AbstractEntity entity)
+			{
+				ContentRoot root = (ContentRoot) viewer.getInput();
+				viewer.add(root, entity);
+			}
+
+			@Override
+			public void postUpdate(final AbstractEntity entity)
+			{
+				viewer.refresh(entity);
+			}
+		});
 	}
 
 	private void packColumns()

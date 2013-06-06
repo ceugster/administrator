@@ -103,7 +103,7 @@ public abstract class AbstractExportAction extends AbstractReportViewerAction
 					try
 					{
 						int totalPages = getReportViewer().getDocument().getPages().size();
-						monitor.beginTask(Messages.getString("AbstractExportAction.taskLabel"), totalPages); //$NON-NLS-1$
+						monitor.beginTask("Exportieren", totalPages); //$NON-NLS-1$
 						exportWithProgress(file, new ProgressMonitorAdapter(monitor, totalPages));
 					}
 					catch (Throwable e)
@@ -328,7 +328,7 @@ class ProgressMonitorAdapter implements JRExportProgressMonitor
 
 	private void updateSubtask()
 	{
-		monitor.subTask(MessageFormat.format(Messages.getString("AbstractExportAction.pageMofN"), new Object[] { //$NON-NLS-1$
+		monitor.subTask(MessageFormat.format("Seite (0) von (1)", new Object[] { //$NON-NLS-1$
 				new Integer(currentPage), new Integer(totalPages) }));
 	}
 }

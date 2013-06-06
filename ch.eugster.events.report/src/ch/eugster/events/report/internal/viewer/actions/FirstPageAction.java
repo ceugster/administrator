@@ -35,8 +35,8 @@ public class FirstPageAction extends AbstractReportViewerAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("FirstPageAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("FirstPageAction.tooltip")); //$NON-NLS-1$
+		setText("Erste Seite"); //$NON-NLS-1$
+		setToolTipText("Erste Seite"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("first"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("firstd"));
 	}

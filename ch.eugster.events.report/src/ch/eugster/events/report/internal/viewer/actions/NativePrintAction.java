@@ -73,8 +73,8 @@ public class NativePrintAction extends AbstractReportViewerAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("PrintAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("PrintAction.tooltip")); //$NON-NLS-1$
+		setText("Drucken..."); //$NON-NLS-1$
+		setToolTipText("Drucken"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("print"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("printd"));
 	}
@@ -182,11 +182,10 @@ public class NativePrintAction extends AbstractReportViewerAction
 			catch (PrinterException e)
 			{
 				e.printStackTrace();
-				MessageDialog
-						.openError(display.getActiveShell(),
-								Messages.getString("PrintAction.printingError.title"), //$NON-NLS-1$
-								MessageFormat.format(
-										Messages.getString("PrintAction.printingError.message"), new Object[] { e.getMessage() })); //$NON-NLS-1$
+				MessageDialog.openError(display.getActiveShell(),
+						"Fehler beim Drucken", //$NON-NLS-1$
+						MessageFormat.format(
+								"Dokument konnte nicht gedruckt werden: {0}", new Object[] { e.getMessage() })); //$NON-NLS-1$
 			}
 		}
 	}

@@ -40,8 +40,8 @@ import ch.eugster.events.report.internal.viewer.ReportViewerEvent;
  * 
  * @author Peter Severin (peter_p_s@users.sourceforge.net)
  */
-public class StatusContributionItem extends ContributionItem implements
-		IReportViewerListener {
+public class StatusContributionItem extends ContributionItem implements IReportViewerListener
+{
 
 	private IReportViewer viewer;
 
@@ -56,31 +56,16 @@ public class StatusContributionItem extends ContributionItem implements
 	 * @param viewer
 	 *            the report viewer
 	 */
-	public StatusContributionItem(IReportViewer viewer) {
+	public StatusContributionItem(final IReportViewer viewer)
+	{
 		Assert.isNotNull(viewer);
 		this.viewer = viewer;
 		this.viewer.addReportViewerListener(this);
 		refresh();
 	}
 
-	void refresh() {
-		if (label == null || label.isDisposed())
-			return;
-		try {
-			if (!viewer.hasDocument()) {
-				label.setEnabled(false);
-				label.setText(""); //$NON-NLS-1$
-			} else {
-				label.setText(getText());
-				label.setEnabled(true);
-			}
-		} catch (SWTException exception) {
-			if (!SWT.getPlatform().equals("gtk")) //$NON-NLS-1$
-				throw exception;
-		}
-	}
-
-	private Control createControl(Composite parent) {
+	private Control createControl(final Composite parent)
+	{
 		label = new Label(parent, SWT.CENTER);
 		label.setText("88888 of 88888"); //$NON-NLS-1$
 		label.pack();
@@ -92,7 +77,9 @@ public class StatusContributionItem extends ContributionItem implements
 	/**
 	 * @see org.eclipse.jface.action.ContributionItem#dispose()
 	 */
-	public void dispose() {
+	@Override
+	public void dispose()
+	{
 		viewer.removeReportViewerListener(this);
 		label = null;
 		viewer = null;
@@ -101,7 +88,9 @@ public class StatusContributionItem extends ContributionItem implements
 	/**
 	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Composite)
 	 */
-	public final void fill(Composite parent) {
+	@Override
+	public final void fill(final Composite parent)
+	{
 		createControl(parent);
 	}
 
@@ -109,40 +98,70 @@ public class StatusContributionItem extends ContributionItem implements
 	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Menu,
 	 *      int)
 	 */
-	public final void fill(Menu parent, int index) {
-		Assert.isTrue(false, Messages.getString("StatusContributionItem.cannotAddToMenu")); //$NON-NLS-1$
+	@Override
+	public final void fill(final Menu parent, final int index)
+	{
+		Assert.isTrue(false, "Seitennummer kann nicht zu Menu hinzugefügt werden"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.ToolBar,
 	 *      int)
 	 */
-	public void fill(ToolBar parent, int index) {
+	@Override
+	public void fill(final ToolBar parent, final int index)
+	{
 		toolitem = new ToolItem(parent, SWT.SEPARATOR, index);
 		Control control = createControl(parent);
 		toolitem.setWidth(label.getSize().x);
 		toolitem.setControl(control);
 	}
 
+	private String getText()
+	{
+		if (viewer == null || !viewer.hasDocument())
+		{
+			return ""; //$NON-NLS-1$
+		}
+		else
+		{
+			return MessageFormat.format("{0} von {1}", //$NON-NLS-1$
+					new Object[] { new Integer(viewer.getPageIndex() + 1),
+							new Integer(viewer.getDocument().getPages().size()) });
+		}
+	}
+
+	void refresh()
+	{
+		if (label == null || label.isDisposed())
+			return;
+		try
+		{
+			if (!viewer.hasDocument())
+			{
+				label.setEnabled(false);
+				label.setText(""); //$NON-NLS-1$
+			}
+			else
+			{
+				label.setText(getText());
+				label.setEnabled(true);
+			}
+		}
+		catch (SWTException exception)
+		{
+			if (!SWT.getPlatform().equals("gtk")) //$NON-NLS-1$
+				throw exception;
+		}
+	}
+
 	/**
 	 * @see ch.eugster.events.report.internal.viewer.IReportViewerListener#viewerStateChanged(ch.eugster.events.report.internal.viewer.ReportViewerEvent)
 	 */
-	public void viewerStateChanged(ReportViewerEvent evt) {
+	@Override
+	public void viewerStateChanged(final ReportViewerEvent evt)
+	{
 		refresh();
-	}
-
-	private String getText() {
-		if (viewer == null || !viewer.hasDocument()) {
-			return ""; //$NON-NLS-1$
-		} else {
-			return MessageFormat
-					.format(Messages
-							.getString("StatusContributionItem.pageMofN"), //$NON-NLS-1$
-							new Object[] {
-									new Integer(viewer.getPageIndex() + 1),
-									new Integer(viewer.getDocument().getPages()
-											.size()) });
-		}
 	}
 
 }

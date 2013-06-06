@@ -42,14 +42,14 @@ public class ExportAsXmlWithImagesAction extends AbstractExportAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("ExportAsXmlWithImagesAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("ExportAsXmlWithImagesAction.tooltip")); //$NON-NLS-1$
+		setText("Export als XML mit Bildern"); //$NON-NLS-1$
+		setToolTipText("Export als XML mit Bildern"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("save"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("saved"));
 
 		setFileExtensions(new String[] { "*.xml", "*.jrpxml" }); //$NON-NLS-1$ //$NON-NLS-2$
 		setFilterNames(new String[] {
-				Messages.getString("ExportAsXmlWithImagesAction.xmlFilterName"), Messages.getString("ExportAsXmlWithImagesAction.jrpxmlFilterName") }); //$NON-NLS-1$ //$NON-NLS-2$
+				"XML mit eingebetteten Bildern (*.xml)", "XML mit eingebetteten Bildern (*.jrpxml)" }); //$NON-NLS-1$ //$NON-NLS-2$
 		setDefaultFileExtension("xml"); //$NON-NLS-1$
 	}
 

@@ -36,8 +36,8 @@ public class ZoomFitPageWidthAction extends AbstractReportViewerAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("ZoomFitPageWidthAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("ZoomFitPageWidthAction.tooltip")); //$NON-NLS-1$
+		setText("An Breite anpassen"); //$NON-NLS-1$
+		setToolTipText("An Breite anpassen"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("zoomfitwidth"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("zoomfitwidthd"));
 		update();

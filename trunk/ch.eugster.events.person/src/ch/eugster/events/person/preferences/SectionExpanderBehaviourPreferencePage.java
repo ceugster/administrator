@@ -63,7 +63,7 @@ public class SectionExpanderBehaviourPreferencePage extends FieldEditorPreferenc
 	@Override
 	public void init(final IWorkbench workbench)
 	{
-		IPreferenceStore store = new PersonPreferenceStore();
+		IPreferenceStore store = PersonPreferenceStore.getInstance();
 		this.setPreferenceStore(store);
 		this.setDescription("");
 	}

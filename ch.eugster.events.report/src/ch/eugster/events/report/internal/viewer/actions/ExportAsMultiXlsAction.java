@@ -42,13 +42,13 @@ public class ExportAsMultiXlsAction extends AbstractExportAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("ExportAsMultiXlsAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("ExportAsMultiXlsAction.tooltip")); //$NON-NLS-1$
+		setText("Export als mehrseitiges XLS"); //$NON-NLS-1$
+		setToolTipText("Export als mehrseitiges XLS"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("save"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("saved"));
 
 		setFileExtensions(new String[] { "*.xls" }); //$NON-NLS-1$
-		setFilterNames(new String[] { Messages.getString("ExportAsMultiXlsAction.filterName") }); //$NON-NLS-1$
+		setFilterNames(new String[] { "Mehrseitiges XLS (*.xls)" }); //$NON-NLS-1$
 		setDefaultFileExtension("xls"); //$NON-NLS-1$
 	}
 

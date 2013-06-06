@@ -41,13 +41,13 @@ public class ExportAsJasperReportsAction extends AbstractExportAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("ExportAsJasperReportsAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("ExportAsJasperReportsAction.tooltip")); //$NON-NLS-1$
+		setText("Export als JasperReports"); //$NON-NLS-1$
+		setToolTipText("Export als JasperReports"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("save"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("saved"));
 
 		setFileExtensions(new String[] { "*.jrprint" }); //$NON-NLS-1$
-		setFilterNames(new String[] { Messages.getString("ExportAsJasperReportsAction.filterName") }); //$NON-NLS-1$
+		setFilterNames(new String[] { "JasperReports (*.jrprint)" }); //$NON-NLS-1$
 		setDefaultFileExtension("jrprint"); //$NON-NLS-1$
 	}
 

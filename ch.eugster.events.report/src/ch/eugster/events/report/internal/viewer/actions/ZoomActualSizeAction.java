@@ -36,8 +36,8 @@ public class ZoomActualSizeAction extends AbstractReportViewerAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("ZoomActualSizeAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("ZoomActualSizeAction.tooltip")); //$NON-NLS-1$
+		setText("Aktuelle Grösse"); //$NON-NLS-1$
+		setToolTipText("Aktuelle Grösse"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("zoomactual"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("zoomactuald"));
 		update();

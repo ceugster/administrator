@@ -41,14 +41,13 @@ public class ExportAsHtmlAction extends AbstractExportAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("ExportAsHtmlAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("ExportAsHtmlAction.tooltip")); //$NON-NLS-1$
+		setText("Export als HTML"); //$NON-NLS-1$
+		setToolTipText("Export als HTML"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("save"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("saved"));
 
 		setFileExtensions(new String[] { "*.html", "*.htm" }); //$NON-NLS-1$ //$NON-NLS-2$
-		setFilterNames(new String[] {
-				Messages.getString("ExportAsHtmlAction.htmlFilterName"), Messages.getString("ExportAsHtmlAction.htmFilterName") }); //$NON-NLS-1$ //$NON-NLS-2$
+		setFilterNames(new String[] { "HTML (*.html)", "HTML (*.htm)" }); //$NON-NLS-1$ //$NON-NLS-2$
 		setDefaultFileExtension("html"); //$NON-NLS-1$
 	}
 

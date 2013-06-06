@@ -40,10 +40,10 @@ import org.eclipse.swt.widgets.Control;
  * 
  * @author Peter Severin (peter_p_s@users.sourceforge.net)
  */
-public class ReportViewer implements IReportViewer {
+public class ReportViewer implements IReportViewer
+{
 
-	private static final double[] DEFAULT_ZOOM_LEVELS = new double[] { 0.5f,
-			0.75f, 1.0f, 1.25f, 1.50f, 1.75f, 2.0f };
+	private static final double[] DEFAULT_ZOOM_LEVELS = new double[] { 0.5f, 0.75f, 1.0f, 1.25f, 1.50f, 1.75f, 2.0f };
 
 	private EventListenerList listenerList = new EventListenerList();
 
@@ -73,312 +73,149 @@ public class ReportViewer implements IReportViewer {
 	 * Default constructor. The default style will be used for the SWT control
 	 * associated to the viewer.
 	 */
-	public ReportViewer() {
+	public ReportViewer()
+	{
 		this(SWT.NONE);
 	}
 
 	/**
-	 * Constructor that allows to specify a SWT control style. For possible styles
-	 * see the {@link org.eclipse.swt.widgets.Canvas} class. Most frequently you
-	 * will wont to specify the <code>SWT.NONE<code> style.
-	 * @param style the style
+	 * Constructor that allows to specify a SWT control style. For possible
+	 * styles see the {@link org.eclipse.swt.widgets.Canvas} class. Most
+	 * frequently you will wont to specify the <code>SWT.NONE<code> style.
+	 * 
+	 * @param style
+	 *            the style
 	 */
-	public ReportViewer(int style) {
+	public ReportViewer(final int style)
+	{
 		this.style = style;
 	}
 
 	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#setDocument(net.sf.jasperreports.engine.JasperPrint)
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#addHyperlinkListener(net.sf.jasperreports.view.JRHyperlinkListener)
 	 */
-	public void setDocument(JasperPrint document) {
-		Assert.isNotNull(document, Messages.getString("ReportViewer.documentNotNull")); //$NON-NLS-1$
-		Assert.isNotNull(document.getPages(), Messages.getString("ReportViewer.documentNotEmpty")); //$NON-NLS-1$
-		Assert.isTrue(!document.getPages().isEmpty(), Messages.getString("ReportViewer.documentNotEmpty")); //$NON-NLS-1$
-
-		this.document = document;
-		this.reason = null;
-		this.pageIndex = Math.min(Math.max(0, pageIndex), getPageCount() - 1);
-		setZoomInternal(computeZoom());
-		fireViewerModelChanged();
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getDocument()
-	 */
-	public JasperPrint getDocument() {
-		return document;
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#hasDocument()
-	 */
-	public boolean hasDocument() {
-		return getDocument() != null;
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#unsetDocument(java.lang.String)
-	 */
-	public void unsetDocument(String reason) {
-		this.document = null;
-		this.reason = reason;
-		fireViewerModelChanged();
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getReason()
-	 */
-	public String getReason() {
-		return reason;
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#setZoom(double)
-	 */
-	public void setZoom(double zoom) {
-		setZoom(zoom, false);
-	}
-
-	private void setZoom(double zoom, boolean keepMode) {
-		if (!canChangeZoom())
-			return;
-
-		if (Math.abs(zoom - getZoom()) > 0.00001) {
-			setZoomInternal(zoom);
-			if (!keepMode)
-				this.zoomMode = ZOOM_MODE_NONE;
-			fireViewerModelChanged();
+	@Override
+	public void addHyperlinkListener(final JRHyperlinkListener listener)
+	{
+		if (hyperlinkListeners == null)
+		{
+			hyperlinkListeners = new ArrayList();
 		}
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canChangeZoom()
-	 */
-	public boolean canChangeZoom() {
-		return hasDocument();
-	}
-
-	private void setZoomInternal(double zoom) {
-		this.zoom = Math.min(Math.max(zoom, getMinZoom()), getMaxZoom());
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getZoom()
-	 */
-	public double getZoom() {
-		return zoom;
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#setZoomMode(int)
-	 */
-	public void setZoomMode(int zoomMode) {
-		if (!canChangeZoom())
-			return;
-
-		if (zoomMode != getZoomMode()) {
-			this.zoomMode = zoomMode;
-			setZoomInternal(computeZoom());
-			fireViewerModelChanged();
-		}
-	}
-
-	private double computeZoom() {
-		switch (zoomMode) {
-		case ZOOM_MODE_ACTUAL_SIZE:
-			return 1.0;
-		case ZOOM_MODE_FIT_WIDTH: {
-			double ratio = ratio(viewerComposite.getFitSize().x, document
-					.getPageWidth());
-			return ratio(viewerComposite.getFitSize((int) (document
-					.getPageWidth() * ratio),
-					(int) (document.getPageHeight() * ratio)).x, document
-					.getPageWidth());
-		}
-		case ZOOM_MODE_FIT_HEIGHT: {
-			double ratio = ratio(viewerComposite.getFitSize().y, document
-					.getPageHeight());
-			return ratio(viewerComposite.getFitSize((int) (document
-					.getPageWidth() * ratio),
-					(int) (document.getPageHeight() * ratio)).y, document
-					.getPageHeight());
-		}
-		case ZOOM_MODE_FIT_PAGE:
-			Point fitSize = viewerComposite.getFitSize();
-			return Math.min(ratio(fitSize.x, document.getPageWidth()), ratio(
-					fitSize.y, document.getPageHeight()));
+		else
+		{
+			hyperlinkListeners.remove(listener); // add once
 		}
 
-		return zoom;
-	}
-
-	private double ratio(int a, int b) {
-		return (a * 100 / b) / 100.0;
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getZoomMode()
-	 */
-	public int getZoomMode() {
-		return zoomMode;
-	}
-
-	private int getPageCount() {
-		return document == null ? 0 : document.getPages().size();
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getPageIndex()
-	 */
-	public int getPageIndex() {
-		return pageIndex;
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#setPageIndex(int)
-	 */
-	public void setPageIndex(int pageIndex) {
-		if (pageIndex != getPageIndex()) {
-			this.pageIndex = Math.min(Math.max(0, pageIndex),
-					getPageCount() - 1);
-			fireViewerModelChanged();
-		}
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canGotoFirstPage()
-	 */
-	public boolean canGotoFirstPage() {
-		return hasDocument() && pageIndex > 0;
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#gotoFirstPage()
-	 */
-	public void gotoFirstPage() {
-		if (canGotoFirstPage()) {
-			setPageIndex(0);
-		}
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canGotoLastPage()
-	 */
-	public boolean canGotoLastPage() {
-		return hasDocument() && pageIndex < getPageCount() - 1;
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#gotoLastPage()
-	 */
-	public void gotoLastPage() {
-		if (canGotoLastPage()) {
-			setPageIndex(getPageCount() - 1);
-		}
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canGotoNextPage()
-	 */
-	public boolean canGotoNextPage() {
-		return hasDocument() && pageIndex < getPageCount() - 1;
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#gotoNextPage()
-	 */
-	public void gotoNextPage() {
-		if (canGotoNextPage()) {
-			setPageIndex(pageIndex + 1);
-		}
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canGotoPreviousPage()
-	 */
-	public boolean canGotoPreviousPage() {
-		return hasDocument() && pageIndex > 0;
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#gotoPreviousPage()
-	 */
-	public void gotoPreviousPage() {
-		if (canGotoPreviousPage()) {
-			setPageIndex(pageIndex - 1);
-		}
+		hyperlinkListeners.add(listener);
 	}
 
 	/**
 	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#addReportViewerListener(ch.eugster.events.report.internal.viewer.IReportViewerListener)
 	 */
-	public void addReportViewerListener(IReportViewerListener listener) {
+	@Override
+	public void addReportViewerListener(final IReportViewerListener listener)
+	{
 		listenerList.add(IReportViewerListener.class, listener);
 	}
 
 	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#removeReportViewerListener(ch.eugster.events.report.internal.viewer.IReportViewerListener)
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canChangeZoom()
 	 */
-	public void removeReportViewerListener(IReportViewerListener listener) {
-		listenerList.remove(IReportViewerListener.class, listener);
-	}
-
-	private void fireViewerModelChanged() {
-		Object[] listeners = listenerList.getListenerList();
-		ReportViewerEvent e = null;
-
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == IReportViewerListener.class) {
-				if (e == null) {
-					e = new ReportViewerEvent(this);
-				}
-				((IReportViewerListener) listeners[i + 1])
-						.viewerStateChanged(e);
-			}
-		}
+	@Override
+	public boolean canChangeZoom()
+	{
+		return hasDocument();
 	}
 
 	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#reload()
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canGotoFirstPage()
 	 */
-	public void reload() {
-		try {
-			pageIndex = 0;
-			//			zoom = 1.0f;
-			//			zoomMode = ZOOM_MODE_NONE;
-			setDocument(load());
-		} catch (JRException e) {
-			unsetDocument(e.toString());
-		}
+	@Override
+	public boolean canGotoFirstPage()
+	{
+		return hasDocument() && pageIndex > 0;
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canGotoLastPage()
+	 */
+	@Override
+	public boolean canGotoLastPage()
+	{
+		return hasDocument() && pageIndex < getPageCount() - 1;
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canGotoNextPage()
+	 */
+	@Override
+	public boolean canGotoNextPage()
+	{
+		return hasDocument() && pageIndex < getPageCount() - 1;
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canGotoPreviousPage()
+	 */
+	@Override
+	public boolean canGotoPreviousPage()
+	{
+		return hasDocument() && pageIndex > 0;
 	}
 
 	/**
 	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canReload()
 	 */
-	public boolean canReload() {
+	@Override
+	public boolean canReload()
+	{
 		return fileName != null;
 	}
-	
+
 	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#loadDocument(java.lang.String,
-	 *      boolean)
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canZoomIn()
 	 */
-	public void loadDocument(String fileName, boolean xml) {
-		this.fileName = fileName;
-		this.xml = xml;
-		reload();
+	@Override
+	public boolean canZoomIn()
+	{
+		return hasDocument() && getZoom() < getMaxZoom();
 	}
 
-	private JasperPrint load() throws JRException {
-		JasperPrint jasperPrint = null;
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canZoomOut()
+	 */
+	@Override
+	public boolean canZoomOut()
+	{
+		return hasDocument() && getZoom() > getMinZoom();
+	}
 
-		if (xml) {
-			jasperPrint = JRPrintXmlLoader.load(fileName);
-		} else {
-			jasperPrint = (JasperPrint) JRLoader.loadObject(fileName);
+	private double computeZoom()
+	{
+		switch (zoomMode)
+		{
+			case ZOOM_MODE_ACTUAL_SIZE:
+				return 1.0;
+			case ZOOM_MODE_FIT_WIDTH:
+			{
+				double ratio = ratio(viewerComposite.getFitSize().x, document.getPageWidth());
+				return ratio(
+						viewerComposite.getFitSize((int) (document.getPageWidth() * ratio),
+								(int) (document.getPageHeight() * ratio)).x, document.getPageWidth());
+			}
+			case ZOOM_MODE_FIT_HEIGHT:
+			{
+				double ratio = ratio(viewerComposite.getFitSize().y, document.getPageHeight());
+				return ratio(
+						viewerComposite.getFitSize((int) (document.getPageWidth() * ratio),
+								(int) (document.getPageHeight() * ratio)).y, document.getPageHeight());
+			}
+			case ZOOM_MODE_FIT_PAGE:
+				Point fitSize = viewerComposite.getFitSize();
+				return Math.min(ratio(fitSize.x, document.getPageWidth()), ratio(fitSize.y, document.getPageHeight()));
 		}
 
-		return jasperPrint;
+		return zoom;
 	}
 
 	/**
@@ -389,13 +226,18 @@ public class ReportViewer implements IReportViewer {
 	 *            the parent
 	 * @return the created control
 	 */
-	public Control createControl(Composite parent) {
-		if (viewerComposite == null) {
-			viewerComposite = new ViewerCanvas(parent, style) {
+	public Control createControl(final Composite parent)
+	{
+		if (viewerComposite == null)
+		{
+			viewerComposite = new ViewerCanvas(parent, style)
+			{
 				/**
 				 * @see ch.eugster.events.report.internal.viewer.ViewerCanvas#resize()
 				 */
-				protected void resize() {
+				@Override
+				protected void resize()
+				{
 					setZoom(computeZoom(), true);
 					super.resize();
 				}
@@ -406,62 +248,57 @@ public class ReportViewer implements IReportViewer {
 		return viewerComposite;
 	}
 
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getZoomLevels()
-	 */
-	public double[] getZoomLevels() {
-		return zoomLevels;
+	private void fireViewerModelChanged()
+	{
+		Object[] listeners = listenerList.getListenerList();
+		ReportViewerEvent e = null;
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == IReportViewerListener.class)
+			{
+				if (e == null)
+				{
+					e = new ReportViewerEvent(this);
+				}
+				((IReportViewerListener) listeners[i + 1]).viewerStateChanged(e);
+			}
+		}
 	}
 
 	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#setZoomLevels(double[])
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getDocument()
 	 */
-	public void setZoomLevels(double[] levels) {
-		Assert.isNotNull(levels);
-		Assert.isTrue(levels.length > 0);
-		this.zoomLevels = levels;
+	@Override
+	public JasperPrint getDocument()
+	{
+		return document;
 	}
 
 	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#zoomIn()
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getHyperlinkListeners()
 	 */
-	public void zoomIn() {
-		if (canZoomIn())
-			setZoom(getNextZoom());
+	@Override
+	public JRHyperlinkListener[] getHyperlinkListeners()
+	{
+		return hyperlinkListeners == null ? new JRHyperlinkListener[0] : (JRHyperlinkListener[]) hyperlinkListeners
+				.toArray(new JRHyperlinkListener[hyperlinkListeners.size()]);
 	}
 
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canZoomIn()
-	 */
-	public boolean canZoomIn() {
-		return hasDocument() && getZoom() < getMaxZoom();
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#zoomOut()
-	 */
-	public void zoomOut() {
-		if (canZoomOut())
-			setZoom(getPreviousZoom());
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#canZoomOut()
-	 */
-	public boolean canZoomOut() {
-		return hasDocument() && getZoom() > getMinZoom();
-	}
-
-	private double getMinZoom() {
-		return zoomLevels[0];
-	}
-
-	private double getMaxZoom() {
+	private double getMaxZoom()
+	{
 		return zoomLevels[zoomLevels.length - 1];
 	}
 
-	private double getNextZoom() {
-		for (int i = 0; i < zoomLevels.length; i++) {
+	private double getMinZoom()
+	{
+		return zoomLevels[0];
+	}
+
+	private double getNextZoom()
+	{
+		for (int i = 0; i < zoomLevels.length; i++)
+		{
 			if (zoom < zoomLevels[i])
 				return zoomLevels[i];
 		}
@@ -469,8 +306,24 @@ public class ReportViewer implements IReportViewer {
 		return getMaxZoom();
 	}
 
-	private double getPreviousZoom() {
-		for (int i = zoomLevels.length - 1; i >= 0; i--) {
+	private int getPageCount()
+	{
+		return document == null ? 0 : document.getPages().size();
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getPageIndex()
+	 */
+	@Override
+	public int getPageIndex()
+	{
+		return pageIndex;
+	}
+
+	private double getPreviousZoom()
+	{
+		for (int i = zoomLevels.length - 1; i >= 0; i--)
+		{
 			if (zoom > zoomLevels[i])
 				return zoomLevels[i];
 		}
@@ -479,33 +332,283 @@ public class ReportViewer implements IReportViewer {
 	}
 
 	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#addHyperlinkListener(net.sf.jasperreports.view.JRHyperlinkListener)
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getReason()
 	 */
-	public void addHyperlinkListener(JRHyperlinkListener listener) {
-		if (hyperlinkListeners == null) {
-			hyperlinkListeners = new ArrayList();
-		} else {
-			hyperlinkListeners.remove(listener); // add once
+	@Override
+	public String getReason()
+	{
+		return reason;
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getZoom()
+	 */
+	@Override
+	public double getZoom()
+	{
+		return zoom;
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getZoomLevels()
+	 */
+	@Override
+	public double[] getZoomLevels()
+	{
+		return zoomLevels;
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getZoomMode()
+	 */
+	@Override
+	public int getZoomMode()
+	{
+		return zoomMode;
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#gotoFirstPage()
+	 */
+	@Override
+	public void gotoFirstPage()
+	{
+		if (canGotoFirstPage())
+		{
+			setPageIndex(0);
+		}
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#gotoLastPage()
+	 */
+	@Override
+	public void gotoLastPage()
+	{
+		if (canGotoLastPage())
+		{
+			setPageIndex(getPageCount() - 1);
+		}
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#gotoNextPage()
+	 */
+	@Override
+	public void gotoNextPage()
+	{
+		if (canGotoNextPage())
+		{
+			setPageIndex(pageIndex + 1);
+		}
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#gotoPreviousPage()
+	 */
+	@Override
+	public void gotoPreviousPage()
+	{
+		if (canGotoPreviousPage())
+		{
+			setPageIndex(pageIndex - 1);
+		}
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#hasDocument()
+	 */
+	@Override
+	public boolean hasDocument()
+	{
+		return getDocument() != null;
+	}
+
+	private JasperPrint load() throws JRException
+	{
+		JasperPrint jasperPrint = null;
+
+		if (xml)
+		{
+			jasperPrint = JRPrintXmlLoader.load(fileName);
+		}
+		else
+		{
+			jasperPrint = (JasperPrint) JRLoader.loadObject(fileName);
 		}
 
-		hyperlinkListeners.add(listener);
+		return jasperPrint;
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#loadDocument(java.lang.String,
+	 *      boolean)
+	 */
+	@Override
+	public void loadDocument(final String fileName, final boolean xml)
+	{
+		this.fileName = fileName;
+		this.xml = xml;
+		reload();
+	}
+
+	private double ratio(final int a, final int b)
+	{
+		return (a * 100 / b) / 100.0;
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#reload()
+	 */
+	@Override
+	public void reload()
+	{
+		try
+		{
+			pageIndex = 0;
+			// zoom = 1.0f;
+			// zoomMode = ZOOM_MODE_NONE;
+			setDocument(load());
+		}
+		catch (JRException e)
+		{
+			unsetDocument(e.toString());
+		}
 	}
 
 	/**
 	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#removeHyperlinkListener(net.sf.jasperreports.view.JRHyperlinkListener)
 	 */
-	public void removeHyperlinkListener(JRHyperlinkListener listener) {
+	@Override
+	public void removeHyperlinkListener(final JRHyperlinkListener listener)
+	{
 		if (hyperlinkListeners != null)
 			hyperlinkListeners.remove(listener);
 	}
 
 	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getHyperlinkListeners()
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#removeReportViewerListener(ch.eugster.events.report.internal.viewer.IReportViewerListener)
 	 */
-	public JRHyperlinkListener[] getHyperlinkListeners() {
-		return hyperlinkListeners == null ? new JRHyperlinkListener[0]
-				: (JRHyperlinkListener[]) hyperlinkListeners
-						.toArray(new JRHyperlinkListener[hyperlinkListeners
-								.size()]);
+	@Override
+	public void removeReportViewerListener(final IReportViewerListener listener)
+	{
+		listenerList.remove(IReportViewerListener.class, listener);
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#setDocument(net.sf.jasperreports.engine.JasperPrint)
+	 */
+	@Override
+	public void setDocument(final JasperPrint document)
+	{
+		Assert.isNotNull(document, "ReportViewer.documentNotNull"); //$NON-NLS-1$
+		Assert.isNotNull(document.getPages(), "ReportViewer.documentNotEmpty"); //$NON-NLS-1$
+		Assert.isTrue(!document.getPages().isEmpty(), "ReportViewer.documentNotEmpty"); //$NON-NLS-1$
+
+		this.document = document;
+		this.reason = null;
+		this.pageIndex = Math.min(Math.max(0, pageIndex), getPageCount() - 1);
+		setZoomInternal(computeZoom());
+		fireViewerModelChanged();
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#setPageIndex(int)
+	 */
+	@Override
+	public void setPageIndex(final int pageIndex)
+	{
+		if (pageIndex != getPageIndex())
+		{
+			this.pageIndex = Math.min(Math.max(0, pageIndex), getPageCount() - 1);
+			fireViewerModelChanged();
+		}
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#setZoom(double)
+	 */
+	@Override
+	public void setZoom(final double zoom)
+	{
+		setZoom(zoom, false);
+	}
+
+	private void setZoom(final double zoom, final boolean keepMode)
+	{
+		if (!canChangeZoom())
+			return;
+
+		if (Math.abs(zoom - getZoom()) > 0.00001)
+		{
+			setZoomInternal(zoom);
+			if (!keepMode)
+				this.zoomMode = ZOOM_MODE_NONE;
+			fireViewerModelChanged();
+		}
+	}
+
+	private void setZoomInternal(final double zoom)
+	{
+		this.zoom = Math.min(Math.max(zoom, getMinZoom()), getMaxZoom());
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#setZoomLevels(double[])
+	 */
+	@Override
+	public void setZoomLevels(final double[] levels)
+	{
+		Assert.isNotNull(levels);
+		Assert.isTrue(levels.length > 0);
+		this.zoomLevels = levels;
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#setZoomMode(int)
+	 */
+	@Override
+	public void setZoomMode(final int zoomMode)
+	{
+		if (!canChangeZoom())
+			return;
+
+		if (zoomMode != getZoomMode())
+		{
+			this.zoomMode = zoomMode;
+			setZoomInternal(computeZoom());
+			fireViewerModelChanged();
+		}
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#unsetDocument(java.lang.String)
+	 */
+	@Override
+	public void unsetDocument(final String reason)
+	{
+		this.document = null;
+		this.reason = reason;
+		fireViewerModelChanged();
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#zoomIn()
+	 */
+	@Override
+	public void zoomIn()
+	{
+		if (canZoomIn())
+			setZoom(getNextZoom());
+	}
+
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#zoomOut()
+	 */
+	@Override
+	public void zoomOut()
+	{
+		if (canZoomOut())
+			setZoom(getPreviousZoom());
 	}
 }

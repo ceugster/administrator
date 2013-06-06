@@ -42,14 +42,13 @@ public class ExportAsXmlAction extends AbstractExportAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("ExportAsXmlAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("ExportAsXmlAction.tooltip")); //$NON-NLS-1$
+		setText("Export als XML"); //$NON-NLS-1$
+		setToolTipText("Export als XML"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("save"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("saved"));
 
 		setFileExtensions(new String[] { "*.xml", "*.jrpxml" }); //$NON-NLS-1$ //$NON-NLS-2$
-		setFilterNames(new String[] {
-				Messages.getString("ExportAsXmlAction.xmlFilterName"), Messages.getString("ExportAsXmlAction.jrpxmlFilterName") }); //$NON-NLS-1$ //$NON-NLS-2$
+		setFilterNames(new String[] { "XML (*.xml)", "XML (*.jrpxml)" }); //$NON-NLS-1$ //$NON-NLS-2$
 		setDefaultFileExtension("xml"); //$NON-NLS-1$
 	}
 

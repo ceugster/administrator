@@ -48,8 +48,8 @@ public class ExportMenuAction extends AbstractReportViewerAction implements IMen
 	{
 		super(viewer, AS_DROP_DOWN_MENU);
 
-		setText(Messages.getString("ExportMenuAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("ExportMenuAction.tooltip")); //$NON-NLS-1$
+		setText("Expxort"); //$NON-NLS-1$
+		setToolTipText("Export"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("save"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("saved"));
 		setMenuCreator(this);

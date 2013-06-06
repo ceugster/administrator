@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 
@@ -250,8 +251,10 @@ public class CourseFormatter
 		SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd.MMMM.yyyy HH:mm");
 		CourseDetail[] details = course.getCourseDetails().toArray(new CourseDetail[0]);
 		if (details.length == 0)
+		{
 			return "";
-
+		}
+		Arrays.sort(details);
 		dates = dates.append(sdf.format(details[0].getStart().getTime()));
 		dates = dates.append(" bis ");
 		dates = dates.append(sdf.format(details[details.length - 1].getEnd().getTime()));
@@ -314,6 +317,20 @@ public class CourseFormatter
 				dates = dates.append(sdf.format(details[i].getStart()) + "-" + sdf.format(details[i].getEnd()));
 			}
 		}
+		return dates.toString();
+	}
+
+	public String formatStartDate(final Course course)
+	{
+		StringBuffer dates = new StringBuffer("");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+		CourseDetail[] details = course.getCourseDetails().toArray(new CourseDetail[0]);
+		if (details.length == 0)
+			return "";
+
+		dates = dates.append(sdf.format(details[0].getStart().getTime()));
+		dates = dates.append(" bis ");
+		dates = dates.append(sdf.format(details[details.length - 1].getEnd().getTime()));
 		return dates.toString();
 	}
 

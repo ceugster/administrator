@@ -47,122 +47,154 @@ import ch.eugster.events.report.internal.viewer.ReportViewerEvent;
  * 
  * @author Peter Severin (peter_p_s@users.sourceforge.net)
  */
-public class PageNumberContributionItem extends ContributionItem implements IReportViewerListener,
-        Listener {
+public class PageNumberContributionItem extends ContributionItem implements IReportViewerListener, Listener
+{
 
-    private IReportViewer viewer;
+	private IReportViewer viewer;
 
-    private Text text;
+	private Text text;
 
-    private ToolItem toolitem;
+	private ToolItem toolitem;
 
-    /**
-     * Constructs the action by specifying the report viewer to associate with
-     * the item.
-     * 
-     * @param viewer
-     *            the report viewer
-     */
-    public PageNumberContributionItem(IReportViewer viewer) {
-        Assert.isNotNull(viewer);
-        this.viewer = viewer;
-        this.viewer.addReportViewerListener(this);
-        refresh();
-    }
+	/**
+	 * Constructs the action by specifying the report viewer to associate with
+	 * the item.
+	 * 
+	 * @param viewer
+	 *            the report viewer
+	 */
+	public PageNumberContributionItem(final IReportViewer viewer)
+	{
+		Assert.isNotNull(viewer);
+		this.viewer = viewer;
+		this.viewer.addReportViewerListener(this);
+		refresh();
+	}
 
-    void refresh() {
-        if (text == null || text.isDisposed())
-            return;
-        try {
-            if (!viewer.hasDocument()) {
-                text.setEnabled(false);
-                text.setText(""); //$NON-NLS-1$
-            } else {
-                text.removeListener(SWT.DefaultSelection, this);
-                text.setText(getPageMofNText());
-                text.setEnabled(true);
-                text.addListener(SWT.DefaultSelection, this);
-            }
-        } catch (SWTException exception) {
-            if (!SWT.getPlatform().equals("gtk")) //$NON-NLS-1$
-                throw exception;
-        }
-    }
+	private Control createControl(final Composite parent)
+	{
+		text = new Text(parent, SWT.BORDER | SWT.CENTER);
+		text.setText(formatPageMofN(888, 888));
+		text.addListener(SWT.DefaultSelection, this);
+		text.pack();
 
-    private Control createControl(Composite parent) {
-        text = new Text(parent, SWT.BORDER | SWT.CENTER);
-        text.setText(formatPageMofN(888, 888));
-        text.addListener(SWT.DefaultSelection, this);
-        text.pack();
+		refresh();
+		return text;
+	}
 
-        refresh();
-        return text;
-    }
+	@Override
+	public void dispose()
+	{
+		viewer.removeReportViewerListener(this);
+		text = null;
+		viewer = null;
+	}
 
-    private static String formatPageMofN(int m, int n) {
-        return MessageFormat.format(
-                Messages.getString("PageNumberContributionItem.pageMofN"), new Object[] { //$NON-NLS-1$
-                new Integer(m), new Integer(n) });
-    }
+	@Override
+	public final void fill(final Composite parent)
+	{
+		createControl(parent);
+	}
 
-    public void dispose() {
-        viewer.removeReportViewerListener(this);
-        text = null;
-        viewer = null;
-    }
+	@Override
+	public final void fill(final Menu parent, final int index)
+	{
+		Assert.isTrue(false, "Can't add page number to a menu");//$NON-NLS-1$
+	}
 
-    public final void fill(Composite parent) {
-        createControl(parent);
-    }
+	@Override
+	public void fill(final ToolBar parent, final int index)
+	{
+		toolitem = new ToolItem(parent, SWT.SEPARATOR, index);
+		Control control = createControl(parent);
+		toolitem.setWidth(text.getSize().x);
+		toolitem.setControl(control);
+	}
 
-    public final void fill(Menu parent, int index) {
-        Assert.isTrue(false, "Can't add page number to a menu");//$NON-NLS-1$
-    }
+	private String getPageMofNText()
+	{
+		return formatPageMofN(viewer.getPageIndex() + 1, viewer.getDocument().getPages().size());
+	}
 
-    public void fill(ToolBar parent, int index) {
-        toolitem = new ToolItem(parent, SWT.SEPARATOR, index);
-        Control control = createControl(parent);
-        toolitem.setWidth(text.getSize().x);
-        toolitem.setControl(control);
-    }
+	@Override
+	public void handleEvent(final Event event)
+	{
+		switch (event.type)
+		{
+			case SWT.Selection:
+			case SWT.DefaultSelection:
+				onSelection();
+				break;
+		}
+	}
 
-    private void onSelection() {
-        if (viewer.hasDocument()) {
-            setPageAsText(text.getText());
-        }
-    }
+	private void onSelection()
+	{
+		if (viewer.hasDocument())
+		{
+			setPageAsText(text.getText());
+		}
+	}
 
-    private void setPageAsText(String pageText) {
-        try {
-            final int pageIndex = Integer.parseInt(pageText) - 1;
-            BusyIndicator.showWhile(null, new Runnable() {
-                public void run() {
-                    viewer.setPageIndex(pageIndex);
-                }
-            });
-        } catch (NumberFormatException e) {
-            Display.getCurrent().beep();
-        }
+	void refresh()
+	{
+		if (text == null || text.isDisposed())
+			return;
+		try
+		{
+			if (!viewer.hasDocument())
+			{
+				text.setEnabled(false);
+				text.setText(""); //$NON-NLS-1$
+			}
+			else
+			{
+				text.removeListener(SWT.DefaultSelection, this);
+				text.setText(getPageMofNText());
+				text.setEnabled(true);
+				text.addListener(SWT.DefaultSelection, this);
+			}
+		}
+		catch (SWTException exception)
+		{
+			if (!SWT.getPlatform().equals("gtk")) //$NON-NLS-1$
+				throw exception;
+		}
+	}
 
-        text.removeListener(SWT.DefaultSelection, this);
-        text.setText(getPageMofNText());
-        text.addListener(SWT.DefaultSelection, this);
-    }
+	private void setPageAsText(final String pageText)
+	{
+		try
+		{
+			final int pageIndex = Integer.parseInt(pageText) - 1;
+			BusyIndicator.showWhile(null, new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					viewer.setPageIndex(pageIndex);
+				}
+			});
+		}
+		catch (NumberFormatException e)
+		{
+			Display.getCurrent().beep();
+		}
 
-    private String getPageMofNText() {
-        return formatPageMofN(viewer.getPageIndex() + 1, viewer.getDocument().getPages().size());
-    }
+		text.removeListener(SWT.DefaultSelection, this);
+		text.setText(getPageMofNText());
+		text.addListener(SWT.DefaultSelection, this);
+	}
 
-    public void viewerStateChanged(ReportViewerEvent evt) {
-        refresh();
-    }
+	@Override
+	public void viewerStateChanged(final ReportViewerEvent evt)
+	{
+		refresh();
+	}
 
-    public void handleEvent(Event event) {
-        switch (event.type) {
-        case SWT.Selection:
-        case SWT.DefaultSelection:
-            onSelection();
-            break;
-        }
-    }
+	private static String formatPageMofN(final int m, final int n)
+	{
+		return MessageFormat.format("{0} von {1}", new Object[] { //$NON-NLS-1$
+				new Integer(m), new Integer(n) });
+	}
 }

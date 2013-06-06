@@ -41,13 +41,13 @@ public class ExportAsCsvAction extends AbstractExportAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("ExportAsCsvAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("ExportAsCsvAction.tooltip")); //$NON-NLS-1$
+		setText("Export als CSV"); //$NON-NLS-1$
+		setToolTipText("Export als CSV"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("save"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("saved"));
 
 		setFileExtensions(new String[] { "*.csv" }); //$NON-NLS-1$
-		setFilterNames(new String[] { Messages.getString("ExportAsCsvAction.filterName") }); //$NON-NLS-1$
+		setFilterNames(new String[] { "CSV (*.csv)" }); //$NON-NLS-1$
 		setDefaultFileExtension("csv"); //$NON-NLS-1$
 	}
 

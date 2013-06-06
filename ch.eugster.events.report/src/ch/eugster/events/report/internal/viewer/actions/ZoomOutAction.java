@@ -35,8 +35,8 @@ public class ZoomOutAction extends AbstractReportViewerAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("ZoomOutAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("ZoomOutAction.tooltip")); //$NON-NLS-1$
+		setText("Verkleinern"); //$NON-NLS-1$
+		setToolTipText("Verkleinern"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("zoomminus"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("zoomminusd"));
 	}

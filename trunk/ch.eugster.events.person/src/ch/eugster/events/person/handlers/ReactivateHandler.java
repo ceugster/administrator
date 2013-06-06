@@ -32,7 +32,7 @@ public class ReactivateHandler extends AbstractHandler implements IHandler
 				ConnectionService.class.getName(), null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public Object addingService(final ServiceReference reference)
 			{
 				connectionService = (ConnectionService) super.addingService(reference);
 				setBaseEnabled(connectionService != null);
@@ -40,7 +40,7 @@ public class ReactivateHandler extends AbstractHandler implements IHandler
 			}
 
 			@Override
-			public void removedService(ServiceReference reference, Object service)
+			public void removedService(final ServiceReference reference, final Object service)
 			{
 				connectionService = null;
 				setBaseEnabled(false);
@@ -51,7 +51,13 @@ public class ReactivateHandler extends AbstractHandler implements IHandler
 	}
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException
+	public void dispose()
+	{
+		connectionServiceTracker.close();
+	}
+
+	@Override
+	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
 		if (event.getApplicationContext() instanceof EvaluationContext)
 		{
@@ -108,39 +114,33 @@ public class ReactivateHandler extends AbstractHandler implements IHandler
 	}
 
 	@Override
-	public void setEnabled(Object evaluationContext)
+	public void setEnabled(final Object evaluationContext)
 	{
-		if (evaluationContext != null)
-		{
-			EvaluationContext context = (EvaluationContext) evaluationContext;
-			Object object = context.getParent().getVariable("selection");
-			if (object instanceof StructuredSelection)
-			{
-				StructuredSelection ssel = (StructuredSelection) object;
-				if (ssel.getFirstElement() instanceof Person)
-				{
-					if (((Person) ssel.getFirstElement()).isDeleted())
-					{
-						super.setBaseEnabled(true);
-						return;
-					}
-				}
-				else if (ssel.getFirstElement() instanceof Address)
-				{
-					if (((Address) ssel.getFirstElement()).isDeleted())
-					{
-						super.setBaseEnabled(true);
-						return;
-					}
-				}
-			}
-		}
+		// if (evaluationContext != null)
+		// {
+		// EvaluationContext context = (EvaluationContext) evaluationContext;
+		// Object object = context.getParent().getVariable("selection");
+		// if (object instanceof StructuredSelection)
+		// {
+		// StructuredSelection ssel = (StructuredSelection) object;
+		// if (ssel.getFirstElement() instanceof Person)
+		// {
+		// if (((Person) ssel.getFirstElement()).isDeleted())
+		// {
+		// super.setBaseEnabled(true);
+		// return;
+		// }
+		// }
+		// else if (ssel.getFirstElement() instanceof Address)
+		// {
+		// if (((Address) ssel.getFirstElement()).isDeleted())
+		// {
+		// super.setBaseEnabled(true);
+		// return;
+		// }
+		// }
+		// }
+		// }
 		super.setBaseEnabled(false);
-	}
-
-	@Override
-	public void dispose()
-	{
-		connectionServiceTracker.close();
 	}
 }

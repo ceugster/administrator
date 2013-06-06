@@ -42,13 +42,13 @@ public class ExportAsSingleXlsAction extends AbstractExportAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("ExportAsSingleXlsAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("ExportAsSingleXlsAction.tooltip")); //$NON-NLS-1$
+		setText("Export als einsitiges XLS"); //$NON-NLS-1$
+		setToolTipText("Export als einsitiges XLS"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("save"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("saved"));
 
 		setFileExtensions(new String[] { "*.xls" }); //$NON-NLS-1$
-		setFilterNames(new String[] { Messages.getString("ExportAsSingleXlsAction.filterName") }); //$NON-NLS-1$
+		setFilterNames(new String[] { "Einseitiges XLS (*.xls)" }); //$NON-NLS-1$
 		setDefaultFileExtension("xls"); //$NON-NLS-1$
 	}
 

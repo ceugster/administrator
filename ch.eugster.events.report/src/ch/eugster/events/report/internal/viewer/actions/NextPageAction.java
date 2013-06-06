@@ -35,8 +35,8 @@ public class NextPageAction extends AbstractReportViewerAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("NextPageAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("NextPageAction.tooltip")); //$NON-NLS-1$
+		setText("Nächste Seite"); //$NON-NLS-1$
+		setToolTipText("Nächste Seite"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("next"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("nextd"));
 	}

@@ -31,7 +31,8 @@ import org.eclipse.swt.widgets.Label;
  * 
  * @author Peter Severin (peter_p_s@users.sourceforge.net)
  */
-public class StatusBar implements IReportViewerAware {
+public class StatusBar implements IReportViewerAware
+{
 
 	/** The viewer */
 	private IReportViewer viewer;
@@ -43,8 +44,11 @@ public class StatusBar implements IReportViewerAware {
 	private Label label;
 
 	/** Viewer model change listener */
-	private IReportViewerListener listener = new IReportViewerListener() {
-		public void viewerStateChanged(ReportViewerEvent evt) {
+	private IReportViewerListener listener = new IReportViewerListener()
+	{
+		@Override
+		public void viewerStateChanged(final ReportViewerEvent evt)
+		{
 			refresh();
 		}
 	};
@@ -52,7 +56,8 @@ public class StatusBar implements IReportViewerAware {
 	/**
 	 * Default constructor. The control will be created using default style
 	 */
-	public StatusBar() {
+	public StatusBar()
+	{
 	}
 
 	/**
@@ -63,7 +68,8 @@ public class StatusBar implements IReportViewerAware {
 	 *            style
 	 * @see Label
 	 */
-	public StatusBar(int style) {
+	public StatusBar(final int style)
+	{
 		this.style = style;
 	}
 
@@ -75,8 +81,10 @@ public class StatusBar implements IReportViewerAware {
 	 *            the parent
 	 * @return the created control
 	 */
-	public Control createControl(Composite parent) {
-		if (label == null) {
+	public Control createControl(final Composite parent)
+	{
+		if (label == null)
+		{
 			label = new Label(parent, style);
 			refresh();
 		}
@@ -84,36 +92,42 @@ public class StatusBar implements IReportViewerAware {
 		return label;
 	}
 
-	private void refresh() {
+	/**
+	 * @see ch.eugster.events.report.internal.viewer.IReportViewerAware#getReportViewer()
+	 */
+	@Override
+	public IReportViewer getReportViewer()
+	{
+		return viewer;
+	}
+
+	private void refresh()
+	{
 		if (label == null || label.isDisposed())
 			return;
 
-		if (viewer == null || !viewer.hasDocument()) {
+		if (viewer == null || !viewer.hasDocument())
+		{
 			label.setText(""); //$NON-NLS-1$
-		} else {
-			label.setText(MessageFormat.format(Messages
-					.getString("StatusBar.pageMofN"), new Object[] { //$NON-NLS-1$
-					new Integer(viewer.getPageIndex() + 1),
-					new Integer(viewer.getDocument().getPages().size()) }));
+		}
+		else
+		{
+			label.setText(MessageFormat.format("{0} von {1}", new Object[] { //$NON-NLS-1$
+					new Integer(viewer.getPageIndex() + 1), new Integer(viewer.getDocument().getPages().size()) }));
 		}
 	}
 
 	/**
 	 * @see ch.eugster.events.report.internal.viewer.IReportViewerAware#setReportViewer(ch.eugster.events.report.internal.viewer.IReportViewer)
 	 */
-	public void setReportViewer(IReportViewer viewer) {
+	@Override
+	public void setReportViewer(final IReportViewer viewer)
+	{
 		if (viewer != null)
 			viewer.removeReportViewerListener(listener);
 		this.viewer = viewer;
 		if (viewer != null)
 			viewer.addReportViewerListener(listener);
 		refresh();
-	}
-
-	/**
-	 * @see ch.eugster.events.report.internal.viewer.IReportViewerAware#getReportViewer()
-	 */
-	public IReportViewer getReportViewer() {
-		return viewer;
 	}
 }

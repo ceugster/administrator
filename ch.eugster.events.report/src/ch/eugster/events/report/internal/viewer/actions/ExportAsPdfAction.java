@@ -41,13 +41,13 @@ public class ExportAsPdfAction extends AbstractExportAction
 	{
 		super(viewer);
 
-		setText(Messages.getString("ExportAsPdfAction.label")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("ExportAsPdfAction.tooltip")); //$NON-NLS-1$
+		setText("Export als PDF"); //$NON-NLS-1$
+		setToolTipText("Export als PDF"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("save"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("saved"));
 
 		setFileExtensions(new String[] { "*.pdf" }); //$NON-NLS-1$
-		setFilterNames(new String[] { Messages.getString("ExportAsPdfAction.filterName") }); //$NON-NLS-1$
+		setFilterNames(new String[] { "PDF (*.pdf)" }); //$NON-NLS-1$
 		setDefaultFileExtension("pdf"); //$NON-NLS-1$
 	}
 
