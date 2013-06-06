@@ -469,7 +469,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		Booking booking = input.getEntity();
 		if (booking != null)
 		{
-			this.date.setSelection(booking.getDate().getTime());
+			this.date.setSelection(booking.getDate() == null ? null : booking.getDate().getTime());
 
 			if (booking.getCourse().getState().equals(CourseState.FORTHCOMING))
 				this.stateViewer.setSelection(new StructuredSelection(booking.getForthcomingState()));
@@ -637,8 +637,12 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 			{
 				calendar = GregorianCalendar.getInstance();
 				calendar.setTime(date.getSelection());
+				booking.setDate(calendar);
 			}
-			booking.setDate(null);
+			else
+			{
+				booking.setDate(null);
+			}
 
 			StructuredSelection ssel = (StructuredSelection) this.stateViewer.getSelection();
 			if (ssel.getFirstElement() instanceof BookingForthcomingState)

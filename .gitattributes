@@ -285,6 +285,7 @@ ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handle
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateParticipantListHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateParticipantListReportHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateParticipationConfirmationHandler.java -text
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/PrintLabelHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/preferences/ExternalPathPreferencePage.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/preferences/PreferenceConstants.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/preferences/PreferenceInitializer.java -text
@@ -428,6 +429,7 @@ ch.eugster.events.customer.arai/.classpath -text
 ch.eugster.events.customer.arai/.project -text
 ch.eugster.events.customer.arai/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.customer.arai/META-INF/MANIFEST.MF -text
+ch.eugster.events.customer.arai/Thumbs.db -text
 ch.eugster.events.customer.arai/build.properties -text
 ch.eugster.events.customer.arai/splash.bmp -text
 ch.eugster.events.customer.arai/src/ch/eugster/events/arai/Activator.java -text
@@ -435,6 +437,7 @@ ch.eugster.events.customer.wwfost/.classpath -text
 ch.eugster.events.customer.wwfost/.project -text
 ch.eugster.events.customer.wwfost/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.customer.wwfost/META-INF/MANIFEST.MF -text
+ch.eugster.events.customer.wwfost/Thumbs.db -text
 ch.eugster.events.customer.wwfost/build.properties -text
 ch.eugster.events.customer.wwfost/splash.bmp -text
 ch.eugster.events.customer.wwfost/src/ch/eugster/events/wwfost/Activator.java -text

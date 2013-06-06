@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Course Plugin
 Bundle-SymbolicName: ch.eugster.events.course;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.2
 Bundle-Activator: ch.eugster.events.course.Activator
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

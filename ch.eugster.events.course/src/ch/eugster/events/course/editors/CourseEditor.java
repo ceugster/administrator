@@ -990,6 +990,20 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 
 		label = this.formToolkit.createLabel(composite, "");
 		this.substituted = this.formToolkit.createButton(composite, "Verschoben", SWT.CHECK);
+		this.substituted.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent e)
+			{
+				widgetSelected(e);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent e)
+			{
+				CourseEditor.this.setDirty(true);
+			}
+		});
 
 		label = this.formToolkit.createLabel(composite, "Anmeldefrist", SWT.TRAIL);
 		label.setLayoutData(new GridData());
@@ -1456,45 +1470,54 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 
 		if (msg == null)
 		{
-			if (GlobalSettings.getInstance().isCourseDomainMandatory())
+			if (GlobalSettings.getInstance().getCourseHasDomain())
 			{
-				ssel = (StructuredSelection) this.domainViewer.getSelection();
-				if (ssel.isEmpty() || ((Domain) ssel.getFirstElement()).getId() == null)
+				if (GlobalSettings.getInstance().isCourseDomainMandatory())
 				{
-					msg = new Message(this.code, "Fehlende Domäne");
-					msg.setMessage("Sie haben keine Domäne ausgewählt.");
-					FormToolkit.ensureVisible(this.domainViewer.getCCombo());
-					this.domainViewer.getCCombo().setFocus();
+					ssel = (StructuredSelection) this.domainViewer.getSelection();
+					if (ssel.isEmpty() || ((Domain) ssel.getFirstElement()).getId() == null)
+					{
+						msg = new Message(this.code, "Fehlende Domäne");
+						msg.setMessage("Sie haben keine Domäne ausgewählt.");
+						FormToolkit.ensureVisible(this.domainViewer.getCCombo());
+						this.domainViewer.getCCombo().setFocus();
+					}
 				}
 			}
 		}
 
 		if (msg == null)
 		{
-			if (GlobalSettings.getInstance().isCourseCategoryMandatory())
+			if (GlobalSettings.getInstance().getCourseHasCategory())
 			{
-				ssel = (StructuredSelection) this.categoryViewer.getSelection();
-				if (ssel.isEmpty() || ((Category) ssel.getFirstElement()).getId() == null)
+				if (GlobalSettings.getInstance().isCourseCategoryMandatory())
 				{
-					msg = new Message(this.code, "Fehlende Kategorie");
-					msg.setMessage("Sie haben keine Kategorie ausgewählt.");
-					FormToolkit.ensureVisible(this.categoryViewer.getCCombo());
-					this.categoryViewer.getCCombo().setFocus();
+					ssel = (StructuredSelection) this.categoryViewer.getSelection();
+					if (ssel.isEmpty() || ((Category) ssel.getFirstElement()).getId() == null)
+					{
+						msg = new Message(this.code, "Fehlende Kategorie");
+						msg.setMessage("Sie haben keine Kategorie ausgewählt.");
+						FormToolkit.ensureVisible(this.categoryViewer.getCCombo());
+						this.categoryViewer.getCCombo().setFocus();
+					}
 				}
 			}
 		}
 
 		if (msg == null)
 		{
-			if (GlobalSettings.getInstance().isCourseRubricMandatory())
+			if (GlobalSettings.getInstance().getCourseHasRubric())
 			{
-				ssel = (StructuredSelection) this.rubricViewer.getSelection();
-				if (ssel.isEmpty() || ((Rubric) ssel.getFirstElement()).getId() == null)
+				if (GlobalSettings.getInstance().isCourseRubricMandatory())
 				{
-					msg = new Message(this.code, "Fehlende Rubrik");
-					msg.setMessage("Sie haben keine Rubrik ausgewählt.");
-					FormToolkit.ensureVisible(this.rubricViewer.getCCombo());
-					this.rubricViewer.getCCombo().setFocus();
+					ssel = (StructuredSelection) this.rubricViewer.getSelection();
+					if (ssel.isEmpty() || ((Rubric) ssel.getFirstElement()).getId() == null)
+					{
+						msg = new Message(this.code, "Fehlende Rubrik");
+						msg.setMessage("Sie haben keine Rubrik ausgewählt.");
+						FormToolkit.ensureVisible(this.rubricViewer.getCCombo());
+						this.rubricViewer.getCCombo().setFocus();
+					}
 				}
 			}
 		}

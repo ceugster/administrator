@@ -1,6 +1,7 @@
 package ch.eugster.events.course.reporting;
 
 import java.util.Collection;
+import java.util.Date;
 
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.BookingAnnulatedState;
@@ -15,7 +16,9 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 
 	private String name;
 
-	private String state;
+	private Date date;
+
+	private int max;
 
 	private int booked;
 
@@ -82,9 +85,19 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 		return code;
 	}
 
+	public Date getDate()
+	{
+		return date;
+	}
+
 	public Double getDue()
 	{
 		return this.amount - this.payed;
+	}
+
+	public int getMax()
+	{
+		return max;
 	}
 
 	public String getName()
@@ -102,11 +115,6 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 		return Integer.valueOf(provisional);
 	}
 
-	public String getState()
-	{
-		return state;
-	}
-
 	public Integer getWaitingList()
 	{
 		return Integer.valueOf(waitingList);
@@ -120,10 +128,10 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 		this.payed = 0D;
 		this.provisional = 0;
 		this.waitingList = 0;
-
+		this.max = course.getMaxParticipants();
 		this.code = course.getCode();
 		this.name = course.getTitle();
-		this.state = course.getState().toString();
+		this.date = course.getFirstDate().getTime();
 
 		Collection<Booking> bookings = course.getBookings();
 		for (Booking booking : bookings)

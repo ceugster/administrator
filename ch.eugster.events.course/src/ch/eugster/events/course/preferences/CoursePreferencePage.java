@@ -27,19 +27,19 @@ public class CoursePreferencePage extends FieldEditorPreferencePage implements I
 		this(GRID);
 	}
 
-	public CoursePreferencePage(int style)
+	public CoursePreferencePage(final int style)
 	{
 		super(style);
 	}
 
-	public CoursePreferencePage(String title, int style)
-	{
-		super(title, style);
-	}
-
-	public CoursePreferencePage(String title, ImageDescriptor image, int style)
+	public CoursePreferencePage(final String title, final ImageDescriptor image, final int style)
 	{
 		super(title, image, style);
+	}
+
+	public CoursePreferencePage(final String title, final int style)
+	{
+		super(title, style);
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class CoursePreferencePage extends FieldEditorPreferencePage implements I
 				"Verwendung der Domänen ist zwingend", getFieldEditorParent());
 		domainsMandatory.setEnabled(this.getPreferenceStore().getBoolean(PreferenceInitializer.KEY_USE_DOMAINS),
 				getFieldEditorParent());
-		addField(useDomains);
+		addField(domainsMandatory);
 
 		useCategories = new BooleanFieldEditor(PreferenceInitializer.KEY_USE_CATEGORIES, "Kategorien verwenden",
 				getFieldEditorParent());
@@ -65,7 +65,7 @@ public class CoursePreferencePage extends FieldEditorPreferencePage implements I
 				"Verwendung der Kategorien ist zwingend", getFieldEditorParent());
 		categoriesMandatory.setEnabled(this.getPreferenceStore().getBoolean(PreferenceInitializer.KEY_USE_CATEGORIES),
 				getFieldEditorParent());
-		addField(useCategories);
+		addField(categoriesMandatory);
 
 		useRubrics = new BooleanFieldEditor(PreferenceInitializer.KEY_USE_RUBRICS, "Rubriken verwenden",
 				getFieldEditorParent());
@@ -76,12 +76,20 @@ public class CoursePreferencePage extends FieldEditorPreferencePage implements I
 				"Verwendung der Rubriken ist zwingend", getFieldEditorParent());
 		rubricsMandatory.setEnabled(this.getPreferenceStore().getBoolean(PreferenceInitializer.KEY_USE_RUBRICS),
 				getFieldEditorParent());
-		addField(useRubrics);
+		addField(rubricsMandatory);
 
 	}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent event)
+	public void init(final IWorkbench workbench)
+	{
+		IPreferenceStore store = CoursePreferenceStore.getInstance();
+		this.setPreferenceStore(store);
+		this.setDescription("Optionen");
+	}
+
+	@Override
+	public void propertyChange(final PropertyChangeEvent event)
 	{
 		if (event.getSource().equals(useDomains))
 		{
@@ -95,14 +103,6 @@ public class CoursePreferencePage extends FieldEditorPreferencePage implements I
 		{
 			rubricsMandatory.setEnabled(useRubrics.getBooleanValue(), getFieldEditorParent());
 		}
+		super.propertyChange(event);
 	}
-
-	@Override
-	public void init(IWorkbench workbench)
-	{
-		IPreferenceStore store = new CoursePreferenceStore();
-		this.setPreferenceStore(store);
-		this.setDescription("Optionen");
-	}
-
 }

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.eugster.events.persistence.model.Course;
+import ch.eugster.events.persistence.model.CourseState;
 import ch.eugster.events.persistence.model.Season;
 import ch.eugster.events.persistence.model.User;
 
@@ -52,7 +53,10 @@ public class BookingListFactory
 		Collection<Course> courses = season.getCourses();
 		for (Course course : courses)
 		{
-			this.bookingListReportItems.add(new BookingListReportItem(course));
+			if (!course.isDeleted() && course.getState().equals(CourseState.FORTHCOMING))
+			{
+				this.bookingListReportItems.add(new BookingListReportItem(course));
+			}
 		}
 		return size();
 	}

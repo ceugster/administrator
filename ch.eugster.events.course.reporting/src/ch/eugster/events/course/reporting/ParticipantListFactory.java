@@ -40,7 +40,7 @@ public class ParticipantListFactory
 		parameters.put("code", course.getCode());
 		parameters.put("title", course.getTitle());
 
-		StringBuilder builder = new StringBuilder("Kursleitung\n");
+		StringBuilder builder = new StringBuilder();
 		Collection<CourseGuide> guides = course.getCourseGuides();
 		for (CourseGuide guide : guides)
 		{
@@ -59,7 +59,7 @@ public class ParticipantListFactory
 		}
 		parameters.put("guidance", builder.toString());
 
-		builder = new StringBuilder("Kursdaten\n");
+		builder = new StringBuilder();
 		builder = builder.append(CourseFormatter.getInstance().formatMediumDate(course));
 		parameters.put("dates", builder.toString());
 

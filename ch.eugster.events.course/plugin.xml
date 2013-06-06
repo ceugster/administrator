@@ -89,9 +89,8 @@
                id="ch.eugster.events.course.views.linkParticipantView"
                minimized="false"
                moveable="true"
-               ratio=".5"
-               relationship="left"
-               relative="org.eclipse.ui.editorss"
+               relationship="stack"
+               relative="ch.eugster.events.addressgroup.person.view"
                showTitle="true"
                standalone="false"
                visible="true">
@@ -1835,6 +1834,12 @@
             name="Kontext Kurse"
             parentId="org.eclipse.ui.contexts.window">
       </context>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="ch.eugster.events.course.preferences.PreferenceInitializer">
+      </initializer>
    </extension>
 
 </plugin>
