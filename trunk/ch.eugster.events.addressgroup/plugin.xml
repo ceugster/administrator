@@ -30,6 +30,21 @@
                visible="true">
          </view>
       </perspectiveExtension>
+      <perspectiveExtension
+            targetID="ch.eugster.events.person.perspective">
+         <view
+               closeable="true"
+               id="ch.eugster.events.addressgroup.person.view"
+               minimized="false"
+               moveable="true"
+               ratio=".5"
+               relationship="left"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+      </perspectiveExtension>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
@@ -604,7 +619,7 @@
                hoverIcon="icons/addressgroup_add_16.png"
                icon="icons/addressgroup_add_16.png"
                id="ch.eugster.events.addressgroup.command.add.group"
-               label="Adressgruppe hinzufügen"
+               label="Neue Adressgruppe"
                style="push"
                tooltip="Hinzufügen einer neuen Adressgruppe">
             <visibleWhen

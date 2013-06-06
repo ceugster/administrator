@@ -1,7 +1,6 @@
 package ch.eugster.events.addressgroup.report.handlers;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -117,9 +116,8 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/phone_list.jrxml");
-				InputStream inputStream = url.openStream();
 				Map<String, Object> parameters = new HashMap<String, Object>();
-				reportService.export(inputStream, PhoneListFactory.getEntries(), parameters, format, file);
+				reportService.export(url, PhoneListFactory.getEntries(), parameters, format, file);
 				return true;
 			}
 		}
@@ -231,9 +229,8 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/phone_list.jrxml");
-				InputStream inputStream = url.openStream();
 				Map<String, Object> parameters = new HashMap<String, Object>();
-				reportService.view(inputStream, PhoneListFactory.getEntries(), parameters);
+				reportService.view(url, PhoneListFactory.getEntries(), parameters);
 				return true;
 			}
 		}
@@ -259,9 +256,8 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/phone_list.jrxml");
-				InputStream inputStream = url.openStream();
 				Map<String, Object> parameters = new HashMap<String, Object>();
-				reportService.print(inputStream, PhoneListFactory.getEntries(), parameters, showPrintDialog);
+				reportService.print(url, PhoneListFactory.getEntries(), parameters, showPrintDialog);
 				return true;
 			}
 		}

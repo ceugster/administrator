@@ -1,7 +1,6 @@
 package ch.eugster.events.addressgroup.report.handlers;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -103,10 +102,9 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/recipient_list.jrxml");
-				InputStream inputStream = url.openStream();
 				Map<String, Object> parameters = new HashMap<String, Object>();
 				parameters.put("addressGroups", RecipientListFactory.getAddressGroupParameter());
-				reportService.export(inputStream, RecipientListFactory.getRecipients(), parameters, format, file);
+				reportService.export(url, RecipientListFactory.getRecipients(), parameters, format, file);
 				return true;
 			}
 		}
@@ -218,10 +216,9 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/recipient_list.jrxml");
-				InputStream inputStream = url.openStream();
 				Map<String, Object> parameters = new HashMap<String, Object>();
 				parameters.put("addressGroups", RecipientListFactory.getAddressGroupParameter());
-				reportService.view(inputStream, RecipientListFactory.getRecipients(), parameters);
+				reportService.view(url, RecipientListFactory.getRecipients(), parameters);
 				return true;
 			}
 		}
@@ -247,10 +244,9 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/recipient_list.jrxml");
-				InputStream inputStream = url.openStream();
 				Map<String, Object> parameters = new HashMap<String, Object>();
 				parameters.put("addressGroups", RecipientListFactory.getAddressGroupParameter());
-				reportService.print(inputStream, RecipientListFactory.getRecipients(), parameters, showPrintDialog);
+				reportService.print(url, RecipientListFactory.getRecipients(), parameters, showPrintDialog);
 				return true;
 			}
 		}
@@ -309,9 +305,16 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 					}
 					return export(format, new File(path));
 				}
+				default:
+				{
+					return false;
+				}
 			}
 		}
-		return false;
+		else
+		{
+			return true;
+		}
 	}
 
 	@Override

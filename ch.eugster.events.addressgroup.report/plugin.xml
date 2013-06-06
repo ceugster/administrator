@@ -66,14 +66,18 @@
                visible="true">
          </separator>
          <command
-               commandId="ch.eugster.events.addressgroup.report.sendEmail"
+               commandId="ch.eugster.events.addressgroup.report.sendEmailWithPrint"
                disabledIcon="icons/email_grey_16.png"
                hoverIcon="icons/email_16.png"
                icon="icons/email_16.png"
-               label="Email senden..."
+               label="Email senden"
                style="push"
-               tooltip="Email senden">
+               tooltip="Schreiben und Senden eines Emails an die ausgewählten Adressen">
          </command>
+         <separator
+               name="ch.eugster.events.addressgroup.report.separator5"
+               visible="true">
+         </separator>
          <command
                commandId="ch.eugster.events.addressgroup.report.generateAddressList"
                disabledIcon="icons/work_grey_16.png"
@@ -92,15 +96,10 @@
                style="push"
                tooltip="Generieren eines Serienbriefs">
          </command>
-         <command
-               commandId="ch.eugster.events.addressgroup.report.sendEmailWithPrint"
-               disabledIcon="icons/email_grey_16.png"
-               hoverIcon="icons/email_16.png"
-               icon="icons/email_16.png"
-               label="Email senden (Empfängerliste drucken)..."
-               style="push"
-               tooltip="Schreiben und Senden eines Emails an die ausgewählten Adressen">
-         </command>
+         <separator
+               name="ch.eugster.events.addressgroup.report.separator4"
+               visible="true">
+         </separator>
          <command
                commandId="ch.eugster.events.addressgroup.report.printLabels"
                hoverIcon="icons/printer.png"
@@ -125,15 +124,15 @@
                icon="icons/work_16.png"
                label="Generieren"
                tooltip="Generieren von Berichten">
+            <command
+                  commandId="ch.eugster.events.addressgroup.report.printRecipientList"
+                  hoverIcon="icons/printer.png"
+                  icon="icons/printer.png"
+                  label="Empfängerliste drucken..."
+                  style="push"
+                  tooltip="Empfängerliste drucken">
+            </command>
          </menu>
-         <command
-               commandId="ch.eugster.events.addressgroup.report.printRecipientList"
-               hoverIcon="icons/printer.png"
-               icon="icons/printer.png"
-               label="Empfängerliste drucken..."
-               style="push"
-               tooltip="Empfängerliste drucken">
-         </command>
          <separator
                name="ch.eugster.events.addressgroup.report.separator3"
                visible="true">
