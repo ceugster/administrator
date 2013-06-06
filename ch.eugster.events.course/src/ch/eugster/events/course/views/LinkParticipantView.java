@@ -182,7 +182,7 @@ public class LinkParticipantView extends AbstractEntityView implements IDoubleCl
 				else if (cell.getElement() instanceof Participant)
 				{
 					Participant participant = (Participant) cell.getElement();
-					cell.setText(LinkParticipantView.this.df.format(participant.getDate()));
+					cell.setText(LinkParticipantView.this.df.format(participant.getDate().getTime()));
 				}
 			}
 
@@ -366,6 +366,12 @@ public class LinkParticipantView extends AbstractEntityView implements IDoubleCl
 					this.packColumns();
 				}
 			}
+		}
+		else if (entity instanceof Booking)
+		{
+			Booking booking = (Booking) entity;
+			this.getViewer().refresh(booking);
+			this.packColumns();
 		}
 	}
 

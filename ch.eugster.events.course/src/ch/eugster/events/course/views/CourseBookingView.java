@@ -462,69 +462,78 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 	@Override
 	public void postDelete(final AbstractEntity entity)
 	{
-		if (entity instanceof Season)
-			this.viewer.refresh();
-		else if (entity instanceof Course)
-			this.viewer.refresh();
-		else if (entity instanceof Booking)
-			this.viewer.refresh(((Booking) entity).getCourse());
-		else if (entity instanceof Participant)
-			this.viewer.refresh(((Participant) entity).getBooking());
+		if (this.viewer.getInput() != null)
+		{
+			if (entity instanceof Season)
+				this.viewer.refresh();
+			else if (entity instanceof Course)
+				this.viewer.refresh();
+			else if (entity instanceof Booking)
+				this.viewer.refresh(((Booking) entity).getCourse());
+			else if (entity instanceof Participant)
+				this.viewer.refresh(((Participant) entity).getBooking());
+		}
 	}
 
 	@Override
 	public void postPersist(final AbstractEntity entity)
 	{
-		if (entity instanceof Season)
-			this.viewer.add(this, entity);
-		else if (entity instanceof Course)
+		if (this.viewer.getInput() != null)
 		{
-			Course course = (Course) entity;
-			this.viewer.add(course.getSeason(), course);
+			if (entity instanceof Season)
+				this.viewer.add(this, entity);
+			else if (entity instanceof Course)
+			{
+				Course course = (Course) entity;
+				this.viewer.add(course.getSeason(), course);
+			}
+			else if (entity instanceof Booking)
+			{
+				Booking booking = (Booking) entity;
+				this.viewer.add(booking.getCourse(), booking);
+			}
+			else if (entity instanceof Participant)
+			{
+				Participant participant = (Participant) entity;
+				this.viewer.refresh(participant.getBooking());
+			}
+			this.packColumns();
 		}
-		else if (entity instanceof Booking)
-		{
-			Booking booking = (Booking) entity;
-			this.viewer.add(booking.getCourse(), booking);
-		}
-		else if (entity instanceof Participant)
-		{
-			Participant participant = (Participant) entity;
-			this.viewer.refresh(participant.getBooking());
-		}
-		this.packColumns();
 	}
 
 	@Override
 	public void postUpdate(final AbstractEntity entity)
 	{
-		if (entity instanceof Season)
-			this.viewer.refresh();
-		else if (entity instanceof Course)
-			this.viewer.refresh(entity);
-		else if (entity instanceof Booking)
+		if (this.viewer.getInput() != null)
 		{
-			Booking booking = (Booking) entity;
-			Course course = booking.getCourse();
-			if (this.viewer.getInput().equals(course))
-			{
+			if (entity instanceof Season)
+				this.viewer.refresh();
+			else if (entity instanceof Course)
 				this.viewer.refresh(entity);
-				this.setSummaryLabels(course);
-			}
-		}
-		else if (entity instanceof Participant)
-		{
-			Participant participant = (Participant) entity;
-			Booking booking = participant.getBooking();
-			Course course = booking.getCourse();
-			if (this.viewer.getInput().equals(course))
+			else if (entity instanceof Booking)
 			{
-				this.viewer.refresh(booking);
-				this.setSummaryLabels(course);
+				Booking booking = (Booking) entity;
+				Course course = booking.getCourse();
+				if (this.viewer.getInput().equals(course))
+				{
+					this.viewer.refresh(entity);
+					this.setSummaryLabels(course);
+				}
 			}
-		}
+			else if (entity instanceof Participant)
+			{
+				Participant participant = (Participant) entity;
+				Booking booking = participant.getBooking();
+				Course course = booking.getCourse();
+				if (this.viewer.getInput().equals(course))
+				{
+					this.viewer.refresh(booking);
+					this.setSummaryLabels(course);
+				}
+			}
 
-		this.packColumns();
+			this.packColumns();
+		}
 	}
 
 	@Override
