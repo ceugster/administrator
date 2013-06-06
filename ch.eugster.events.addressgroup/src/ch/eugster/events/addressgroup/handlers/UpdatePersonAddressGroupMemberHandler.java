@@ -22,21 +22,13 @@ public class UpdatePersonAddressGroupMemberHandler extends AbstractHandler imple
 
 	private PersonAddressGroupMemberView view;
 
-	@Override
-	public void dispose()
-	{
-		view.removePartPropertyListener(this);
-		connectionServiceTracker.close();
-		super.dispose();
-	}
-
 	public UpdatePersonAddressGroupMemberHandler()
 	{
 		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public Object addingService(final ServiceReference reference)
 			{
 				connectionService = (ConnectionService) super.addingService(reference);
 				setBaseEnabled(connectionService != null);
@@ -44,7 +36,7 @@ public class UpdatePersonAddressGroupMemberHandler extends AbstractHandler imple
 			}
 
 			@Override
-			public void removedService(ServiceReference reference, Object service)
+			public void removedService(final ServiceReference reference, final Object service)
 			{
 				super.removedService(reference, service);
 				setBaseEnabled(false);
@@ -54,7 +46,18 @@ public class UpdatePersonAddressGroupMemberHandler extends AbstractHandler imple
 	}
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException
+	public void dispose()
+	{
+		if (view != null)
+		{
+			view.removePartPropertyListener(this);
+		}
+		connectionServiceTracker.close();
+		super.dispose();
+	}
+
+	@Override
+	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
 		if (event.getApplicationContext() instanceof EvaluationContext)
 		{
@@ -70,19 +73,7 @@ public class UpdatePersonAddressGroupMemberHandler extends AbstractHandler imple
 	}
 
 	@Override
-	public void setEnabled(Object evaluationContext)
-	{
-		EvaluationContext context = (EvaluationContext) evaluationContext;
-		if (context.getParent().getVariable("activePart") instanceof PersonAddressGroupMemberView)
-		{
-			view = (PersonAddressGroupMemberView) context.getParent().getVariable("activePart");
-			view.addPartPropertyListener(this);
-			this.setBaseEnabled(view.isDirty());
-		}
-	}
-
-	@Override
-	public void propertyChange(PropertyChangeEvent event)
+	public void propertyChange(final PropertyChangeEvent event)
 	{
 		if (event.getProperty().equals("dirty"))
 		{
@@ -91,6 +82,18 @@ public class UpdatePersonAddressGroupMemberHandler extends AbstractHandler imple
 			{
 				setBaseEnabled(dirty.equals("true"));
 			}
+		}
+	}
+
+	@Override
+	public void setEnabled(final Object evaluationContext)
+	{
+		EvaluationContext context = (EvaluationContext) evaluationContext;
+		if (context.getParent().getVariable("activePart") instanceof PersonAddressGroupMemberView)
+		{
+			view = (PersonAddressGroupMemberView) context.getParent().getVariable("activePart");
+			view.addPartPropertyListener(this);
+			this.setBaseEnabled(view.isDirty());
 		}
 	}
 

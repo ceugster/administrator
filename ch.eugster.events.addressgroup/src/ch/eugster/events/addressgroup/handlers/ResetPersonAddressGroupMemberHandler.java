@@ -14,19 +14,22 @@ public class ResetPersonAddressGroupMemberHandler extends AbstractHandler implem
 {
 	private PersonAddressGroupMemberView view;
 
-	@Override
-	public void dispose()
-	{
-		view.removePartPropertyListener(this);
-		super.dispose();
-	}
-
 	public ResetPersonAddressGroupMemberHandler()
 	{
 	}
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException
+	public void dispose()
+	{
+		if (view != null)
+		{
+			view.removePartPropertyListener(this);
+		}
+		super.dispose();
+	}
+
+	@Override
+	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
 		if (view != null)
 		{
@@ -36,19 +39,7 @@ public class ResetPersonAddressGroupMemberHandler extends AbstractHandler implem
 	}
 
 	@Override
-	public void setEnabled(Object evaluationContext)
-	{
-		EvaluationContext context = (EvaluationContext) evaluationContext;
-		if (context.getParent().getVariable("activePart") instanceof PersonAddressGroupMemberView)
-		{
-			view = (PersonAddressGroupMemberView) context.getParent().getVariable("activePart");
-			view.addPartPropertyListener(this);
-			this.setBaseEnabled(view.isDirty());
-		}
-	}
-
-	@Override
-	public void propertyChange(PropertyChangeEvent event)
+	public void propertyChange(final PropertyChangeEvent event)
 	{
 		if (event.getProperty().equals("dirty"))
 		{
@@ -57,6 +48,18 @@ public class ResetPersonAddressGroupMemberHandler extends AbstractHandler implem
 			{
 				setBaseEnabled(dirty.equals("true"));
 			}
+		}
+	}
+
+	@Override
+	public void setEnabled(final Object evaluationContext)
+	{
+		EvaluationContext context = (EvaluationContext) evaluationContext;
+		if (context.getParent().getVariable("activePart") instanceof PersonAddressGroupMemberView)
+		{
+			view = (PersonAddressGroupMemberView) context.getParent().getVariable("activePart");
+			view.addPartPropertyListener(this);
+			this.setBaseEnabled(view.isDirty());
 		}
 	}
 
