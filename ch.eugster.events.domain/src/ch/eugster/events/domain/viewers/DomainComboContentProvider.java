@@ -10,44 +10,44 @@ public class DomainComboContentProvider extends ArrayContentProvider
 {
 	private boolean mandatoryDomain;
 
-	public DomainComboContentProvider(boolean mandatory)
+	public DomainComboContentProvider(final boolean mandatory)
 	{
 		this.mandatoryDomain = mandatory;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object[] getElements(Object inputElement)
+	public Object[] getElements(final Object inputElement)
 	{
+		Domain[] domains = new Domain[0];
 		if (this.mandatoryDomain)
 		{
 			if (inputElement instanceof Domain[])
 			{
-				return (Domain[]) inputElement;
+				domains = (Domain[]) inputElement;
 			}
 			else if (inputElement instanceof Collection<?>)
 			{
-				return ((Collection<Domain>) inputElement).toArray(new Domain[0]);
+				domains = ((Collection<Domain>) inputElement).toArray(new Domain[0]);
 			}
 		}
-		else
-			if (inputElement instanceof Domain[])
-			{
-				Domain[] list = (Domain[]) inputElement;
-				Domain[] domains = new Domain[list.length + 1];
-				for (int i = 0; i < list.length; i++)
-					domains[i + 1] = list[i];
-				domains[0] = Domain.newInstance();
-			}
-			else if (inputElement instanceof Collection<?>)
-			{
-				Domain[] list = ((Collection<Domain>) inputElement).toArray(new Domain[0]);
-				Domain[] domains = new Domain[list.length + 1];
-				for (int i = 0; i < list.length; i++)
-					domains[i + 1] = list[i];
-				domains[0] = Domain.newInstance();
-			}
-		return new Domain[0];
+		else if (inputElement instanceof Domain[])
+		{
+			Domain[] list = (Domain[]) inputElement;
+			domains = new Domain[list.length + 1];
+			for (int i = 0; i < list.length; i++)
+				domains[i + 1] = list[i];
+			domains[0] = Domain.newInstance();
+		}
+		else if (inputElement instanceof Collection<?>)
+		{
+			Domain[] list = ((Collection<Domain>) inputElement).toArray(new Domain[0]);
+			domains = new Domain[list.length + 1];
+			for (int i = 0; i < list.length; i++)
+				domains[i + 1] = list[i];
+			domains[0] = Domain.newInstance();
+		}
+		return domains;
 	}
 
 }

@@ -16,21 +16,20 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.nebula.jface.viewer.radiogroup.RadioGroupViewer;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
-import org.eclipse.nebula.widgets.formattedtext.FormattedText;
-import org.eclipse.nebula.widgets.formattedtext.MaskFormatter;
-import org.eclipse.nebula.widgets.formattedtext.StringFormatter;
 import org.eclipse.nebula.widgets.radiogroup.RadioGroup;
 import org.eclipse.nebula.widgets.radiogroup.forms.RadioGroupFormToolkit;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -95,6 +94,11 @@ import ch.eugster.events.ui.dialogs.Message;
 import ch.eugster.events.ui.helpers.BrowseHelper;
 import ch.eugster.events.ui.helpers.EmailHelper;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
+
 public class FormEditorPersonPage extends FormPage
 {
 	private static final String ID = FormEditorPersonPage.class.getName();
@@ -151,7 +155,7 @@ public class FormEditorPersonPage extends FormPage
 
 	private ComboViewer countryViewer;
 
-	private FormattedText phone;
+	private Text phone;
 
 	private Link send;
 
@@ -160,6 +164,8 @@ public class FormEditorPersonPage extends FormPage
 	private Link browse;
 
 	private Text website;
+
+	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
 	private final Collection<IPropertyChangeListener> listeners = new ArrayList<IPropertyChangeListener>();
 
@@ -332,18 +338,28 @@ public class FormEditorPersonPage extends FormPage
 				if (ssel.getFirstElement() instanceof Country)
 				{
 					Country country = (Country) ssel.getFirstElement();
-					String numValue = getNumValue(phone.getControl().getText());
-					phone.setFormatter(new MaskFormatter(country.getPhonePattern()));
-					phone.setValue(numValue);
+					String numValue = getNumValue(phone.getText());
+					if (!numValue.isEmpty())
+					{
+						try
+						{
+							PhoneNumber phoneNumber = phoneUtil.parse(numValue, country.getIso3166alpha2());
+							String number = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
+							phone.setText(number);
+						}
+						catch (NumberParseException e)
+						{
+
+						}
+					}
 				}
 				setDirty(true);
-				phone.getControl().setFocus();
 			}
 		});
 
-		Text phone = toolkit.createText(client, "");
-		phone.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		phone.addModifyListener(new ModifyListener()
+		this.phone = toolkit.createText(client, "");
+		this.phone.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.phone.addModifyListener(new ModifyListener()
 		{
 			@Override
 			public void modifyText(final ModifyEvent e)
@@ -351,17 +367,51 @@ public class FormEditorPersonPage extends FormPage
 				setDirty(true);
 			}
 		});
-		phone.addFocusListener(new FocusAdapter()
+		phone.addFocusListener(new FocusListener()
 		{
 			@Override
 			public void focusGained(final FocusEvent e)
 			{
-				Text text = (Text) e.getSource();
-				text.setSelection(0, text.getText().length());
+				IStructuredSelection ssel = (IStructuredSelection) FormEditorPersonPage.this.countryViewer
+						.getSelection();
+				if (ssel.getFirstElement() instanceof Country)
+				{
+					StringBuilder editValue = new StringBuilder();
+					String value = FormEditorPersonPage.this.phone.getText().trim();
+					value = removeSpaces(value);
+					FormEditorPersonPage.this.phone.setText(value);
+					FormEditorPersonPage.this.phone.setSelection(0, FormEditorPersonPage.this.phone.getText().length());
+				}
+			}
+
+			@Override
+			public void focusLost(final FocusEvent e)
+			{
+				if (!FormEditorPersonPage.this.countryViewer.getSelection().isEmpty())
+				{
+					IStructuredSelection ssel = (IStructuredSelection) FormEditorPersonPage.this.countryViewer
+							.getSelection();
+					if (ssel.getFirstElement() instanceof Country)
+					{
+						String phoneString = phone.getText();
+						if (!phoneString.isEmpty())
+						{
+							Country country = (Country) ssel.getFirstElement();
+							try
+							{
+								PhoneNumber phoneNumber = phoneUtil.parse(phoneString, country.getIso3166alpha2());
+								phoneString = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
+								phone.setText(phoneString);
+							}
+							catch (NumberParseException ex)
+							{
+
+							}
+						}
+					}
+				}
 			}
 		});
-
-		this.phone = new FormattedText(phone);
 
 		this.send = new Link(client, SWT.NONE);
 		this.send.setText(FormEditorPersonPage.EMAIL_LABEL);
@@ -902,7 +952,7 @@ public class FormEditorPersonPage extends FormPage
 	{
 		Message msg = null;
 
-		if (this.countryViewer.getSelection().isEmpty() && !this.phone.isEmpty())
+		if (this.countryViewer.getSelection().isEmpty() && !this.phone.getText().isEmpty())
 		{
 			msg = new Message(this.countryViewer.getControl(), "Fehler");
 			msg.setMessage("Sie haben die Telefonvorwahl nicht eingegeben.");
@@ -1030,8 +1080,25 @@ public class FormEditorPersonPage extends FormPage
 		{
 			person.setCountry(PersonFormatter.getInstance().getCountry());
 		}
-		this.countryViewer.setSelection(new StructuredSelection(person.getCountry()));
-		setPhone(phone, person.getPhone());
+		Country country = person.getCountry();
+		if (country != null)
+		{
+			this.countryViewer.setSelection(new StructuredSelection(country));
+			String numberString = person.getPhone();
+			if (!numberString.isEmpty())
+			{
+				try
+				{
+					PhoneNumber number = phoneUtil.parse(numberString, country.getIso3166alpha2());
+
+				}
+				catch (NumberParseException e)
+				{
+					e.printStackTrace();
+				}
+			}
+
+		}
 		this.email.setText(person.getEmail());
 		this.website.setText(person.getWebsite());
 	}
@@ -1093,6 +1160,7 @@ public class FormEditorPersonPage extends FormPage
 			if (sexes.length > 0)
 			{
 				this.sexRadioGroupViewer.setSelection(new StructuredSelection(sexes[0]));
+				person.setSex(sexes[0]);
 			}
 		}
 		else
@@ -1132,11 +1200,24 @@ public class FormEditorPersonPage extends FormPage
 		this.listeners.remove(listener);
 	}
 
+	private String removeSpaces(final String value)
+	{
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < value.length(); i++)
+		{
+			if ("0123456789".contains(value.substring(i, i + 1)))
+			{
+				builder = builder.append(value.substring(i, i + 1));
+			}
+		}
+		return builder.toString();
+	}
+
 	private void saveContactsValues(final Person person)
 	{
 		StructuredSelection ssel = (StructuredSelection) countryViewer.getSelection();
 		person.setCountry((Country) ssel.getFirstElement());
-		person.setPhone((String) this.phone.getValue());
+		person.setPhone(removeSpaces(this.phone.getText()));
 		person.setEmail(this.email.getText());
 		person.setWebsite(this.website.getText());
 	}
@@ -1280,18 +1361,18 @@ public class FormEditorPersonPage extends FormPage
 		control.setFocus();
 	}
 
-	private void setPhone(final FormattedText field, final String value)
-	{
-		try
-		{
-			field.setValue(value);
-		}
-		catch (IllegalArgumentException e)
-		{
-			field.setFormatter(new StringFormatter());
-			field.setValue(value);
-		}
-	}
+	// private void setPhone(final FormattedText field, final String value)
+	// {
+	// try
+	// {
+	// field.setValue(value);
+	// }
+	// catch (IllegalArgumentException e)
+	// {
+	// field.setFormatter(new StringFormatter());
+	// field.setValue(value);
+	// }
+	// }
 
 	protected int showMessage(final String title, final Image image, final String message, final int dialogType,
 			final String[] buttonLabels, final int defaultButton)

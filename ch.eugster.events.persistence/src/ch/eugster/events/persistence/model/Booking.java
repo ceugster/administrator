@@ -198,7 +198,7 @@ public class Booking extends AbstractEntity
 
 	public BookingAnnulatedState getAnnulatedState()
 	{
-		return this.annulatedState;
+		return this.annulatedState == null ? BookingAnnulatedState.ANNULATED : this.annulatedState;
 	}
 
 	public Calendar getBookingConfirmationSentDate()
@@ -210,15 +210,15 @@ public class Booking extends AbstractEntity
 	{
 		if (courseState.equals(CourseState.FORTHCOMING))
 		{
-			return this.forthcomingState;
+			return this.getForthcomingState();
 		}
 		else if (courseState.equals(CourseState.DONE))
 		{
-			return this.doneState;
+			return this.getDoneState();
 		}
 		else if (courseState.equals(CourseState.ANNULATED))
 		{
-			return this.annulatedState;
+			return this.getAnnulatedState();
 		}
 
 		return null;
@@ -236,12 +236,12 @@ public class Booking extends AbstractEntity
 
 	public BookingDoneState getDoneState()
 	{
-		return this.doneState;
+		return this.doneState == null ? BookingDoneState.PARTICIPATED : this.doneState;
 	}
 
 	public BookingForthcomingState getForthcomingState()
 	{
-		return this.forthcomingState;
+		return this.forthcomingState == null ? BookingForthcomingState.BOOKED : this.forthcomingState;
 	}
 
 	@Override

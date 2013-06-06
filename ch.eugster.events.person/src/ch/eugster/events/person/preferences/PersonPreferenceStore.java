@@ -13,7 +13,9 @@ import ch.eugster.events.person.Activator;
 
 public class PersonPreferenceStore extends ScopedPreferenceStore
 {
-	public PersonPreferenceStore()
+	private static PersonPreferenceStore store;
+
+	private PersonPreferenceStore()
 	{
 		super(new InstanceScope(), Activator.PLUGIN_ID);
 		this.setValue(PreferenceInitializer.KEY_ID_FORMAT, PersonSettings.getInstance().getIdFormat());
@@ -67,6 +69,15 @@ public class PersonPreferenceStore extends ScopedPreferenceStore
 			{
 			}
 		}
+	}
+
+	public static PersonPreferenceStore getInstance()
+	{
+		if (store == null)
+		{
+			store = new PersonPreferenceStore();
+		}
+		return store;
 	}
 
 }

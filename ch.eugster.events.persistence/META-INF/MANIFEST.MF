@@ -2,15 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Persistence Plugin
 Bundle-SymbolicName: ch.eugster.events.persistence;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.2
 Bundle-Vendor: Christian Eugster
 Bundle-Activator: ch.eugster.events.persistence.Activator
 Bundle-ClassPath: lib/mysql-connector-java-3.0.11-stable-bin.jar,
  lib/postgresql-8.4-701.jdbc4.jar,
- lib/libphonenumber-4.8.jar,
  lib/derby.jar,
  lib/derbyclient.jar,
  lib/sqljdbc4.jar,
+ lib/libphonenumber-5.5.jar,
  .
 Export-Package: ch.eugster.events.persistence.events,
  ch.eugster.events.persistence.exceptions,
@@ -19,7 +19,8 @@ Export-Package: ch.eugster.events.persistence.events,
  ch.eugster.events.persistence.model,
  ch.eugster.events.persistence.preferences,
  ch.eugster.events.persistence.queries,
- ch.eugster.events.persistence.service
+ ch.eugster.events.persistence.service,
+ com.google.i18n.phonenumbers
 Bundle-ActivationPolicy: lazy
 JPA-PersistenceUnits: ch.eugster.events.persistence
 Meta-Persistence: META-INF/persistence.xml

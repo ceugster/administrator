@@ -435,9 +435,84 @@ public class LinkSearcher extends Composite
 			listener.criteriaChanged(event);
 	}
 
+	private Map<String, String> createCriteria()
+	{
+		Map<String, String> criteria = new HashMap<String, String>();
+		for (Entry<String, Widget> entry : this.widgets.entrySet())
+		{
+			if (entry.getKey().equals(ID))
+			{
+			}
+			else if (entry.getKey().equals(LASTNAME))
+			{
+			}
+			else if (entry.getKey().equals(PHONE))
+			{
+			}
+			else
+			{
+				if (entry.getValue() instanceof Text)
+				{
+					Text text = (Text) entry.getValue();
+					if (!text.getText().isEmpty())
+					{
+						if (criteria.isEmpty())
+							criteria.put(entry.getKey(), text.getText().trim());
+					}
+				}
+			}
+		}
+		if (criteria.isEmpty())
+		{
+			Text text = (Text) this.widgets.get(LASTNAME);
+			if (text.getText().length() > 3)
+			{
+				criteria.put(LASTNAME, text.getText().trim());
+			}
+			text = (Text) this.widgets.get(PHONE);
+			if (text.getText().length() > 6)
+			{
+				criteria.put(PHONE, text.getText().trim());
+			}
+		}
+		else
+		{
+			Text text = (Text) this.widgets.get(LASTNAME);
+			if (!text.getText().isEmpty())
+			{
+				criteria.put(LASTNAME, text.getText().trim());
+			}
+			text = (Text) this.widgets.get(PHONE);
+			if (!text.getText().isEmpty())
+			{
+				criteria.put(PHONE, text.getText().trim());
+			}
+		}
+		return criteria;
+	}
+
 	@Override
 	public void dispose()
 	{
+		int length = 0;
+		length += this.dialogSettings.get("lastname.text").length();
+		length += this.dialogSettings.get("firstname.text").length();
+		length += this.dialogSettings.get("organisation.text").length();
+		length += this.dialogSettings.get("address.text").length();
+		length += this.dialogSettings.get("city.text").length();
+		length += this.dialogSettings.get("phone.text").length();
+		length += this.dialogSettings.get("email.text").length();
+		if (length < 3)
+		{
+			this.dialogSettings.put("lastname.text", "");
+			this.dialogSettings.put("firstname.text", "");
+			this.dialogSettings.put("organisation.text", "");
+			this.dialogSettings.put("address.text", "");
+			this.dialogSettings.put("city.text", "");
+			this.dialogSettings.put("phone.text", "");
+			this.dialogSettings.put("email.text", "");
+		}
+
 		connectionServiceTracker.close();
 		EntityMediator.removeListener(Address.class, entityListener);
 		EntityMediator.removeListener(Person.class, entityListener);
@@ -511,9 +586,16 @@ public class LinkSearcher extends Composite
 	{
 		if (this.listen)
 		{
-			CriteriaChangedEvent event = new CriteriaChangedEvent(this.selectItems());
-			for (ICriteriaChangedListener listener : this.listeners)
-				listener.criteriaChanged(event);
+			Map<String, String> criteria = createCriteria();
+			AbstractEntity[] entities = selectItems(criteria);
+			if (entities.length > 0)
+			{
+				CriteriaChangedEvent event = new CriteriaChangedEvent(entities);
+				for (ICriteriaChangedListener listener : this.listeners)
+				{
+					listener.criteriaChanged(event);
+				}
+			}
 		}
 
 		entityListener = new EntityAdapter()
@@ -598,21 +680,7 @@ public class LinkSearcher extends Composite
 	{
 		if (this.listen)
 		{
-			if (updateListJob == null || updateListJob.getState() == Job.NONE)
-			{
-				schedule();
-			}
-			else if (updateListJob.getState() == Job.SLEEPING)
-			{
-				System.out.println("SLEEPING: " + updateListJob.getState());
-				updateListJob.cancel();
-				System.out.println("CANCELLED: " + updateListJob.getState());
-				schedule();
-			}
-			else
-			{
-				System.out.println("RUNNING: " + updateListJob.getState());
-			}
+			schedule();
 		}
 	}
 
@@ -624,16 +692,26 @@ public class LinkSearcher extends Composite
 
 	private void schedule()
 	{
-		System.out.println(updateListJob == null ? "FIRST" : "IF: " + updateListJob.getState());
+		if (updateListJob != null)
+		{
+			if (updateListJob.getState() == Job.RUNNING)
+			{
+				updateListJob.cancel();
+			}
+		}
 		updateListJob = new UIJob("Starte Suchlauf...")
 		{
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor)
 			{
-				CriteriaChangedEvent event = new CriteriaChangedEvent(LinkSearcher.this.selectItems());
-				for (ICriteriaChangedListener listener : LinkSearcher.this.listeners)
+				Map<String, String> criteria = createCriteria();
+				if (!criteria.isEmpty())
 				{
-					listener.criteriaChanged(event);
+					CriteriaChangedEvent event = new CriteriaChangedEvent(LinkSearcher.this.selectItems(criteria));
+					for (ICriteriaChangedListener listener : LinkSearcher.this.listeners)
+					{
+						listener.criteriaChanged(event);
+					}
 				}
 				return Status.OK_STATUS;
 			}
@@ -674,33 +752,21 @@ public class LinkSearcher extends Composite
 		return entities;
 	}
 
-	private AbstractEntity[] selectItems()
+	private AbstractEntity[] selectItems(final Map<String, String> criteria)
 	{
+		if (criteria == null || criteria.isEmpty())
+		{
+			return new AbstractEntity[0];
+		}
 		Collection<AbstractEntity> entities = new ArrayList<AbstractEntity>();
 
 		String value = this.getText(ID);
 		if (!value.isEmpty())
 		{
-			entities = this.selectById(this.getTextWidget(ID).getText());
+			entities = this.selectById(this.getTextWidget(ID).getText().trim());
 		}
 		else
 		{
-			Map<String, String> criteria = new HashMap<String, String>();
-			for (Entry<String, Widget> entry : this.widgets.entrySet())
-			{
-				if (!entry.getKey().equals("id"))
-				{
-					if (entry.getValue() instanceof Text)
-					{
-						Text text = (Text) entry.getValue();
-						if (!text.getText().isEmpty())
-						{
-							criteria.put(entry.getKey(), text.getText());
-						}
-					}
-				}
-			}
-
 			if (!criteria.isEmpty())
 			{
 				if (connectionService != null)

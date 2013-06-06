@@ -112,4 +112,31 @@ public class EditHandler extends AbstractHandler implements IHandler
 			}
 		}
 	}
+
+	@Override
+	public void setEnabled(final Object evaluationContext)
+	{
+		if (evaluationContext != null)
+		{
+			EvaluationContext context = (EvaluationContext) evaluationContext;
+			Object object = context.getParent().getVariable("selection");
+			if (object instanceof StructuredSelection)
+			{
+				StructuredSelection ssel = (StructuredSelection) object;
+				Object[] selected = ssel.toArray();
+				for (Object sel : selected)
+				{
+					if (sel instanceof AbstractEntity)
+					{
+						if (!((AbstractEntity) sel).isDeleted())
+						{
+							super.setBaseEnabled(true);
+							return;
+						}
+					}
+				}
+			}
+		}
+		super.setBaseEnabled(false);
+	}
 }

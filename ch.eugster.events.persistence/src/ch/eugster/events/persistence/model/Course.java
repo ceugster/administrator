@@ -742,14 +742,14 @@ public class Course extends AbstractEntity
 			{
 				if (this.substituted)
 				{
-					if (courseDate == null || courseDate.getTimeInMillis() < detail.getEnd().getTimeInMillis())
-						courseDate = detail.getEnd();
-				}
-				else
-				{
 					if (courseDate == null
 							|| courseDate.getTimeInMillis() < detail.getSubstituteEnd().getTimeInMillis())
 						courseDate = detail.getSubstituteEnd();
+				}
+				else
+				{
+					if (courseDate == null || courseDate.getTimeInMillis() < detail.getEnd().getTimeInMillis())
+						courseDate = detail.getEnd();
 				}
 			}
 			if (courseDate == null)

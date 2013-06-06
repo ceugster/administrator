@@ -577,6 +577,7 @@ ch.eugster.events.domain/src/ch/eugster/events/domain/views/DomainSorter.java -t
 ch.eugster.events.domain/src/ch/eugster/events/domain/views/DomainView.java -text
 ch.eugster.events.donation.feature/.project -text
 ch.eugster.events.donation.feature/build.properties -text
+ch.eugster.events.donation.feature/build.xml -text
 ch.eugster.events.donation.feature/feature.xml -text
 ch.eugster.events.donation/.classpath -text
 ch.eugster.events.donation/.project -text
@@ -584,6 +585,7 @@ ch.eugster.events.donation/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.donation/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.donation/META-INF/MANIFEST.MF -text
 ch.eugster.events.donation/build.properties -text
+ch.eugster.events.donation/build.xml -text
 ch.eugster.events.donation/icons/add_16.gif -text
 ch.eugster.events.donation/icons/add_grey_16.gif -text
 ch.eugster.events.donation/icons/delete_16.png -text
@@ -595,6 +597,7 @@ ch.eugster.events.donation/icons/reset_16.png -text
 ch.eugster.events.donation/icons/reset_grey_16.png -text
 ch.eugster.events.donation/icons/save_16.png -text
 ch.eugster.events.donation/icons/save_grey_16.png -text
+ch.eugster.events.donation/javaCompiler...args -text
 ch.eugster.events.donation/plugin.xml -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/Activator.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationConfirmationDialog.java -text
@@ -771,7 +774,7 @@ ch.eugster.events.persistence/lib/derby.jar -text
 ch.eugster.events.persistence/lib/derbyclient.jar -text
 ch.eugster.events.persistence/lib/derbynet.jar -text
 ch.eugster.events.persistence/lib/derbytools.jar -text
-ch.eugster.events.persistence/lib/libphonenumber-4.8.jar -text
+ch.eugster.events.persistence/lib/libphonenumber-5.5.jar -text
 ch.eugster.events.persistence/lib/mysql-connector-java-3.0.11-stable-bin.jar -text
 ch.eugster.events.persistence/lib/postgresql-8.4-701.jdbc4.jar -text
 ch.eugster.events.persistence/lib/sqljdbc4.jar -text
@@ -947,6 +950,7 @@ ch.eugster.events.person/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.person/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.person/META-INF/MANIFEST.MF -text
 ch.eugster.events.person/build.properties -text
+ch.eugster.events.person/icons/Thumbs.db -text
 ch.eugster.events.person/icons/add_16.gif -text
 ch.eugster.events.person/icons/add_address_16.png -text
 ch.eugster.events.person/icons/add_grey_16.gif -text

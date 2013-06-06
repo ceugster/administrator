@@ -56,26 +56,14 @@
       <perspectiveExtension
             targetID="ch.eugster.events.person.perspective">
          <view
-               closeable="true"
+               closeable="false"
                id="ch.eugster.events.person.view"
                minimized="false"
                moveable="true"
-               ratio=".4"
-               relationship="left"
-               relative="org.eclipse.ui.editorss"
+               ratio=".8"
+               relationship="top"
+               relative="ch.eugster.events.addressgroup.person.view"
                showTitle="true"
-               visible="true">
-         </view>
-         <view
-               closeable="true"
-               id="org.eclipse.ui.views.ContentOutline"
-               minimized="false"
-               moveable="true"
-               ratio=".6"
-               relationship="right"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="false"
                visible="true">
          </view>
       </perspectiveExtension>
@@ -966,10 +954,6 @@
                style="push"
                tooltip="Ausgewählten Eintrag bearbeiten">
          </command>
-         <separator
-               name="ch.eugster.events.person.separator1"
-               visible="true">
-         </separator>
          <command
                commandId="ch.eugster.events.person.command.delete"
                disabledIcon="icons/delete_grey_16.png"
@@ -979,15 +963,10 @@
                style="push"
                tooltip="Ausgewählten Eintrag entfernen">
          </command>
-         <command
-               commandId="ch.eugster.events.person.command.reactivate"
-               disabledIcon="icons/reset_grey_16.png"
-               hoverIcon="icons/reset_16.png"
-               icon="icons/reset_16.png"
-               label="Wiederherstellen"
-               style="push"
-               tooltip="Ausgewählten Eintrag wiederherstellen">
-         </command>
+         <separator
+               name="ch.eugster.events.person.separator1"
+               visible="true">
+         </separator>
          <separator
                name="ch.eugster.events.person.separator2"
                visible="true">

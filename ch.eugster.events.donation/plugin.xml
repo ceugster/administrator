@@ -590,20 +590,6 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="ch.eugster.events.person.perspective">
-         <view
-               closeable="true"
-               id="ch.eugster.events.donation.linkView"
-               minimized="false"
-               moveable="true"
-               relationship="stack"
-               relative="ch.eugster.events.course.views.linkParticipantView"
-               showTitle="true"
-               standalone="false"
-               visible="true">
-         </view>
-      </perspectiveExtension>
-      <perspectiveExtension
             targetID="ch.eugster.events.core.perspective">
          <view
                closeable="true"
@@ -612,6 +598,20 @@
                moveable="true"
                relationship="stack"
                relative="ch.eugster.events.domain.view"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="ch.eugster.events.person.perspective">
+         <view
+               closeable="true"
+               id="ch.eugster.events.donation.linkView"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="ch.eugster.events.addressgroup.person.view"
                showTitle="true"
                standalone="false"
                visible="true">

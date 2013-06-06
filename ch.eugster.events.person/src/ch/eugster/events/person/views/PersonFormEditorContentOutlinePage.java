@@ -34,6 +34,8 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import ch.eugster.events.persistence.filters.BookingParticipantFilter;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
+import ch.eugster.events.persistence.model.AddressGroup;
+import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseDetail;
@@ -198,6 +200,76 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		getTreeViewer().setInput(this.currentPage);
 	}
 
+	private class AddressGroupMemberRoot implements Root
+	{
+		private final FormPage currentPage;
+
+		public AddressGroupMemberRoot(final FormPage page)
+		{
+			this.currentPage = page;
+		}
+
+		@Override
+		public Object[] getChildren()
+		{
+			if (this.currentPage instanceof FormEditorPersonPage)
+			{
+				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
+				LinkPersonAddress link = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				return link.getAddressGroupMembers().toArray(new AddressGroupMember[0]);
+			}
+			else if (this.currentPage instanceof FormEditorLinkPage)
+			{
+				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
+				LinkPersonAddress link = page.getLink();
+				return link.getAddressGroupMembers().toArray(new AddressGroupMember[0]);
+			}
+			return new AddressGroupMember[0];
+		}
+
+		@Override
+		public FormPage getFormPage()
+		{
+			return currentPage;
+		}
+
+		@Override
+		public Image getImage()
+		{
+			return Activator.getDefault().getImageRegistry().get(Activator.KEY_PERSON_BLUE);
+		}
+
+		@Override
+		public String getName()
+		{
+			return "Adressgruppen (" + getChildren().length + ")";
+		}
+
+		@Override
+		public Integer getOrder()
+		{
+			return Integer.valueOf(Order.ADDRESS_GROUPS.ordinal());
+		}
+
+		@Override
+		public boolean hasChildren()
+		{
+			if (this.currentPage instanceof FormEditorPersonPage)
+			{
+				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
+				LinkPersonAddress link = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				return link.getAddressGroupMembers().size() > 0;
+			}
+			else if (this.currentPage instanceof FormEditorLinkPage)
+			{
+				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
+				LinkPersonAddress link = page.getLink();
+				return link.getAddressGroupMembers().size() > 0;
+			}
+			return false;
+		}
+	}
+
 	private class AddressLabelProvider extends LabelProvider
 	{
 		@Override
@@ -220,6 +292,10 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			else if (element instanceof Participant)
 			{
 				return Activator.getDefault().getImageRegistry().get(Activator.KEY_PARTICIPANT);
+			}
+			else if (element instanceof AddressGroupMember)
+			{
+				return Activator.getDefault().getImageRegistry().get(Activator.KEY_PERSON_BLUE);
 			}
 			else if (element instanceof Person || element instanceof LinkPersonAddress)
 			{
@@ -255,6 +331,13 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			{
 				Member member = (Member) element;
 				return member.getMembership().format();
+			}
+			else if (element instanceof AddressGroupMember)
+			{
+				AddressGroupMember member = (AddressGroupMember) element;
+				AddressGroup group = member.getAddressGroup();
+				return group.getCode().isEmpty() ? group.getName() : (group.getCode() + (group.getName().isEmpty() ? ""
+						: " - " + group.getName()));
 			}
 			else if (element instanceof Participant)
 			{
@@ -292,7 +375,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				Collection<LinkPersonAddress> links = page.getLink().getAddress().getPersonLinks();
 				for (LinkPersonAddress link : links)
 				{
-					if (!link.isDeleted() && !link.getPerson().isDeleted()
+					if (!link.isDeleted() && !link.getPerson().isDeleted() && page.getLink().getId() != null
 							&& !page.getLink().getId().equals(link.getId()))
 					{
 						others.add(link);
@@ -317,7 +400,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public String getName()
 		{
-			return "Personen";
+			return "Zugehörende Personen (" + getChildren().length + ")";
 		}
 
 		@Override
@@ -389,7 +472,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public String getName()
 		{
-			return "Spenden";
+			return "Spenden (" + getChildren().length + ")";
 		}
 
 		@Override
@@ -462,7 +545,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public String getName()
 		{
-			return "Mitgliedschaften";
+			return "Mitgliedschaften: " + getChildren().length + ")";
 		}
 
 		@Override
@@ -492,7 +575,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 
 	public enum Order
 	{
-		PERSONS, COURSES, DONATION, MEMBER;
+		PERSONS, COURSES, DONATION, MEMBER, ADDRESS_GROUPS;
 	}
 
 	private class OutlineContentProvider implements ITreeContentProvider
@@ -513,19 +596,10 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				FormEditorPersonPage page = (FormEditorPersonPage) parentElement;
 				LinkPersonAddress link = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
 				Collection<Root> roots = new ArrayList<Root>();
-				if (link.getPerson().getMembers().size() > 0)
-				{
-					roots.add(new MemberRoot(page));
-				}
-				if (link.getParticipants().size() > 0)
-				{
-					roots.add(new ParticipantRoot(page));
-				}
-				if (link.getPerson().getDonations().size() > 0)
-				{
-					roots.add(new DonationRoot(page));
-				}
-				// roots.add(new PersonContactRoot(page));
+				roots.add(new MemberRoot(page));
+				roots.add(new ParticipantRoot(page));
+				roots.add(new DonationRoot(page));
+				roots.add(new AddressGroupMemberRoot(page));
 				return roots.toArray(new Root[0]);
 			}
 			else if (parentElement instanceof FormEditorLinkPage)
@@ -535,24 +609,11 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				 */
 				FormEditorLinkPage page = (FormEditorLinkPage) parentElement;
 				Collection<Root> roots = new ArrayList<Root>();
-				if (page.getLink().getAddress().getPersonLinks().size() > 1)
-				{
-					roots.add(new AddressRoot(page));
-				}
-				if (page.getLink().getMembers().size() > 0)
-				{
-					roots.add(new MemberRoot(page));
-				}
-				if (page.getLink().getParticipants().size() > 0)
-				{
-					roots.add(new ParticipantRoot(page));
-				}
-				if (page.getLink().getDonations().size() > 0)
-				{
-					roots.add(new DonationRoot(page));
-				}
-				// roots.add(new LinkPersonAddressContactRoot(page));
-				// roots.add(new AddressContactRoot(page));
+				roots.add(new AddressRoot(page));
+				roots.add(new MemberRoot(page));
+				roots.add(new ParticipantRoot(page));
+				roots.add(new DonationRoot(page));
+				roots.add(new AddressGroupMemberRoot(page));
 				return roots.toArray(new Root[0]);
 			}
 			else if (parentElement instanceof Root)
@@ -625,19 +686,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public Object[] getChildren()
 		{
-			if (this.currentPage instanceof FormEditorPersonPage)
-			{
-				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				LinkPersonAddress link = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return link.getParticipants().toArray(new Participant[0]);
-			}
-			else if (this.currentPage instanceof FormEditorLinkPage)
-			{
-				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
-				LinkPersonAddress link = page.getLink();
-				return link.getParticipants().toArray(new Participant[0]);
-			}
-			return new Participant[0];
+			return getParticipants().toArray(new Participant[0]);
 		}
 
 		@Override
@@ -655,7 +704,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public String getName()
 		{
-			return "Besuchte Kurse";
+			return "Besuchte Kurse (" + getParticipants().size() + ")";
 		}
 
 		@Override
@@ -664,28 +713,27 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			return Integer.valueOf(Order.COURSES.ordinal());
 		}
 
-		@Override
-		public boolean hasChildren()
+		private Collection<Participant> getParticipants()
 		{
 			if (this.currentPage instanceof FormEditorPersonPage)
 			{
 				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				LinkPersonAddress l = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				for (LinkPersonAddress link : l.getPerson().getLinks())
-				{
-					if (link.getParticipants().toArray(new Participant[0]).length > 0)
-					{
-						return true;
-					}
-				}
+				LinkPersonAddress link = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				return link.getParticipants();
 			}
 			else if (this.currentPage instanceof FormEditorLinkPage)
 			{
 				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
 				LinkPersonAddress link = page.getLink();
-				return link.getParticipants().toArray(new Participant[0]).length > 0;
+				return link.getParticipants();
 			}
-			return false;
+			return new ArrayList<Participant>();
+		}
+
+		@Override
+		public boolean hasChildren()
+		{
+			return getParticipants().size() > 0;
 		}
 	}
 
@@ -717,7 +765,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 
 	}
 
-	private interface Root
+	interface Root
 	{
 		Object[] getChildren();
 
