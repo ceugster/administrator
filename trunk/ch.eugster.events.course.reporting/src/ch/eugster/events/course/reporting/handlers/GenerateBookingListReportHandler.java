@@ -1,7 +1,6 @@
 package ch.eugster.events.course.reporting.handlers;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 
@@ -77,9 +76,8 @@ public class GenerateBookingListReportHandler extends AbstractHandler implements
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/booking_list.jrxml");
-				InputStream inputStream = url.openStream();
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.export(inputStream, factory.getCourses(), parameters, format, file);
+				reportService.export(url, factory.getCourses(), parameters, format, file);
 				return true;
 			}
 		}
@@ -105,9 +103,8 @@ public class GenerateBookingListReportHandler extends AbstractHandler implements
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/booking_list.jrxml");
-				InputStream inputStream = url.openStream();
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.view(inputStream, factory.getCourses(), parameters);
+				reportService.view(url, factory.getCourses(), parameters);
 				return true;
 			}
 		}
@@ -133,9 +130,8 @@ public class GenerateBookingListReportHandler extends AbstractHandler implements
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/booking_list.jrxml");
-				InputStream inputStream = url.openStream();
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.print(inputStream, factory.getCourses(), parameters, showPrintDialog);
+				reportService.print(url, factory.getCourses(), parameters, showPrintDialog);
 				return true;
 			}
 		}

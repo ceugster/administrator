@@ -56,6 +56,11 @@
             id="ch.eugster.events.course.reporting.command.printBookingListReport"
             name="Kursliste mit Buchungsstand drucken">
       </command>
+      <command
+            defaultHandler="ch.eugster.events.course.reporting.handlers.PrintLabelHandler"
+            id="ch.eugster.events.course.reporting.printLabels"
+            name="Etiketten drucken">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -192,6 +197,14 @@
                   style="push"
                   tooltip="Generieren der Teilnahmebestätigung">
             </command>
+            <command
+                  commandId="ch.eugster.events.course.reporting.printLabels"
+                  disabledIcon="icons/work_grey_16.png"
+                  hoverIcon="icons/work_16.png"
+                  icon="icons/work_16.png"
+                  label="Etiketten drucken"
+                  style="push">
+            </command>
          </menu>
       </menuContribution>
       <menuContribution
@@ -243,6 +256,14 @@
                label="Teilnahmebestätigung"
                style="push"
                tooltip="Generieren der Teilnahmebestätigung">
+         </command>
+         <command
+               commandId="ch.eugster.events.course.reporting.printLabels"
+               disabledIcon="icons/work_grey_16.png"
+               hoverIcon="icons/work_16.png"
+               icon="icons/work_16.png"
+               label="Etiketten drucken"
+               style="push">
          </command>
       </menuContribution>
    </extension>

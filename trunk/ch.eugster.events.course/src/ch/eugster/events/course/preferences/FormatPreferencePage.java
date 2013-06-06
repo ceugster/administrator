@@ -41,7 +41,7 @@ public class FormatPreferencePage extends FieldEditorPreferencePage implements I
 	@Override
 	public void init(final IWorkbench workbench)
 	{
-		IPreferenceStore store = new CoursePreferenceStore();
+		IPreferenceStore store = CoursePreferenceStore.getInstance();
 		this.setPreferenceStore(store);
 		this.setDescription("Formatierungen");
 	}

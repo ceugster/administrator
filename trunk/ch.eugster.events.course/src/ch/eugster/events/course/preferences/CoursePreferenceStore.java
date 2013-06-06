@@ -11,19 +11,11 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class CoursePreferenceStore extends ScopedPreferenceStore
 {
-	public CoursePreferenceStore()
+	private static CoursePreferenceStore store;
+
+	private CoursePreferenceStore()
 	{
 		super(new InstanceScope(), Activator.PLUGIN_ID);
-		this.setValue(PreferenceInitializer.KEY_BOOKING_ID_FORMAT, GlobalSettings.getInstance().getBookingIdFormat());
-		this.setValue(PreferenceInitializer.KEY_USE_CATEGORIES, GlobalSettings.getInstance().getCourseHasCategory());
-		this.setValue(PreferenceInitializer.KEY_USE_DOMAINS, GlobalSettings.getInstance().getCourseHasDomain());
-		this.setValue(PreferenceInitializer.KEY_USE_RUBRICS, GlobalSettings.getInstance().getCourseHasRubric());
-		this.setValue(PreferenceInitializer.KEY_MANDATORY_CATEGORIES, GlobalSettings.getInstance()
-				.isCourseCategoryMandatory());
-		this.setValue(PreferenceInitializer.KEY_MANDATORY_DOMAINS, GlobalSettings.getInstance()
-				.isCourseDomainMandatory());
-		this.setValue(PreferenceInitializer.KEY_MANDATORY_RUBRICS, GlobalSettings.getInstance()
-				.isCourseRubricMandatory());
 	}
 
 	@Override
@@ -60,7 +52,27 @@ public class CoursePreferenceStore extends ScopedPreferenceStore
 			}
 			catch (Exception e)
 			{
+				e.printStackTrace();
 			}
 		}
+	}
+
+	public static CoursePreferenceStore getInstance()
+	{
+		if (store == null)
+		{
+			store = new CoursePreferenceStore();
+		}
+		store.setValue(PreferenceInitializer.KEY_BOOKING_ID_FORMAT, GlobalSettings.getInstance().getBookingIdFormat());
+		store.setValue(PreferenceInitializer.KEY_USE_DOMAINS, GlobalSettings.getInstance().getCourseHasDomain());
+		store.setValue(PreferenceInitializer.KEY_MANDATORY_DOMAINS, GlobalSettings.getInstance()
+				.isCourseDomainMandatory());
+		store.setValue(PreferenceInitializer.KEY_USE_CATEGORIES, GlobalSettings.getInstance().getCourseHasCategory());
+		store.setValue(PreferenceInitializer.KEY_MANDATORY_CATEGORIES, GlobalSettings.getInstance()
+				.isCourseCategoryMandatory());
+		store.setValue(PreferenceInitializer.KEY_USE_RUBRICS, GlobalSettings.getInstance().getCourseHasRubric());
+		store.setValue(PreferenceInitializer.KEY_MANDATORY_RUBRICS, GlobalSettings.getInstance()
+				.isCourseRubricMandatory());
+		return store;
 	}
 }

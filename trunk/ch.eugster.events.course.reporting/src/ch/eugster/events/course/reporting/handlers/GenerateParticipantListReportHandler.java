@@ -1,7 +1,6 @@
 package ch.eugster.events.course.reporting.handlers;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 
@@ -75,9 +74,8 @@ public class GenerateParticipantListReportHandler extends AbstractHandler implem
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/participant_list.jrxml");
-				InputStream inputStream = url.openStream();
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.export(inputStream, factory.getParticipants(), parameters, format, file);
+				reportService.export(url, factory.getParticipants(), parameters, format, file);
 				return true;
 			}
 		}
@@ -103,9 +101,8 @@ public class GenerateParticipantListReportHandler extends AbstractHandler implem
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/participant_list.jrxml");
-				InputStream inputStream = url.openStream();
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.view(inputStream, factory.getParticipants(), parameters);
+				reportService.view(url, factory.getParticipants(), parameters);
 				return true;
 			}
 		}
@@ -131,9 +128,8 @@ public class GenerateParticipantListReportHandler extends AbstractHandler implem
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/participant_list.jrxml");
-				InputStream inputStream = url.openStream();
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.print(inputStream, factory.getParticipants(), parameters, showPrintDialog);
+				reportService.print(url, factory.getParticipants(), parameters, showPrintDialog);
 				return true;
 			}
 		}

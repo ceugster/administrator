@@ -1,5 +1,7 @@
 package ch.eugster.events.course.views;
 
+import java.util.Calendar;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
@@ -53,12 +55,23 @@ public class LinkParticipantSorter extends ViewerSorter
 
 	private int compareDate(final Booking booking1, final Booking booking2)
 	{
+		Calendar c1 = booking1.getDate();
+		Calendar c2 = booking2.getDate();
 		if (this.order.equals(Order.ASCENDING))
-			return booking1.getDate().compareTo(booking2.getDate());
+		{
+			if (c1 != null && c2 != null)
+			{
+				return c1.getTime().compareTo(c2.getTime());
+			}
+		}
 		else if (this.order.equals(Order.DESCENDING))
-			return booking2.getDate().compareTo(booking1.getDate());
-		else
-			return 0;
+		{
+			if (c1 != null && c2 != null)
+			{
+				return c2.getTime().compareTo(c1.getTime());
+			}
+		}
+		return 0;
 	}
 
 	private int compareDate(final Participant participant1, final Participant participant2)

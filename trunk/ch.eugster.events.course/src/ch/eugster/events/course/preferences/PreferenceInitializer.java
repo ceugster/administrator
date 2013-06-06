@@ -17,11 +17,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 
 	public static final String KEY_USE_RUBRICS = "course.rubric";
 
-	public static final String KEY_MANDATORY_CATEGORIES = "course.category";
+	public static final String KEY_MANDATORY_CATEGORIES = "course.category.mandatory";
 
-	public static final String KEY_MANDATORY_DOMAINS = "course.domain";
+	public static final String KEY_MANDATORY_DOMAINS = "course.domain.mandatory";
 
-	public static final String KEY_MANDATORY_RUBRICS = "course.rubric";
+	public static final String KEY_MANDATORY_RUBRICS = "course.rubric.mandatory";
 
 	public static final String KEY_BOOKING_TEMPLATE = "booking.confirmation.template";
 
