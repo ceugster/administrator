@@ -5,6 +5,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -19,7 +20,7 @@ public class AddAddressHandler extends AbstractHandler implements IHandler
 {
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException
+	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
 		EvaluationContext context = (EvaluationContext) event.getApplicationContext();
 		try
@@ -35,11 +36,11 @@ public class AddAddressHandler extends AbstractHandler implements IHandler
 					if (part instanceof PersonView)
 					{
 						PersonView view = (PersonView) part;
+						view.getViewer().setSelection(new StructuredSelection());
 						view.getSearcher().fillAddress(address);
 					}
 				}
 			}
-
 			window.getActivePage().openEditor(new AddressEditorInput(address), AddressEditor.ID);
 		}
 		catch (PartInitException e)

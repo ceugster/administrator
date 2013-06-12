@@ -134,7 +134,7 @@ public class AddressFormatter extends AbstractFormatter
 					labelFormat = labelFormat.replace(variable, address.getSalutation() == null ? "" : address
 							.getSalutation().getSalutation());
 				}
-				else if (variable.equals("${organisation}"))
+				else if (variable.equals("${organization}"))
 				{
 					labelFormat = labelFormat.replace(variable, address.getName());
 				}
@@ -184,7 +184,7 @@ public class AddressFormatter extends AbstractFormatter
 
 	public String[] getAddressLabelStoredVariables()
 	{
-		return new String[] { "${salutation}", "${organisation}", "${anotherline}", "${address}", "${pob}",
+		return new String[] { "${salutation}", "${organization}", "${anotherline}", "${address}", "${pob}",
 				"${country}", "${zip}", "${city}" };
 	}
 

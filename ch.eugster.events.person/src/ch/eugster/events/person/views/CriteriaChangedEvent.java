@@ -8,11 +8,13 @@ public class CriteriaChangedEvent
 
 	public CriteriaChangedEvent(AbstractEntity[] result)
 	{
+		System.out.println(this);
 		this.result = result;
 	}
 
 	public AbstractEntity[] getResult()
 	{
+		System.out.println(this);
 		return this.result;
 	}
 }

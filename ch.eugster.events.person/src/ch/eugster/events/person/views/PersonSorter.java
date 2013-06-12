@@ -43,18 +43,25 @@ public class PersonSorter extends ViewerSorter
 			case 3:
 			{
 				if (asc)
+					return this.compare(a1.getId(), a2.getId());
+				else
+					return this.compare(a2.getId(), a1.getId());
+			}
+			case 4:
+			{
+				if (asc)
 					return this.compare(a1.getName(), a2.getName());
 				else
 					return this.compare(a2.getName(), a1.getName());
 			}
-			case 4:
+			case 5:
 			{
 				if (asc)
 					return this.compare(a1.getAddress(), a2.getAddress());
 				else
 					return this.compare(a2.getAddress(), a1.getAddress());
 			}
-			case 5:
+			case 6:
 			{
 				if (asc)
 					return this.compare(AddressFormatter.getInstance().formatCityLine(a1), AddressFormatter
@@ -63,11 +70,11 @@ public class PersonSorter extends ViewerSorter
 					return this.compare(AddressFormatter.getInstance().formatCityLine(a2), AddressFormatter
 							.getInstance().formatCityLine(a1));
 			}
-			case 6:
+			case 7:
 			{
 				return 0;
 			}
-			case 7:
+			case 8:
 			{
 				String phone1 = a1.getPhone();
 				String phone2 = a2.getPhone();
@@ -77,7 +84,7 @@ public class PersonSorter extends ViewerSorter
 				else
 					return this.compare(phone2, phone1);
 			}
-			case 8:
+			case 9:
 			{
 				String email1 = a1.getEmail();
 				String email2 = a2.getEmail();
@@ -87,7 +94,7 @@ public class PersonSorter extends ViewerSorter
 				else
 					return this.compare(email2, email1);
 			}
-			case 9:
+			case 10:
 			{
 				return 0;
 			}
@@ -126,11 +133,20 @@ public class PersonSorter extends ViewerSorter
 				LinkPersonAddress link1 = p1.getDefaultLink();
 
 				if (asc)
+					return this.compare(link1.getAddress().getId(), a2.getId());
+				else
+					return this.compare(a2.getId(), link1.getAddress().getId());
+			}
+			case 4:
+			{
+				LinkPersonAddress link1 = p1.getDefaultLink();
+
+				if (asc)
 					return this.compare(link1.getAddress().getName(), a2.getName());
 				else
 					return this.compare(a2.getName(), link1.getAddress().getName());
 			}
-			case 4:
+			case 5:
 			{
 				LinkPersonAddress link1 = p1.getDefaultLink();
 
@@ -139,7 +155,7 @@ public class PersonSorter extends ViewerSorter
 				else
 					return this.compare(a2.getAddress(), link1.getAddress().getAddress());
 			}
-			case 5:
+			case 6:
 			{
 				LinkPersonAddress link1 = p1.getDefaultLink();
 				String city1 = link1 == null ? "" : AddressFormatter.getInstance().formatCityLine(link1.getAddress());
@@ -149,14 +165,14 @@ public class PersonSorter extends ViewerSorter
 				else
 					return this.compare(AddressFormatter.getInstance().formatCityLine(a2), city1);
 			}
-			case 6:
+			case 7:
 			{
 				if (asc)
 					return this.compare(p1.getPhone(), "");
 				else
 					return this.compare("", p1.getPhone());
 			}
-			case 7:
+			case 8:
 			{
 				LinkPersonAddress link1 = p1.getDefaultLink();
 
@@ -168,7 +184,7 @@ public class PersonSorter extends ViewerSorter
 				else
 					return this.compare(phone2, phone1);
 			}
-			case 8:
+			case 9:
 			{
 				LinkPersonAddress link1 = p1.getDefaultLink();
 
@@ -180,7 +196,7 @@ public class PersonSorter extends ViewerSorter
 				else
 					return this.compare(email2, email1);
 			}
-			case 9:
+			case 10:
 			{
 				if (asc)
 					return this.compareDomain(p1, null);
@@ -228,11 +244,21 @@ public class PersonSorter extends ViewerSorter
 				LinkPersonAddress link2 = p2.getDefaultLink();
 
 				if (this.asc)
-					return this.compareOrganisation(link1.getAddress(), link2.getAddress());
+					return link1.getAddress().getId().compareTo(link2.getAddress().getId());
 				else
-					return this.compareOrganisation(link2.getAddress(), link1.getAddress());
+					return link2.getAddress().getId().compareTo(link1.getAddress().getId());
 			}
 			case 4:
+			{
+				LinkPersonAddress link1 = p1.getDefaultLink();
+				LinkPersonAddress link2 = p2.getDefaultLink();
+
+				if (this.asc)
+					return this.compareOrganization(link1.getAddress(), link2.getAddress());
+				else
+					return this.compareOrganization(link2.getAddress(), link1.getAddress());
+			}
+			case 5:
 			{
 				LinkPersonAddress link1 = p1.getDefaultLink();
 				LinkPersonAddress link2 = p2.getDefaultLink();
@@ -242,7 +268,7 @@ public class PersonSorter extends ViewerSorter
 				else
 					return this.compareAddress(link2, link1);
 			}
-			case 5:
+			case 6:
 			{
 				LinkPersonAddress link1 = p1.getDefaultLink();
 				LinkPersonAddress link2 = p2.getDefaultLink();
@@ -254,14 +280,14 @@ public class PersonSorter extends ViewerSorter
 				else
 					return this.compare(city2, city1);
 			}
-			case 6:
+			case 7:
 			{
 				if (this.asc)
 					return this.compare(p1.getPhone(), p2.getPhone());
 				else
 					return this.compare(p2.getPhone(), p1.getPhone());
 			}
-			case 7:
+			case 8:
 			{
 				LinkPersonAddress link1 = p1.getDefaultLink();
 				LinkPersonAddress link2 = p2.getDefaultLink();
@@ -276,7 +302,7 @@ public class PersonSorter extends ViewerSorter
 				else
 					return this.compare(phone2, phone1);
 			}
-			case 8:
+			case 9:
 			{
 
 				LinkPersonAddress link1 = p1.getDefaultLink();
@@ -292,7 +318,7 @@ public class PersonSorter extends ViewerSorter
 				else
 					return this.compare(email2, email1);
 			}
-			case 9:
+			case 10:
 			{
 				if (this.asc)
 					return this.compareDomain(p1, p2);
@@ -397,7 +423,7 @@ public class PersonSorter extends ViewerSorter
 			return -1;
 	}
 
-	private int compareOrganisation(final Address a1, final Address a2)
+	private int compareOrganization(final Address a1, final Address a2)
 	{
 		int compare = this.compare(a1.getName(), a2.getName());
 		if (compare == 0)

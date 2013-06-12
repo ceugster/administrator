@@ -37,6 +37,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -200,7 +201,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 	private FormattedText fax;
 
-	private Text organisation;
+	private Text organization;
 
 	private Text anotherLine;
 
@@ -666,9 +667,9 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 4;
 
-		this.organisation = formToolkit.createText(composite, "");
-		this.organisation.setLayoutData(gridData);
-		this.organisation.addModifyListener(new ModifyListener()
+		this.organization = formToolkit.createText(composite, "");
+		this.organization.setLayoutData(gridData);
+		this.organization.addModifyListener(new ModifyListener()
 		{
 			@Override
 			public void modifyText(final ModifyEvent e)
@@ -677,7 +678,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 				setDirty(true);
 			}
 		});
-		this.organisation.addFocusListener(new FocusAdapter()
+		this.organization.addFocusListener(new FocusAdapter()
 		{
 			@Override
 			public void focusGained(final FocusEvent e)
@@ -872,13 +873,31 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 				setDirty(true);
 			}
 		});
-		this.city.addFocusListener(new FocusAdapter()
+		this.city.addFocusListener(new FocusListener()
 		{
 			@Override
 			public void focusGained(final FocusEvent e)
 			{
 				Text text = (Text) e.getSource();
 				text.setSelection(0, text.getText().length());
+			}
+
+			@Override
+			public void focusLost(final FocusEvent e)
+			{
+				Text text = (Text) e.getSource();
+				String value = text.getText();
+				if (PersonSettings.getInstance().isAddBlankAfterPointInCity())
+				{
+					if (value.contains("."))
+					{
+						if (!value.contains(". "))
+						{
+							value = value.replaceAll(".", ". ");
+							text.setText(value);
+						}
+					}
+				}
 			}
 		});
 		try
@@ -1753,7 +1772,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 		this.firstname.setText(link.getPerson().getFirstname());
 		this.lastname.setText(link.getPerson().getLastname());
-		this.organisation.setText(link.getAddress().getName());
+		this.organization.setText(link.getAddress().getName());
 		this.anotherLine.setText(link.getPerson().getAnotherLine());
 		this.address.setText(link.getAddress().getAddress());
 		this.pob.setText(link.getAddress().getPob());
@@ -1946,7 +1965,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 		link.getPerson().setFirstname(firstname.getText());
 		link.getPerson().setLastname(lastname.getText());
-		link.getAddress().setName(organisation.getText());
+		link.getAddress().setName(organization.getText());
 		link.getPerson().setAnotherLine(anotherLine.getText());
 		link.getAddress().setAddress(address.getText());
 		link.getAddress().setPob(pob.getText());
@@ -2062,7 +2081,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 	@Override
 	public void setFocus()
 	{
-		this.organisation.setFocus();
+		this.organization.setFocus();
 	}
 
 	private void updateLastnameDecoration()
@@ -2142,7 +2161,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 						}
 						else if (variable.equals("${organisation}"))
 						{
-							line = line.replace(variable, this.organisation.getText());
+							line = line.replace(variable, this.organization.getText());
 						}
 						else if (variable.equals("${firstname}"))
 						{

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -17,6 +18,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
@@ -71,7 +73,6 @@ import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Membership;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Person;
-import ch.eugster.events.person.views.CriteriaChangedEvent;
 import ch.eugster.events.person.views.ICriteriaChangedListener;
 import ch.eugster.events.person.views.LinkSearcher;
 import ch.eugster.events.person.views.PersonSorter;
@@ -146,18 +147,32 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	@SuppressWarnings("unchecked")
 	private void addParticipants(final StructuredSelection selectedLinks)
 	{
-		Iterator<LinkPersonAddress> iterator = selectedLinks.iterator();
-		while (iterator.hasNext())
+		List<LinkPersonAddress> links = selectedLinks.toList();
+		for (LinkPersonAddress link : links)
 		{
-			LinkPersonAddress link = iterator.next();
-			Participant participant = Participant.newInstance(link, this.booking);
-			this.root.addParticipant(participant);
+			if (canAdd(1))
+			{
+				Participant participant = Participant.newInstance(link, this.booking);
+				this.root.addParticipant(participant);
+			}
+			else
+			{
+				MessageDialog.openWarning(this.getShell(), "Teilnehmerzahl überschritten",
+						"Es können keine weiteren Teilnehmer erfasst werden, da die maximale Anzahl erreicht ist.");
+			}
 		}
 	}
 
 	public void addSelectionChangedListener(final ISelectionChangedListener listener)
 	{
 		this.selectionChangedListeners.add(listener);
+	}
+
+	private boolean canAdd(final int count)
+	{
+		int max = booking.getCourse().getMaxParticipants();
+		int existing = booking.getCourse().getParticipantsCount();
+		return count + existing <= max;
 	}
 
 	@Override
@@ -309,12 +324,11 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		this.searcher.addCriteriaChangedListener(new ICriteriaChangedListener()
 		{
 			@Override
-			public void criteriaChanged(final CriteriaChangedEvent event)
+			public void criteriaChanged(final AbstractEntity[] entities)
 			{
 				Collection<LinkPersonAddress> revisedLinks = new ArrayList<LinkPersonAddress>();
-				AbstractEntity[] persons = event.getResult();
 				ViewerRoot root = (ViewerRoot) ParticipantWizardPage.this.participantViewer.getInput();
-				for (AbstractEntity entity : persons)
+				for (AbstractEntity entity : entities)
 				{
 					if (entity instanceof Person)
 					{
@@ -1062,7 +1076,11 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 						val = val.isEmpty() ? "0" : val;
 						try
 						{
-							Integer.valueOf(val);
+							Integer count = Integer.valueOf(val);
+							if (!canAdd(count.intValue()))
+							{
+								return "Die Teilnehmerzahl ist überschritten.";
+							}
 						}
 						catch (NumberFormatException e)
 						{
@@ -1084,10 +1102,13 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			protected void setValue(final Object element, final Object value)
 			{
-				Participant participant = (Participant) element;
-				participant.setCount(Integer.valueOf(value.toString()).intValue());
-				participantViewer.update(participant, null);
-				setPageComplete(true);
+				if (value != null)
+				{
+					Participant participant = (Participant) element;
+					participant.setCount(Integer.valueOf(value.toString()).intValue());
+					participantViewer.update(participant, null);
+					setPageComplete(true);
+				}
 			}
 
 		});
@@ -1515,6 +1536,17 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		public Participant getDefaultParticipant()
 		{
 			return this.defaultParticipant;
+		}
+
+		public int getParticipantCount()
+		{
+			int count = 0;
+			Collection<Participant> participants = getParticipants();
+			for (Participant participant : participants)
+			{
+				count += participant.getCount();
+			}
+			return count;
 		}
 
 		public Collection<Participant> getParticipants()

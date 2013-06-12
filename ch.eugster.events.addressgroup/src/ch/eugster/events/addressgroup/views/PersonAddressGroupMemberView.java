@@ -190,6 +190,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		this.addressGroupViewer.addCheckStateListener(this);
 		this.addressGroupViewer.addTreeListener(this);
 
+		this.domainViewer.addSelectionChangedListener(this);
 	}
 
 	@Override
@@ -251,6 +252,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 			this.current.clear();
 
 			Collection<AddressGroupMember> members = null;
+
 			if (this.parent instanceof LinkPersonAddress)
 			{
 				AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
@@ -271,43 +273,40 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 					this.current.put(addressGroupMember.getAddressGroup().getId(), addressGroupMember);
 				}
 			}
-		}
 
-		if (service != null)
-		{
-			DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
-			Collection<Domain> domains = query.selectAll();
-			domainViewer.setInput(domains.toArray(new Domain[0]));
-		}
-		this.domainViewer.addSelectionChangedListener(this);
-
-		Domain domain = null;
-		if (this.parent instanceof LinkPersonAddress)
-		{
-			LinkPersonAddress link = (LinkPersonAddress) this.parent;
-			if (link.getPerson().getDomain() != null)
+			if (this.parent == null)
 			{
-				domain = link.getPerson().getDomain();
+				domainViewer.setInput(new Domain[] { Domain.newInstance() });
 			}
-		}
-		else
-		{
-			if (User.getCurrent() != null)
+			else
 			{
-				if (User.getCurrent().getDomain() != null)
+				DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
+				Collection<Domain> domains = query.selectAll();
+				domainViewer.setInput(domains.toArray(new Domain[0]));
+			}
+
+			Domain domain = Domain.newInstance();
+			if (this.parent instanceof LinkPersonAddress)
+			{
+				LinkPersonAddress link = (LinkPersonAddress) this.parent;
+				if (link.getPerson().getDomain() != null)
 				{
-					domain = User.getCurrent().getDomain();
+					domain = link.getPerson().getDomain();
 				}
 			}
-		}
-		if (domain != null)
-		{
+			else
+			{
+				if (User.getCurrent() != null)
+				{
+					if (User.getCurrent().getDomain() != null)
+					{
+						domain = User.getCurrent().getDomain();
+					}
+				}
+			}
+
 			this.domainViewer.setSelection(new StructuredSelection(domain));
 			this.checkCategory(domain);
-		}
-		else
-		{
-			this.domainViewer.setSelection(new StructuredSelection());
 		}
 		this.setDirty(false);
 	}
@@ -333,8 +332,12 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 				{
 					this.parent = (Address) ssel.getFirstElement();
 				}
-				reset();
 			}
+			else
+			{
+				this.parent = null;
+			}
+			reset();
 		}
 	}
 
@@ -347,7 +350,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 			StructuredSelection ssel = (StructuredSelection) comboViewer.getSelection();
 			if (ssel.isEmpty())
 			{
-				this.addressGroupViewer.setInput(null);
+				this.addressGroupViewer.setInput(Domain.newInstance());
 			}
 			else
 			{

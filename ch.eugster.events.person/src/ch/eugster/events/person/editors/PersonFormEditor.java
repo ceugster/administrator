@@ -9,15 +9,10 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.formatters.PersonFormatter;
-import ch.eugster.events.persistence.model.AddressType;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
-import ch.eugster.events.persistence.queries.AddressTypeQuery;
-import ch.eugster.events.persistence.service.ConnectionService;
-import ch.eugster.events.person.Activator;
 import ch.eugster.events.person.views.PersonFormEditorContentOutlinePage;
 import ch.eugster.events.ui.editors.AbstractEntityFormEditor;
 
@@ -86,7 +81,7 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 
 	protected Person getPerson()
 	{
-		return ((PersonEditorInput) this.getEditorInput()).getEntity().getPerson();
+		return ((PersonEditorInput) this.getEditorInput()).getEntity();
 	}
 
 	@Override
@@ -100,31 +95,15 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 	@Override
 	public boolean isDirty()
 	{
-		IFormPage page = this.findPage("person.page");
-		if (page != null && page.isDirty())
+		Collection<IFormPage> pages = this.getPages();
+		for (IFormPage page : pages)
 		{
-			return true;
-		}
-
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
-		{
-			AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
-			Collection<AddressType> addressTypes = query.selectAll(true);
-			for (AddressType addressType : addressTypes)
+			if (page != null && page.isDirty())
 			{
-				page = this.findPage("link.page." + addressType.getId().toString());
-				if (page != null && page.isDirty())
-				{
-					return true;
-				}
+				return true;
 			}
 		}
-		tracker.close();
-		return dirty;
+		return false;
 	}
 
 	@Override
@@ -158,47 +137,32 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 	protected void reset()
 	{
 		Collection<Object> pagesToRemove = new ArrayList<Object>();
-		for (Object page : this.pages)
+		Collection<IFormPage> pages = this.getPages();
+		for (IFormPage page : pages)
 		{
-			if (page instanceof FormEditorPersonPage)
+			if (page != null)
 			{
-				FormEditorPersonPage formPage = (FormEditorPersonPage) page;
-				if (formPage.getManagedForm() != null)
-				{
-					formPage.getManagedForm().getForm().setText(this.getEditorInput().getName());
-					formPage.loadValues();
-					formPage.setDirty(false);
-				}
-			}
-			else if (page instanceof FormEditorLinkPage)
-			{
-				FormEditorLinkPage formPage = (FormEditorLinkPage) page;
-				if (formPage.getLink().getId() == null)
+				LinkPersonAddress link = (LinkPersonAddress) page.getAdapter(LinkPersonAddress.class);
+				if (link != null && link.getId() == null)
 				{
 					pagesToRemove.add(page);
 				}
-				else
+				else if (page.getManagedForm() != null)
 				{
-					if (formPage.getManagedForm() != null)
+					page.getManagedForm().getForm().setText(this.getEditorInput().getName());
+					if (page instanceof Saveable)
 					{
-						formPage.getManagedForm().getForm().setText(this.getEditorInput().getName());
-						formPage.loadValues();
-						formPage.setDirty(false);
+						Saveable saveable = (Saveable) page;
+						saveable.loadValues();
+						saveable.setDirty(false);
 					}
 				}
-			}
-			else if (page == null)
-			{
-				pagesToRemove.add(page);
 			}
 		}
 		for (Object page : pagesToRemove)
 		{
-			if (page != null)
-			{
-				int index = this.pages.indexOf(page);
-				this.removePage(index);
-			}
+			int index = this.pages.indexOf(page);
+			this.removePage(index);
 		}
 		this.setDirty(false);
 	}
@@ -206,50 +170,17 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 	@Override
 	protected void saveValues()
 	{
-		Person person = getPerson();
-		IFormPage page = this.findPage("person.page");
-		if (page != null && page.isDirty())
+		Collection<IFormPage> pages = this.getPages();
+		for (IFormPage page : pages)
 		{
-			((FormEditorPersonPage) page).saveValues();
-		}
-
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
-		{
-			AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
-			Collection<AddressType> addressTypes = query.selectAll(true);
-			for (AddressType addressType : addressTypes)
+			if (page != null && page.isDirty())
 			{
-				page = this.findPage("link.page." + addressType.getId().toString());
-				if (page == null)
+				if (page instanceof Saveable)
 				{
-					Collection<LinkPersonAddress> links = person.getLinks();
-					for (LinkPersonAddress link : links)
-					{
-						if (link.getAddressType().getId().equals(addressType.getId()))
-						{
-							link.setDeleted(true);
-						}
-					}
-				}
-				else
-				{
-					if (page.isDirty() && page instanceof FormEditorLinkPage)
-					{
-						FormEditorLinkPage linkPage = (FormEditorLinkPage) page;
-						linkPage.saveValues();
-						if (!person.getLinks().contains(linkPage.getLink()))
-						{
-							person.getLinks().add(linkPage.getLink());
-						}
-					}
+					((Saveable) page).saveValues();
 				}
 			}
 		}
-		tracker.close();
 	}
 
 	@Override
@@ -263,43 +194,21 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 	protected boolean validate()
 	{
 		boolean valid = true;
-		IFormPage page = this.findPage("person.page");
-		if (page != null && page.isDirty())
+		Collection<IFormPage> pages = this.getPages();
+		for (IFormPage page : pages)
 		{
-			valid = ((FormEditorPersonPage) page).validate();
-			if (!valid)
+			if (page != null && page.isDirty())
 			{
-				this.setActivePage(page.getId());
-			}
-		}
-
-		if (valid)
-		{
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
-			tracker.open();
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
-			{
-				AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
-				Collection<AddressType> addressTypes = query.selectAll(true);
-				for (AddressType addressType : addressTypes)
+				if (page instanceof Validateable)
 				{
-					page = this.findPage("link.page." + addressType.getId().toString());
-					if (page != null && page.isDirty())
+					valid = ((Validateable) page).validate();
+					if (!valid)
 					{
-						if (valid)
-						{
-							valid = ((FormEditorLinkPage) page).validate();
-							if (!valid)
-							{
-								this.setActivePage(page.getId());
-							}
-						}
+						this.setActivePage(page.getId());
+						return false;
 					}
 				}
 			}
-			tracker.close();
 		}
 		return valid;
 	}

@@ -5,8 +5,11 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -39,15 +42,11 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 
 	private Text polite;
 
+	private Button showAddressNameForPersons;
+
 	public AddressSalutationEditor()
 	{
 		EntityMediator.addListener(AddressSalutation.class, this);
-	}
-
-	@Override
-	protected void createSections(ScrolledForm parent)
-	{
-		this.createSalutationSection();
 	}
 
 	private void createSalutationSection()
@@ -68,14 +67,20 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 		this.salutationSection.addExpansionListener(new ExpansionAdapter()
 		{
 			@Override
-			public void expansionStateChanged(ExpansionEvent e)
+			public void expansionStateChanged(final ExpansionEvent e)
 			{
 				AddressSalutationEditor.this.scrolledForm.reflow(true);
 			}
 		});
 	}
 
-	private Control fillTitleSection(Section parent)
+	@Override
+	protected void createSections(final ScrolledForm parent)
+	{
+		this.createSalutationSection();
+	}
+
+	private Control fillTitleSection(final Section parent)
 	{
 		Composite composite = this.formToolkit.createComposite(parent);
 		composite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
@@ -89,7 +94,7 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 		this.salutation.addModifyListener(new ModifyListener()
 		{
 			@Override
-			public void modifyText(ModifyEvent e)
+			public void modifyText(final ModifyEvent e)
 			{
 				AddressSalutationEditor.this.setDirty(true);
 			}
@@ -97,7 +102,7 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 		this.salutation.addFocusListener(new FocusAdapter()
 		{
 			@Override
-			public void focusGained(FocusEvent e)
+			public void focusGained(final FocusEvent e)
 			{
 				Text text = (Text) e.getSource();
 				text.setSelection(0, text.getText().length());
@@ -112,7 +117,7 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 		this.polite.addModifyListener(new ModifyListener()
 		{
 			@Override
-			public void modifyText(ModifyEvent e)
+			public void modifyText(final ModifyEvent e)
 			{
 				AddressSalutationEditor.this.setDirty(true);
 			}
@@ -120,10 +125,31 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 		this.polite.addFocusListener(new FocusAdapter()
 		{
 			@Override
-			public void focusGained(FocusEvent e)
+			public void focusGained(final FocusEvent e)
 			{
 				Text text = (Text) e.getSource();
 				text.setSelection(0, text.getText().length());
+			}
+		});
+
+		label = this.formToolkit.createLabel(composite, "", SWT.NONE);
+		label.setLayoutData(new GridData());
+
+		this.showAddressNameForPersons = this.formToolkit.createButton(composite,
+				"Organisation bei Personen verwenden", SWT.CHECK);
+		this.showAddressNameForPersons.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.showAddressNameForPersons.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent e)
+			{
+				widgetSelected(e);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent e)
+			{
+				AddressSalutationEditor.this.setDirty(true);
 			}
 		});
 
@@ -133,7 +159,7 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 	}
 
 	@Override
-	protected Message getMessage(ErrorCode errorCode)
+	protected Message getMessage(final ErrorCode errorCode)
 	{
 		return null;
 	}
@@ -164,7 +190,19 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 		AddressSalutation salutation = input.getEntity();
 		this.salutation.setText(salutation.getSalutation());
 		this.polite.setText(salutation.getPolite());
+		this.showAddressNameForPersons.setSelection(salutation.isShowAddressNameForPersons());
 		this.setDirty(false);
+	}
+
+	@Override
+	public void postDelete(final AbstractEntity entity)
+	{
+		AddressSalutationEditorInput input = (AddressSalutationEditorInput) this.getEditorInput();
+		AddressSalutation salutation = input.getEntity();
+		if (salutation.getId() != null && salutation.getId().equals(entity.getId()))
+		{
+			this.getEditorSite().getPage().closeEditor(this, false);
+		}
 	}
 
 	@Override
@@ -174,18 +212,7 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 		AddressSalutation salutation = input.getEntity();
 		salutation.setSalutation(this.salutation.getText());
 		salutation.setPolite(this.polite.getText());
-	}
-
-	@Override
-	protected boolean validate()
-	{
-		return true;
-	}
-
-	@Override
-	protected boolean validateType(AbstractEntityEditorInput<AddressSalutation> input)
-	{
-		return input.getEntity() instanceof AddressSalutation;
+		salutation.setShowAddressNameForPersons(this.showAddressNameForPersons.getSelection());
 	}
 
 	@Override
@@ -195,13 +222,14 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 	}
 
 	@Override
-	public void postDelete(AbstractEntity entity)
+	protected boolean validate()
 	{
-		AddressSalutationEditorInput input = (AddressSalutationEditorInput) this.getEditorInput();
-		AddressSalutation salutation = input.getEntity();
-		if (salutation.getId() != null && salutation.getId().equals(entity.getId()))
-		{
-			this.getEditorSite().getPage().closeEditor(this, false);
-		}
+		return true;
+	}
+
+	@Override
+	protected boolean validateType(final AbstractEntityEditorInput<AddressSalutation> input)
+	{
+		return input.getEntity() instanceof AddressSalutation;
 	}
 }

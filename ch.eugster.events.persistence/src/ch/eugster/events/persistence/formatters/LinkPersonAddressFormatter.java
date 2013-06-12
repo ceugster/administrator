@@ -39,9 +39,17 @@ public class LinkPersonAddressFormatter extends AbstractFormatter
 					labelFormat = labelFormat.replace(variable, link.getPerson().getTitle() == null ? "" : link
 							.getPerson().getTitle().getTitle());
 				}
-				else if (variable.equals("${organisation}"))
+				else if (variable.equals("${organization}"))
 				{
-					labelFormat = labelFormat.replace(variable, link.getAddress().getName());
+					if (link.getAddress().getSalutation() == null
+							|| link.getAddress().getSalutation().isShowAddressNameForPersons())
+					{
+						labelFormat = labelFormat.replace(variable, link.getAddress().getName());
+					}
+					else
+					{
+						labelFormat = labelFormat.replace(variable, "");
+					}
 				}
 				else if (variable.equals("${firstname}"))
 				{

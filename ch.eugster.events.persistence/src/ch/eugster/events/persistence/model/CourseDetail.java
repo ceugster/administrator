@@ -29,7 +29,7 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "deleted", column = @Column(name = "course_detail_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "course_detail_version")) })
 @Customizer(DeletedFilter.class)
-public class CourseDetail extends AbstractEntity
+public class CourseDetail extends AbstractEntity implements Comparable<CourseDetail>
 {
 	/**
 	 * References
@@ -93,6 +93,29 @@ public class CourseDetail extends AbstractEntity
 	{
 		super();
 		this.setCourse(course);
+	}
+
+	@Override
+	public int compareTo(final CourseDetail other)
+	{
+		Calendar thisStart = this.isWithSubstituteDate() ? this.getSubstituteStart() : this.getStart();
+		Calendar otherStart = other.isWithSubstituteDate() ? other.getSubstituteStart() : other.getStart();
+		if (thisStart == null && otherStart == null)
+		{
+			return 0;
+		}
+		else if (thisStart != null && otherStart != null)
+		{
+			return thisStart.getTime().compareTo(otherStart.getTime());
+		}
+		else if (thisStart == null)
+		{
+			return -1;
+		}
+		else
+		{
+			return 1;
+		}
 	}
 
 	public CourseDetail copy()

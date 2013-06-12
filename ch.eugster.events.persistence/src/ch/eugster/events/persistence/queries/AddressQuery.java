@@ -36,13 +36,13 @@ public class AddressQuery extends AbstractEntityQuery<Address>
 
 	private Expression createCriteriaExpression(final Map<String, String> criteria)
 	{
-		Expression organisation = null, street = null, city = null, phone = null, email = null;
+		Expression organization = null, street = null, city = null, phone = null, email = null;
 		Set<Entry<String, String>> entries = criteria.entrySet();
 		for (Entry<String, String> entry : entries)
 		{
-			if (entry.getKey().equals("organisation"))
+			if (entry.getKey().equals("organization"))
 			{
-				organisation = getOrganisationExpression(entry.getValue());
+				organization = getOrganizationExpression(entry.getValue());
 			}
 			else if (entry.getKey().equals("address"))
 			{
@@ -64,9 +64,9 @@ public class AddressQuery extends AbstractEntityQuery<Address>
 
 		Expression whole = this.getNoLinksExpression();
 
-		if (organisation != null)
+		if (organization != null)
 		{
-			whole = whole.and(organisation);
+			whole = whole.and(organization);
 		}
 		if (street != null)
 		{
@@ -137,7 +137,7 @@ public class AddressQuery extends AbstractEntityQuery<Address>
 		return new ExpressionBuilder(Address.class).isEmpty("links");
 	}
 
-	private Expression getOrganisationExpression(final String value)
+	private Expression getOrganizationExpression(final String value)
 	{
 		return new ExpressionBuilder().get("name").containsSubstringIgnoringCase(value);
 	}

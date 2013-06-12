@@ -18,6 +18,8 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 
 	private Date date;
 
+	private int min;
+
 	private int max;
 
 	private int booked;
@@ -100,6 +102,11 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 		return max;
 	}
 
+	public int getMin()
+	{
+		return min;
+	}
+
 	public String getName()
 	{
 		return name;
@@ -128,6 +135,7 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 		this.payed = 0D;
 		this.provisional = 0;
 		this.waitingList = 0;
+		this.min = course.getMinParticipants();
 		this.max = course.getMaxParticipants();
 		this.code = course.getCode();
 		this.name = course.getTitle();

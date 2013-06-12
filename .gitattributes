@@ -1046,9 +1046,11 @@ ch.eugster.events.person/src/ch/eugster/events/person/editors/PersonTitleEditor.
 ch.eugster.events.person/src/ch/eugster/events/person/editors/PersonTitleEditorInput.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/ProvinceLabelProvider.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/ProvinceSorter.java -text
+ch.eugster.events.person/src/ch/eugster/events/person/editors/Saveable.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/TitleComboViewerContentProvider.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/TitleComboViewerLabelProvider.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/TitleComboViewerSorter.java -text
+ch.eugster.events.person/src/ch/eugster/events/person/editors/Validateable.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/ActivatePersonViewHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/AddAddressHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/AddFieldExtensionHandler.java -text

@@ -36,9 +36,9 @@ public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddres
 			{
 				firstname = getFirstnameExpression(entry.getValue());
 			}
-			else if (entry.getKey().equals("organisation"))
+			else if (entry.getKey().equals("organization"))
 			{
-				firstname = getOrganisationExpression(entry.getValue());
+				firstname = getOrganizationExpression(entry.getValue());
 			}
 			else if (entry.getKey().equals("address"))
 			{
@@ -225,7 +225,7 @@ public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddres
 		return new ExpressionBuilder().get("person").get("lastname").containsSubstringIgnoringCase(value);
 	}
 
-	private Expression getOrganisationExpression(final String value)
+	private Expression getOrganizationExpression(final String value)
 	{
 		return new ExpressionBuilder().get("address").get("name").containsSubstringIgnoringCase(value);
 	}

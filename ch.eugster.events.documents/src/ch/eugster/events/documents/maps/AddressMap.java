@@ -217,7 +217,7 @@ public class AddressMap extends AbstractDataMap
 			{
 				case NAME:
 				{
-					return "Name";
+					return "Organisation";
 				}
 				case ANOTHER_LINE:
 				{

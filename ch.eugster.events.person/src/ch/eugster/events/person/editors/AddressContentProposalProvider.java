@@ -20,15 +20,16 @@ public class AddressContentProposalProvider implements IContentProposalProvider
 {
 	private final FormEditorLinkPage editorPage;
 
-	public AddressContentProposalProvider(FormEditorLinkPage editorPage)
+	public AddressContentProposalProvider(final FormEditorLinkPage editorPage)
 	{
 		this.editorPage = editorPage;
 	}
 
-	private boolean addressExists(LinkPersonAddress link)
+	private boolean addressExists(final LinkPersonAddress link)
 	{
 		boolean exists = false;
-		Person person = this.editorPage.getLink().getPerson();
+		PersonEditorInput input = (PersonEditorInput) this.editorPage.getEditor().getEditorInput();
+		Person person = input.getEntity();
 		if (person.getId() != null && person.getId().equals(link.getPerson().getId()))
 		{
 			Collection<IFormPage> pages = editorPage.getEditor().getPages();
@@ -54,7 +55,7 @@ public class AddressContentProposalProvider implements IContentProposalProvider
 	}
 
 	@Override
-	public IContentProposal[] getProposals(String contents, int position)
+	public IContentProposal[] getProposals(final String contents, final int position)
 	{
 		AddressContentProposal[] proposals = new AddressContentProposal[0];
 		if (position > 3)

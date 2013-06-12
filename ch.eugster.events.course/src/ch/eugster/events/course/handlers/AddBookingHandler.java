@@ -9,6 +9,8 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Shell;
@@ -30,7 +32,7 @@ public class AddBookingHandler extends AbstractHandler implements IHandler
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException
+	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
 		EvaluationContext context = (EvaluationContext) event.getApplicationContext();
 		StructuredSelection ssel = (StructuredSelection) context.getParent().getVariable("selection");
@@ -90,7 +92,23 @@ public class AddBookingHandler extends AbstractHandler implements IHandler
 				dialog.open();
 			}
 		}
-		return null;
+		return Status.OK_STATUS;
+	}
+
+	@Override
+	public void setEnabled(final Object evaluationContext)
+	{
+		EvaluationContext context = (EvaluationContext) evaluationContext;
+		Object sel = context.getVariable("selection");
+		if (sel instanceof IStructuredSelection)
+		{
+			IStructuredSelection ssel = (IStructuredSelection) sel;
+			if (ssel.getFirstElement() instanceof Course)
+			{
+				Course course = (Course) ssel.getFirstElement();
+				setBaseEnabled(course.getParticipantsCount() < course.getMaxParticipants());
+			}
+		}
 	}
 
 }

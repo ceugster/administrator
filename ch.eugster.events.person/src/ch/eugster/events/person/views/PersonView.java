@@ -24,6 +24,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -157,13 +158,20 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 		this.searcher.addCriteriaChangedListener(new ICriteriaChangedListener()
 		{
 			@Override
-			public void criteriaChanged(final CriteriaChangedEvent event)
+			public void criteriaChanged(final AbstractEntity[] entities)
 			{
-				AbstractEntity[] entities = event.getResult();
-				PersonView.this.viewer.setInput(new ContentRoot(entities));
-				PersonView.this.viewer.expandAll();
-				PersonView.this.packColumns();
-				PersonView.this.found.setText("Gefunden: " + event.getResult().length);
+				Display.getDefault().asyncExec(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						System.out.println("Anzahl: " + entities.length);
+						PersonView.this.viewer.setInput(new ContentRoot(entities));
+						PersonView.this.viewer.expandAll();
+						PersonView.this.packColumns();
+						PersonView.this.found.setText("Gefunden: " + entities.length);
+					}
+				});
 			}
 		});
 
@@ -413,28 +421,84 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			public void update(final ViewerCell cell)
 			{
 				boolean deleted = false;
+				Address address = null;
+				Image image = null;
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
-					cell.setText(person.getDefaultLink().getAddress().getName());
+					address = person.getDefaultLink().getAddress();
+					image = person.getDefaultLink().getAddressType().getImage();
 					deleted = person.isDeleted();
 				}
 				else if (object instanceof Address)
 				{
-					Address address = (Address) object;
-					if (!address.getName().isEmpty())
-					{
-						cell.setText(address.getName());
-					}
+					address = (Address) object;
+					image = Activator.getDefault().getImageRegistry().get(Activator.KEY_ADDRESS);
 					deleted = address.isDeleted();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					link.getAddress().getName();
+					address = link.getAddress();
+					image = link.getAddressType().getImage();
 					deleted = link.isDeleted();
 				}
+				cell.setText(AddressFormatter.getInstance().formatId(address));
+				cell.setImage(image);
+				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+			}
+		});
+		treeColumn = treeViewerColumn.getColumn();
+		treeColumn.setText("Adresse");
+		treeColumn.setResizable(true);
+		treeColumn.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent event)
+			{
+				this.widgetSelected(event);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent event)
+			{
+				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
+				sorter.setCurrentColumn(3);
+				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
+				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
+				PersonView.this.viewer.refresh();
+			}
+		});
+
+		treeViewerColumn = new TreeViewerColumn(this.viewer, SWT.LEFT);
+		treeViewerColumn.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public void update(final ViewerCell cell)
+			{
+				boolean deleted = false;
+				String name = "";
+				Object object = cell.getElement();
+				if (object instanceof Person)
+				{
+					Person person = (Person) object;
+					name = person.getDefaultLink().getAddress().getName();
+					deleted = person.isDeleted();
+				}
+				else if (object instanceof Address)
+				{
+					Address address = (Address) object;
+					name = address.getName();
+					deleted = address.isDeleted();
+				}
+				else if (object instanceof LinkPersonAddress)
+				{
+					LinkPersonAddress link = (LinkPersonAddress) object;
+					name = link.getAddress().getName();
+					deleted = link.isDeleted();
+				}
+				cell.setText(name);
 				cell.setImage(null);
 				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			}
@@ -468,29 +532,29 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			public void update(final ViewerCell cell)
 			{
 				boolean deleted = false;
+				String address = "";
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
-					cell.setText(person.getDefaultLink() == null ? "" : AddressFormatter.getInstance()
-							.formatAddressLine(person.getDefaultLink().getAddress()));
-					cell.setImage(person.getDefaultLink().getAddressType().getImage());
+					address = person.getDefaultLink() == null ? "" : AddressFormatter.getInstance().formatAddressLine(
+							person.getDefaultLink().getAddress());
 					deleted = person.isDeleted();
 				}
 				else if (object instanceof Address)
 				{
-					Address address = (Address) object;
-					cell.setText(AddressFormatter.getInstance().formatAddressLine(address));
-					cell.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_ADDRESS));
-					deleted = address.isDeleted();
+					Address a = (Address) object;
+					address = AddressFormatter.getInstance().formatAddressLine(a);
+					deleted = a.isDeleted();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(AddressFormatter.getInstance().formatAddressLine(link.getAddress()));
-					cell.setImage(link.getAddressType().getImage());
+					address = AddressFormatter.getInstance().formatAddressLine(link.getAddress());
 					deleted = link.isDeleted();
 				}
+				cell.setText(address);
+				cell.setImage(null);
 				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			}
 		});

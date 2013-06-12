@@ -37,7 +37,7 @@ public enum EditorSelector
 			}
 			case MULTI_PAGE_EDITOR:
 			{
-				return new PersonEditorInput(link);
+				return new PersonEditorInput(link.getPerson());
 			}
 			default:
 			{

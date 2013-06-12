@@ -99,7 +99,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
-public class FormEditorPersonPage extends FormPage
+public class FormEditorPersonPage extends FormPage implements Validateable, Saveable
 {
 	private static final String ID = FormEditorPersonPage.class.getName();
 
@@ -238,8 +238,7 @@ public class FormEditorPersonPage extends FormPage
 						{
 							try
 							{
-								LinkPersonAddress l = ((PersonEditorInput) getEditor().getEditorInput()).getEntity();
-								Person person = l.getPerson();
+								Person person = ((PersonEditorInput) getEditor().getEditorInput()).getEntity();
 								Address address = Address.newInstance();
 								LinkPersonAddress link = LinkPersonAddress.newInstance(person, address);
 								link.setAddressType(addressType);
@@ -273,11 +272,10 @@ public class FormEditorPersonPage extends FormPage
 						{
 							try
 							{
-								LinkPersonAddress l = ((PersonEditorInput) getEditor().getEditorInput()).getEntity();
-								Person person = l.getPerson();
-								LinkPersonAddress link = LinkPersonAddress.newInstance(person);
+								Person person = ((PersonEditorInput) getEditor().getEditorInput()).getEntity();
+								Address address = Address.newInstance();
+								LinkPersonAddress link = LinkPersonAddress.newInstance(person, address);
 								link.setAddressType(addressType);
-								link.setAddress(Address.newInstance());
 								page = new FormEditorLinkPage(getEditor(), FormEditorPersonPage.this, id, link);
 								getEditor().addPage(page);
 								getEditor().setActivePage(page.getId());
@@ -379,8 +377,10 @@ public class FormEditorPersonPage extends FormPage
 					StringBuilder editValue = new StringBuilder();
 					String value = FormEditorPersonPage.this.phone.getText().trim();
 					value = removeSpaces(value);
+					boolean dirty = isDirty();
 					FormEditorPersonPage.this.phone.setText(value);
 					FormEditorPersonPage.this.phone.setSelection(0, FormEditorPersonPage.this.phone.getText().length());
+					setDirty(dirty);
 				}
 			}
 
@@ -401,7 +401,10 @@ public class FormEditorPersonPage extends FormPage
 							{
 								PhoneNumber phoneNumber = phoneUtil.parse(phoneString, country.getIso3166alpha2());
 								phoneString = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
+								boolean dirty = isDirty();
 								phone.setText(phoneString);
+								setDirty(dirty);
+
 							}
 							catch (NumberParseException ex)
 							{
@@ -744,6 +747,14 @@ public class FormEditorPersonPage extends FormPage
 		{
 			control.setBackground(client.getBackground());
 		}
+		this.formRadioGroupViewer.addSelectionChangedListener(new ISelectionChangedListener()
+		{
+			@Override
+			public void selectionChanged(final SelectionChangedEvent event)
+			{
+				FormEditorPersonPage.this.setDirty(true);
+			}
+		});
 
 		label = toolkit.createLabel(client, "Anrede", SWT.NONE);
 		label.setLayoutData(new GridData());
@@ -911,6 +922,16 @@ public class FormEditorPersonPage extends FormPage
 		return section;
 	}
 
+	@Override
+	public Object getAdapter(final Class clazz)
+	{
+		if (clazz.equals(LinkPersonAddress.class))
+		{
+			return this.getEditorInput().getAdapter(LinkPersonAddress.class);
+		}
+		return super.getAdapter(clazz);
+	}
+
 	private AddressType[] getAddressTypes()
 	{
 		Collection<AddressType> addressTypes = null;
@@ -997,7 +1018,7 @@ public class FormEditorPersonPage extends FormPage
 	private Person getPerson()
 	{
 		PersonEditorInput input = (PersonEditorInput) this.getEditor().getEditorInput();
-		return input.getEntity().getPerson();
+		return input.getEntity();
 	}
 
 	public PersonForm getPersonForm()
@@ -1084,13 +1105,14 @@ public class FormEditorPersonPage extends FormPage
 		if (country != null)
 		{
 			this.countryViewer.setSelection(new StructuredSelection(country));
-			String numberString = person.getPhone();
-			if (!numberString.isEmpty())
+			String phoneString = person.getPhone();
+			if (!phoneString.isEmpty())
 			{
 				try
 				{
-					PhoneNumber number = phoneUtil.parse(numberString, country.getIso3166alpha2());
-
+					PhoneNumber phoneNumber = phoneUtil.parse(phoneString, country.getIso3166alpha2());
+					phoneString = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
+					this.phone.setText(phoneString);
 				}
 				catch (NumberParseException e)
 				{
@@ -1177,6 +1199,7 @@ public class FormEditorPersonPage extends FormPage
 		this.lastname.setText(person.getLastname());
 	}
 
+	@Override
 	public void loadValues()
 	{
 		Person person = getPerson();
@@ -1282,6 +1305,7 @@ public class FormEditorPersonPage extends FormPage
 		person.setLastname(this.lastname.getText());
 	}
 
+	@Override
 	public void saveValues()
 	{
 		Person person = getPerson();
@@ -1341,6 +1365,7 @@ public class FormEditorPersonPage extends FormPage
 		return prefixes == null ? new Country[0] : prefixes.toArray(new Country[0]);
 	}
 
+	@Override
 	public void setDirty(final boolean dirty)
 	{
 		if (this.dirty == dirty)
@@ -1420,6 +1445,7 @@ public class FormEditorPersonPage extends FormPage
 		}
 	}
 
+	@Override
 	public boolean validate()
 	{
 		Message msg = null;

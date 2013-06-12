@@ -23,13 +23,78 @@ import ch.eugster.events.ui.Activator;
 public abstract class AbstractEntityFormEditor<T extends AbstractEntity> extends FormEditor implements
 		IPropertyListener
 {
-	protected abstract boolean validate();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.forms.editor.FormEditor#createToolkit(org.eclipse.swt.
+	 * widgets.Display)
+	 */
+	@Override
+	protected FormToolkit createToolkit(final Display display)
+	{
+		return new FormToolkit(Activator.getDefault().getFormColors(display));
+	}
 
-	protected abstract void saveValues();
+	@Override
+	public void doSave(final IProgressMonitor monitor)
+	{
+		if (this.validate())
+		{
+			this.saveValues();
 
-	public abstract void setDirty(boolean dirty);
+			@SuppressWarnings("unchecked")
+			AbstractEntityEditorInput<T> input = (AbstractEntityEditorInput<T>) this.getEditorInput();
+			T entity = input.getEntity();
 
-	public void reset(boolean ask)
+			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class.getName(), null);
+			try
+			{
+				tracker.open();
+				ConnectionService service = (ConnectionService) tracker.getService();
+				if (service != null)
+				{
+					@SuppressWarnings("unchecked")
+					AbstractEntityQuery<T> query = (AbstractEntityQuery<T>) service.getQuery(entity.getClass());
+					input.setEntity(query.merge(entity));
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				setDirty(false);
+				tracker.close();
+			}
+		}
+	}
+
+	@Override
+	public void doSaveAs()
+	{
+	}
+
+	@Override
+	public boolean isSaveAsAllowed()
+	{
+		return false;
+	}
+
+	@Override
+	public void propertyChanged(final Object source, final int propId)
+	{
+		if (propId == PROP_DIRTY)
+		{
+			this.firePropertyChange(IEditorPart.PROP_DIRTY);
+		}
+	}
+
+	protected abstract void reset();
+
+	public void reset(final boolean ask)
 	{
 		if (this.isDirty())
 		{
@@ -46,72 +111,9 @@ public abstract class AbstractEntityFormEditor<T extends AbstractEntity> extends
 		}
 	}
 
-	protected abstract void reset();
+	protected abstract void saveValues();
 
-	@Override
-	public void doSave(IProgressMonitor monitor)
-	{
-		if (this.validate())
-		{
-			this.saveValues();
+	public abstract void setDirty(boolean dirty);
 
-			@SuppressWarnings("unchecked")
-			AbstractEntityEditorInput<T> input = (AbstractEntityEditorInput<T>) this.getEditorInput();
-			T entity = input.getEntity();
-
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
-			tracker.open();
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
-			{
-				@SuppressWarnings("unchecked")
-				AbstractEntityQuery<T> query = (AbstractEntityQuery<T>) service.getQuery(entity.getClass());
-				input.setEntity(query.merge(entity));
-				setDirty(false);
-				// updatePages();
-				// updateContentOutlinePage();
-				if (input.hasParent())
-				{
-					AbstractEntityQuery<? extends AbstractEntity> parentQuery = service.getQuery(input.getParent()
-							.getClass());
-					parentQuery.refresh(input.getParent());
-				}
-			}
-			tracker.close();
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.forms.editor.FormEditor#createToolkit(org.eclipse.swt.
-	 * widgets.Display)
-	 */
-	@Override
-	protected FormToolkit createToolkit(Display display)
-	{
-		return new FormToolkit(Activator.getDefault().getFormColors(display));
-	}
-
-	@Override
-	public void propertyChanged(Object source, int propId)
-	{
-		if (propId == PROP_DIRTY)
-		{
-			this.firePropertyChange(IEditorPart.PROP_DIRTY);
-		}
-	}
-
-	@Override
-	public void doSaveAs()
-	{
-	}
-
-	@Override
-	public boolean isSaveAsAllowed()
-	{
-		return false;
-	}
+	protected abstract boolean validate();
 }
