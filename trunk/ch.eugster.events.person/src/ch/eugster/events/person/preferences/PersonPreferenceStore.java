@@ -31,6 +31,8 @@ public class PersonPreferenceStore extends ScopedPreferenceStore
 				Integer.toString(PersonSettings.getInstance().getEditorSelector()));
 		this.setValue(PreferenceInitializer.KEY_EDITOR_SECTION_BEHAVIOUR,
 				Integer.toString(PersonSettings.getInstance().getEditorSectionBehaviour()));
+		this.setValue(PreferenceInitializer.KEY_EDITOR_ADD_BLANK_AFTER_DOT_IN_CITY,
+				Boolean.toString(PersonSettings.getInstance().isAddBlankAfterPointInCity()));
 	}
 
 	@Override
@@ -51,6 +53,8 @@ public class PersonPreferenceStore extends ScopedPreferenceStore
 			PersonSettings.getInstance().setEditorSelector(this.getInt(PreferenceInitializer.KEY_EDITOR_SELECTOR));
 			PersonSettings.getInstance().setEditorSectionBehaviour(
 					this.getInt(PreferenceInitializer.KEY_EDITOR_SECTION_BEHAVIOUR));
+			PersonSettings.getInstance().setAddBlankAfterPointInCity(
+					this.getBoolean(PreferenceInitializer.KEY_EDITOR_ADD_BLANK_AFTER_DOT_IN_CITY));
 			try
 			{
 				ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),

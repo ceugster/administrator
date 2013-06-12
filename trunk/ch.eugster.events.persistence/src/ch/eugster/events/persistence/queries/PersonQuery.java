@@ -66,9 +66,9 @@ public class PersonQuery extends AbstractEntityQuery<Person>
 			{
 				firstname = getFirstnameExpression(entry.getValue());
 			}
-			else if (entry.getKey().equals("organisation"))
+			else if (entry.getKey().equals("organization"))
 			{
-				firstname = getOrganisationExpression(entry.getValue());
+				firstname = getOrganizationExpression(entry.getValue());
 			}
 			else if (entry.getKey().equals("address"))
 			{
@@ -202,7 +202,7 @@ public class PersonQuery extends AbstractEntityQuery<Person>
 		return new ExpressionBuilder().get("lastname").containsSubstringIgnoringCase(value);
 	}
 
-	private Expression getOrganisationExpression(final String value)
+	private Expression getOrganizationExpression(final String value)
 	{
 		return new ExpressionBuilder().anyOf("links").get("address").get("name").containsSubstringIgnoringCase(value);
 	}

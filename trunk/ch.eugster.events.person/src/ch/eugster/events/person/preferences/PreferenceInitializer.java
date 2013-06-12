@@ -30,6 +30,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 
 	public static final String KEY_EDITOR_SECTION_BEHAVIOUR = "editor.section.behaviour";
 
+	public static final String KEY_EDITOR_ADD_BLANK_AFTER_DOT_IN_CITY = "editor.add.blank.after.dot.in.city";
+
 	public static final String KEY_EDITOR_SELECTOR = "editor.selector";
 
 	public static final String EDITOR_SECTION_BEHAVIOUR_EDITOR = "0";
@@ -60,6 +62,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 		prefs.putInt(KEY_MAX_RECORDS, 100);
 		prefs.put(KEY_EDITOR_SECTION_BEHAVIOUR, EDITOR_SECTION_BEHAVIOUR_EDITOR);
 		prefs.put(KEY_EDITOR_SELECTOR, EditorSelector.SINGLE_PAGE_EDITOR.value());
+		prefs.put(KEY_EDITOR_ADD_BLANK_AFTER_DOT_IN_CITY, "0");
 	}
 
 }

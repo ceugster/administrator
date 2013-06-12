@@ -298,7 +298,9 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 	public void selectionChanged(final IWorkbenchPart part, final ISelection selection)
 	{
 		if (selection.isEmpty())
+		{
 			this.setInput(null);
+		}
 		else
 		{
 			if (selection instanceof StructuredSelection)

@@ -1,21 +1,21 @@
 package ch.eugster.events.person.editors;
 
 import ch.eugster.events.persistence.formatters.PersonFormatter;
-import ch.eugster.events.persistence.model.LinkPersonAddress;
+import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.ui.editors.AbstractEntityEditorInput;
 
-public class PersonEditorInput extends AbstractEntityEditorInput<LinkPersonAddress>
+public class PersonEditorInput extends AbstractEntityEditorInput<Person>
 {
-	public PersonEditorInput(final LinkPersonAddress link)
+	public PersonEditorInput(final Person person)
 	{
-		this.entity = link;
+		this.entity = person;
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(final Class clazz)
 	{
-		if (clazz.equals(LinkPersonAddress.class))
+		if (clazz.equals(Person.class))
 		{
 			return this.entity;
 		}
@@ -31,7 +31,7 @@ public class PersonEditorInput extends AbstractEntityEditorInput<LinkPersonAddre
 		}
 		else
 		{
-			return PersonFormatter.getInstance().formatLastnameFirstname(entity.getPerson());
+			return PersonFormatter.getInstance().formatLastnameFirstname(entity);
 		}
 	}
 
@@ -44,7 +44,7 @@ public class PersonEditorInput extends AbstractEntityEditorInput<LinkPersonAddre
 	@Override
 	public boolean hasParent()
 	{
+		// TODO Auto-generated method stub
 		return false;
 	}
-
 }

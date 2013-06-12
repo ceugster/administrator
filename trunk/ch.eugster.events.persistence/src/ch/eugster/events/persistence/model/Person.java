@@ -171,6 +171,20 @@ public class Person extends AbstractEntity
 		return copy;
 	}
 
+	public Collection<AddressGroupMember> getAddressGroupMembers()
+	{
+		Collection<AddressGroupMember> members = new ArrayList<AddressGroupMember>();
+		Collection<LinkPersonAddress> links = this.getLinks();
+		for (LinkPersonAddress link : links)
+		{
+			if (!link.isDeleted())
+			{
+				members.addAll(link.getAddressGroupMembers());
+			}
+		}
+		return members;
+	}
+
 	public String getAnotherLine()
 	{
 		return AbstractEntity.stringValueOf(this.anotherLine);
@@ -322,7 +336,10 @@ public class Person extends AbstractEntity
 		Collection<LinkPersonAddress> links = this.getLinks();
 		for (LinkPersonAddress link : links)
 		{
-			participants.addAll(link.getParticipants());
+			if (!link.isDeleted())
+			{
+				participants.addAll(link.getParticipants());
+			}
 		}
 		return participants;
 	}

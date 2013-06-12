@@ -197,7 +197,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	// }
 	// line = line.replace(variable, salutation);
 	// }
-	// else if (variable.equals("${organisation}"))
+	// else if (variable.equals("${organization}"))
 	// {
 	// line = line.replace(variable, this.name.getText());
 	// }
@@ -1243,7 +1243,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 								line = line.replace(variable, "");
 							}
 						}
-						else if (variable.equals("${organisation}"))
+						else if (variable.equals("${organization}"))
 						{
 							line = line.replace(variable, this.name.getText());
 						}

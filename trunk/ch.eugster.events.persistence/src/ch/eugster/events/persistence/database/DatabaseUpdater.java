@@ -991,6 +991,34 @@ public abstract class DatabaseUpdater
 						ok = executeSqlQuery(con,
 								"UPDATE events_participant SET participant_count = 1 WHERE participant_count = 0");
 					}
+					if (structureVersion == 18)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						if (!columnExists(con, "events_person_settings",
+								"person_settings_add_blank_after_point_in_city"))
+						{
+							ok = executeSqlQuery(
+									con,
+									new StringBuilder("ALTER TABLE events_person_settings ")
+											.append("ADD COLUMN person_settings_add_blank_after_point_in_city SMALLINT DEFAULT 0")
+											.toString());
+							ok = executeSqlQuery(con,
+									"UPDATE events_person_settings SET person_settings_add_blank_after_point_in_city = 0");
+						}
+					}
+					if (structureVersion == 19)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						if (!columnExists(con, "events_address_salutation",
+								"address_salutation_show_address_name_for_person"))
+						{
+							ok = executeSqlQuery(
+									con,
+									new StringBuilder("ALTER TABLE events_address_salutation ")
+											.append("ADD COLUMN address_salutation_show_address_name_for_person SMALLINT DEFAULT 0")
+											.toString());
+						}
+					}
 
 					stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);
 				}

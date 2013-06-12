@@ -54,7 +54,8 @@ public class AddressContentProposal implements IContentProposal, Comparable<Addr
 	@Override
 	public String getLabel()
 	{
-		StringBuilder builder = new StringBuilder(this.link.getAddress().getAddress());
+		StringBuilder builder = new StringBuilder(AddressFormatter.getInstance().formatId(this.link.getAddress()));
+		builder = builder.append(", " + this.link.getAddress().getAddress());
 		if (!this.link.getAddress().getCity().isEmpty())
 		{
 			if (builder.length() > 0)

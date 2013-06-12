@@ -91,7 +91,8 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
-public class FormEditorLinkPage extends FormPage implements IContentProposalListener, IPropertyChangeListener
+public class FormEditorLinkPage extends FormPage implements IContentProposalListener, IPropertyChangeListener,
+		Validateable, Saveable
 {
 	private static final String ID = FormEditorLinkPage.class.getName();
 
@@ -118,10 +119,6 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 	private IDialogSettings dialogSettings;
 
 	private EntityAdapter entityAdapter;
-
-	private final LinkPersonAddress link;
-
-	private Address selectedAddress;
 
 	private Text linkFunction;
 
@@ -177,6 +174,8 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 
 	private Label groupLabel;
 
+	private AddressType addressType;
+
 	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
 	public FormEditorLinkPage(final FormEditor editor, final FormEditorPersonPage personPage, final String id,
@@ -190,7 +189,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 	{
 		super(editor, id, addressType.getName());
 		this.personPage = personPage;
-		this.link = link;
+		this.addressType = addressType;
 		this.setTitleImage(link.getAddressType().getImage());
 	}
 
@@ -198,17 +197,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 	{
 		try
 		{
-			FormEditorPersonPage personPage = null;
-			for (IFormPage formPage : getEditor().getPages())
-			{
-				if (formPage instanceof FormEditorPersonPage)
-				{
-					personPage = (FormEditorPersonPage) formPage;
-					break;
-				}
-			}
-			LinkPersonAddress l = ((PersonEditorInput) getEditor().getEditorInput()).getEntity();
-			Person person = l.getPerson();
+			Person person = ((PersonEditorInput) getEditor().getEditorInput()).getEntity();
 			Address address = Address.newInstance();
 			LinkPersonAddress link = LinkPersonAddress.newInstance(person, address);
 			link.setAddressType(addressType);
@@ -428,7 +417,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 
 		groupLabel = toolkit.createLabel(client, "", SWT.BORDER);
 		groupLabel.setLayoutData(gridData);
-		groupLabel.setEnabled(link.getAddress().getPersonLinks().size() > 1);
+		groupLabel.setEnabled(getLink() == null ? false : getLink().getAddress().getPersonLinks().size() > 1);
 
 		toolkit.paintBordersFor(client);
 	}
@@ -650,15 +639,20 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 					fax.setText(formatPhoneNumber(fax.getText()));
 					linkPhone.setText(formatPhoneNumber(linkPhone.getText()));
 
-					String p = FormEditorLinkPage.this.link.getAddress().getPhone();
-					p = p.startsWith(phonePrefix.getText()) ? p.substring(phonePrefix.getText().length()) : p;
-					FormEditorLinkPage.this.phone.setText(formatPhoneNumber(p));
-					p = FormEditorLinkPage.this.link.getAddress().getFax();
-					p = p.startsWith(faxPrefix.getText()) ? p.substring(faxPrefix.getText().length()) : p;
-					FormEditorLinkPage.this.fax.setText(formatPhoneNumber(p));
-					p = FormEditorLinkPage.this.link.getPhone();
-					p = p.startsWith(linkPhonePrefix.getText()) ? p.substring(linkPhonePrefix.getText().length()) : p;
-					FormEditorLinkPage.this.linkPhone.setText(formatPhoneNumber(p));
+					LinkPersonAddress link = getLink();
+					if (link != null)
+					{
+						String p = link.getAddress().getPhone();
+						p = p.startsWith(phonePrefix.getText()) ? p.substring(phonePrefix.getText().length()) : p;
+						FormEditorLinkPage.this.phone.setText(formatPhoneNumber(p));
+						p = link.getAddress().getFax();
+						p = p.startsWith(faxPrefix.getText()) ? p.substring(faxPrefix.getText().length()) : p;
+						FormEditorLinkPage.this.fax.setText(formatPhoneNumber(p));
+						p = link.getPhone();
+						p = p.startsWith(linkPhonePrefix.getText()) ? p.substring(linkPhonePrefix.getText().length())
+								: p;
+						FormEditorLinkPage.this.linkPhone.setText(formatPhoneNumber(p));
+					}
 
 					String[] states = selectProvinceCodes(country);
 					provinceViewer.setInput(states);
@@ -731,15 +725,17 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			{
 				Text text = (Text) e.getSource();
 				String value = text.getText();
-				if (value.contains("."))
+				if (PersonSettings.getInstance().isAddBlankAfterPointInCity())
 				{
-					if (!value.contains(". "))
+					if (value.contains("."))
 					{
-						value = value.replaceAll(".", ". ");
-						text.setText(value);
+						if (!value.contains(". "))
+						{
+							value = value.replace(".", ". ");
+							text.setText(value);
+						}
 					}
 				}
-
 			}
 		});
 
@@ -912,7 +908,8 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		 * set enabled only and only if link has an id and there are at least
 		 * one other active address page!
 		 */
-		boolean enabled = link.getPerson().getDefaultLink() != link;
+		LinkPersonAddress link = getLink();
+		boolean enabled = link == null ? false : link.getPerson().getDefaultLink() != link;
 		deleteHyperlink.setEnabled(enabled);
 		String key = enabled ? Activator.KEY_DELETE : Activator.KEY_DELETE_INACTIVE;
 		image = Activator.getDefault().getImageRegistry().get(key);
@@ -962,7 +959,6 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		createAddressLabelExampleSectionPart(managedForm, "Vorschau Adressetikette",
 				"Vorschau der Adressetiketten für Einzel- und, falls gegeben, Sammeladresse.", 2);
 
-		selectedAddress = link.getAddress();
 		loadValues();
 	}
 
@@ -1169,6 +1165,16 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		return value;
 	}
 
+	@Override
+	public Object getAdapter(final Class clazz)
+	{
+		if (clazz.equals(LinkPersonAddress.class))
+		{
+			return this.getLink();
+		}
+		return super.getAdapter(clazz);
+	}
+
 	public String getAddress()
 	{
 		return this.address.getText();
@@ -1243,7 +1249,16 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 
 	public LinkPersonAddress getLink()
 	{
-		return link;
+		PersonEditorInput input = (PersonEditorInput) this.getEditor().getEditorInput();
+		Collection<LinkPersonAddress> links = input.getEntity().getLinks();
+		for (LinkPersonAddress link : links)
+		{
+			if (link.getAddressType().getId().equals(this.addressType.getId()))
+			{
+				return link;
+			}
+		}
+		return null;
 	}
 
 	private String getText()
@@ -1301,7 +1316,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 				if (entity instanceof Person)
 				{
 					Person person = (Person) entity;
-					if (person.getId().equals(link.getPerson().getId()))
+					if (person.getId().equals(getLink().getPerson().getId()))
 					{
 
 					}
@@ -1313,6 +1328,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			{
 				if (entity instanceof LinkPersonAddress)
 				{
+					LinkPersonAddress link = getLink();
 					LinkPersonAddress other = (LinkPersonAddress) entity;
 					if (link.getId() != null && link.getPerson().getId() != null)
 					{
@@ -1328,6 +1344,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 				}
 				else if (entity instanceof Person)
 				{
+					LinkPersonAddress link = getLink();
 					Person person = (Person) entity;
 					if (person.getId().equals(link.getPerson().getId()))
 					{
@@ -1368,39 +1385,43 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 
 	private void loadAddressContactsValues()
 	{
-		phone.setText(formatPhoneNumber(selectedAddress.getPhone()));
-		fax.setText(formatPhoneNumber(selectedAddress.getFax()));
-		this.website.setText(selectedAddress.getWebsite());
+		LinkPersonAddress link = getLink();
+		phone.setText(formatPhoneNumber(link.getAddress().getPhone()));
+		fax.setText(formatPhoneNumber(link.getAddress().getFax()));
+		this.website.setText(link.getAddress().getWebsite());
 	}
 
 	private void loadAddressValues()
 	{
-		if (selectedAddress.getSalutation() == null)
+		LinkPersonAddress link = getLink();
+		if (link.getAddress().getSalutation() != null)
 		{
-			this.salutationViewer.setSelection(new StructuredSelection(new AddressSalutation[] { selectedAddress
+			this.salutationViewer.setSelection(new StructuredSelection(new AddressSalutation[] { link.getAddress()
 					.getSalutation() }));
 		}
-		this.name.setText(selectedAddress.getName());
-		this.anotherLine.setText(selectedAddress.getAnotherLine());
-		this.address.setText(selectedAddress.getAddress());
-		this.pob.setText(selectedAddress.getPob());
-		if (selectedAddress.getCountry() == null)
+		this.name.setText(link.getAddress().getName());
+		this.anotherLine.setText(link.getAddress().getAnotherLine());
+		this.address.setText(link.getAddress().getAddress());
+		this.pob.setText(link.getAddress().getPob());
+		if (link.getAddress().getCountry() == null)
 		{
-			selectedAddress.setCountry(AddressFormatter.getInstance().getCountry());
+			link.getAddress().setCountry(AddressFormatter.getInstance().getCountry());
 		}
-		this.countryViewer.setSelection(new StructuredSelection(selectedAddress.getCountry()));
-		this.zip.setText(selectedAddress.getZip());
-		this.city.setText(selectedAddress.getCity());
+		this.countryViewer.setSelection(new StructuredSelection(link.getAddress().getCountry()));
+		this.zip.setText(link.getAddress().getZip());
+		this.city.setText(link.getAddress().getCity());
 	}
 
 	private void loadLinkValues()
 	{
+		LinkPersonAddress link = getLink();
 		this.linkFunction.setText(link.getFunction());
 		linkPhone.setText(formatPhoneNumber(link.getPhone()));
 		this.linkEmail.setText(link.getEmail());
 
 	}
 
+	@Override
 	public void loadValues()
 	{
 		loadAddressValues();
@@ -1422,9 +1443,14 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		if (contentProposal instanceof AddressContentProposal)
 		{
 			AddressContentProposal proposal = (AddressContentProposal) contentProposal;
-			selectedAddress = proposal.getPersonAddressLink().getAddress();
-			loadAddressValues();
-			loadAddressContactsValues();
+			Address address = proposal.getPersonAddressLink().getAddress();
+			if (address.getId() != null)
+			{
+				LinkPersonAddress link = getLink();
+				link.setAddress(proposal.getPersonAddressLink().getAddress());
+				loadAddressValues();
+				loadAddressContactsValues();
+			}
 		}
 		else if (contentProposal instanceof CityContentProposal)
 		{
@@ -1448,48 +1474,51 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 
 	private void saveAddressContactsValues()
 	{
-		selectedAddress.setPhone(removeSpaces(this.phone.getText()));
-		selectedAddress.setFax(removeSpaces(this.fax.getText()));
-		selectedAddress.setEmail(this.email.getText());
-		selectedAddress.setWebsite(this.website.getText());
+		LinkPersonAddress link = getLink();
+		link.getAddress().setPhone(removeSpaces(this.phone.getText()));
+		link.getAddress().setFax(removeSpaces(this.fax.getText()));
+		link.getAddress().setEmail(this.email.getText());
+		link.getAddress().setWebsite(this.website.getText());
 	}
 
 	private void saveAddressValues()
 	{
+		LinkPersonAddress link = getLink();
 		StructuredSelection ssel = (StructuredSelection) this.salutationViewer.getSelection();
 		if (ssel.isEmpty())
 		{
-			selectedAddress.setSalutation(null);
+			link.getAddress().setSalutation(null);
 		}
 		else
 		{
-			selectedAddress.setSalutation((AddressSalutation) ssel.getFirstElement());
+			link.getAddress().setSalutation((AddressSalutation) ssel.getFirstElement());
 		}
-		selectedAddress.setName(name.getText());
-		selectedAddress.setAnotherLine(anotherLine.getText());
-		selectedAddress.setAddress(this.address.getText());
-		selectedAddress.setPob(this.pob.getText());
+		link.getAddress().setName(name.getText());
+		link.getAddress().setAnotherLine(anotherLine.getText());
+		link.getAddress().setAddress(this.address.getText());
+		link.getAddress().setPob(this.pob.getText());
 		ssel = (StructuredSelection) countryViewer.getSelection();
 		if (ssel.getFirstElement() instanceof Country)
 		{
-			selectedAddress.setCountry((Country) ssel.getFirstElement());
+			link.getAddress().setCountry((Country) ssel.getFirstElement());
 		}
 		else
 		{
-			selectedAddress.setCountry(null);
+			link.getAddress().setCountry(null);
 		}
-		selectedAddress.setZip(this.zip.getText());
-		selectedAddress.setCity(this.city.getText());
+		link.getAddress().setZip(this.zip.getText());
+		link.getAddress().setCity(this.city.getText());
 	}
 
 	private void saveLinkValues()
 	{
+		LinkPersonAddress link = getLink();
 		link.setFunction(linkFunction.getText());
 		link.setPhone(removeSpaces(this.linkPhone.getText()));
 		link.setEmail(this.linkEmail.getText());
-		link.setAddress(selectedAddress);
 	}
 
+	@Override
 	public void saveValues()
 	{
 		saveAddressValues();
@@ -1554,6 +1583,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		return salutations.toArray(new AddressSalutation[0]);
 	}
 
+	@Override
 	public void setDirty(final boolean dirty)
 	{
 		if (this.dirty == dirty)
@@ -1614,7 +1644,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 							}
 							line = line.replace(variable, salutation);
 						}
-						else if (variable.equals("${organisation}"))
+						else if (variable.equals("${organization}"))
 						{
 							line = line.replace(variable, this.name.getText());
 						}
@@ -1706,9 +1736,25 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 							line = line.replace(variable, personPage.getPersonTitle() == null ? "" : personPage
 									.getPersonTitle().getTitle());
 						}
-						else if (variable.equals("${organisation}"))
+						else if (variable.equals("${organization}"))
 						{
-							line = line.replace(variable, this.name.getText());
+							IStructuredSelection ssel = (IStructuredSelection) this.salutationViewer.getSelection();
+							if (ssel.getFirstElement() instanceof AddressSalutation)
+							{
+								AddressSalutation salutation = (AddressSalutation) ssel.getFirstElement();
+								if (salutation.isShowAddressNameForPersons())
+								{
+									line = line.replace(variable, this.name.getText());
+								}
+								else
+								{
+									line = line.replace(variable, "").trim();
+								}
+							}
+							else
+							{
+								line = line.replace(variable, "").trim();
+							}
 						}
 						else if (variable.equals("${firstname}"))
 						{
@@ -1779,6 +1825,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		this.singleLabel.setText(label.toString());
 	}
 
+	@Override
 	public boolean validate()
 	{
 		Message msg = null;

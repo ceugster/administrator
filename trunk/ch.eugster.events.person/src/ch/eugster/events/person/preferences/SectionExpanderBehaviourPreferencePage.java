@@ -1,5 +1,6 @@
 package ch.eugster.events.person.preferences;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
@@ -58,6 +59,11 @@ public class SectionExpanderBehaviourPreferencePage extends FieldEditorPreferenc
 		selectEditor = new RadioGroupFieldEditor(PreferenceInitializer.KEY_EDITOR_SECTION_BEHAVIOUR,
 				"Verhalten der Bereiche in den Editoren", 1, labelsAndValues, getFieldEditorParent());
 		this.addField(selectEditor);
+
+		BooleanFieldEditor cityEditor = new BooleanFieldEditor(
+				PreferenceInitializer.KEY_EDITOR_ADD_BLANK_AFTER_DOT_IN_CITY, "Leerschlag nach . in Ort",
+				getFieldEditorParent());
+		this.addField(cityEditor);
 	}
 
 	@Override
