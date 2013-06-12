@@ -17,13 +17,45 @@ public abstract class AbstractEntityEditorInput<T extends AbstractEntity> implem
 	protected T entity;
 
 	@Override
+	public boolean equals(final Object object)
+	{
+		if (object != null && object.getClass().equals(this.getClass()))
+		{
+			AbstractEntityEditorInput<?> input = (AbstractEntityEditorInput<?>) object;
+			if (this.entity.getId() != null && input.getEntity().getId() != null)
+				return this.entity.getId().equals(input.getEntity().getId());
+		}
+		return false;
+	}
+
+	@Override
 	public boolean exists()
 	{
 		return false;
 	}
 
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Object getAdapter(final Class adapter)
+	{
+		if (adapter.getName().equals(this.entity.getClass().getName()))
+			return this.entity;
+
+		return null;
+	}
+
+	public T getEntity()
+	{
+		return this.entity;
+	}
+
 	@Override
 	public ImageDescriptor getImageDescriptor()
+	{
+		return null;
+	}
+
+	public AbstractEntity getParent()
 	{
 		return null;
 	}
@@ -34,42 +66,13 @@ public abstract class AbstractEntityEditorInput<T extends AbstractEntity> implem
 		return null;
 	}
 
-	public T getEntity()
+	public boolean hasParent()
 	{
-		return this.entity;
+		return false;
 	}
 
-	public void setEntity(T entity)
+	public void setEntity(final T entity)
 	{
 		this.entity = entity;
-	}
-
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Object getAdapter(Class adapter)
-	{
-		if (adapter.getName().equals(this.entity.getClass().getName()))
-			return this.entity;
-
-		return null;
-	}
-
-	public AbstractEntity getParent()
-	{
-		return null;
-	}
-
-	public abstract boolean hasParent();
-
-	@Override
-	public boolean equals(Object object)
-	{
-		if (object != null && object.getClass().equals(this.getClass()))
-		{
-			AbstractEntityEditorInput<?> input = (AbstractEntityEditorInput<?>) object;
-			if (this.entity.getId() != null && input.getEntity().getId() != null)
-				return this.entity.getId().equals(input.getEntity().getId());
-		}
-		return false;
 	}
 }

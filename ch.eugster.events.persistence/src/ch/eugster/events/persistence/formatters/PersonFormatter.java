@@ -158,7 +158,7 @@ public class PersonFormatter extends AbstractFormatter
 
 	public String[] getPersonLabelStoredVariables()
 	{
-		return new String[] { "${organisation}", "${salutation}", "${title}", "${firstname}", "${lastname}",
+		return new String[] { "${organization}", "${salutation}", "${title}", "${firstname}", "${lastname}",
 				"${anotherline}", "${address}", "${pob}", "${country}", "${zip}", "${city}" };
 	}
 

@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.Customizer;
 
 @Entity
@@ -39,22 +40,20 @@ public class AddressSalutation extends AbstractEntity
 	@Column(name = "address_salutation_polite")
 	private String polite;
 
+	@Basic
+	@Column(name = "address_salutation_show_address_name_for_person")
+	@Convert("booleanConverter")
+	private boolean showAddressNameForPersons;
+
 	@Override
 	public Long getId()
 	{
 		return id;
 	}
 
-	@Override
-	public void setId(Long id)
+	public String getPolite()
 	{
-		this.propertyChangeSupport.firePropertyChange("id", this.id, this.id = id);
-		this.id = id;
-	}
-
-	public void setSalutation(String salutation)
-	{
-		this.propertyChangeSupport.firePropertyChange("salutation", this.salutation, this.salutation = salutation);
+		return AbstractEntity.stringValueOf(polite);
 	}
 
 	public String getSalutation()
@@ -62,14 +61,32 @@ public class AddressSalutation extends AbstractEntity
 		return AbstractEntity.stringValueOf(salutation);
 	}
 
-	public void setPolite(String polite)
+	public boolean isShowAddressNameForPersons()
+	{
+		return showAddressNameForPersons;
+	}
+
+	@Override
+	public void setId(final Long id)
+	{
+		this.propertyChangeSupport.firePropertyChange("id", this.id, this.id = id);
+		this.id = id;
+	}
+
+	public void setPolite(final String polite)
 	{
 		this.propertyChangeSupport.firePropertyChange("polite", this.polite, this.polite = polite);
 	}
 
-	public String getPolite()
+	public void setSalutation(final String salutation)
 	{
-		return AbstractEntity.stringValueOf(polite);
+		this.propertyChangeSupport.firePropertyChange("salutation", this.salutation, this.salutation = salutation);
+	}
+
+	public void setShowAddressNameForPersons(final boolean showAddressNameForPersons)
+	{
+		this.propertyChangeSupport.firePropertyChange("showAddressNameForPersons", this.showAddressNameForPersons,
+				this.showAddressNameForPersons = showAddressNameForPersons);
 	}
 
 	public static AddressSalutation newInstance()

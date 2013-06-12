@@ -9,6 +9,7 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -87,6 +88,7 @@ public class AddPersonHandler extends AbstractHandler implements IHandler
 				if (part instanceof PersonView)
 				{
 					PersonView view = (PersonView) part;
+					view.getViewer().setSelection(new StructuredSelection());
 					view.getSearcher().fillPerson(person);
 				}
 			}

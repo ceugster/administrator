@@ -120,7 +120,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 					try
 					{
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-								.openEditor(new PersonEditorInput(person.getDefaultLink()), PersonFormEditor.ID);
+								.openEditor(new PersonEditorInput(person), PersonFormEditor.ID);
 					}
 					catch (PartInitException e)
 					{
@@ -172,7 +172,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			try
 			{
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-						.openEditor(new PersonEditorInput(link), PersonFormEditor.ID);
+						.openEditor(new PersonEditorInput(link.getPerson()), PersonFormEditor.ID);
 			}
 			catch (PartInitException e)
 			{
@@ -215,8 +215,8 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			if (this.currentPage instanceof FormEditorPersonPage)
 			{
 				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				LinkPersonAddress link = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return link.getAddressGroupMembers().toArray(new AddressGroupMember[0]);
+				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				return person.getAddressGroupMembers().toArray(new AddressGroupMember[0]);
 			}
 			else if (this.currentPage instanceof FormEditorLinkPage)
 			{
@@ -257,8 +257,8 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			if (this.currentPage instanceof FormEditorPersonPage)
 			{
 				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				LinkPersonAddress link = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return link.getAddressGroupMembers().size() > 0;
+				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				return person.getAddressGroupMembers().size() > 0;
 			}
 			else if (this.currentPage instanceof FormEditorLinkPage)
 			{
@@ -419,7 +419,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				Collection<LinkPersonAddress> links = page.getLink().getAddress().getPersonLinks();
 				for (LinkPersonAddress link : links)
 				{
-					if (!link.isDeleted() && !link.getPerson().isDeleted()
+					if (!link.isDeleted() && !link.getPerson().isDeleted() && page.getLink().getId() != null
 							&& !page.getLink().getId().equals(link.getId()))
 					{
 						count++;
@@ -445,8 +445,8 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			if (this.currentPage instanceof FormEditorPersonPage)
 			{
 				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				LinkPersonAddress link = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return link.getPerson().getDonations().toArray(new Donation[0]);
+				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				return person.getDonations().toArray(new Donation[0]);
 			}
 			else if (this.currentPage instanceof FormEditorLinkPage)
 			{
@@ -484,20 +484,17 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public boolean hasChildren()
 		{
-			LinkPersonAddress link = null;
 			if (this.currentPage instanceof FormEditorPersonPage)
 			{
 				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				link = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				return !person.getDonations().isEmpty();
 			}
 			else if (this.currentPage instanceof FormEditorLinkPage)
 			{
 				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
-				link = page.getLink();
-			}
-			if (link != null)
-			{
-				return link.getPerson().getDonations().size() > 0;
+				LinkPersonAddress link = page.getLink();
+				return !link.getDonations().isEmpty();
 			}
 			return false;
 		}
@@ -518,8 +515,8 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			if (this.currentPage instanceof FormEditorPersonPage)
 			{
 				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				LinkPersonAddress link = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return link.getPerson().getMembers().toArray(new Member[0]);
+				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				return person.getMembers().toArray(new Member[0]);
 			}
 			else if (this.currentPage instanceof FormEditorLinkPage)
 			{
@@ -560,14 +557,14 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			if (this.currentPage instanceof FormEditorPersonPage)
 			{
 				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				LinkPersonAddress link = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return link.getPerson().getMembers().toArray(new Member[0]).length > 0;
+				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				return !person.getMembers().isEmpty();
 			}
 			else if (this.currentPage instanceof FormEditorLinkPage)
 			{
 				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
 				LinkPersonAddress link = page.getLink();
-				return link.getMembers().toArray(new Member[0]).length > 0;
+				return !link.getMembers().isEmpty();
 			}
 			return false;
 		}
@@ -594,7 +591,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				 * Es wurde der PersonenEditor ausgwählt
 				 */
 				FormEditorPersonPage page = (FormEditorPersonPage) parentElement;
-				LinkPersonAddress link = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
 				Collection<Root> roots = new ArrayList<Root>();
 				roots.add(new MemberRoot(page));
 				roots.add(new ParticipantRoot(page));
@@ -718,8 +715,8 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			if (this.currentPage instanceof FormEditorPersonPage)
 			{
 				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				LinkPersonAddress link = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return link.getParticipants();
+				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				return person.getParticipants();
 			}
 			else if (this.currentPage instanceof FormEditorLinkPage)
 			{

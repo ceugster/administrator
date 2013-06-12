@@ -585,7 +585,7 @@ public class Course extends AbstractEntity
 		{
 			if (!booking.isDeleted())
 			{
-				count = booking.getParticipantCount();
+				count += booking.getParticipantCount();
 			}
 		}
 		return count;
@@ -740,24 +740,47 @@ public class Course extends AbstractEntity
 			Collection<CourseDetail> details = this.getCourseDetails();
 			for (CourseDetail detail : details)
 			{
-				if (this.substituted)
+				if (this.isSubstituted())
 				{
-					if (courseDate == null
-							|| courseDate.getTimeInMillis() < detail.getSubstituteEnd().getTimeInMillis())
-						courseDate = detail.getSubstituteEnd();
+					if (detail.isWithSubstituteDate() && detail.getSubstituteEnd() != null)
+					{
+						if (courseDate == null
+								|| courseDate.getTimeInMillis() < detail.getSubstituteEnd().getTimeInMillis())
+						{
+							courseDate = detail.getSubstituteEnd();
+						}
+					}
+					else if (detail.getEnd() != null)
+					{
+						if (courseDate == null || courseDate.getTimeInMillis() < detail.getEnd().getTimeInMillis())
+						{
+							courseDate = detail.getEnd();
+						}
+					}
 				}
 				else
 				{
-					if (courseDate == null || courseDate.getTimeInMillis() < detail.getEnd().getTimeInMillis())
-						courseDate = detail.getEnd();
+					if (detail.getEnd() != null)
+					{
+						if (courseDate == null || courseDate.getTimeInMillis() < detail.getEnd().getTimeInMillis())
+						{
+							courseDate = detail.getEnd();
+						}
+					}
 				}
 			}
 			if (courseDate == null)
+			{
 				this.state = CourseState.FORTHCOMING;
+			}
 			else if (courseDate.getTimeInMillis() < Calendar.getInstance().getTimeInMillis())
+			{
 				this.state = CourseState.DONE;
+			}
 			else
+			{
 				this.state = CourseState.FORTHCOMING;
+			}
 		}
 		else
 			this.state = CourseState.ANNULATED;

@@ -1,7 +1,5 @@
 package ch.eugster.events.course.reporting;
 
-import java.text.DecimalFormat;
-
 import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
@@ -23,7 +21,7 @@ public class ParticipantListReportItem implements Comparable<ParticipantListRepo
 
 	private String email;
 
-	private String count;
+	private int count;
 
 	private String correspondant;
 
@@ -69,7 +67,7 @@ public class ParticipantListReportItem implements Comparable<ParticipantListRepo
 		return this.correspondant;
 	}
 
-	public String getCount()
+	public int getCount()
 	{
 		return count;
 	}
@@ -104,14 +102,19 @@ public class ParticipantListReportItem implements Comparable<ParticipantListRepo
 		this.address = AddressFormatter.getInstance().formatAddressLine(participant.getLink().getAddress());
 		this.city = AddressFormatter.getInstance().formatCityLine(participant.getLink().getAddress());
 		this.correspondant = participant.getBooking().getParticipant().getId().equals(participant.getId()) ? "A" : "";
-		this.count = DecimalFormat.getIntegerInstance().format(participant.getCount());
+		this.count = participant.getCount();
 		this.email = participant.getLink().getEmail();
 		this.id = PersonFormatter.getInstance().formatId(participant.getLink().getPerson());
 		this.mobile = LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(
-				participant.getLink().getPerson().getCountry(), participant.getLink().getPhone());
-		this.name = PersonFormatter.getInstance().formatLastnameFirstname(participant.getLink().getPerson());
+				participant.getLink().getPerson().getCountry(), participant.getLink().getPerson().getPhone());
 		this.phone = PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(
 				participant.getLink().getPerson().getCountry(), participant.getLink().getPhone());
+		if (this.phone == null || this.phone.isEmpty())
+		{
+			this.phone = LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(
+					participant.getLink().getAddress().getCountry(), participant.getLink().getAddress().getPhone());
+		}
+		this.name = PersonFormatter.getInstance().formatLastnameFirstname(participant.getLink().getPerson());
 	}
 
 	public void setAddress(final String address)
@@ -129,7 +132,7 @@ public class ParticipantListReportItem implements Comparable<ParticipantListRepo
 		this.correspondant = correspondant;
 	}
 
-	public void setCount(final String count)
+	public void setCount(final int count)
 	{
 		this.count = count;
 	}

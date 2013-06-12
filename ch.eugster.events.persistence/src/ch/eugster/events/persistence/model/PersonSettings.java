@@ -77,6 +77,11 @@ public class PersonSettings extends AbstractEntity
 	@Column(name = "person_settings_person_domain_mandatory")
 	private boolean personDomainMandatory;
 
+	@Basic
+	@Convert("booleanConverter")
+	@Column(name = "person_settings_add_blank_after_point_in_city")
+	private boolean addBlankAfterPointInCity;
+
 	@Override
 	public Object clone()
 	{
@@ -125,9 +130,19 @@ public class PersonSettings extends AbstractEntity
 		return stringValueOf(personLabelFormat);
 	}
 
+	public boolean isAddBlankAfterPointInCity()
+	{
+		return addBlankAfterPointInCity;
+	}
+
 	public boolean isPersonDomainMandatory()
 	{
 		return this.personDomainMandatory;
+	}
+
+	public void setAddBlankAfterPointInCity(final boolean addBlankAfterPointInCity)
+	{
+		this.addBlankAfterPointInCity = addBlankAfterPointInCity;
 	}
 
 	public void setAddressLabelFormat(final String addressLabelFormat)

@@ -11,7 +11,6 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
@@ -22,6 +21,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
@@ -55,7 +55,7 @@ public class LinkSearcher extends Composite
 
 	private static final String FIRSTNAME = "firstname";
 
-	private static final String ORGANISATION = "organisation";
+	private static final String ORGANISATION = "organization";
 
 	private static final String ADDRESS = "address";
 
@@ -101,8 +101,8 @@ public class LinkSearcher extends Composite
 			this.dialogSettings.put("lastname.text", "");
 		if (this.dialogSettings.get("firstname.text") == null)
 			this.dialogSettings.put("firstname.text", "");
-		if (this.dialogSettings.get("organisation.text") == null)
-			this.dialogSettings.put("organisation.text", "");
+		if (this.dialogSettings.get("organization.text") == null)
+			this.dialogSettings.put("organization.text", "");
 		if (this.dialogSettings.get("address.text") == null)
 			this.dialogSettings.put("address.text", "");
 		if (this.dialogSettings.get("city.text") == null)
@@ -175,7 +175,7 @@ public class LinkSearcher extends Composite
 		label.setLayoutData(new GridData());
 
 		widget = new Text(this, SWT.BORDER | SWT.SINGLE);
-		widget.setText(this.dialogSettings.get("organisation.text"));
+		widget.setText(this.dialogSettings.get("organization.text"));
 		widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		widget.addModifyListener(new ModifyListener()
 		{
@@ -183,7 +183,7 @@ public class LinkSearcher extends Composite
 			public void modifyText(final ModifyEvent event)
 			{
 				Text widget = (Text) LinkSearcher.this.widgets.get(ORGANISATION);
-				LinkSearcher.this.dialogSettings.put("organisation.text", widget.getText());
+				LinkSearcher.this.dialogSettings.put("organization.text", widget.getText());
 				LinkSearcher.this.modifyText();
 			}
 		});
@@ -430,64 +430,81 @@ public class LinkSearcher extends Composite
 		}
 		this.startListening();
 
-		CriteriaChangedEvent event = new CriteriaChangedEvent(new AbstractEntity[0]);
 		for (ICriteriaChangedListener listener : this.listeners)
-			listener.criteriaChanged(event);
+		{
+			listener.criteriaChanged(new AbstractEntity[0]);
+		}
 	}
 
 	private Map<String, String> createCriteria()
 	{
-		Map<String, String> criteria = new HashMap<String, String>();
-		for (Entry<String, Widget> entry : this.widgets.entrySet())
+		final Map<String, String> criteria = new HashMap<String, String>();
+		Display.getDefault().syncExec(new Runnable()
 		{
-			if (entry.getKey().equals(ID))
+			@Override
+			public void run()
 			{
-			}
-			else if (entry.getKey().equals(LASTNAME))
-			{
-			}
-			else if (entry.getKey().equals(PHONE))
-			{
-			}
-			else
-			{
-				if (entry.getValue() instanceof Text)
+				Text text = (Text) widgets.get(ID);
+				String id = text.getText().trim();
+				if (!id.isEmpty())
 				{
-					Text text = (Text) entry.getValue();
-					if (!text.getText().isEmpty())
+					criteria.put(ID, id);
+				}
+				else
+				{
+					for (Entry<String, Widget> entry : widgets.entrySet())
 					{
-						if (criteria.isEmpty())
-							criteria.put(entry.getKey(), text.getText().trim());
+						if (entry.getKey().equals(ID))
+						{
+						}
+						else if (entry.getKey().equals(LASTNAME))
+						{
+						}
+						else if (entry.getKey().equals(PHONE))
+						{
+						}
+						else
+						{
+							if (entry.getValue() instanceof Text)
+							{
+								text = (Text) entry.getValue();
+								if (!text.getText().isEmpty())
+								{
+									if (criteria.isEmpty())
+										criteria.put(entry.getKey(), text.getText().trim());
+								}
+							}
+						}
+					}
+					if (criteria.isEmpty())
+					{
+						text = (Text) widgets.get(LASTNAME);
+						if (text.getText().length() > 3)
+						{
+							criteria.put(LASTNAME, text.getText().trim());
+						}
+						text = (Text) widgets.get(PHONE);
+						if (text.getText().length() > 6)
+						{
+							criteria.put(PHONE, text.getText().trim());
+						}
+					}
+					else
+					{
+						text = (Text) widgets.get(LASTNAME);
+						if (!text.getText().isEmpty())
+						{
+							criteria.put(LASTNAME, text.getText().trim());
+						}
+						text = (Text) widgets.get(PHONE);
+						if (!text.getText().isEmpty())
+						{
+							criteria.put(PHONE, text.getText().trim());
+						}
 					}
 				}
 			}
-		}
-		if (criteria.isEmpty())
-		{
-			Text text = (Text) this.widgets.get(LASTNAME);
-			if (text.getText().length() > 3)
-			{
-				criteria.put(LASTNAME, text.getText().trim());
-			}
-			text = (Text) this.widgets.get(PHONE);
-			if (text.getText().length() > 6)
-			{
-				criteria.put(PHONE, text.getText().trim());
-			}
-		}
-		else
-		{
-			Text text = (Text) this.widgets.get(LASTNAME);
-			if (!text.getText().isEmpty())
-			{
-				criteria.put(LASTNAME, text.getText().trim());
-			}
-			text = (Text) this.widgets.get(PHONE);
-			if (!text.getText().isEmpty())
-			{
-				criteria.put(PHONE, text.getText().trim());
-			}
-		}
+		});
 		return criteria;
 	}
 
@@ -497,7 +514,7 @@ public class LinkSearcher extends Composite
 		int length = 0;
 		length += this.dialogSettings.get("lastname.text").length();
 		length += this.dialogSettings.get("firstname.text").length();
-		length += this.dialogSettings.get("organisation.text").length();
+		length += this.dialogSettings.get("organization.text").length();
 		length += this.dialogSettings.get("address.text").length();
 		length += this.dialogSettings.get("city.text").length();
 		length += this.dialogSettings.get("phone.text").length();
@@ -506,7 +523,7 @@ public class LinkSearcher extends Composite
 		{
 			this.dialogSettings.put("lastname.text", "");
 			this.dialogSettings.put("firstname.text", "");
-			this.dialogSettings.put("organisation.text", "");
+			this.dialogSettings.put("organization.text", "");
 			this.dialogSettings.put("address.text", "");
 			this.dialogSettings.put("city.text", "");
 			this.dialogSettings.put("phone.text", "");
@@ -525,7 +542,7 @@ public class LinkSearcher extends Composite
 
 	public void fillAddress(final Address address)
 	{
-		String text = this.dialogSettings.get("organisation.text");
+		String text = this.dialogSettings.get("organization.text");
 		address.setName(text);
 		text = this.dialogSettings.get("address.text");
 		address.setAddress(text);
@@ -550,16 +567,6 @@ public class LinkSearcher extends Composite
 			}
 		}
 		return persons.values();
-	}
-
-	private String getText(final String key)
-	{
-		return ((Text) this.widgets.get(key)).getText();
-	}
-
-	private Text getTextWidget(final String key)
-	{
-		return (Text) this.widgets.get(key);
 	}
 
 	private boolean hasAddressCriteria(final Map<String, String> criteria)
@@ -590,10 +597,9 @@ public class LinkSearcher extends Composite
 			AbstractEntity[] entities = selectItems(criteria);
 			if (entities.length > 0)
 			{
-				CriteriaChangedEvent event = new CriteriaChangedEvent(entities);
 				for (ICriteriaChangedListener listener : this.listeners)
 				{
-					listener.criteriaChanged(event);
+					listener.criteriaChanged(entities);
 				}
 			}
 		}
@@ -692,35 +698,36 @@ public class LinkSearcher extends Composite
 
 	private void schedule()
 	{
-		if (updateListJob != null)
+		if (updateListJob == null)
 		{
-			if (updateListJob.getState() == Job.RUNNING)
+			updateListJob = new UIJob("Starte Suchlauf...")
 			{
-				updateListJob.cancel();
-			}
-		}
-		updateListJob = new UIJob("Starte Suchlauf...")
-		{
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor)
-			{
-				Map<String, String> criteria = createCriteria();
-				if (!criteria.isEmpty())
+				@Override
+				public IStatus runInUIThread(final IProgressMonitor monitor)
 				{
-					CriteriaChangedEvent event = new CriteriaChangedEvent(LinkSearcher.this.selectItems(criteria));
+					AbstractEntity[] entities = new AbstractEntity[0];
+					final Map<String, String> criteria = createCriteria();
+					if (!criteria.isEmpty())
+					{
+						entities = LinkSearcher.this.selectItems(criteria);
+					}
 					for (ICriteriaChangedListener listener : LinkSearcher.this.listeners)
 					{
-						listener.criteriaChanged(event);
+						listener.criteriaChanged(entities);
 					}
+					return Status.OK_STATUS;
 				}
-				return Status.OK_STATUS;
-			}
-		};
+			};
+		}
+		else
+		{
+			updateListJob.cancel();
+		}
 		updateListJob.schedule(500L);
 		System.out.println("SCHEDULED: " + updateListJob.getState());
 	}
 
-	private Collection<AbstractEntity> selectById(final String text)
+	private AbstractEntity[] selectById(final String text)
 	{
 		Collection<AbstractEntity> entities = new ArrayList<AbstractEntity>();
 
@@ -749,46 +756,46 @@ public class LinkSearcher extends Composite
 		{
 			entities.add(address);
 		}
-		return entities;
+		return entities.toArray(new AbstractEntity[0]);
 	}
 
 	private AbstractEntity[] selectItems(final Map<String, String> criteria)
 	{
+		AbstractEntity[] entities = new AbstractEntity[0];
 		if (criteria == null || criteria.isEmpty())
 		{
-			return new AbstractEntity[0];
-		}
-		Collection<AbstractEntity> entities = new ArrayList<AbstractEntity>();
-
-		String value = this.getText(ID);
-		if (!value.isEmpty())
-		{
-			entities = this.selectById(this.getTextWidget(ID).getText().trim());
 		}
 		else
 		{
-			if (!criteria.isEmpty())
+			String id = criteria.get(ID);
+			if (id != null && !id.trim().isEmpty())
+			{
+				entities = this.selectById(id.trim());
+			}
+			else
 			{
 				if (connectionService != null)
 				{
+					Collection<AbstractEntity> selected = new ArrayList<AbstractEntity>();
 					LinkPersonAddressQuery linkQuery = (LinkPersonAddressQuery) connectionService
 							.getQuery(LinkPersonAddress.class);
 					int maxRows = new InstanceScope().getNode(Activator.PLUGIN_ID).getInt(
 							PreferenceInitializer.KEY_MAX_RECORDS, 0);
-					entities.addAll(getPersons(linkQuery.selectByCriteria(criteria, extensions, maxRows)));
+					selected.addAll(getPersons(linkQuery.selectByCriteria(criteria, extensions, maxRows)));
 
 					if (this.searchAddresses)
 					{
 						if (hasAddressCriteria(criteria))
 						{
 							AddressQuery addressQuery = (AddressQuery) connectionService.getQuery(Address.class);
-							entities.addAll(addressQuery.selectByCriteria(criteria, maxRows - entities.size()));
+							selected.addAll(addressQuery.selectByCriteria(criteria, maxRows - selected.size()));
 						}
 					}
+					entities = selected.toArray(new AbstractEntity[0]);
 				}
 			}
 		}
-		return entities.toArray(new AbstractEntity[0]);
+		return entities;
 	}
 
 	public void startListening()

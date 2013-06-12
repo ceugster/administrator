@@ -27,7 +27,10 @@
 	<field name="phone" class="java.lang.String"/>
 	<field name="mobile" class="java.lang.String"/>
 	<field name="email" class="java.lang.String"/>
-	<field name="count" class="java.lang.String"/>
+	<field name="count" class="java.lang.Integer"/>
+	<variable name="totalCount" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{count}]]></variableExpression>
+	</variable>
 	<group name="name_group">
 		<groupExpression><![CDATA[$F{name}]]></groupExpression>
 	</group>
@@ -42,7 +45,7 @@
 				<textElement textAlignment="Right">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd.MM.yyyy").format(new java.util.Date())]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement uuid="2713bec1-845f-4023-843d-376ca9d13850" x="28" y="90" width="752" height="1">
@@ -275,14 +278,30 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="54" splitType="Stretch">
+		<band height="70" splitType="Stretch">
 			<textField>
-				<reportElement uuid="1d8fe7f6-ca5f-47e8-9480-3ed0dc51cbdb" x="528" y="29" width="254" height="20"/>
+				<reportElement uuid="1d8fe7f6-ca5f-47e8-9480-3ed0dc51cbdb" x="528" y="40" width="256" height="22"/>
 				<textElement textAlignment="Right">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement uuid="b09f85bf-20e9-4f95-a418-a40558a0db06" x="727" y="1" width="58" height="14">
+					<property name="local_mesure_unitheight" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalCount}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f16de281-c5a6-4efc-85b9-94eb6bde06c4" x="540" y="1" width="189" height="22"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Total Teilnehmer]]></text>
+			</staticText>
 		</band>
 	</pageFooter>
 </jasperReport>

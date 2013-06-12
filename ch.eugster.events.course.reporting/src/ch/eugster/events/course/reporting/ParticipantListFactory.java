@@ -10,8 +10,11 @@ import ch.eugster.events.persistence.formatters.CourseFormatter;
 import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.Booking;
+import ch.eugster.events.persistence.model.BookingDoneState;
+import ch.eugster.events.persistence.model.BookingForthcomingState;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseGuide;
+import ch.eugster.events.persistence.model.CourseState;
 import ch.eugster.events.persistence.model.Participant;
 
 public class ParticipantListFactory
@@ -74,13 +77,34 @@ public class ParticipantListFactory
 	public int setCourse(final Course course)
 	{
 		this.course = course;
-		Collection<Booking> bookings = course.getBookings();
-		for (Booking booking : bookings)
+		if (course.getState().equals(CourseState.FORTHCOMING))
 		{
-			Collection<Participant> participants = booking.getParticipants();
-			for (Participant participant : participants)
+			for (Booking booking : course.getBookings())
 			{
-				this.participantListReportItems.add(new ParticipantListReportItem(participant));
+				if (booking.getState().equals(BookingForthcomingState.BOOKED))
+				{
+					Collection<Participant> participants = booking.getParticipants();
+					for (Participant participant : participants)
+					{
+
+						this.participantListReportItems.add(new ParticipantListReportItem(participant));
+					}
+				}
+			}
+		}
+		if (course.getState().equals(CourseState.DONE))
+		{
+			for (Booking booking : course.getBookings())
+			{
+				if (booking.getState().equals(BookingDoneState.PARTICIPATED))
+				{
+					Collection<Participant> participants = booking.getParticipants();
+					for (Participant participant : participants)
+					{
+
+						this.participantListReportItems.add(new ParticipantListReportItem(participant));
+					}
+				}
 			}
 		}
 		return size();

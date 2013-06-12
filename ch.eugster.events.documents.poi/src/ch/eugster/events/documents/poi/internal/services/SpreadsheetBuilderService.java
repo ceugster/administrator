@@ -14,6 +14,7 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.eclipse.core.runtime.IStatus;
@@ -115,14 +116,31 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 		return Status.CANCEL_STATUS;
 	}
 
+	protected void createCell(final HSSFRow row, final int col, final Double value, final HSSFFont font,
+			final HSSFCellStyle style)
+	{
+		HSSFCell cell = row.createCell(col);
+		cell.setCellStyle(style);
+		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+		cell.setCellValue(value);
+	}
+
 	protected void createCell(final HSSFRow row, final int col, final String value, final HSSFFont font,
 			final HSSFCellStyle style)
 	{
-		HSSFRichTextString string = new HSSFRichTextString(value);
-		string.applyFont(font);
-		HSSFCell cell = row.createCell(col);
-		cell.setCellStyle(style);
-		cell.setCellValue(string);
+		try
+		{
+			double doubleValue = Double.valueOf(value);
+			createCell(row, col, doubleValue, font, style);
+		}
+		catch (NumberFormatException e)
+		{
+			HSSFRichTextString string = new HSSFRichTextString(value);
+			string.applyFont(font);
+			HSSFCell cell = row.createCell(col);
+			cell.setCellStyle(style);
+			cell.setCellValue(string);
+		}
 	}
 
 	protected HSSFFont createFont(final HSSFWorkbook workbook, final String name, final short type, final short height)
