@@ -260,7 +260,8 @@ public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddres
 	{
 		Expression expression = createCriteriaExpression(criteria, extensions, new ExpressionBuilder(
 				LinkPersonAddress.class));
-		return select(LinkPersonAddress.class, expression, maxResults);
+		Collection<LinkPersonAddress> links = select(LinkPersonAddress.class, expression, maxResults);
+		return links;
 	}
 
 }

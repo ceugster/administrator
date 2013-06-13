@@ -171,10 +171,23 @@ public class Person extends AbstractEntity
 		return copy;
 	}
 
+	public Collection<LinkPersonAddress> getActiveLinks()
+	{
+		Collection<LinkPersonAddress> links = new ArrayList<LinkPersonAddress>();
+		for (LinkPersonAddress link : links)
+		{
+			if (!link.isDeleted())
+			{
+				links.add(link);
+			}
+		}
+		return links;
+	}
+
 	public Collection<AddressGroupMember> getAddressGroupMembers()
 	{
 		Collection<AddressGroupMember> members = new ArrayList<AddressGroupMember>();
-		Collection<LinkPersonAddress> links = this.getLinks();
+		Collection<LinkPersonAddress> links = this.getActiveLinks();
 		for (LinkPersonAddress link : links)
 		{
 			if (!link.isDeleted())
@@ -255,7 +268,7 @@ public class Person extends AbstractEntity
 	public Collection<Donation> getDonations()
 	{
 		Collection<Donation> donations = new ArrayList<Donation>();
-		Collection<LinkPersonAddress> links = this.getLinks();
+		Collection<LinkPersonAddress> links = this.getActiveLinks();
 		for (LinkPersonAddress link : links)
 		{
 			donations.addAll(link.getDonations());
@@ -333,7 +346,7 @@ public class Person extends AbstractEntity
 	public Collection<Participant> getParticipants()
 	{
 		Collection<Participant> participants = new ArrayList<Participant>();
-		Collection<LinkPersonAddress> links = this.getLinks();
+		Collection<LinkPersonAddress> links = this.getActiveLinks();
 		for (LinkPersonAddress link : links)
 		{
 			if (!link.isDeleted())
@@ -441,7 +454,7 @@ public class Person extends AbstractEntity
 	@Override
 	public void setDeleted(final boolean deleted)
 	{
-		Collection<LinkPersonAddress> links = this.getLinks();
+		Collection<LinkPersonAddress> links = this.getActiveLinks();
 		if (links != null)
 		{
 			for (LinkPersonAddress link : links)
