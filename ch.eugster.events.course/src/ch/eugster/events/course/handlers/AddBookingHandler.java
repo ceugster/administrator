@@ -22,6 +22,7 @@ import ch.eugster.events.course.wizards.ParticipantWizardPage;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
+import ch.eugster.events.persistence.model.CourseState;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Person;
@@ -98,6 +99,7 @@ public class AddBookingHandler extends AbstractHandler implements IHandler
 	@Override
 	public void setEnabled(final Object evaluationContext)
 	{
+		boolean enabled = false;
 		EvaluationContext context = (EvaluationContext) evaluationContext;
 		Object sel = context.getVariable("selection");
 		if (sel instanceof IStructuredSelection)
@@ -106,9 +108,10 @@ public class AddBookingHandler extends AbstractHandler implements IHandler
 			if (ssel.getFirstElement() instanceof Course)
 			{
 				Course course = (Course) ssel.getFirstElement();
-				setBaseEnabled(course.getParticipantsCount() < course.getMaxParticipants());
+				enabled = course.getState().equals(CourseState.FORTHCOMING);
 			}
 		}
+		setBaseEnabled(enabled);
 	}
 
 }

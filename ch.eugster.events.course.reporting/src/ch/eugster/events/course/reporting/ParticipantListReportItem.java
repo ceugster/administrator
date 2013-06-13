@@ -7,23 +7,7 @@ import ch.eugster.events.persistence.model.Participant;
 
 public class ParticipantListReportItem implements Comparable<ParticipantListReportItem>
 {
-	private String id;
-
-	private String name;
-
-	private String address;
-
-	private String city;
-
-	private String phone;
-
-	private String mobile;
-
-	private String email;
-
-	private int count;
-
-	private String correspondant;
+	private Participant participant;
 
 	public ParticipantListReportItem()
 	{
@@ -37,7 +21,7 @@ public class ParticipantListReportItem implements Comparable<ParticipantListRepo
 	 */
 	public ParticipantListReportItem(final Participant participant)
 	{
-		loadData(participant);
+		this.participant = participant;
 	}
 
 	@Override
@@ -54,106 +38,65 @@ public class ParticipantListReportItem implements Comparable<ParticipantListRepo
 
 	public String getAddress()
 	{
-		return address;
+		return AddressFormatter.getInstance().formatAddressLine(participant.getLink().getAddress());
 	}
 
 	public String getCity()
 	{
-		return city;
+		return AddressFormatter.getInstance().formatCityLine(participant.getLink().getAddress());
 	}
 
 	public String getCorrespondant()
 	{
-		return this.correspondant;
+		return participant.getBooking().getParticipant().getId().equals(participant.getId()) ? "A" : "";
 	}
 
 	public int getCount()
 	{
-		return count;
+		return participant.getCount();
 	}
 
 	public String getEmail()
 	{
-		return email;
+		return participant.getLink().getEmail();
 	}
 
 	public String getId()
 	{
-		return id;
+		return PersonFormatter.getInstance().formatId(participant.getLink().getPerson());
 	}
 
 	public String getMobile()
 	{
-		return mobile;
+		return LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(
+				participant.getLink().getPerson().getCountry(), participant.getLink().getPerson().getPhone());
 	}
 
 	public String getName()
 	{
-		return name;
+		return PersonFormatter.getInstance().formatLastnameFirstname(participant.getLink().getPerson());
+	}
+
+	public Participant getParticipant()
+	{
+		return this.participant;
 	}
 
 	public String getPhone()
 	{
+		String phone = null;
+		phone = PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(
+				participant.getLink().getPerson().getCountry(), participant.getLink().getPhone());
+		if (phone == null || phone.isEmpty())
+		{
+			phone = LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(
+					participant.getLink().getAddress().getCountry(), participant.getLink().getAddress().getPhone());
+		}
 		return phone;
 	}
 
-	private void loadData(final Participant participant)
+	public String getStatus()
 	{
-		this.address = AddressFormatter.getInstance().formatAddressLine(participant.getLink().getAddress());
-		this.city = AddressFormatter.getInstance().formatCityLine(participant.getLink().getAddress());
-		this.correspondant = participant.getBooking().getParticipant().getId().equals(participant.getId()) ? "A" : "";
-		this.count = participant.getCount();
-		this.email = participant.getLink().getEmail();
-		this.id = PersonFormatter.getInstance().formatId(participant.getLink().getPerson());
-		this.mobile = LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(
-				participant.getLink().getPerson().getCountry(), participant.getLink().getPerson().getPhone());
-		this.phone = PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(
-				participant.getLink().getPerson().getCountry(), participant.getLink().getPhone());
-		if (this.phone == null || this.phone.isEmpty())
-		{
-			this.phone = LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(
-					participant.getLink().getAddress().getCountry(), participant.getLink().getAddress().getPhone());
-		}
-		this.name = PersonFormatter.getInstance().formatLastnameFirstname(participant.getLink().getPerson());
-	}
-
-	public void setAddress(final String address)
-	{
-		this.address = address;
-	}
-
-	public void setCity(final String city)
-	{
-		this.city = city;
-	}
-
-	public void setCorrespondant(final String correspondant)
-	{
-		this.correspondant = correspondant;
-	}
-
-	public void setCount(final int count)
-	{
-		this.count = count;
-	}
-
-	public void setEmail(final String email)
-	{
-		this.email = email;
-	}
-
-	public void setId(final String id)
-	{
-		this.id = id;
-	}
-
-	public void setName(final String name)
-	{
-		this.name = name;
-	}
-
-	public void setPhone(final String phone)
-	{
-		this.phone = phone;
+		return participant.getBooking().getBookingState(participant.getBooking().getCourse().getState()).toString();
 	}
 }

@@ -67,6 +67,7 @@ import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.Booking;
+import ch.eugster.events.persistence.model.BookingForthcomingState;
 import ch.eugster.events.persistence.model.BookingType;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
@@ -170,9 +171,17 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 
 	private boolean canAdd(final int count)
 	{
-		int max = booking.getCourse().getMaxParticipants();
-		int existing = booking.getCourse().getParticipantsCount();
-		return count + existing <= max;
+		if (booking.getForthcomingState().equals(BookingForthcomingState.BOOKED)
+				|| booking.getForthcomingState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
+		{
+			int max = booking.getCourse().getMaxParticipants();
+			int existing = booking.getCourse().getParticipantsCount();
+			return count + existing <= max;
+		}
+		else
+		{
+			return true;
+		}
 	}
 
 	@Override

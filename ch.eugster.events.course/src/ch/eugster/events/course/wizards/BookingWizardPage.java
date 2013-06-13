@@ -464,25 +464,23 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		else
 		{
 			CourseState courseState = course.getState();
+			BookingForthcomingState[] availableBookingStates = null;
 			if (courseState.equals(CourseState.FORTHCOMING))
 			{
-				this.bookingState.setInput(BookingForthcomingState.values());
-				if (this.booking.getState() == null)
-					this.booking.setForthcomingState(BookingForthcomingState.BOOKED);
+				if (course.getParticipantsCount() + 1 < course.getMaxParticipants())
+				{
+					availableBookingStates = BookingForthcomingState.values();
+				}
+				else
+				{
+					availableBookingStates = new BookingForthcomingState[] { BookingForthcomingState.WAITING_LIST };
+				}
 			}
-			else if (courseState.equals(CourseState.DONE))
-			{
-				this.bookingState.setInput(BookingDoneState.values());
-				if (this.booking.getState() == null)
-					this.booking.setDoneState(BookingDoneState.PARTICIPATED);
-			}
-			else if (courseState.equals(CourseState.ANNULATED))
-			{
-				this.bookingState.setInput(BookingAnnulatedState.values());
-				if (this.booking.getState() == null)
-					this.booking.setAnnulatedState(BookingAnnulatedState.ANNULATED);
-			}
-			this.bookingState.setSelection(new StructuredSelection(this.booking.getBookingState(courseState)));
+			this.bookingState.setInput(availableBookingStates);
+			BookingForthcomingState selectedBookingState = availableBookingStates[0];
+			this.booking.setForthcomingState(selectedBookingState);
+			this.bookingState.setSelection(new StructuredSelection(
+					new BookingForthcomingState[] { selectedBookingState }));
 		}
 	}
 
