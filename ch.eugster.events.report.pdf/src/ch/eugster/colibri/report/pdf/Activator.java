@@ -1,4 +1,4 @@
-package ch.eugster.events.report.pdf;
+package ch.eugster.colibri.report.pdf;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
