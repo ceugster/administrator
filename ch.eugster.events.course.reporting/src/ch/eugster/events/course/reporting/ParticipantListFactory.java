@@ -4,17 +4,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.CourseFormatter;
 import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.Booking;
+import ch.eugster.events.persistence.model.BookingAnnulatedState;
 import ch.eugster.events.persistence.model.BookingDoneState;
 import ch.eugster.events.persistence.model.BookingForthcomingState;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseGuide;
-import ch.eugster.events.persistence.model.CourseState;
+import ch.eugster.events.persistence.model.IBookingState;
 import ch.eugster.events.persistence.model.Participant;
 
 public class ParticipantListFactory
@@ -39,9 +42,10 @@ public class ParticipantListFactory
 		parameters.put("email", course.getDomain() == null ? "" : course.getDomain().getEmail());
 		parameters.put("fax", course.getDomain() == null ? "" : course.getDomain().getFax());
 		parameters.put("website", course.getDomain() == null ? "" : course.getDomain().getWebsite());
+		parameters.put("header", "Teilnehmerliste");
 
 		parameters.put("code", course.getCode());
-		parameters.put("title", course.getTitle());
+		parameters.put("title", course.getTitle() + " (" + course.getState().toString() + ")");
 
 		StringBuilder builder = new StringBuilder();
 		Collection<CourseGuide> guides = course.getCourseGuides();
@@ -66,6 +70,39 @@ public class ParticipantListFactory
 		builder = builder.append(CourseFormatter.getInstance().formatMediumDate(course));
 		parameters.put("dates", builder.toString());
 
+		Map<IBookingState, Integer> counts = new HashMap<IBookingState, Integer>();
+		Collection<Booking> bookings = course.getBookings();
+		for (Booking booking : bookings)
+		{
+			Integer count = counts.get(booking.getBookingState(course.getState()));
+			if (count == null)
+			{
+				count = new Integer(booking.getParticipantCount());
+			}
+			else
+			{
+				int c = count.intValue();
+				c += booking.getParticipantCount();
+				count = new Integer(c);
+			}
+			counts.put(booking.getBookingState(course.getState()), count);
+		}
+
+		int max = Math.max(BookingForthcomingState.values().length, BookingDoneState.values().length);
+		max = Math.max(max, BookingAnnulatedState.values().length);
+		for (int i = 0; i < max; i++)
+		{
+			parameters.put("bookingTypeKey" + i, null);
+			parameters.put("bookingTypeValue" + i, null);
+		}
+		int i = 0;
+		Set<Entry<IBookingState, Integer>> bookingStates = counts.entrySet();
+		for (Entry<IBookingState, Integer> bookingState : bookingStates)
+		{
+			parameters.put("bookingTypeKey" + i, bookingState.getKey().toString());
+			parameters.put("bookingTypeValue" + i, bookingState.getValue());
+			i++;
+		}
 		return parameters;
 	}
 
@@ -77,34 +114,13 @@ public class ParticipantListFactory
 	public int setCourse(final Course course)
 	{
 		this.course = course;
-		if (course.getState().equals(CourseState.FORTHCOMING))
+		Collection<Booking> bookings = course.getBookings();
+		for (Booking booking : bookings)
 		{
-			for (Booking booking : course.getBookings())
+			Collection<Participant> participants = booking.getParticipants();
+			for (Participant participant : participants)
 			{
-				if (booking.getState().equals(BookingForthcomingState.BOOKED))
-				{
-					Collection<Participant> participants = booking.getParticipants();
-					for (Participant participant : participants)
-					{
-
-						this.participantListReportItems.add(new ParticipantListReportItem(participant));
-					}
-				}
-			}
-		}
-		if (course.getState().equals(CourseState.DONE))
-		{
-			for (Booking booking : course.getBookings())
-			{
-				if (booking.getState().equals(BookingDoneState.PARTICIPATED))
-				{
-					Collection<Participant> participants = booking.getParticipants();
-					for (Participant participant : participants)
-					{
-
-						this.participantListReportItems.add(new ParticipantListReportItem(participant));
-					}
-				}
+				this.participantListReportItems.add(new ParticipantListReportItem(participant));
 			}
 		}
 		return size();
