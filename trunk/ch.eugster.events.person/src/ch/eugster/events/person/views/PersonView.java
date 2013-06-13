@@ -940,9 +940,9 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					{
 						DeletedPersonAndAddressFilter f = (DeletedPersonAndAddressFilter) filter;
 						f.setShowDeleted(showDeleted);
-						viewer.refresh();
 					}
 				}
+				viewer.refresh();
 				PersonView.this.found.setText("Gefunden: " + PersonView.this.viewer.getTree().getItemCount());
 				PersonView.this.selected.setText("Ausgewählt: "
 						+ ((StructuredSelection) PersonView.this.viewer.getSelection()).size());
@@ -1107,7 +1107,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void postDelete(final AbstractEntity entity)
 			{
-				viewer.refresh(entity);
+				viewer.refresh();
 			}
 
 			@Override
@@ -1128,7 +1128,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void postDelete(final AbstractEntity entity)
 			{
-				viewer.refresh(entity);
+				viewer.refresh();
 			}
 
 			@Override
@@ -1149,7 +1149,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void postDelete(final AbstractEntity entity)
 			{
-				viewer.refresh(entity);
+				viewer.refresh();
 			}
 
 			@Override

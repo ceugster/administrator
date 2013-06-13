@@ -62,14 +62,14 @@ public class AddressGroupMember extends AbstractEntity
 	{
 		super();
 		this.setAddressGroup(addressGroup);
-		addressGroup.addAddressGroupMember(this);
+		// addressGroup.addAddressGroupMember(this);
 	}
 
 	private AddressGroupMember(final AddressGroup addressGroup, final Address address)
 	{
 		super();
 		this.setAddressGroup(addressGroup);
-		addressGroup.addAddressGroupMember(this);
+		// addressGroup.addAddressGroupMember(this);
 		this.setParent(null, address);
 	}
 
@@ -77,7 +77,7 @@ public class AddressGroupMember extends AbstractEntity
 	{
 		super();
 		this.setAddressGroup(addressGroup);
-		addressGroup.addAddressGroupMember(this);
+		// addressGroup.addAddressGroupMember(this);
 		this.setParent(link, link.getAddress());
 	}
 

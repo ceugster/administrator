@@ -229,6 +229,7 @@ public class DeleteHandler extends AbstractHandler implements IHandler
 	@Override
 	public void setEnabled(final Object evaluationContext)
 	{
+		boolean enabled = true;
 		if (evaluationContext != null)
 		{
 			EvaluationContext context = (EvaluationContext) evaluationContext;
@@ -241,15 +242,31 @@ public class DeleteHandler extends AbstractHandler implements IHandler
 				{
 					if (sel instanceof AbstractEntity)
 					{
-						if (!((AbstractEntity) sel).isDeleted())
+						if (sel instanceof Person)
 						{
-							super.setBaseEnabled(true);
-							return;
+							/*
+							 * Es handelt sich um den DefaultLink (der wird auf
+							 * Person-Ebene für das Anzeigen der Adressdaten
+							 * verwendet. Wenn weitere Adressen für die gleiche
+							 * Person vorhanden sind, dann muss zuerst die
+							 * Default-Adresse geändert werden, bevor der Link
+							 * gelöscht werden kann.
+							 */
+							Person person = (Person) sel;
+							if (person.getActiveLinks().size() > 1)
+							{
+								enabled = false;
+								break;
+							}
+						}
+						else if (((AbstractEntity) sel).isDeleted())
+						{
+							enabled = false;
 						}
 					}
 				}
 			}
 		}
-		super.setBaseEnabled(false);
+		super.setBaseEnabled(enabled);
 	}
 }
