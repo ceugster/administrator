@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307, USA.
  */
-package ch.eugster.events.report.internal.viewer;
+package ch.eugster.colibri.report.internal.viewer;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRPrintHyperlink;
@@ -25,7 +25,7 @@ import net.sf.jasperreports.view.JRHyperlinkListener;
 
 import org.eclipse.swt.custom.BusyIndicator;
 
-import ch.eugster.events.report.internal.viewer.util.BrowserUtils;
+import ch.eugster.colibri.report.internal.viewer.util.BrowserUtils;
 
 /**
  * Default hyperlink listener implementation that opens links using browser.
