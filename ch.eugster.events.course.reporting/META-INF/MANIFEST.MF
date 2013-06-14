@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Course Reporting Plugin
 Bundle-SymbolicName: ch.eugster.events.course.reporting;singleton:=true
-Bundle-Version: 1.0.8
+Bundle-Version: 1.0.8.qualifier
 Bundle-Activator: ch.eugster.events.course.reporting.Activator
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
