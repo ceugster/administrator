@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -80,15 +81,8 @@ import ch.eugster.events.person.views.PersonSorter;
 import ch.eugster.events.ui.dnd.EntityTransfer;
 import ch.eugster.events.ui.dnd.LinkPersonAddressDragSourceListener;
 
-public class ParticipantWizardPage extends WizardPage implements ISelectionChangedListener
+public class ParticipantWizardPage extends WizardPage implements ISelectionChangedListener, IBookingWizardPage
 {
-	/**
-	 * The booking, that will be created or updated. Use only as read-only. The
-	 * wizard is responsible in method performFinish to call the update method
-	 * of this instance before saving the booking
-	 */
-	private final Booking booking;
-
 	/**
 	 * The ViewerRoot caches the changes to the items of the booking. Clones of
 	 * the bookings's existing participants are added to this instance. Changes
@@ -115,11 +109,10 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 
 	private final Collection<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
 
-	public ParticipantWizardPage(final String pageName, final Booking booking)
+	public ParticipantWizardPage(final String pageName, final IBookingWizard wizard)
 	{
 		super(pageName);
-		this.booking = booking;
-
+		Assert.isTrue(this.getWizard() instanceof BookingWizard);
 		this.dialogSettings = Activator.getDefault().getDialogSettings()
 				.getSection(Constants.DIALOG_SETTINGS_KEY_PARTICIPANT_WIZARD_PAGE_ID);
 		if (this.dialogSettings == null)
@@ -153,7 +146,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		{
 			if (canAdd(1))
 			{
-				Participant participant = Participant.newInstance(link, this.booking);
+				BookingWizard wizard = (BookingWizard) this.getWizard();
+				Participant participant = Participant.newInstance(link, wizard.getBooking());
 				this.root.addParticipant(participant);
 			}
 			else
@@ -171,11 +165,12 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 
 	private boolean canAdd(final int count)
 	{
-		if (booking.getForthcomingState().equals(BookingForthcomingState.BOOKED)
-				|| booking.getForthcomingState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
+		BookingWizard wizard = (BookingWizard) this.getWizard();
+		if (wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.BOOKED)
+				|| wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
 		{
-			int max = booking.getCourse().getMaxParticipants();
-			int existing = booking.getCourse().getParticipantsCount();
+			int max = wizard.getBooking().getCourse().getMaxParticipants();
+			int existing = wizard.getBooking().getCourse().getParticipantsCount();
 			return count + existing <= max;
 		}
 		else
@@ -795,12 +790,13 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		Menu menu = menuManager.createContextMenu(this.participantViewer.getTable());
 		this.participantViewer.getTable().setMenu(menu);
 
-		if (this.booking.getCourse() != null)
-			this.loadBookingTypes(this.booking.getCourse());
+		BookingWizard wizard = (BookingWizard) this.getWizard();
+		if (wizard.getBooking().getCourse() != null)
+			this.loadBookingTypes(wizard.getBooking().getCourse());
 
 		this.root = new ViewerRoot(this.participantViewer);
 		this.root.addSelectionChangedListener(this);
-		this.root.setBooking(this.booking);
+		this.root.setBooking(wizard.getBooking());
 
 		tableViewerColumn = new TableViewerColumn(this.participantViewer, SWT.LEFT);
 		tableViewerColumn.setLabelProvider(new ColumnLabelProvider()
@@ -1128,7 +1124,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		transfers = new Transfer[] { EntityTransfer.getTransfer() };
 		ops = DND.DROP_COPY;
 		this.participantViewer.addDropSupport(ops, transfers, new ParticipantViewerDropAdapter(this.participantViewer,
-				this.booking));
+				wizard.getBooking()));
 
 		this.participantViewer.setInput(this.root);
 

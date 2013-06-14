@@ -421,6 +421,8 @@ ch.eugster.events.course/src/ch/eugster/events/course/wizards/CourseDetailWizard
 ch.eugster.events.course/src/ch/eugster/events/course/wizards/CourseGuideWizard.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/wizards/CourseGuideWizardPage.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/wizards/CourseWizardPage.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/wizards/IBookingWizard.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/wizards/IBookingWizardPage.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/wizards/MembershipLabelProvider.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/wizards/MembershipSorter.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/wizards/ParticipantSorter.java -text

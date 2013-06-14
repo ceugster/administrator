@@ -11,7 +11,6 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.eugster.events.course.wizards.BookingWizard;
@@ -29,8 +28,6 @@ import ch.eugster.events.ui.wizards.WizardDialog;
 
 public class AddBookingHandler extends AbstractHandler implements IHandler
 {
-
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
@@ -38,15 +35,15 @@ public class AddBookingHandler extends AbstractHandler implements IHandler
 		IStructuredSelection ssel = (IStructuredSelection) context.getParent().getVariable("selection");
 		if (!ssel.isEmpty())
 		{
-			Wizard wizard = null;
+			BookingWizard wizard = null;
 			if (ssel.getFirstElement() instanceof Course)
 			{
 				Booking booking = Booking.newInstance((Course) ssel.getFirstElement());
 				wizard = new BookingWizard(booking);
-				ParticipantWizardPage participantPage = new ParticipantWizardPage("participantWizardPage", booking);
-				wizard.addPage(participantPage);
-				BookingWizardPage bookingPage = new BookingWizardPage("bookingWizardPage", booking);
+				BookingWizardPage bookingPage = new BookingWizardPage("bookingWizardPage", wizard);
 				wizard.addPage(bookingPage);
+				ParticipantWizardPage participantPage = new ParticipantWizardPage("participantWizardPage", wizard);
+				wizard.addPage(participantPage);
 			}
 			else
 			{
@@ -89,9 +86,9 @@ public class AddBookingHandler extends AbstractHandler implements IHandler
 			booking.setParticipants(participants);
 			booking.setParticipant(participants.toArray(new Participant[0])[0]);
 			wizard = new BookingWizard(booking);
-			CourseWizardPage coursePage = new CourseWizardPage("courseWizardPage", booking);
-			ParticipantWizardPage participantPage = new ParticipantWizardPage("participantWizardPage", booking);
-			BookingWizardPage bookingPage = new BookingWizardPage("bookingWizardPage", booking);
+			CourseWizardPage coursePage = new CourseWizardPage("courseWizardPage", wizard);
+			ParticipantWizardPage participantPage = new ParticipantWizardPage("participantWizardPage", wizard);
+			BookingWizardPage bookingPage = new BookingWizardPage("bookingWizardPage", wizard);
 			coursePage.addSelectionChangedListener(bookingPage);
 			coursePage.addSelectionChangedListener(participantPage);
 			wizard.addPage(coursePage);

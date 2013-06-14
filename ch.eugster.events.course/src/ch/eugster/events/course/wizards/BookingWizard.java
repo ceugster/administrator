@@ -17,7 +17,7 @@ import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.queries.BookingQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
-public class BookingWizard extends Wizard
+public class BookingWizard extends Wizard implements IBookingWizard
 {
 
 	private Booking booking;
@@ -40,6 +40,7 @@ public class BookingWizard extends Wizard
 		return true;
 	}
 
+	@Override
 	public Booking getBooking()
 	{
 		return this.booking;

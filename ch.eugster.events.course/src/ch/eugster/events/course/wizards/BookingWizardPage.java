@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -42,10 +43,8 @@ import ch.eugster.events.persistence.model.BookingForthcomingState;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseState;
 
-public class BookingWizardPage extends WizardPage implements ISelectionChangedListener
+public class BookingWizardPage extends WizardPage implements ISelectionChangedListener, IBookingWizardPage
 {
-	private final Booking booking;
-
 	private CDateTime bookingDate;
 
 	private ComboViewer bookingState;
@@ -78,10 +77,10 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 
 	private IDialogSettings settings;
 
-	public BookingWizardPage(final String name, final Booking booking)
+	public BookingWizardPage(final String name, final IBookingWizard wizard)
 	{
 		super(name);
-		this.booking = booking;
+		Assert.isTrue(this.getWizard() instanceof BookingWizard);
 		settings = Activator.getDefault().getDialogSettings().getSection("booking.wizard");
 		if (settings == null)
 		{
@@ -173,6 +172,20 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		this.printBookingConfirmation = new Button(composite, SWT.CHECK);
 		this.printBookingConfirmation.setText("Buchungsbestätigung jetzt drucken");
 		this.printBookingConfirmation.setLayoutData(new GridData());
+		this.printBookingConfirmation.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent e)
+			{
+				widgetSelected(e);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent e)
+			{
+				updatePageState();
+			}
+		});
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
@@ -185,6 +198,20 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		this.printInvitation = new Button(composite, SWT.CHECK);
 		this.printInvitation.setText("Kurseinladung jetzt drucken");
 		this.printInvitation.setLayoutData(new GridData());
+		this.printInvitation.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent e)
+			{
+				widgetSelected(e);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent e)
+			{
+				updatePageState();
+			}
+		});
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
@@ -351,9 +378,15 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 
 		this.setValues();
 
-		this.setControl(composite);
-
 		this.updatePageState();
+
+		this.setControl(composite);
+	}
+
+	private Booking getBooking()
+	{
+		BookingWizard wizard = (BookingWizard) this.getWizard();
+		return wizard.getBooking();
 	}
 
 	private Calendar getBookingConfirmationSentDate()
@@ -481,7 +514,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 			}
 			this.bookingState.setInput(availableBookingStates);
 			BookingForthcomingState selectedBookingState = availableBookingStates[0];
-			this.booking.setForthcomingState(selectedBookingState);
+			this.getBooking().setForthcomingState(selectedBookingState);
 			this.bookingState.setSelection(new StructuredSelection(
 					new BookingForthcomingState[] { selectedBookingState }));
 		}
@@ -490,74 +523,74 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 	private void setValues()
 	{
 		Date date = null;
-		if (this.booking.getDate() == null)
+		if (this.getBooking().getDate() == null)
 		{
 			date = GregorianCalendar.getInstance().getTime();
 		}
 		else
 		{
-			date = this.booking.getDate().getTime();
+			date = this.getBooking().getDate().getTime();
 		}
 		this.bookingDate.setSelection(date);
 
-		if (this.booking.getCourse() != null)
+		if (this.getBooking().getCourse() != null)
 		{
-			this.setBookingStateInput(this.booking.getCourse());
+			this.setBookingStateInput(this.getBooking().getCourse());
 		}
 
-		if (this.booking.getBookingConfirmationSentDate() == null)
+		if (this.getBooking().getBookingConfirmationSentDate() == null)
 		{
 			date = null;
 		}
 		else
 		{
-			date = this.booking.getBookingConfirmationSentDate().getTime();
+			date = this.getBooking().getBookingConfirmationSentDate().getTime();
 		}
 		this.bookingConfirmationSentDate.setSelection(date);
 
-		if (this.booking.getInvitationSentDate() == null)
+		if (this.getBooking().getInvitationSentDate() == null)
 		{
 			date = null;
 		}
 		else
 		{
-			date = this.booking.getInvitationSentDate().getTime();
+			date = this.getBooking().getInvitationSentDate().getTime();
 		}
 		this.invitationSentDate.setSelection(date);
 
-		if (this.booking.getParticipationConfirmationSentDate() == null)
+		if (this.getBooking().getParticipationConfirmationSentDate() == null)
 		{
 			date = null;
 		}
 		else
 		{
-			date = this.booking.getParticipationConfirmationSentDate().getTime();
+			date = this.getBooking().getParticipationConfirmationSentDate().getTime();
 		}
 		this.participationConfirmationSentDate.setSelection(date);
 
-		if (this.booking.getPayDate() == null)
+		if (this.getBooking().getPayDate() == null)
 		{
 			date = null;
 		}
 		else
 		{
-			date = this.booking.getPayDate().getTime();
+			date = this.getBooking().getPayDate().getTime();
 		}
 		this.payDate.setSelection(date);
 
-		this.payAmount.setValue(Double.valueOf(this.booking.getPayAmount()));
+		this.payAmount.setValue(Double.valueOf(this.getBooking().getPayAmount()));
 
-		if (this.booking.getPayBackDate() == null)
+		if (this.getBooking().getPayBackDate() == null)
 		{
 			date = null;
 		}
 		else
 		{
-			date = this.booking.getPayBackDate().getTime();
+			date = this.getBooking().getPayBackDate().getTime();
 		}
 		this.payBackDate.setSelection(date);
 
-		this.payBackAmount.setValue(Double.valueOf(this.booking.getPayBackAmount()));
+		this.payBackAmount.setValue(Double.valueOf(this.getBooking().getPayBackAmount()));
 
 		updatePageState();
 	}
@@ -606,12 +639,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 			super.setPageComplete(false);
 			return;
 		}
-		if (!this.printBookingConfirmation())
-		{
-			super.setPageComplete(false);
-			return;
-		}
-		else
+		if (this.printBookingConfirmation())
 		{
 			File file = new File(bookingConfirmationTemplatePath.getText());
 			if (!file.isFile())
@@ -620,12 +648,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 				return;
 			}
 		}
-		if (!this.printInvitation())
-		{
-			super.setPageComplete(false);
-			return;
-		}
-		else
+		if (this.printInvitation())
 		{
 			File file = new File(invitationTemplatePath.getText());
 			if (!file.isFile())

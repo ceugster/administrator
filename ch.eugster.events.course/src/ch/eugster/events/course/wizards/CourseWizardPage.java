@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -57,10 +58,9 @@ import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Season;
 import ch.eugster.events.persistence.service.ConnectionService;
 
-public class CourseWizardPage extends WizardPage implements IDoubleClickListener, ISelectionChangedListener
+public class CourseWizardPage extends WizardPage implements IDoubleClickListener, ISelectionChangedListener,
+		IBookingWizardPage
 {
-	private final Booking booking;
-
 	private Text filterText;
 
 	private Button filterButton;
@@ -81,10 +81,10 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 
 	private ServiceTracker connectionServiceTracker;
 
-	public CourseWizardPage(final String name, final Booking booking)
+	public CourseWizardPage(final String name, final IBookingWizard wizard)
 	{
 		super(name);
-		this.booking = booking;
+		Assert.isTrue(this.getWizard() instanceof BookingWizard);
 		this.dialogSettings = Activator.getDefault().getDialogSettings()
 				.getSection(Constants.DIALOG_SETTINGS_KEY_COURSE_VIEW_SECTION_ID);
 		if (this.dialogSettings == null)
@@ -201,7 +201,8 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		doneCoursesFilter.doFilter(false);
 		AnnulatedCoursesFilter annulatedCoursesFilter = new AnnulatedCoursesFilter(this.viewer);
 		annulatedCoursesFilter.doFilter(false);
-		this.alreadyParticipantFilter = new AlreadyParticipantFilter(this.viewer, this.booking);
+		BookingWizard wizard = (BookingWizard) this.getWizard();
+		this.alreadyParticipantFilter = new AlreadyParticipantFilter(this.viewer, wizard.getBooking());
 
 		ViewerFilter[] filters = new ViewerFilter[] { seasonFilter, deletedFilter, courseFilter, doneCoursesFilter,
 				annulatedCoursesFilter, this.alreadyParticipantFilter };
@@ -371,9 +372,11 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 						viewer.setInput(connectionService);
 						viewer.expandAll();
 						packColumns();
-						if (booking.getCourse() != null)
+						BookingWizard wizard = (BookingWizard) CourseWizardPage.this.getWizard();
+
+						if (wizard.getBooking().getCourse() != null)
 						{
-							viewer.setSelection(new StructuredSelection(booking.getCourse()), true);
+							viewer.setSelection(new StructuredSelection(wizard.getBooking().getCourse()), true);
 						}
 					}
 				});
@@ -436,12 +439,19 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 	{
 		if (event.getSource().equals(viewer))
 		{
-			this.updatePageState();
-			ISelectionChangedListener[] listeners = this.selectionChangedListeners
-					.toArray(new ISelectionChangedListener[0]);
-			for (ISelectionChangedListener listener : listeners)
+			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+			if (ssel.getFirstElement() instanceof Course)
 			{
-				listener.selectionChanged(event);
+				Course course = (Course) ssel.getFirstElement();
+				BookingWizard wizard = (BookingWizard) this.getWizard();
+				wizard.getBooking().setCourse(course);
+				this.updatePageState();
+				ISelectionChangedListener[] listeners = this.selectionChangedListeners
+						.toArray(new ISelectionChangedListener[0]);
+				for (ISelectionChangedListener listener : listeners)
+				{
+					listener.selectionChanged(event);
+				}
 			}
 		}
 		else if (event.getSource() instanceof TableViewer && !event.getSelection().isEmpty()

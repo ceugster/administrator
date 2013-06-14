@@ -25,7 +25,7 @@ public class AddParticipantHandler extends AbstractHandler implements IHandler
 		{
 			Booking booking = (Booking) ssel.getFirstElement();
 			BookingWizard wizard = new BookingWizard(booking);
-			ParticipantWizardPage participantPage = new ParticipantWizardPage("participantWizardPage", booking);
+			ParticipantWizardPage participantPage = new ParticipantWizardPage("participantWizardPage", wizard);
 			wizard.addPage(participantPage);
 
 			Shell shell = (Shell) context.getParent().getVariable("activeShell");
