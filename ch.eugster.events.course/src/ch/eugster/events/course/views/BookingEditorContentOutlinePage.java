@@ -133,8 +133,7 @@ public class BookingEditorContentOutlinePage extends ContentOutlinePage implemen
 					participant.getPropertyChangeSupport().addPropertyChangeListener(
 							BookingEditorContentOutlinePage.this);
 					BookingWizard wizard = new BookingWizard(BookingEditorContentOutlinePage.this.root.getBooking());
-					wizard.addPage(new ParticipantWizardPage("participantWizardPage",
-							BookingEditorContentOutlinePage.this.root.getBooking()));
+					wizard.addPage(new ParticipantWizardPage("participantWizardPage", wizard));
 					Shell shell = BookingEditorContentOutlinePage.this.getSite().getShell();
 					WizardDialog dialog = new WizardDialog(shell, wizard);
 					dialog.open();
