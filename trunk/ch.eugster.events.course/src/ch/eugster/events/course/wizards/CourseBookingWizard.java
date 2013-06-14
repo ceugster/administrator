@@ -9,7 +9,7 @@ import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.queries.BookingQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
-public class CourseBookingWizard extends Wizard
+public class CourseBookingWizard extends Wizard implements IBookingWizard
 {
 
 	private Booking booking;
@@ -22,8 +22,8 @@ public class CourseBookingWizard extends Wizard
 	@Override
 	public void addPages()
 	{
-		ParticipantWizardPage participantPage = new ParticipantWizardPage("participantWizardPage", this.booking);
-		BookingWizardPage bookingPage = new BookingWizardPage("bookingWizardPage", this.booking);
+		ParticipantWizardPage participantPage = new ParticipantWizardPage("participantWizardPage", this);
+		BookingWizardPage bookingPage = new BookingWizardPage("bookingWizardPage", this);
 		this.addPage(bookingPage);
 		this.addPage(participantPage);
 	}
@@ -39,6 +39,7 @@ public class CourseBookingWizard extends Wizard
 		return true;
 	}
 
+	@Override
 	public Booking getBooking()
 	{
 		return this.booking;
