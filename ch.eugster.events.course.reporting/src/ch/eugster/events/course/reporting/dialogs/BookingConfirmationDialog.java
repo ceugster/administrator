@@ -125,6 +125,10 @@ public class BookingConfirmationDialog extends TitleAreaDialog
 								{
 									break;
 								}
+								else if (status.getSeverity() == IStatus.ERROR)
+								{
+									return status;
+								}
 							}
 						}
 						else

@@ -10,6 +10,7 @@ import java.util.Collection;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -85,6 +86,8 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 				if (counter == 0)
 				{
 					sheet = this.createSheet(workbook, "Adressen");
+					sheet.getPrintSetup().setLandscape(false);
+					sheet.getPrintSetup().setPaperSize(HSSFPrintSetup.A4_PAPERSIZE);
 					this.addHeader(sheet);
 					this.addTitles(keys, sheet, counter, style, bold);
 				}

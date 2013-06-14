@@ -482,8 +482,16 @@ public class CourseMap extends AbstractDataMap
 				}
 				case FIRST_DATE:
 				{
-					Calendar calendar = course.getFirstDate();
-					return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+					Calendar firstDate = course.getFirstDate();
+					if (firstDate == null)
+					{
+						return "";
+					}
+					if (firstDate.get(Calendar.HOUR_OF_DAY) == 0 && firstDate.get(Calendar.MINUTE) == 0)
+					{
+						return SimpleDateFormat.getDateInstance().format(firstDate.getTime());
+					}
+					return dateFormatter.format(firstDate.getTime());
 				}
 				case INVITATION_DATE:
 				{
@@ -507,8 +515,16 @@ public class CourseMap extends AbstractDataMap
 				}
 				case LAST_DATE:
 				{
-					Calendar calendar = course.getLastDate();
-					return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+					Calendar lastDate = course.getLastDate();
+					if (lastDate == null)
+					{
+						return "";
+					}
+					if (lastDate.get(Calendar.HOUR_OF_DAY) == 0 && lastDate.get(Calendar.MINUTE) == 0)
+					{
+						return SimpleDateFormat.getDateInstance().format(lastDate.getTime());
+					}
+					return dateFormatter.format(lastDate.getTime());
 				}
 				case LODGING:
 				{

@@ -359,14 +359,26 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		file.deleteOnExit();
 		document.save(file);
 
-		if (Desktop.isDesktopSupported() && writer.isEmpty())
+		if (Desktop.isDesktopSupported() && (writer == null || writer.isEmpty()))
 		{
-			Desktop.getDesktop().open(file);
+			try
+			{
+				Desktop.getDesktop().open(file);
+			}
+			catch (Exception e)
+			{
+				this.showDocumentWithProgram(writer, file);
+			}
 		}
 		else
 		{
-			Runtime.getRuntime().exec(writer + " " + file.getAbsolutePath());
+			this.showDocumentWithProgram(writer, file);
 		}
 		return Status.OK_STATUS;
+	}
+
+	private void showDocumentWithProgram(final String writer, final File file) throws Exception
+	{
+		Runtime.getRuntime().exec(writer + " " + file.getAbsolutePath());
 	}
 }

@@ -8,7 +8,9 @@ import ch.eugster.events.persistence.model.CourseDetail;
 
 public class CourseDetailMap extends AbstractDataMap
 {
-	private static DateFormat dateTimeFormatter = SimpleDateFormat.getDateTimeInstance();
+	private static DateFormat dateTimeFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+
+	private static DateFormat dateFormatter = SimpleDateFormat.getDateInstance();
 
 	public CourseDetailMap(final CourseDetail courseDetail)
 	{
@@ -150,8 +152,16 @@ public class CourseDetailMap extends AbstractDataMap
 			{
 				case END:
 				{
-					Calendar calendar = courseDetail.getEnd();
-					return calendar == null ? "" : dateTimeFormatter.format(calendar.getTime());
+					Calendar end = courseDetail.getEnd();
+					if (end == null)
+					{
+						return "";
+					}
+					if (end.get(Calendar.HOUR_OF_DAY) == 0 && end.get(Calendar.MINUTE) == 0)
+					{
+						return dateFormatter.format(end.getTime());
+					}
+					return dateTimeFormatter.format(end.getTime());
 				}
 				case JOURNEY:
 				{
@@ -167,8 +177,16 @@ public class CourseDetailMap extends AbstractDataMap
 				}
 				case START:
 				{
-					Calendar calendar = courseDetail.getStart();
-					return calendar == null ? "" : dateTimeFormatter.format(calendar.getTime());
+					Calendar start = courseDetail.getStart();
+					if (start == null)
+					{
+						return "";
+					}
+					if (start.get(Calendar.HOUR_OF_DAY) == 0 && start.get(Calendar.MINUTE) == 0)
+					{
+						return dateFormatter.format(start.getTime());
+					}
+					return dateTimeFormatter.format(start.getTime());
 				}
 				case SUBSTITUTION_START:
 				{
