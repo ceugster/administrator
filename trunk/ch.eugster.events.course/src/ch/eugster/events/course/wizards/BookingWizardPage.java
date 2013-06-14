@@ -10,6 +10,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -351,6 +352,8 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		this.setValues();
 
 		this.setControl(composite);
+
+		this.updatePageState();
 	}
 
 	private Calendar getBookingConfirmationSentDate()
@@ -592,41 +595,46 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 
 	private void updatePageState()
 	{
-		boolean pageComplete = false;
-		if (this.bookingDate.getSelection() != null)
+		if (this.bookingDate.getSelection() == null)
 		{
-			if (!this.bookingState.getSelection().isEmpty())
+			super.setPageComplete(false);
+			return;
+		}
+		IStructuredSelection ssel = (IStructuredSelection) this.bookingState.getSelection();
+		if (!(ssel.getFirstElement() instanceof BookingForthcomingState))
+		{
+			super.setPageComplete(false);
+			return;
+		}
+		if (!this.printBookingConfirmation())
+		{
+			super.setPageComplete(false);
+			return;
+		}
+		else
+		{
+			File file = new File(bookingConfirmationTemplatePath.getText());
+			if (!file.isFile())
 			{
-				if (this.printBookingConfirmation())
-				{
-					File file = new File(bookingConfirmationTemplatePath.getText());
-					if (file.isFile())
-					{
-						pageComplete = true;
-					}
-				}
-				else
-				{
-					pageComplete = true;
-				}
-				if (pageComplete == true)
-				{
-					if (this.printInvitation())
-					{
-						File file = new File(invitationTemplatePath.getText());
-						if (file.isFile())
-						{
-							pageComplete = true;
-						}
-					}
-					else
-					{
-						pageComplete = true;
-					}
-				}
+				super.setPageComplete(false);
+				return;
 			}
 		}
-		this.setPageComplete(pageComplete);
+		if (!this.printInvitation())
+		{
+			super.setPageComplete(false);
+			return;
+		}
+		else
+		{
+			File file = new File(invitationTemplatePath.getText());
+			if (!file.isFile())
+			{
+				super.setPageComplete(false);
+				return;
+			}
+		}
+		super.setPageComplete(true);
 	}
 
 }

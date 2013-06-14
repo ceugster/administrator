@@ -1026,7 +1026,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 						ParticipantWizardPage.this.participantViewer.refresh(element);
 					}
 				}
-				setPageComplete(true);
+				updatePageState();
 			}
 
 		});
@@ -1137,6 +1137,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		this.searcher.initialize();
 
 		this.setControl(mainSash);
+
+		this.updatePageState();
 	}
 
 	private void createDeleteParticipantAction(final IMenuManager manager)
@@ -1270,28 +1272,6 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		}
 	}
 
-	@Override
-	public void setPageComplete(boolean complete)
-	{
-		Table table = this.participantViewer.getTable();
-		TableItem[] items = table.getItems();
-		for (TableItem item : items)
-		{
-			Participant participant = (Participant) item.getData();
-			if (participant.getBookingType() == null)
-			{
-				complete = false;
-				break;
-			}
-			else if (participant.getCount() < 1)
-			{
-				complete = false;
-				break;
-			}
-		}
-		super.setPageComplete(items.length == 0 ? false : complete);
-	}
-
 	public void update(final Booking booking)
 	{
 		Map<Long, Participant> existingParticipants = new HashMap<Long, Participant>();
@@ -1316,6 +1296,27 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		{
 			booking.setParticipant(this.root.getDefaultParticipant());
 		}
+	}
+
+	public void updatePageState()
+	{
+		Table table = this.participantViewer.getTable();
+		TableItem[] items = table.getItems();
+		for (TableItem item : items)
+		{
+			Participant participant = (Participant) item.getData();
+			if (participant.getBookingType() == null)
+			{
+				super.setPageComplete(false);
+				return;
+			}
+			if (participant.getCount() < 1)
+			{
+				super.setPageComplete(false);
+				return;
+			}
+		}
+		super.setPageComplete(items.length > 0);
 	}
 
 	private class ParticipantContentProvider implements IStructuredContentProvider
