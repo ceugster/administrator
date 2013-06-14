@@ -11,7 +11,6 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Shell;
 
@@ -36,7 +35,7 @@ public class AddBookingHandler extends AbstractHandler implements IHandler
 	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
 		EvaluationContext context = (EvaluationContext) event.getApplicationContext();
-		StructuredSelection ssel = (StructuredSelection) context.getParent().getVariable("selection");
+		IStructuredSelection ssel = (IStructuredSelection) context.getParent().getVariable("selection");
 		if (!ssel.isEmpty())
 		{
 			Wizard wizard = null;
@@ -51,40 +50,7 @@ public class AddBookingHandler extends AbstractHandler implements IHandler
 			}
 			else
 			{
-				Booking booking = Booking.newInstance();
-
-				Collection<Participant> participants = new ArrayList<Participant>();
-				List<AbstractEntity> entities = ssel.toList();
-				for (AbstractEntity entity : entities)
-				{
-					if (entity instanceof LinkPersonAddress)
-					{
-						participants.add(Participant.newInstance((LinkPersonAddress) entity, booking));
-					}
-					else if (entity instanceof Person)
-					{
-						Person person = (Person) entity;
-						if (person.getDefaultLink() != null)
-						{
-							participants.add(Participant.newInstance(person.getDefaultLink(), booking));
-						}
-					}
-				}
-				if (participants.size() > 0)
-				{
-					booking.setParticipants(participants);
-					booking.setParticipant(participants.toArray(new Participant[0])[0]);
-					wizard = new BookingWizard(booking);
-					CourseWizardPage coursePage = new CourseWizardPage("courseWizardPage", booking);
-					ParticipantWizardPage participantPage = new ParticipantWizardPage("participantWizardPage", booking);
-					BookingWizardPage bookingPage = new BookingWizardPage("bookingWizardPage", booking);
-					coursePage.addSelectionChangedListener(bookingPage);
-					coursePage.addSelectionChangedListener(participantPage);
-					wizard.addPage(coursePage);
-					wizard.addPage(bookingPage);
-					wizard.addPage(participantPage);
-					participantPage.addSelectionChangedListener(coursePage);
-				}
+				wizard = prepareBooking(ssel);
 			}
 			if (wizard != null)
 			{
@@ -94,6 +60,46 @@ public class AddBookingHandler extends AbstractHandler implements IHandler
 			}
 		}
 		return Status.OK_STATUS;
+	}
+
+	private BookingWizard prepareBooking(final IStructuredSelection ssel)
+	{
+		Booking booking = Booking.newInstance();
+
+		Collection<Participant> participants = new ArrayList<Participant>();
+		List<AbstractEntity> entities = ssel.toList();
+		for (AbstractEntity entity : entities)
+		{
+			if (entity instanceof LinkPersonAddress)
+			{
+				participants.add(Participant.newInstance((LinkPersonAddress) entity, booking));
+			}
+			else if (entity instanceof Person)
+			{
+				Person person = (Person) entity;
+				if (person.getDefaultLink() != null)
+				{
+					participants.add(Participant.newInstance(person.getDefaultLink(), booking));
+				}
+			}
+		}
+		BookingWizard wizard = null;
+		if (participants.size() > 0)
+		{
+			booking.setParticipants(participants);
+			booking.setParticipant(participants.toArray(new Participant[0])[0]);
+			wizard = new BookingWizard(booking);
+			CourseWizardPage coursePage = new CourseWizardPage("courseWizardPage", booking);
+			ParticipantWizardPage participantPage = new ParticipantWizardPage("participantWizardPage", booking);
+			BookingWizardPage bookingPage = new BookingWizardPage("bookingWizardPage", booking);
+			coursePage.addSelectionChangedListener(bookingPage);
+			coursePage.addSelectionChangedListener(participantPage);
+			wizard.addPage(coursePage);
+			wizard.addPage(bookingPage);
+			wizard.addPage(participantPage);
+			participantPage.addSelectionChangedListener(coursePage);
+		}
+		return wizard;
 	}
 
 	@Override
@@ -109,6 +115,14 @@ public class AddBookingHandler extends AbstractHandler implements IHandler
 			{
 				Course course = (Course) ssel.getFirstElement();
 				enabled = course.getState().equals(CourseState.FORTHCOMING);
+			}
+			else if (ssel.getFirstElement() instanceof Person)
+			{
+				enabled = true;
+			}
+			else if (ssel.getFirstElement() instanceof LinkPersonAddress)
+			{
+				enabled = true;
 			}
 		}
 		setBaseEnabled(enabled);

@@ -30,6 +30,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -76,6 +77,8 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 	private TableViewer viewer;
 
 	private Text filter;
+
+	private Button clear;
 
 	private IDialogSettings dialogSettings;
 
@@ -126,7 +129,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 		topComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Composite filterComposite = new Composite(topComposite, SWT.NONE);
-		filterComposite.setLayout(new GridLayout(2, false));
+		filterComposite.setLayout(new GridLayout(3, false));
 		filterComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(filterComposite, SWT.NONE);
@@ -148,6 +151,24 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				AddressGroupMemberView.this.dialogSettings.put("member.filter", value);
 				nameFilter.setFilter(value);
 				AddressGroupMemberView.this.refresh();
+			}
+		});
+
+		this.clear = new Button(filterComposite, SWT.PUSH);
+		this.clear.setLayoutData(new GridData());
+		this.clear.setImage(Activator.getDefault().getImageRegistry().get("CLEAR"));
+		this.clear.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent e)
+			{
+				widgetSelected(e);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent e)
+			{
+				filter.setText("");
 			}
 		});
 
