@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -80,7 +81,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 
 	private ServiceTracker connectionServiceTracker;
 
-	public CourseWizardPage(String name, Booking booking)
+	public CourseWizardPage(final String name, final Booking booking)
 	{
 		super(name);
 		this.booking = booking;
@@ -95,12 +96,23 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		}
 	}
 
+	public void addSelectionChangedListener(final ISelectionChangedListener listener)
+	{
+		this.selectionChangedListeners.add(listener);
+	}
+
+	@Override
+	public boolean canFlipToNextPage()
+	{
+		return this.isPageComplete();
+	}
+
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 */
 	@Override
-	public void createControl(Composite parent)
+	public void createControl(final Composite parent)
 	{
 		this.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("BOOKING_48"));
 		this.setTitle("Auswahl Kurse");
@@ -124,7 +136,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		this.filterText.addModifyListener(new ModifyListener()
 		{
 			@Override
-			public void modifyText(ModifyEvent event)
+			public void modifyText(final ModifyEvent event)
 			{
 				CourseWizardPage.this.dialogSettings.put(Constants.DIALOG_SETTINGS_KEY_COURSE_FILTER_TEXT_VALUE_ID,
 						CourseWizardPage.this.filterText.getText());
@@ -140,18 +152,18 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		this.filterButton.addSelectionListener(new SelectionListener()
 		{
 			@Override
-			public void widgetSelected(SelectionEvent event)
+			public void widgetDefaultSelected(final SelectionEvent event)
+			{
+				this.widgetSelected(event);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent event)
 			{
 				CourseWizardPage.this.dialogSettings.put(
 						Constants.DIALOG_SETTINGS_KEY_COURSE_FILTER_BUTTON_SELECTED_ID,
 						CourseWizardPage.this.filterButton.getSelection());
 				CourseWizardPage.this.viewer.refresh();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent event)
-			{
-				this.widgetSelected(event);
 			}
 		});
 
@@ -162,7 +174,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		tree.addListener(SWT.Expand, new Listener()
 		{
 			@Override
-			public void handleEvent(Event event)
+			public void handleEvent(final Event event)
 			{
 				CourseWizardPage.this.getControl().getDisplay().asyncExec(new Runnable()
 				{
@@ -202,7 +214,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		treeViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				if (cell.getElement() instanceof Season)
 				{
@@ -233,7 +245,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		treeViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				if (cell.getElement() instanceof Course)
 				{
@@ -251,7 +263,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		treeViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				if (cell.getElement() instanceof Course)
 				{
@@ -276,7 +288,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		treeViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				if (cell.getElement() instanceof Course)
 				{
@@ -301,7 +313,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		treeViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				if (cell.getElement() instanceof Course)
 				{
@@ -343,7 +355,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 				ConnectionService.class.getName(), null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public Object addingService(final ServiceReference reference)
 			{
 				final ConnectionService connectionService = (ConnectionService) super.addingService(reference);
 				Display display = Display.getCurrent();
@@ -357,6 +369,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 					public void run()
 					{
 						viewer.setInput(connectionService);
+						viewer.expandAll();
 						packColumns();
 						if (booking.getCourse() != null)
 						{
@@ -368,7 +381,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 			}
 
 			@Override
-			public void removedService(ServiceReference reference, Object service)
+			public void removedService(final ServiceReference reference, final Object service)
 			{
 				Display display = Display.getCurrent();
 				if (display == null)
@@ -390,73 +403,12 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		connectionServiceTracker.open();
 
 		this.setControl(composite);
+
+		this.updatePageState();
 	}
 
 	@Override
-	public void selectionChanged(SelectionChangedEvent event)
-	{
-		if (event.getSource().equals(this.viewer))
-		{
-			Course course = null;
-			if (!event.getSelection().isEmpty())
-			{
-				StructuredSelection ssel = (StructuredSelection) event.getSelection();
-				if (ssel.getFirstElement() instanceof Course)
-				{
-					course = (Course) ssel.getFirstElement();
-					if (course.getBookingTypes().size() == 0)
-					{
-						course = null;
-						messageLabel.setText("Für den Kurs sind keine Buchungsarten definiert.");
-						imageLabel.setImage(Activator.getDefault().getImageRegistry().get("error"));
-					}
-					else
-					{
-						messageLabel.setText("");
-						imageLabel.setImage(null);
-					}
-				}
-				else
-				{
-					course = null;
-					messageLabel.setText("Kein Kurs ausgewählt.");
-					imageLabel.setImage(null);
-				}
-
-				CourseWizardPage.this.setPageComplete(course != null);
-			}
-			ISelectionChangedListener[] listeners = this.selectionChangedListeners
-					.toArray(new ISelectionChangedListener[0]);
-			for (ISelectionChangedListener listener : listeners)
-				listener.selectionChanged(event);
-		}
-		else if (event.getSource() instanceof TableViewer && !event.getSelection().isEmpty()
-				&& event.getSelection() instanceof StructuredSelection)
-		{
-			this.alreadyParticipantFilter.selectionChanged(event);
-		}
-	}
-
-	public void addSelectionChangedListener(ISelectionChangedListener listener)
-	{
-		this.selectionChangedListeners.add(listener);
-	}
-
-	public void update(Booking booking)
-	{
-		StructuredSelection ssel = (StructuredSelection) this.viewer.getSelection();
-		booking.setCourse((Course) ssel.getFirstElement());
-	}
-
-	private void packColumns()
-	{
-		TreeColumn[] columns = this.viewer.getTree().getColumns();
-		for (int i = 1; i < columns.length; i++)
-			columns[i].pack();
-	}
-
-	@Override
-	public void doubleClick(DoubleClickEvent event)
+	public void doubleClick(final DoubleClickEvent event)
 	{
 		StructuredSelection ssel = (StructuredSelection) event.getSelection();
 		if (!ssel.isEmpty() && ssel.getFirstElement() instanceof Course)
@@ -472,10 +424,74 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		return (Course) ssel.getFirstElement();
 	}
 
-	@Override
-	public boolean canFlipToNextPage()
+	private void packColumns()
 	{
-		return this.isPageComplete();
+		TreeColumn[] columns = this.viewer.getTree().getColumns();
+		for (int i = 1; i < columns.length; i++)
+			columns[i].pack();
+	}
+
+	@Override
+	public void selectionChanged(final SelectionChangedEvent event)
+	{
+		if (event.getSource().equals(viewer))
+		{
+			this.updatePageState();
+			ISelectionChangedListener[] listeners = this.selectionChangedListeners
+					.toArray(new ISelectionChangedListener[0]);
+			for (ISelectionChangedListener listener : listeners)
+			{
+				listener.selectionChanged(event);
+			}
+		}
+		else if (event.getSource() instanceof TableViewer && !event.getSelection().isEmpty()
+				&& event.getSelection() instanceof StructuredSelection)
+		{
+			this.alreadyParticipantFilter.selectionChanged(event);
+		}
+	}
+
+	public void update(final Booking booking)
+	{
+		StructuredSelection ssel = (StructuredSelection) this.viewer.getSelection();
+		booking.setCourse((Course) ssel.getFirstElement());
+	}
+
+	private void updatePageState()
+	{
+		IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+		if (ssel.getFirstElement() instanceof Course)
+		{
+			Course course = (Course) ssel.getFirstElement();
+			if (course.getParticipantsCount() + 1 > course.getMaxParticipants())
+			{
+				messageLabel.setText("Die maximale Anzahl der Buchungen ist bereits erreicht.");
+				imageLabel.setImage(Activator.getDefault().getImageRegistry().get("error"));
+				this.setPageComplete(false);
+				return;
+			}
+			if (course.getBookingTypes().size() == 0)
+			{
+				messageLabel.setText("Für den Kurs sind keine Buchungsarten definiert.");
+				imageLabel.setImage(Activator.getDefault().getImageRegistry().get("error"));
+				this.setPageComplete(false);
+				return;
+			}
+			else
+			{
+				messageLabel.setText("");
+				imageLabel.setImage(null);
+				this.setPageComplete(true);
+				return;
+			}
+		}
+		else
+		{
+			messageLabel.setText("Kein Kurs ausgewählt.");
+			imageLabel.setImage(null);
+			this.setPageComplete(false);
+			return;
+		}
 	}
 
 	private class AlreadyParticipantFilter extends ViewerFilter implements ISelectionChangedListener
@@ -484,7 +500,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 
 		private final Collection<Course> courses = new ArrayList<Course>();
 
-		public AlreadyParticipantFilter(TreeViewer viewer, Booking booking)
+		public AlreadyParticipantFilter(final TreeViewer viewer, final Booking booking)
 		{
 			this.viewer = viewer;
 
@@ -507,7 +523,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		}
 
 		@Override
-		public boolean select(Viewer viewer, Object parentElement, Object element)
+		public boolean select(final Viewer viewer, final Object parentElement, final Object element)
 		{
 			if (element instanceof Course)
 			{
@@ -521,7 +537,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		}
 
 		@Override
-		public void selectionChanged(SelectionChangedEvent event)
+		public void selectionChanged(final SelectionChangedEvent event)
 		{
 			this.courses.clear();
 			if (!event.getSelection().isEmpty() && event.getSelection() instanceof StructuredSelection)

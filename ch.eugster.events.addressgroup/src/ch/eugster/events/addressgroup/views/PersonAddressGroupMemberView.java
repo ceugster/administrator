@@ -433,7 +433,8 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 					if (monitor.checked != !member.isDeleted())
 					{
 						member.setDeleted(!monitor.checked);
-						AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(Domain.class);
+						AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
+								.getQuery(AddressGroupMember.class);
 						query.merge(member);
 					}
 				}

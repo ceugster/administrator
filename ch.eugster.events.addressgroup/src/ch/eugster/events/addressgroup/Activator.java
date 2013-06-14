@@ -24,6 +24,18 @@ public class Activator extends AbstractUIPlugin
 	{
 	}
 
+	@Override
+	protected void initializeImageRegistry(final ImageRegistry imageRegistry)
+	{
+		super.initializeImageRegistry(imageRegistry);
+		imageRegistry.put("CATEGORY", ImageDescriptor.createFromURL(getBundle().getEntry("/icons/category_16.png")));
+		imageRegistry.put("ADDRESS_GROUP",
+				ImageDescriptor.createFromURL(getBundle().getEntry("/icons/addressgroup_16.png")));
+		imageRegistry.put("MEMBER", ImageDescriptor.createFromURL(getBundle().getEntry("/icons/member_blue_16.png")));
+		imageRegistry.put("ADDRESS", ImageDescriptor.createFromURL(getBundle().getEntry("/icons/home_16.png")));
+		imageRegistry.put("CLEAR", ImageDescriptor.createFromURL(getBundle().getEntry("/icons/clear_16.png")));
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -32,7 +44,7 @@ public class Activator extends AbstractUIPlugin
 	 * )
 	 */
 	@Override
-	public void start(BundleContext context) throws Exception
+	public void start(final BundleContext context) throws Exception
 	{
 		super.start(context);
 		Activator.plugin = this;
@@ -46,7 +58,7 @@ public class Activator extends AbstractUIPlugin
 	 * )
 	 */
 	@Override
-	public void stop(BundleContext context) throws Exception
+	public void stop(final BundleContext context) throws Exception
 	{
 		Activator.plugin = null;
 		super.stop(context);
@@ -60,17 +72,6 @@ public class Activator extends AbstractUIPlugin
 	public static Activator getDefault()
 	{
 		return Activator.plugin;
-	}
-
-	@Override
-	protected void initializeImageRegistry(ImageRegistry imageRegistry)
-	{
-		super.initializeImageRegistry(imageRegistry);
-		imageRegistry.put("CATEGORY", ImageDescriptor.createFromURL(getBundle().getEntry("/icons/category_16.png")));
-		imageRegistry.put("ADDRESS_GROUP",
-				ImageDescriptor.createFromURL(getBundle().getEntry("/icons/addressgroup_16.png")));
-		imageRegistry.put("MEMBER", ImageDescriptor.createFromURL(getBundle().getEntry("/icons/member_blue_16.png")));
-		imageRegistry.put("ADDRESS", ImageDescriptor.createFromURL(getBundle().getEntry("/icons/home_16.png")));
 	}
 
 }

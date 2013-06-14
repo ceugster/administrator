@@ -33,7 +33,9 @@ public class BookingWizard extends Wizard
 		for (IWizardPage page : this.getPages())
 		{
 			if (!page.isPageComplete())
+			{
 				return false;
+			}
 		}
 		return true;
 	}

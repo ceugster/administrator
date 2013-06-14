@@ -2,6 +2,10 @@ package ch.eugster.events.course.views;
 
 import java.util.Collection;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -20,6 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -541,17 +546,30 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 	{
 		if (part instanceof CourseView)
 		{
-			CourseView view = (CourseView) part;
-			if (!view.getViewer().getSelection().isEmpty())
+			Job job = new Job("Lade Buchungen...")
 			{
-				StructuredSelection ssel = (StructuredSelection) view.getViewer().getSelection();
-				if (ssel.size() == 1)
+				@Override
+				public IStatus run(final IProgressMonitor monitor)
 				{
-					this.setInput(ssel.getFirstElement());
+					monitor.beginTask("Buchungen werden geladen...", IProgressMonitor.UNKNOWN);
+					Display.getDefault().syncExec(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							CourseView view = (CourseView) part;
+							if (!view.getViewer().getSelection().isEmpty())
+							{
+								StructuredSelection ssel = (StructuredSelection) view.getViewer().getSelection();
+								setInput(ssel.getFirstElement());
+							}
+						}
+					});
+					monitor.done();
+					return Status.OK_STATUS;
 				}
-				else
-					this.setInput(null);
-			}
+			};
+			job.schedule();
 		}
 	}
 
@@ -569,10 +587,9 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 	{
 		if (this.viewer != null)
 		{
-			this.viewer.setInput(object);
-			this.packColumns();
-			this.setSummaryLabels(object);
-
+			viewer.setInput(object);
+			packColumns();
+			setSummaryLabels(object);
 		}
 	}
 
