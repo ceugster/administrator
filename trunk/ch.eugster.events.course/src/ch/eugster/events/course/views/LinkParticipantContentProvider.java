@@ -14,7 +14,12 @@ import ch.eugster.events.persistence.model.Person;
 public class LinkParticipantContentProvider implements ITreeContentProvider
 {
 	@Override
-	public Object[] getChildren(Object parent)
+	public void dispose()
+	{
+	}
+
+	@Override
+	public Object[] getChildren(final Object parent)
 	{
 		if (parent instanceof Person)
 		{
@@ -24,7 +29,9 @@ public class LinkParticipantContentProvider implements ITreeContentProvider
 			for (Participant participant : participants)
 			{
 				if (!bookings.contains(participant.getBooking()))
+				{
 					bookings.add(participant.getBooking());
+				}
 			}
 			return bookings.toArray(new Booking[0]);
 		}
@@ -36,7 +43,9 @@ public class LinkParticipantContentProvider implements ITreeContentProvider
 			for (Participant participant : participants)
 			{
 				if (!bookings.contains(participant.getBooking()))
+				{
 					bookings.add(participant.getBooking());
+				}
 			}
 			return bookings.toArray(new Booking[0]);
 		}
@@ -49,7 +58,13 @@ public class LinkParticipantContentProvider implements ITreeContentProvider
 	}
 
 	@Override
-	public Object getParent(Object element)
+	public Object[] getElements(final Object inputElement)
+	{
+		return this.getChildren(inputElement);
+	}
+
+	@Override
+	public Object getParent(final Object element)
 	{
 		if (element instanceof Booking)
 		{
@@ -65,7 +80,7 @@ public class LinkParticipantContentProvider implements ITreeContentProvider
 	}
 
 	@Override
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(final Object element)
 	{
 		if (element instanceof Person)
 		{
@@ -86,18 +101,7 @@ public class LinkParticipantContentProvider implements ITreeContentProvider
 	}
 
 	@Override
-	public Object[] getElements(Object inputElement)
-	{
-		return this.getChildren(inputElement);
-	}
-
-	@Override
-	public void dispose()
-	{
-	}
-
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
+	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput)
 	{
 	}
 

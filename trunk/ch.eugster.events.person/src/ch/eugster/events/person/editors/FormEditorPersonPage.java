@@ -1051,10 +1051,9 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 		return (PersonTitle) ssel.getFirstElement();
 	}
 
-	private String getText()
+	public String getText()
 	{
-		PersonEditorInput input = (PersonEditorInput) this.getEditor().getEditorInput();
-		return input.getName();
+		return PersonFormatter.getInstance().formatFirstnameLastname(getPerson());
 	}
 
 	@Override

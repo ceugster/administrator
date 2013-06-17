@@ -1261,10 +1261,9 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		return null;
 	}
 
-	private String getText()
+	public String getText()
 	{
-		PersonEditorInput input = (PersonEditorInput) this.getEditor().getEditorInput();
-		return input.getName();
+		return PersonFormatter.getInstance().formatFirstnameLastname(getLink().getPerson());
 	}
 
 	private List<AddressType> getUnusedAddressTypes(final AddressType[] addressTypes)
@@ -1753,7 +1752,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 							}
 							else
 							{
-								line = line.replace(variable, "").trim();
+								line = line.replace(variable, this.name.getText());
 							}
 						}
 						else if (variable.equals("${firstname}"))

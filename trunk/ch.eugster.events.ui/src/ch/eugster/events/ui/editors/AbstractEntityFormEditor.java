@@ -58,6 +58,8 @@ public abstract class AbstractEntityFormEditor<T extends AbstractEntity> extends
 					@SuppressWarnings("unchecked")
 					AbstractEntityQuery<T> query = (AbstractEntityQuery<T>) service.getQuery(entity.getClass());
 					input.setEntity(query.merge(entity));
+					setDirty(false);
+					updateControls();
 				}
 			}
 			catch (Exception e)
@@ -114,6 +116,8 @@ public abstract class AbstractEntityFormEditor<T extends AbstractEntity> extends
 	protected abstract void saveValues();
 
 	public abstract void setDirty(boolean dirty);
+
+	protected abstract void updateControls();
 
 	protected abstract boolean validate();
 }
