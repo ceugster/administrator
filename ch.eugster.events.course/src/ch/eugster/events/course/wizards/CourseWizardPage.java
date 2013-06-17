@@ -84,7 +84,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 	public CourseWizardPage(final String name, final IBookingWizard wizard)
 	{
 		super(name);
-		Assert.isTrue(this.getWizard() instanceof BookingWizard);
+		Assert.isTrue(wizard instanceof BookingWizard);
 		this.dialogSettings = Activator.getDefault().getDialogSettings()
 				.getSection(Constants.DIALOG_SETTINGS_KEY_COURSE_VIEW_SECTION_ID);
 		if (this.dialogSettings == null)

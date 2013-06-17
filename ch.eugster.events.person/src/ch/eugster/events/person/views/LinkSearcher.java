@@ -21,7 +21,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
@@ -29,18 +28,11 @@ import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import ch.eugster.events.persistence.events.EntityAdapter;
-import ch.eugster.events.persistence.events.EntityListener;
-import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
-import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.FieldExtension;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
-import ch.eugster.events.persistence.model.Member;
 import ch.eugster.events.persistence.model.Person;
-import ch.eugster.events.persistence.model.Teacher;
-import ch.eugster.events.persistence.model.Visitor;
 import ch.eugster.events.persistence.queries.AddressQuery;
 import ch.eugster.events.persistence.queries.FieldExtensionQuery;
 import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
@@ -76,8 +68,6 @@ public class LinkSearcher extends Composite
 	private final Map<String, FieldExtension> extensions = new HashMap<String, FieldExtension>();
 
 	private boolean listen;
-
-	private EntityListener entityListener;
 
 	private final boolean searchAddresses;
 
@@ -344,7 +334,6 @@ public class LinkSearcher extends Composite
 			public Object addingService(final ServiceReference reference)
 			{
 				connectionService = (ConnectionService) super.addingService(reference);
-				modifyText();
 				return connectionService;
 			}
 		};
@@ -439,72 +428,69 @@ public class LinkSearcher extends Composite
 	private Map<String, String> createCriteria()
 	{
 		final Map<String, String> criteria = new HashMap<String, String>();
-		Display.getDefault().syncExec(new Runnable()
+		Text text = (Text) widgets.get(ID);
+		String id = text.getText().trim();
+		if (!id.isEmpty())
 		{
-			@Override
-			public void run()
+			criteria.put(ID, id);
+		}
+		else
+		{
+			for (Entry<String, Widget> entry : widgets.entrySet())
 			{
-				Text text = (Text) widgets.get(ID);
-				String id = text.getText().trim();
-				if (!id.isEmpty())
+				text = (Text) entry.getValue();
+				String value = text.getText().trim();
+				if (entry.getKey().equals(ID))
 				{
-					criteria.put(ID, id);
+				}
+				else if (entry.getKey().equals(LASTNAME))
+				{
+				}
+				else if (entry.getKey().equals(PHONE))
+				{
 				}
 				else
 				{
-					for (Entry<String, Widget> entry : widgets.entrySet())
+					if (!value.isEmpty())
 					{
-						if (entry.getKey().equals(ID))
+						if (criteria.isEmpty())
 						{
-						}
-						else if (entry.getKey().equals(LASTNAME))
-						{
-						}
-						else if (entry.getKey().equals(PHONE))
-						{
-						}
-						else
-						{
-							if (entry.getValue() instanceof Text)
-							{
-								text = (Text) entry.getValue();
-								if (!text.getText().isEmpty())
-								{
-									if (criteria.isEmpty())
-										criteria.put(entry.getKey(), text.getText().trim());
-								}
-							}
-						}
-					}
-					if (criteria.isEmpty())
-					{
-						text = (Text) widgets.get(LASTNAME);
-						if (text.getText().length() > 3)
-						{
-							criteria.put(LASTNAME, text.getText().trim());
-						}
-						text = (Text) widgets.get(PHONE);
-						if (text.getText().length() > 6)
-						{
-							criteria.put(PHONE, text.getText().trim());
-						}
-					}
-					else
-					{
-						text = (Text) widgets.get(LASTNAME);
-						if (!text.getText().isEmpty())
-						{
-							criteria.put(LASTNAME, text.getText().trim());
-						}
-						text = (Text) widgets.get(PHONE);
-						if (!text.getText().isEmpty())
-						{
-							criteria.put(PHONE, text.getText().trim());
+							criteria.put(entry.getKey(), value);
 						}
 					}
 				}
 			}
-		});
+			if (criteria.isEmpty())
+			{
+				text = (Text) widgets.get(LASTNAME);
+				String value = text.getText().trim();
+				if (value.length() > 3)
+				{
+					criteria.put(LASTNAME, value);
+				}
+				text = (Text) widgets.get(PHONE);
+				value = text.getText().trim();
+				if (value.length() > 6)
+				{
+					criteria.put(PHONE, value);
+				}
+			}
+			else
+			{
+				text = (Text) widgets.get(LASTNAME);
+				String value = text.getText().trim();
+				if (!value.isEmpty())
+				{
+					criteria.put(LASTNAME, value);
+				}
+				text = (Text) widgets.get(PHONE);
+				value = text.getText().trim();
+				if (!value.isEmpty())
+				{
+					criteria.put(PHONE, value);
+				}
+			}
+		}
 		return criteria;
 	}
 
@@ -531,13 +517,6 @@ public class LinkSearcher extends Composite
 		}
 
 		connectionServiceTracker.close();
-		EntityMediator.removeListener(Address.class, entityListener);
-		EntityMediator.removeListener(Person.class, entityListener);
-		EntityMediator.removeListener(LinkPersonAddress.class, entityListener);
-		EntityMediator.removeListener(Teacher.class, entityListener);
-		EntityMediator.removeListener(Member.class, entityListener);
-		EntityMediator.removeListener(Visitor.class, entityListener);
-		EntityMediator.removeListener(Domain.class, entityListener);
 	}
 
 	public void fillAddress(final Address address)
@@ -567,6 +546,11 @@ public class LinkSearcher extends Composite
 			}
 		}
 		return persons.values();
+	}
+
+	private String getText(final Widget widget)
+	{
+		return ((Text) widget).getText().trim();
 	}
 
 	private boolean hasAddressCriteria(final Map<String, String> criteria)
@@ -604,82 +588,6 @@ public class LinkSearcher extends Composite
 			}
 		}
 
-		entityListener = new EntityAdapter()
-		{
-			@Override
-			public void postPersist(final AbstractEntity entity)
-			{
-				if (entity instanceof Address)
-				{
-
-					modifyText();
-				}
-				else if (entity instanceof Person)
-				{
-					modifyText();
-				}
-				else if (entity instanceof LinkPersonAddress)
-				{
-					modifyText();
-				}
-				else if (entity instanceof Teacher)
-				{
-					modifyText();
-				}
-				else if (entity instanceof Member)
-				{
-					modifyText();
-				}
-				else if (entity instanceof Visitor)
-				{
-					modifyText();
-				}
-				else if (entity instanceof Domain)
-				{
-					modifyText();
-				}
-			}
-
-			@Override
-			public void postUpdate(final AbstractEntity entity)
-			{
-				if (entity instanceof Address)
-				{
-					modifyText();
-				}
-				else if (entity instanceof Person)
-				{
-					modifyText();
-				}
-				else if (entity instanceof LinkPersonAddress)
-				{
-					modifyText();
-				}
-				else if (entity instanceof Teacher)
-				{
-					modifyText();
-				}
-				else if (entity instanceof Member)
-				{
-					modifyText();
-				}
-				else if (entity instanceof Visitor)
-				{
-					modifyText();
-				}
-				else if (entity instanceof Domain)
-				{
-					modifyText();
-				}
-			}
-		};
-		EntityMediator.addListener(Address.class, entityListener);
-		EntityMediator.addListener(Person.class, entityListener);
-		EntityMediator.addListener(LinkPersonAddress.class, entityListener);
-		EntityMediator.addListener(Teacher.class, entityListener);
-		EntityMediator.addListener(Member.class, entityListener);
-		EntityMediator.addListener(Visitor.class, entityListener);
-		EntityMediator.addListener(Domain.class, entityListener);
 	}
 
 	public void modifyText()

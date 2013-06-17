@@ -191,6 +191,29 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 	}
 
 	@Override
+	protected void updateControls()
+	{
+		PersonEditorInput input = (PersonEditorInput) this.getEditorInput();
+		this.setPartName(input.getName());
+		for (IFormPage page : this.getPages())
+		{
+			if (page != null && page.getManagedForm() != null)
+			{
+				if (page instanceof FormEditorPersonPage)
+				{
+					FormEditorPersonPage fpage = (FormEditorPersonPage) page;
+					page.getManagedForm().getForm().setText(fpage.getText());
+				}
+				else if (page instanceof FormEditorLinkPage)
+				{
+					FormEditorLinkPage fpage = (FormEditorLinkPage) page;
+					page.getManagedForm().getForm().setText(fpage.getText());
+				}
+			}
+		}
+	}
+
+	@Override
 	protected boolean validate()
 	{
 		boolean valid = true;

@@ -174,7 +174,7 @@ public class Person extends AbstractEntity
 	public Collection<LinkPersonAddress> getActiveLinks()
 	{
 		Collection<LinkPersonAddress> links = new ArrayList<LinkPersonAddress>();
-		for (LinkPersonAddress link : links)
+		for (LinkPersonAddress link : this.getLinks())
 		{
 			if (!link.isDeleted())
 			{

@@ -112,7 +112,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	public ParticipantWizardPage(final String pageName, final IBookingWizard wizard)
 	{
 		super(pageName);
-		Assert.isTrue(this.getWizard() instanceof BookingWizard);
+		Assert.isTrue(wizard instanceof BookingWizard);
 		this.dialogSettings = Activator.getDefault().getDialogSettings()
 				.getSection(Constants.DIALOG_SETTINGS_KEY_PARTICIPANT_WIZARD_PAGE_ID);
 		if (this.dialogSettings == null)

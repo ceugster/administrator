@@ -80,7 +80,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 	public BookingWizardPage(final String name, final IBookingWizard wizard)
 	{
 		super(name);
-		Assert.isTrue(this.getWizard() instanceof BookingWizard);
+		Assert.isTrue(wizard instanceof BookingWizard);
 		settings = Activator.getDefault().getDialogSettings().getSection("booking.wizard");
 		if (settings == null)
 		{
