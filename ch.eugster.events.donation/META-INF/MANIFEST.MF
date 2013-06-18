@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Donation Plugin
 Bundle-SymbolicName: ch.eugster.events.donation;singleton:=true
-Bundle-Version: 1.0.1
+Bundle-Version: 1.0.2.qualifier
 Bundle-Activator: ch.eugster.events.donation.Activator
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -49,6 +49,7 @@ Import-Package: ch.eugster.events.documents.maps,
  org.eclipse.ui.contexts,
  org.eclipse.ui.forms.events,
  org.eclipse.ui.forms.widgets,
+ org.eclipse.ui.part,
  org.eclipse.ui.plugin,
  org.eclipse.ui.preferences,
  org.eclipse.ui.progress,

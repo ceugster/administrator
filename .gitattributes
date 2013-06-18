@@ -589,7 +589,6 @@ ch.eugster.events.donation/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.donation/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.donation/META-INF/MANIFEST.MF -text
 ch.eugster.events.donation/build.properties -text
-ch.eugster.events.donation/build.xml -text
 ch.eugster.events.donation/icons/add_16.gif -text
 ch.eugster.events.donation/icons/add_grey_16.gif -text
 ch.eugster.events.donation/icons/delete_16.png -text
@@ -601,7 +600,6 @@ ch.eugster.events.donation/icons/reset_16.png -text
 ch.eugster.events.donation/icons/reset_grey_16.png -text
 ch.eugster.events.donation/icons/save_16.png -text
 ch.eugster.events.donation/icons/save_grey_16.png -text
-ch.eugster.events.donation/javaCompiler...args -text
 ch.eugster.events.donation/plugin.xml -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/Activator.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationConfirmationDialog.java -text
@@ -1050,11 +1048,9 @@ ch.eugster.events.person/src/ch/eugster/events/person/editors/PersonTitleEditor.
 ch.eugster.events.person/src/ch/eugster/events/person/editors/PersonTitleEditorInput.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/ProvinceLabelProvider.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/ProvinceSorter.java -text
-ch.eugster.events.person/src/ch/eugster/events/person/editors/Saveable.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/TitleComboViewerContentProvider.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/TitleComboViewerLabelProvider.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/TitleComboViewerSorter.java -text
-ch.eugster.events.person/src/ch/eugster/events/person/editors/Validateable.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/ActivatePersonViewHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/AddAddressHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/AddFieldExtensionHandler.java -text
