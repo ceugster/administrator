@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -50,6 +51,7 @@ import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.queries.AddressGroupMemberQuery;
 import ch.eugster.events.persistence.queries.DomainQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
+import ch.eugster.events.person.views.PersonView;
 import ch.eugster.events.ui.views.AbstractEntityView;
 
 public class PersonAddressGroupMemberView extends AbstractEntityView implements ISelectionChangedListener,
@@ -191,6 +193,26 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		this.addressGroupViewer.addTreeListener(this);
 
 		this.domainViewer.addSelectionChangedListener(this);
+
+		PersonView view = (PersonView) this.getSite().getPage().findView(PersonView.ID);
+		if (view != null)
+		{
+			IStructuredSelection ssel = (IStructuredSelection) view.getViewer().getSelection();
+			Object object = ssel.getFirstElement();
+			if (object instanceof Person)
+			{
+				Person person = (Person) object;
+				this.parent = person.getDefaultLink();
+			}
+			else if (object instanceof LinkPersonAddress || object instanceof Address)
+			{
+				this.parent = (AbstractEntity) object;
+			}
+			reset();
+		}
+
+		this.getSite().getPage().addSelectionListener(PersonView.ID, this);
+
 	}
 
 	@Override
@@ -219,8 +241,6 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		EntityMediator.addListener(LinkPersonAddress.class, this);
 		EntityMediator.addListener(Address.class, this);
 		EntityMediator.addListener(Person.class, this);
-
-		this.getSite().getPage().addSelectionListener("ch.eugster.events.person.view", this);
 
 		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
