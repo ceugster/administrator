@@ -112,6 +112,7 @@ public class AddBookingHandler extends AbstractHandler implements IHandler
 			{
 				Course course = (Course) ssel.getFirstElement();
 				enabled = course.getState().equals(CourseState.FORTHCOMING);
+
 			}
 			else if (ssel.getFirstElement() instanceof Person)
 			{

@@ -778,17 +778,6 @@
                label="Buchung hinzufügen"
                style="push"
                tooltip="Hinzufügen einer Buchung zum ausgewählten Kurs">
-            <visibleWhen
-                  checkEnabled="false">
-               <and>
-                  <count
-                        value="1">
-                  </count>
-                  <reference
-                        definitionId="ch.eugster.events.course.selection.course">
-                  </reference>
-               </and>
-            </visibleWhen>
          </command>
          <separator
                name="ch.eugster.events.course.separator2"
