@@ -1201,7 +1201,11 @@ ch.eugster.events.ui/src/ch/eugster/events/ui/dnd/LinkPersonAddressViewerDropAda
 ch.eugster.events.ui/src/ch/eugster/events/ui/editors/AbstractEntityEditor.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/editors/AbstractEntityEditorInput.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/editors/AbstractEntityFormEditor.java -text
+ch.eugster.events.ui/src/ch/eugster/events/ui/editors/Clearable.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/editors/ColorManager.java -text
+ch.eugster.events.ui/src/ch/eugster/events/ui/editors/Dirtyable.java -text
+ch.eugster.events.ui/src/ch/eugster/events/ui/editors/Saveable.java -text
+ch.eugster.events.ui/src/ch/eugster/events/ui/editors/Validateable.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/handlers/ActivateOutlineViewHandler.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/helpers/BrowseHelper.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/helpers/ClipboardHelper.java -text
