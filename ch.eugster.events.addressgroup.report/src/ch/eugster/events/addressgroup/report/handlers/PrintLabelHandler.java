@@ -109,20 +109,32 @@ public class PrintLabelHandler extends AbstractHandler implements IHandler
 			Collection<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
 			{
-				this.extract(factory, addressGroup);
+				if (!addressGroup.isDeleted())
+				{
+					this.extract(factory, addressGroup);
+				}
 			}
 		}
 	}
 
 	private void extract(final LabelFactory factory, final AddressGroupMember member)
 	{
-		if (member.getLink() == null)
+		if (!member.isDeleted())
 		{
-			factory.addEntry(member.getAddress());
-		}
-		else
-		{
-			factory.addEntry(member.getLink());
+			if (member.getLink() == null)
+			{
+				if (!member.getAddress().isDeleted())
+				{
+					factory.addEntry(member.getAddress());
+				}
+			}
+			else
+			{
+				if (!member.getLink().isDeleted())
+				{
+					factory.addEntry(member.getLink());
+				}
+			}
 		}
 	}
 
