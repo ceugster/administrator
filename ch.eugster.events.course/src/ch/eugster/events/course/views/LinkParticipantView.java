@@ -211,6 +211,14 @@ public class LinkParticipantView extends AbstractEntityView implements IDoubleCl
 
 		this.createContextMenu();
 
+		PersonView view = (PersonView) this.getSite().getPage().findView(PersonView.ID);
+		if (view != null)
+		{
+			IStructuredSelection ssel = (IStructuredSelection) view.getViewer().getSelection();
+			this.viewer.setInput(ssel.getFirstElement());
+		}
+
+		this.getSite().getPage().addSelectionListener(PersonView.ID, this);
 		this.getSite().setSelectionProvider(this.viewer);
 	}
 
@@ -287,8 +295,6 @@ public class LinkParticipantView extends AbstractEntityView implements IDoubleCl
 		EntityMediator.addListener(Person.class, this);
 		EntityMediator.addListener(Address.class, this);
 		EntityMediator.addListener(Participant.class, this);
-
-		site.getPage().addSelectionListener(PersonView.ID, this);
 	}
 
 	private void packColumns()
