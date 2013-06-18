@@ -15,6 +15,9 @@ import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.person.views.PersonFormEditorContentOutlinePage;
 import ch.eugster.events.ui.editors.AbstractEntityFormEditor;
+import ch.eugster.events.ui.editors.Dirtyable;
+import ch.eugster.events.ui.editors.Saveable;
+import ch.eugster.events.ui.editors.Validateable;
 
 public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 {
@@ -29,7 +32,7 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 	{
 		page.addPropertyListener(this);
 		int pagenum = super.addPage(page);
-		setDirty(true);
+		setDirty();
 		return pagenum;
 	}
 
@@ -57,7 +60,22 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 		{
 		}
 		this.setActivePage(this.getPageCount() > 1 ? 0 : 0);
-		setDirty(false);
+		clearDirty();
+	}
+
+	@Override
+	public void clearDirty()
+	{
+		this.dirty = false;
+		Collection<IFormPage> pages = this.getPages();
+		for (IFormPage page : pages)
+		{
+			if (page instanceof Dirtyable)
+			{
+				((Dirtyable) page).setDirty(false);
+			}
+		}
+		this.firePropertyChange(PROP_DIRTY);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -90,32 +108,33 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 		super.init(site, input);
 		Person person = getPerson();
 		setPartName(person.getId() == null ? "Neu" : PersonFormatter.getInstance().formatFirstnameLastname(person));
+		clearDirty();
 	}
 
 	@Override
 	public boolean isDirty()
 	{
-		Collection<IFormPage> pages = this.getPages();
-		for (IFormPage page : pages)
-		{
-			if (page != null && page.isDirty())
-			{
-				return true;
-			}
-		}
-		return false;
+		return dirty;
+	}
+
+	@Override
+	public void loadValues()
+	{
+		System.out.println();
 	}
 
 	@Override
 	public void removePage(final int page)
 	{
-		setDirty(true);
 		Object object = pages.get(page);
-		if (object instanceof IFormPage)
+		if (object instanceof FormEditorLinkPage)
 		{
-			((IFormPage) object).removePropertyListener(this);
+			FormEditorLinkPage linkPage = (FormEditorLinkPage) object;
+			linkPage.getLink().setDeleted(true);
+			linkPage.removePropertyListener(this);
+			super.removePage(page);
+			this.setDirty();
 		}
-		super.removePage(page);
 	}
 
 	public void removePage(final String id)
@@ -125,10 +144,7 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 		{
 			if (pages[i].getId().equals(id))
 			{
-				pages[i].removePropertyListener(this);
-				super.removePage(i);
-				setDirty(true);
-				break;
+				removePage(i);
 			}
 		}
 	}
@@ -154,7 +170,6 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 					{
 						Saveable saveable = (Saveable) page;
 						saveable.loadValues();
-						saveable.setDirty(false);
 					}
 				}
 			}
@@ -164,11 +179,11 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 			int index = this.pages.indexOf(page);
 			this.removePage(index);
 		}
-		this.setDirty(false);
+		this.clearDirty();
 	}
 
 	@Override
-	protected void saveValues()
+	public void saveValues()
 	{
 		Collection<IFormPage> pages = this.getPages();
 		for (IFormPage page : pages)
@@ -183,10 +198,13 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 		}
 	}
 
-	@Override
-	public void setDirty(final boolean dirty)
+	public void setDirty()
 	{
-		this.dirty = dirty;
+		if (this.dirty == true)
+		{
+			return;
+		}
+		this.dirty = true;
 		this.firePropertyChange(PROP_DIRTY);
 	}
 

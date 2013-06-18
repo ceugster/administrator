@@ -19,12 +19,13 @@ import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.Donation;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
+import ch.eugster.events.persistence.model.Person;
 
 public class AddDonationHandler extends AbstractHandler implements IHandler
 {
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException
+	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
 		AbstractEntity entity = null;
 		EvaluationContext context = (EvaluationContext) event.getApplicationContext();
@@ -35,7 +36,12 @@ public class AddDonationHandler extends AbstractHandler implements IHandler
 			TableViewer viewer = (TableViewer) view.getAdapter(TableViewer.class);
 			if (viewer != null)
 			{
-				if (viewer.getInput() instanceof LinkPersonAddress)
+				if (viewer.getInput() instanceof Person)
+				{
+					Person person = (Person) viewer.getInput();
+					entity = person.getDefaultLink();
+				}
+				else if (viewer.getInput() instanceof LinkPersonAddress)
 				{
 					entity = (LinkPersonAddress) viewer.getInput();
 				}
@@ -53,7 +59,13 @@ public class AddDonationHandler extends AbstractHandler implements IHandler
 				StructuredSelection ssel = (StructuredSelection) sel;
 				if (!ssel.isEmpty())
 				{
-					if (ssel.getFirstElement() instanceof LinkPersonAddress)
+					if (ssel.getFirstElement() instanceof Person)
+					{
+						Person person = (Person) ssel.getFirstElement();
+						entity = person.getDefaultLink();
+
+					}
+					else if (ssel.getFirstElement() instanceof LinkPersonAddress)
 					{
 						entity = (LinkPersonAddress) ssel.getFirstElement();
 

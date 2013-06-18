@@ -173,15 +173,16 @@ public class Person extends AbstractEntity
 
 	public Collection<LinkPersonAddress> getActiveLinks()
 	{
-		Collection<LinkPersonAddress> links = new ArrayList<LinkPersonAddress>();
+		System.out.println("get active links " + links.size());
+		Collection<LinkPersonAddress> activeLinks = new ArrayList<LinkPersonAddress>();
 		for (LinkPersonAddress link : this.getLinks())
 		{
 			if (!link.isDeleted())
 			{
-				links.add(link);
+				activeLinks.add(link);
 			}
 		}
-		return links;
+		return activeLinks;
 	}
 
 	public Collection<AddressGroupMember> getAddressGroupMembers()
@@ -267,11 +268,23 @@ public class Person extends AbstractEntity
 
 	public Collection<Donation> getDonations()
 	{
+		System.out.println("getting links...");
 		Collection<Donation> donations = new ArrayList<Donation>();
-		Collection<LinkPersonAddress> links = this.getActiveLinks();
-		for (LinkPersonAddress link : links)
+		try
 		{
-			donations.addAll(link.getDonations());
+			System.out.println("getting links...");
+			Collection<LinkPersonAddress> links = this.getActiveLinks();
+			System.out.println("get links " + links.size());
+			for (LinkPersonAddress link : links)
+			{
+				System.out.println("add donations " + link.getDonations().size());
+				donations.addAll(link.getDonations());
+			}
+			System.out.println("return donations " + donations.size());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 		return donations;
 	}
