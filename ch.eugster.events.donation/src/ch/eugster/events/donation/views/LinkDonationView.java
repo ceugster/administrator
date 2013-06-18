@@ -24,9 +24,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -129,6 +127,7 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 		TableColumn tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
 		tableColumn.setText("Datum");
+		System.out.println("Donation view add table column date");
 
 		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.RIGHT);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
@@ -147,6 +146,7 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
 		tableColumn.setText("Betrag");
+		System.out.println("Donation view add table column amount");
 
 		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
@@ -167,36 +167,16 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
 		tableColumn.setText("Zweck");
+		System.out.println("Donation view add table column purpose");
 
+		System.out.println("Donation view crate context menu");
 		this.createContextMenu();
 
+		System.out.println("Donation view set selection provider viewer");
 		this.getSite().setSelectionProvider(this.viewer);
 
-		IWorkbenchPage[] pages = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages();
-		for (IWorkbenchPage page : pages)
-		{
-			IViewReference[] refs = page.getViewReferences();
-			for (IViewReference ref : refs)
-			{
-				if (ref.getId().equals(PersonView.ID))
-				{
-					PersonView view = (PersonView) ref.getView(false);
-					if (view != null)
-					{
-						if (!view.getViewer().getSelection().isEmpty())
-						{
-							StructuredSelection ssel = (StructuredSelection) view.getViewer().getSelection();
-							if (ssel.size() == 1)
-							{
-								this.setInput(ssel.getFirstElement());
-							}
-							else
-								this.setInput(null);
-						}
-					}
-				}
-			}
-		}
+		System.out.println("DonationView registers as selection listener to person view");
+		this.getSite().getPage().addSelectionListener(PersonView.ID, this);
 	}
 
 	@Override
@@ -222,8 +202,6 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 	@Override
 	public void init(final IViewSite site) throws PartInitException
 	{
-		super.init(site);
-
 		settings = Activator.getDefault().getDialogSettings().getSection("donation.view");
 		if (settings == null)
 		{
@@ -233,11 +211,12 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 		EntityMediator.addListener(LinkPersonAddress.class, this);
 		EntityMediator.addListener(Donation.class, this);
 		EntityMediator.addListener(Person.class, this);
-		site.getPage().addSelectionListener(PersonView.ID, this);
 
 		numberFormat = NumberFormat.getInstance();
 		numberFormat.setMinimumFractionDigits(Currency.getInstance(Locale.getDefault()).getDefaultFractionDigits());
 		numberFormat.setMaximumFractionDigits(Currency.getInstance(Locale.getDefault()).getDefaultFractionDigits());
+
+		super.init(site);
 	}
 
 	public void packColumns()
@@ -297,20 +276,13 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 	@Override
 	public void selectionChanged(final IWorkbenchPart part, final ISelection selection)
 	{
-		if (selection.isEmpty())
+		System.out.println("Donation view got a selection event from person view");
+		if (selection instanceof StructuredSelection)
 		{
-			this.setInput(null);
-		}
-		else
-		{
-			if (selection instanceof StructuredSelection)
-			{
-				StructuredSelection ssel = (StructuredSelection) selection;
-				if (ssel.size() == 1)
-				{
-					this.setInput(ssel.getFirstElement());
-				}
-			}
+			StructuredSelection ssel = (StructuredSelection) selection;
+			System.out.println("selection is of type " + ssel.getFirstElement().getClass().getName());
+			this.setInput(ssel.getFirstElement());
+			System.out.println("done");
 		}
 	}
 

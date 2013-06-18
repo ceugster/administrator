@@ -1,16 +1,27 @@
 package ch.eugster.events.persistence.model;
 
-public enum CourseState 
+public enum CourseState
 {
-	FORTHCOMING,
-	DONE,
-	ANNULATED;
+	FORTHCOMING, DONE, ANNULATED;
 
 	String[] states = new String[] { "Bevorstehend", "Durchgeführt", "Annuliert" };
 
-	@Override
-	public String toString() {
-		return this.states[this.ordinal()];
+	public IBookingState[] getBookingStates()
+	{
+		if (this.equals(CourseState.FORTHCOMING))
+		{
+			return BookingForthcomingState.values();
+		}
+		else if (this.equals(CourseState.DONE))
+		{
+			return BookingDoneState.values();
+		}
+		else if (this.equals(CourseState.ANNULATED))
+		{
+			return BookingAnnulatedState.values();
+		}
+		else
+			throw new RuntimeException("Ungültiger Kursstatus");
 	}
 
 	public String imageKey()
@@ -23,5 +34,11 @@ public enum CourseState
 			return "COURSE_ANNULATED";
 		else
 			throw new RuntimeException("Ungültiger Kursstatus");
+	}
+
+	@Override
+	public String toString()
+	{
+		return this.states[this.ordinal()];
 	}
 }
