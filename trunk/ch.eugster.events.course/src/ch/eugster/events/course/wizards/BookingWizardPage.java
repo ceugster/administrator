@@ -91,9 +91,18 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 	@Override
 	public void createControl(final Composite parent)
 	{
+		int freePlaces = this.getBooking().getCourse().getMaxParticipants()
+				- this.getBooking().getCourse().getParticipantsCount();
 		this.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("BOOKING_48"));
 		this.setTitle("Buchungsdaten");
-		this.setMessage("Erfassen und Bearbeiten der Buchungsdaten");
+		if (freePlaces > 0)
+		{
+			this.setMessage(this.getBooking().getId() == null ? "Neue Buchung erfassen" : "Buchung bearbeiten");
+		}
+		else
+		{
+			this.setErrorMessage("Achtung: Kann nur in Warteliste aufgenommen werden!");
+		}
 
 		Composite composite = new Composite(parent, SWT.None);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));

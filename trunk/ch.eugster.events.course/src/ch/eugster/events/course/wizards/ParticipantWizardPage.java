@@ -171,7 +171,36 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		{
 			int max = wizard.getBooking().getCourse().getMaxParticipants();
 			int existing = wizard.getBooking().getCourse().getParticipantsCount();
-			return count + existing <= max;
+			return max - existing >= count;
+		}
+		else
+		{
+			return true;
+		}
+	}
+
+	private boolean canAdd(final Participant participant, final int count)
+	{
+		BookingWizard wizard = (BookingWizard) this.getWizard();
+		if (wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.BOOKED)
+				|| wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
+		{
+			int max = wizard.getBooking().getCourse().getMaxParticipants();
+			int existing = wizard.getBooking().getCourse().getParticipantsCount();
+			int existingParticipantCount = 0;
+			if (participant.getId() != null)
+			{
+				Collection<Participant> bookedParticipants = wizard.getBooking().getParticipants();
+				for (Participant bookedParticipant : bookedParticipants)
+				{
+					if (participant.getId().equals(bookedParticipant.getId()))
+					{
+						existingParticipantCount = bookedParticipant.getCount();
+					}
+				}
+			}
+			System.out.println("can add: " + (max - existing + existingParticipantCount) + "; want add " + count);
+			return count - existingParticipantCount <= max - existing;
 		}
 		else
 		{
@@ -1054,6 +1083,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				Object element = cell.getElement();
 				if (element instanceof Participant)
 				{
+					System.out.println("update value in viewer");
 					Participant participant = (Participant) element;
 					cell.setText(DecimalFormat.getIntegerInstance().format(participant.getCount()));
 				}
@@ -1064,12 +1094,14 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			protected boolean canEdit(final Object element)
 			{
+				System.out.println("can edit: " + true);
 				return true;
 			}
 
 			@Override
 			protected CellEditor getCellEditor(final Object element)
 			{
+				final Participant participant = (Participant) element;
 				CellEditor editor = new TextCellEditor(ParticipantWizardPage.this.participantViewer.getTable(),
 						SWT.RIGHT);
 				editor.setValidator(new ICellEditorValidator()
@@ -1077,12 +1109,13 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 					@Override
 					public String isValid(final Object value)
 					{
+						System.out.println("is valid " + value);
 						String val = value.toString();
 						val = val.isEmpty() ? "0" : val;
 						try
 						{
 							Integer count = Integer.valueOf(val);
-							if (!canAdd(count.intValue()))
+							if (!canAdd(participant, count.intValue()))
 							{
 								return "Die Teilnehmerzahl ist überschritten.";
 							}
@@ -1101,12 +1134,14 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			protected Object getValue(final Object element)
 			{
 				Participant participant = (Participant) element;
+				System.out.println("get value " + participant.getCount());
 				return DecimalFormat.getIntegerInstance().format(participant.getCount());
 			}
 
 			@Override
 			protected void setValue(final Object element, final Object value)
 			{
+				System.out.println("set value " + value);
 				if (value != null)
 				{
 					Participant participant = (Participant) element;
