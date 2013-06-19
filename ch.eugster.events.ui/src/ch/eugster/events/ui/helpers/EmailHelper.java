@@ -94,7 +94,6 @@ public class EmailHelper
 					s = s.append(";" + email);
 			URI uri = new URI(s.toString());
 			Desktop.getDesktop().mail(uri);
-			System.out.println(uri.toString());
 		}
 		catch (URISyntaxException se)
 		{

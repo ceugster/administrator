@@ -128,7 +128,6 @@ public abstract class DatabaseUpdater
 
 	protected boolean executeSqlQuery(final java.sql.Connection connection, final String query) throws SQLException
 	{
-		System.out.println(query);
 		Statement statement = null;
 		try
 		{
@@ -152,7 +151,6 @@ public abstract class DatabaseUpdater
 	protected ResultSet executeSqlQueryWithResultSet(final java.sql.Connection connection, final String query)
 			throws SQLException
 	{
-		System.out.println(query);
 		Statement statement = null;
 		try
 		{
@@ -1017,6 +1015,22 @@ public abstract class DatabaseUpdater
 									new StringBuilder("ALTER TABLE events_address_salutation ")
 											.append("ADD COLUMN address_salutation_show_address_name_for_person SMALLINT DEFAULT 0")
 											.toString());
+						}
+					}
+					if (structureVersion == 20)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						String selectSql = "SELECT l.pa_link_address_id AS address_id, p.person_another_line AS another_line FROM events_pa_link l, events_person p WHERE l.pa_link_person_id = p.person_id";
+						Statement selectStatement = con.createStatement();
+						ResultSet resultSet = selectStatement.executeQuery(selectSql);
+						int i = 0;
+						while (resultSet.next())
+						{
+							Statement updateStatement = con.createStatement();
+							updateStatement.executeUpdate("UPDATE events_address SET address_another_line = '"
+									+ resultSet.getString("another_line") + "' WHERE address_id = "
+									+ resultSet.getLong("address_id"));
+							System.out.println(++i);
 						}
 					}
 
