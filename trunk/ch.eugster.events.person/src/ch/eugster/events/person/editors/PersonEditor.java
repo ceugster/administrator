@@ -1773,7 +1773,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 		this.firstname.setText(link.getPerson().getFirstname());
 		this.lastname.setText(link.getPerson().getLastname());
 		this.organization.setText(link.getAddress().getName());
-		this.anotherLine.setText(link.getPerson().getAnotherLine());
+		this.anotherLine.setText(link.getAddress().getAnotherLine());
 		this.address.setText(link.getAddress().getAddress());
 		this.pob.setText(link.getAddress().getPob());
 
@@ -1966,7 +1966,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 		link.getPerson().setFirstname(firstname.getText());
 		link.getPerson().setLastname(lastname.getText());
 		link.getAddress().setName(organization.getText());
-		link.getPerson().setAnotherLine(anotherLine.getText());
+		link.getAddress().setAnotherLine(anotherLine.getText());
 		link.getAddress().setAddress(address.getText());
 		link.getAddress().setPob(pob.getText());
 

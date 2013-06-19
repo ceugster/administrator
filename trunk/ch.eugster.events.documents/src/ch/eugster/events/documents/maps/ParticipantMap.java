@@ -186,7 +186,7 @@ public class ParticipantMap extends AbstractDataMap
 				}
 				case ANOTHER_LINE:
 				{
-					return participant.getLink().getPerson().getAnotherLine();
+					return participant.getLink().getAddress().getAnotherLine();
 				}
 				case SALUTATION:
 				{

@@ -166,7 +166,7 @@ public class AddressGroupMemberMap extends AbstractDataMap
 					}
 					else
 					{
-						anotherLine = member.getLink().getPerson().getAnotherLine();
+						anotherLine = member.getLink().getAddress().getAnotherLine();
 					}
 					return anotherLine;
 				}

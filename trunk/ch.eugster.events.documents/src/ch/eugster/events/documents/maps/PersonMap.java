@@ -63,7 +63,7 @@ public class PersonMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		ID, SALUTATION, TITLE, FIRSTNAME, LASTNAME, ANOTHER_LINE, PROFESSION, PHONE, EMAIL, WEBSITE, SEX, BIRTHDATE, FORM, POLITE;
+		ID, SALUTATION, TITLE, FIRSTNAME, LASTNAME, PROFESSION, PHONE, EMAIL, WEBSITE, SEX, BIRTHDATE, FORM, POLITE;
 
 		@Override
 		public String getDescription()
@@ -89,10 +89,6 @@ public class PersonMap extends AbstractDataMap
 				case LASTNAME:
 				{
 					return "Nachname";
-				}
-				case ANOTHER_LINE:
-				{
-					return "Zusatzzeile (Person)";
 				}
 				case PROFESSION:
 				{
@@ -158,10 +154,6 @@ public class PersonMap extends AbstractDataMap
 				{
 					return "person_lastname";
 				}
-				case ANOTHER_LINE:
-				{
-					return "another_line";
-				}
 				case PROFESSION:
 				{
 					return "person_profession";
@@ -226,10 +218,6 @@ public class PersonMap extends AbstractDataMap
 				{
 					return "Nachname";
 				}
-				case ANOTHER_LINE:
-				{
-					return "Zusatzzeile";
-				}
 				case PROFESSION:
 				{
 					return "Beruf";
@@ -292,10 +280,6 @@ public class PersonMap extends AbstractDataMap
 				case LASTNAME:
 				{
 					return person.getLastname();
-				}
-				case ANOTHER_LINE:
-				{
-					return person.getAnotherLine();
 				}
 				case PROFESSION:
 				{

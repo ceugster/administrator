@@ -632,7 +632,6 @@ public class LinkSearcher extends Composite
 			updateListJob.cancel();
 		}
 		updateListJob.schedule(500L);
-		System.out.println("SCHEDULED: " + updateListJob.getState());
 	}
 
 	private AbstractEntity[] selectById(final String text)

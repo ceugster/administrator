@@ -127,7 +127,6 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 		TableColumn tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
 		tableColumn.setText("Datum");
-		System.out.println("Donation view add table column date");
 
 		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.RIGHT);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
@@ -146,7 +145,6 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
 		tableColumn.setText("Betrag");
-		System.out.println("Donation view add table column amount");
 
 		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
@@ -167,15 +165,11 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
 		tableColumn.setText("Zweck");
-		System.out.println("Donation view add table column purpose");
 
-		System.out.println("Donation view crate context menu");
 		this.createContextMenu();
 
-		System.out.println("Donation view set selection provider viewer");
 		this.getSite().setSelectionProvider(this.viewer);
 
-		System.out.println("DonationView registers as selection listener to person view");
 		this.getSite().getPage().addSelectionListener(PersonView.ID, this);
 	}
 
@@ -276,13 +270,10 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 	@Override
 	public void selectionChanged(final IWorkbenchPart part, final ISelection selection)
 	{
-		System.out.println("Donation view got a selection event from person view");
 		if (selection instanceof StructuredSelection)
 		{
 			StructuredSelection ssel = (StructuredSelection) selection;
-			System.out.println("selection is of type " + ssel.getFirstElement().getClass().getName());
 			this.setInput(ssel.getFirstElement());
-			System.out.println("done");
 		}
 	}
 
