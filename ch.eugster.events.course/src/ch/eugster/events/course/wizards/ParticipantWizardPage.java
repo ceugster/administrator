@@ -199,7 +199,6 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 					}
 				}
 			}
-			System.out.println("can add: " + (max - existing + existingParticipantCount) + "; want add " + count);
 			return count - existingParticipantCount <= max - existing;
 		}
 		else
@@ -1083,7 +1082,6 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				Object element = cell.getElement();
 				if (element instanceof Participant)
 				{
-					System.out.println("update value in viewer");
 					Participant participant = (Participant) element;
 					cell.setText(DecimalFormat.getIntegerInstance().format(participant.getCount()));
 				}
@@ -1094,7 +1092,6 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			protected boolean canEdit(final Object element)
 			{
-				System.out.println("can edit: " + true);
 				return true;
 			}
 
@@ -1109,7 +1106,6 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 					@Override
 					public String isValid(final Object value)
 					{
-						System.out.println("is valid " + value);
 						String val = value.toString();
 						val = val.isEmpty() ? "0" : val;
 						try
@@ -1134,14 +1130,12 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			protected Object getValue(final Object element)
 			{
 				Participant participant = (Participant) element;
-				System.out.println("get value " + participant.getCount());
 				return DecimalFormat.getIntegerInstance().format(participant.getCount());
 			}
 
 			@Override
 			protected void setValue(final Object element, final Object value)
 			{
-				System.out.println("set value " + value);
 				if (value != null)
 				{
 					Participant participant = (Participant) element;

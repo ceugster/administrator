@@ -81,10 +81,6 @@ public class Person extends AbstractEntity
 	private String lastname;
 
 	@Basic
-	@Column(name = "person_another_line")
-	private String anotherLine;
-
-	@Basic
 	@Column(name = "person_profession")
 	private String profession;
 
@@ -153,7 +149,6 @@ public class Person extends AbstractEntity
 	public Person copy()
 	{
 		Person copy = Person.newInstance();
-		copy.setAnotherLine(this.getAnotherLine());
 		copy.setBirthdate(this.getBirthdate());
 		copy.setCountry(this.getCountry());
 		copy.setDeleted(this.isDeleted());
@@ -173,7 +168,6 @@ public class Person extends AbstractEntity
 
 	public Collection<LinkPersonAddress> getActiveLinks()
 	{
-		System.out.println("get active links " + links.size());
 		Collection<LinkPersonAddress> activeLinks = new ArrayList<LinkPersonAddress>();
 		for (LinkPersonAddress link : this.getLinks())
 		{
@@ -197,11 +191,6 @@ public class Person extends AbstractEntity
 			}
 		}
 		return members;
-	}
-
-	public String getAnotherLine()
-	{
-		return AbstractEntity.stringValueOf(this.anotherLine);
 	}
 
 	public Long getBirthdate()
@@ -268,19 +257,14 @@ public class Person extends AbstractEntity
 
 	public Collection<Donation> getDonations()
 	{
-		System.out.println("getting links...");
 		Collection<Donation> donations = new ArrayList<Donation>();
 		try
 		{
-			System.out.println("getting links...");
 			Collection<LinkPersonAddress> links = this.getActiveLinks();
-			System.out.println("get links " + links.size());
 			for (LinkPersonAddress link : links)
 			{
-				System.out.println("add donations " + link.getDonations().size());
 				donations.addAll(link.getDonations());
 			}
-			System.out.println("return donations " + donations.size());
 		}
 		catch (Exception e)
 		{
@@ -442,11 +426,6 @@ public class Person extends AbstractEntity
 	public void removeLink(final LinkPersonAddress link)
 	{
 		this.propertyChangeSupport.firePropertyChange("links", this.links, this.links.remove(link));
-	}
-
-	public void setAnotherLine(final String anotherLine)
-	{
-		this.propertyChangeSupport.firePropertyChange("anotherLine", this.anotherLine, this.anotherLine = anotherLine);
 	}
 
 	public void setBirthdate(final Long birthdate)

@@ -165,7 +165,6 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					@Override
 					public void run()
 					{
-						System.out.println("Anzahl: " + entities.length);
 						PersonView.this.viewer.setInput(new ContentRoot(entities));
 						PersonView.this.viewer.expandAll();
 						PersonView.this.packColumns();

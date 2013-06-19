@@ -251,7 +251,7 @@ public class DonationMap extends AbstractDataMap
 					}
 					else
 					{
-						anotherLine = donation.getLink().getPerson().getAnotherLine();
+						anotherLine = donation.getLink().getAddress().getAnotherLine();
 					}
 					return anotherLine;
 				}
