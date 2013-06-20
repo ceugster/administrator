@@ -57,11 +57,12 @@ public class ChangeAddressTypeDialog extends TitleAreaDialog
 				PersonFormEditor editor = currentPage.getEditor();
 				AddressType addressType = (AddressType) ssel.getFirstElement();
 				LinkPersonAddress link = currentPage.getLink();
-				link.setAddressType(addressType);
 
 				editor.removePage(currentPage.getId());
 				try
 				{
+					link.setDeleted(false);
+					link.setAddressType(addressType);
 					String pageId = "link.page." + addressType.getId().toString();
 					FormEditorLinkPage page = new FormEditorLinkPage(editor, getPersonPage(editor), pageId, link,
 							addressType);
