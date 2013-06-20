@@ -36,6 +36,8 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 
 	public static final String ID = "ch.eugster.events.person.salutation.editor";
 
+	private Text name;
+
 	private Section salutationSection;
 
 	private Text salutation;
@@ -86,7 +88,30 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 		composite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		composite.setLayout(new GridLayout(2, false));
 
-		Label label = this.formToolkit.createLabel(composite, "Anrede", SWT.NONE);
+		Label label = this.formToolkit.createLabel(composite, "Bezeichnung", SWT.NONE);
+		label.setLayoutData(new GridData());
+
+		this.name = this.formToolkit.createText(composite, "");
+		this.name.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.name.addModifyListener(new ModifyListener()
+		{
+			@Override
+			public void modifyText(final ModifyEvent e)
+			{
+				AddressSalutationEditor.this.setDirty(true);
+			}
+		});
+		this.name.addFocusListener(new FocusAdapter()
+		{
+			@Override
+			public void focusGained(final FocusEvent e)
+			{
+				Text text = (Text) e.getSource();
+				text.setSelection(0, text.getText().length());
+			}
+		});
+
+		label = this.formToolkit.createLabel(composite, "Anrede", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		this.salutation = this.formToolkit.createText(composite, "");
@@ -188,6 +213,7 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 	{
 		AddressSalutationEditorInput input = (AddressSalutationEditorInput) this.getEditorInput();
 		AddressSalutation salutation = input.getEntity();
+		this.name.setText(salutation.getName());
 		this.salutation.setText(salutation.getSalutation());
 		this.polite.setText(salutation.getPolite());
 		this.showAddressNameForPersons.setSelection(salutation.isShowAddressNameForPersons());
@@ -210,6 +236,7 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 	{
 		AddressSalutationEditorInput input = (AddressSalutationEditorInput) this.getEditorInput();
 		AddressSalutation salutation = input.getEntity();
+		salutation.setName(name.getText());
 		salutation.setSalutation(this.salutation.getText());
 		salutation.setPolite(this.polite.getText());
 		salutation.setShowAddressNameForPersons(this.showAddressNameForPersons.getSelection());

@@ -142,9 +142,12 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 		IFormPage[] pages = this.getPages().toArray(new IFormPage[0]);
 		for (int i = 0; i < pages.length; i++)
 		{
-			if (pages[i].getId().equals(id))
+			if (pages[i] instanceof IFormPage)
 			{
-				removePage(i);
+				if (pages[i].getId().equals(id))
+				{
+					removePage(i);
+				}
 			}
 		}
 	}

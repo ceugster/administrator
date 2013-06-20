@@ -93,9 +93,9 @@ public class PersonFormatter extends AbstractFormatter
 
 	public String createVisiblePersonLabel()
 	{
-		StringBuilder builder = new StringBuilder("${Anrede} ${Titel}");
-		builder = builder.append("|${Vorname} ${Nachname}");
-		builder = builder.append("|${Organisation}");
+		StringBuilder builder = new StringBuilder("${Organisation}");
+		builder = builder.append("|${Anrede} ${Titel} ${Vorname} ${Nachname}");
+		builder = builder.append("|${Funktion}");
 		builder = builder.append("|${Zusatz}");
 		builder = builder.append("|${Strasse}");
 		builder = builder.append("|${Postfach}");
@@ -159,7 +159,7 @@ public class PersonFormatter extends AbstractFormatter
 	public String[] getPersonLabelStoredVariables()
 	{
 		return new String[] { "${organization}", "${salutation}", "${title}", "${firstname}", "${lastname}",
-				"${anotherline}", "${address}", "${pob}", "${country}", "${zip}", "${city}" };
+				"${function}", "${anotherline}", "${address}", "${pob}", "${country}", "${zip}", "${city}" };
 	}
 
 	public String[][] getPersonLabelVariablesToConvertToStored()
@@ -192,8 +192,8 @@ public class PersonFormatter extends AbstractFormatter
 
 	public String[] getPersonLabelVisibleVariables()
 	{
-		return new String[] { "${Organisation}", "${Anrede}", "${Titel}", "${Vorname}", "${Nachname}", "${Zusatz}",
-				"${Strasse}", "${Postfach}", "${Land}", "${Plz}", "${Ort}" };
+		return new String[] { "${Organisation}", "${Anrede}", "${Titel}", "${Vorname}", "${Nachname}", "${Funktion}",
+				"${Zusatz}", "${Strasse}", "${Postfach}", "${Land}", "${Plz}", "${Ort}" };
 	}
 
 	public String[] getPersonStoredVariables()

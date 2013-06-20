@@ -30,7 +30,7 @@ public class EditPersonHandler extends AbstractHandler implements IHandler
 					try
 					{
 						IWorkbenchWindow window = (IWorkbenchWindow) context.getVariable("activeWorkbenchWindow");
-						window.getActivePage().openEditor(new PersonEditorInput(link), PersonFormEditor.ID);
+						window.getActivePage().openEditor(new PersonEditorInput(link.getPerson()), PersonFormEditor.ID);
 					}
 					catch (PartInitException e)
 					{

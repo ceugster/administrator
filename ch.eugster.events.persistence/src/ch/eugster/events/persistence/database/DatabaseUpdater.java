@@ -1033,6 +1033,17 @@ public abstract class DatabaseUpdater
 							System.out.println(++i);
 						}
 					}
+					if (structureVersion == 21)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						if (!columnExists(con, "events_address_salutation", "address_salutation_name"))
+						{
+							ok = executeSqlQuery(con, new StringBuilder("ALTER TABLE events_address_salutation ")
+									.append("ADD COLUMN address_salutation_name VARCHAR(255)").toString());
+							ok = executeSqlQuery(con,
+									"UPDATE events_address_salutation SET address_salutation_name = address_salutation_salutation");
+						}
+					}
 
 					stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);
 				}

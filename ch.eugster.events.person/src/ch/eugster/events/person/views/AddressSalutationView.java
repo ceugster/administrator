@@ -42,15 +42,19 @@ public class AddressSalutationView extends AbstractEntityView implements IDouble
 
 	private IContextActivation ctxActivation;
 
-	@Override
-	public void init(IViewSite site) throws PartInitException
+	private void createContextMenu()
 	{
-		super.init(site);
-		EntityMediator.addListener(AddressSalutation.class, this);
+		MenuManager menuManager = new MenuManager();
+		menuManager.setRemoveAllWhenShown(true);
+
+		Menu menu = menuManager.createContextMenu(this.viewer.getControl());
+		this.viewer.getControl().setMenu(menu);
+
+		this.getSite().registerContextMenu(menuManager, this.viewer);
 	}
 
 	@Override
-	public void createPartControl(Composite parent)
+	public void createPartControl(final Composite parent)
 	{
 		IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
 		ctxActivation = ctxService.activateContext("ch.eugster.events.person.salutation.context");
@@ -71,7 +75,24 @@ public class AddressSalutationView extends AbstractEntityView implements IDouble
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
+			{
+				Object object = cell.getElement();
+				if (object instanceof AddressSalutation)
+				{
+					cell.setText(((AddressSalutation) object).getName());
+				}
+			}
+		});
+		TableColumn tableColumn = tableViewerColumn.getColumn();
+		tableColumn.setResizable(true);
+		tableColumn.setText("Bezeichnung");
+
+		tableViewerColumn = new TableViewerColumn(viewer, SWT.NONE);
+		tableViewerColumn.setLabelProvider(new CellLabelProvider()
+		{
+			@Override
+			public void update(final ViewerCell cell)
 			{
 				Object object = cell.getElement();
 				if (object instanceof AddressSalutation)
@@ -80,7 +101,7 @@ public class AddressSalutationView extends AbstractEntityView implements IDouble
 				}
 			}
 		});
-		TableColumn tableColumn = tableViewerColumn.getColumn();
+		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
 		tableColumn.setText("Anrede");
 
@@ -88,7 +109,7 @@ public class AddressSalutationView extends AbstractEntityView implements IDouble
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				Object object = cell.getElement();
 				if (object instanceof AddressSalutation)
@@ -109,7 +130,7 @@ public class AddressSalutationView extends AbstractEntityView implements IDouble
 				ConnectionService.class.getName(), null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public Object addingService(final ServiceReference reference)
 			{
 				final ConnectionService connectionService = (ConnectionService) super.addingService(reference);
 				Display display = Display.getCurrent();
@@ -130,7 +151,7 @@ public class AddressSalutationView extends AbstractEntityView implements IDouble
 			}
 
 			@Override
-			public void removedService(ServiceReference reference, Object service)
+			public void removedService(final ServiceReference reference, final Object service)
 			{
 				Display display = Display.getCurrent();
 				if (display == null)
@@ -155,34 +176,18 @@ public class AddressSalutationView extends AbstractEntityView implements IDouble
 		connectionServiceTracker.open();
 	}
 
-	private void packColumns()
+	@Override
+	public void dispose()
 	{
-		TableColumn[] columns = viewer.getTable().getColumns();
-		for (TableColumn column : columns)
-		{
-			column.pack();
-		}
-	}
+		IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
+		ctxService.deactivateContext(ctxActivation);
 
-	private void createContextMenu()
-	{
-		MenuManager menuManager = new MenuManager();
-		menuManager.setRemoveAllWhenShown(true);
-
-		Menu menu = menuManager.createContextMenu(this.viewer.getControl());
-		this.viewer.getControl().setMenu(menu);
-
-		this.getSite().registerContextMenu(menuManager, this.viewer);
+		connectionServiceTracker.close();
+		EntityMediator.removeListener(AddressSalutation.class, this);
 	}
 
 	@Override
-	public void setFocus()
-	{
-		viewer.getTable().setFocus();
-	}
-
-	@Override
-	public void doubleClick(DoubleClickEvent event)
+	public void doubleClick(final DoubleClickEvent event)
 	{
 		if (!event.getSelection().isEmpty() && event.getSelection() instanceof StructuredSelection)
 		{
@@ -194,34 +199,7 @@ public class AddressSalutationView extends AbstractEntityView implements IDouble
 		}
 	}
 
-	@Override
-	public void postPersist(AbstractEntity entity)
-	{
-		if (entity instanceof AddressSalutation)
-		{
-			viewer.add(entity);
-		}
-	}
-
-	@Override
-	public void postUpdate(AbstractEntity entity)
-	{
-		if (entity instanceof AddressSalutation)
-		{
-			viewer.update(entity, null);
-		}
-	}
-
-	@Override
-	public void postDelete(AbstractEntity entity)
-	{
-		if (entity instanceof AddressSalutation)
-		{
-			viewer.refresh();
-		}
-	}
-
-	private void editSalutation(AddressSalutation salutation)
+	private void editSalutation(final AddressSalutation salutation)
 	{
 		try
 		{
@@ -235,13 +213,52 @@ public class AddressSalutationView extends AbstractEntityView implements IDouble
 	}
 
 	@Override
-	public void dispose()
+	public void init(final IViewSite site) throws PartInitException
 	{
-		IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
-		ctxService.deactivateContext(ctxActivation);
+		super.init(site);
+		EntityMediator.addListener(AddressSalutation.class, this);
+	}
 
-		connectionServiceTracker.close();
-		EntityMediator.removeListener(AddressSalutation.class, this);
+	private void packColumns()
+	{
+		TableColumn[] columns = viewer.getTable().getColumns();
+		for (TableColumn column : columns)
+		{
+			column.pack();
+		}
+	}
+
+	@Override
+	public void postDelete(final AbstractEntity entity)
+	{
+		if (entity instanceof AddressSalutation)
+		{
+			viewer.refresh();
+		}
+	}
+
+	@Override
+	public void postPersist(final AbstractEntity entity)
+	{
+		if (entity instanceof AddressSalutation)
+		{
+			viewer.add(entity);
+		}
+	}
+
+	@Override
+	public void postUpdate(final AbstractEntity entity)
+	{
+		if (entity instanceof AddressSalutation)
+		{
+			viewer.update(entity, null);
+		}
+	}
+
+	@Override
+	public void setFocus()
+	{
+		viewer.getTable().setFocus();
 	}
 
 }

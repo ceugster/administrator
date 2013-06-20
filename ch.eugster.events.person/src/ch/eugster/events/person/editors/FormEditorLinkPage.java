@@ -1742,6 +1742,10 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 							line = line.replace(variable, personPage.getPersonTitle() == null ? "" : personPage
 									.getPersonTitle().getTitle());
 						}
+						else if (variable.equals("${function}"))
+						{
+							line = line.replace(variable, this.linkFunction.getText());
+						}
 						else if (variable.equals("${organization}"))
 						{
 							IStructuredSelection ssel = (IStructuredSelection) this.salutationViewer.getSelection();
