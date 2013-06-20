@@ -63,48 +63,19 @@ public class PersonView extends ViewPart
 
 	private EntityAdapter entityAdapter;
 
-	@Override
-	public void init(IViewSite site) throws PartInitException
+	private void createContextMenu()
 	{
-		super.init(site);
-		entityAdapter = new EntityAdapter()
-		{
-			@Override
-			public void postPersist(AbstractEntity entity)
-			{
-				if (entity instanceof LinkPersonAddress)
-				{
-					PersonView.this.viewer.add(entity);
-				}
-			}
+		MenuManager menuManager = new MenuManager();
+		menuManager.setRemoveAllWhenShown(true);
 
-			@Override
-			public void postUpdate(AbstractEntity entity)
-			{
-				if (entity instanceof Person)
-				{
-					viewer.refresh(entity);
-				}
-				else if (entity instanceof LinkPersonAddress)
-				{
-					PersonView.this.viewer.refresh(entity);
-				}
-			}
+		Menu menu = menuManager.createContextMenu(this.viewer.getControl());
+		this.viewer.getControl().setMenu(menu);
 
-			@Override
-			public void postDelete(AbstractEntity entity)
-			{
-				if (entity instanceof Person || entity instanceof LinkPersonAddress)
-				{
-					viewer.refresh();
-				}
-			}
-		};
-		EntityMediator.addListener(LinkPersonAddress.class, entityAdapter);
+		this.getSite().registerContextMenu(menuManager, this.viewer);
 	}
 
 	@Override
-	public void createPartControl(Composite parent)
+	public void createPartControl(final Composite parent)
 	{
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -119,7 +90,7 @@ public class PersonView extends ViewPart
 		lastname.addModifyListener(new ModifyListener()
 		{
 			@Override
-			public void modifyText(ModifyEvent e)
+			public void modifyText(final ModifyEvent e)
 			{
 				setViewerInput();
 			}
@@ -134,7 +105,7 @@ public class PersonView extends ViewPart
 		firstname.addModifyListener(new ModifyListener()
 		{
 			@Override
-			public void modifyText(ModifyEvent e)
+			public void modifyText(final ModifyEvent e)
 			{
 				setViewerInput();
 			}
@@ -149,7 +120,7 @@ public class PersonView extends ViewPart
 		address.addModifyListener(new ModifyListener()
 		{
 			@Override
-			public void modifyText(ModifyEvent e)
+			public void modifyText(final ModifyEvent e)
 			{
 				setViewerInput();
 			}
@@ -177,13 +148,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -198,7 +169,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getPerson().getId().toString());
@@ -214,13 +185,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -235,7 +206,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getId().toString());
@@ -251,13 +222,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -272,7 +243,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getAddress().getId().toString());
@@ -288,13 +259,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -309,7 +280,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				if (link.getPerson().getBirthdate() == null)
@@ -339,13 +310,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -360,7 +331,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				PersonSex sex = link.getPerson().getSex();
@@ -384,13 +355,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -405,7 +376,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				PersonForm form = link.getPerson().getForm();
@@ -429,13 +400,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -450,7 +421,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				if (cell.getElement() instanceof LinkPersonAddress)
 				{
@@ -474,13 +445,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -495,7 +466,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				if (link.getPerson().getTitle() == null)
@@ -518,13 +489,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -539,7 +510,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getPerson().getFirstname());
@@ -555,13 +526,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -576,7 +547,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getPerson().getLastname());
@@ -592,13 +563,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -613,10 +584,10 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
-				cell.setText(link.getPerson().getAnotherLine());
+				cell.setText(link.getAddress().getAnotherLine());
 			}
 		});
 
@@ -629,13 +600,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -650,7 +621,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getPerson().getProfession());
@@ -666,13 +637,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -687,7 +658,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getPerson().getPhone());
@@ -703,13 +674,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -724,7 +695,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getPerson().getEmail());
@@ -740,13 +711,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -761,7 +732,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getPerson().getWebsite());
@@ -777,13 +748,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -798,7 +769,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getFunction());
@@ -814,13 +785,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -835,7 +806,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getPhone());
@@ -851,13 +822,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -872,7 +843,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getEmail());
@@ -888,13 +859,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -909,7 +880,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(NumberFormat.getIntegerInstance().format(link.getParticipants().size()));
@@ -925,13 +896,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -946,7 +917,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(NumberFormat.getIntegerInstance().format(link.getAddressGroupMembers().size()));
@@ -962,13 +933,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -983,7 +954,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(NumberFormat.getIntegerInstance().format(link.getMembers().size()));
@@ -999,13 +970,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -1020,7 +991,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(NumberFormat.getIntegerInstance().format(link.getDonations().size()));
@@ -1036,13 +1007,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -1057,7 +1028,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				Guide guide = link.getGuide();
@@ -1074,13 +1045,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -1095,7 +1066,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				if (cell.getElement() instanceof LinkPersonAddress)
 				{
@@ -1117,13 +1088,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -1138,7 +1109,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getAddress().getName());
@@ -1154,13 +1125,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -1175,7 +1146,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getAddress().getAnotherLine());
@@ -1191,13 +1162,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -1212,7 +1183,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getAddress().getAddress());
@@ -1228,13 +1199,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -1249,7 +1220,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getAddress().getPob());
@@ -1265,13 +1236,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -1286,7 +1257,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				if (link.getAddress().getCountry() != null)
@@ -1305,13 +1276,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -1326,7 +1297,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getAddress().getZip());
@@ -1342,13 +1313,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -1363,7 +1334,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getAddress().getCity());
@@ -1379,13 +1350,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -1400,7 +1371,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getAddress().getPhone());
@@ -1416,13 +1387,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -1437,7 +1408,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getAddress().getFax());
@@ -1453,13 +1424,13 @@ public class PersonView extends ViewPart
 		{
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
+			public void widgetDefaultSelected(final SelectionEvent e)
 			{
 				widgetSelected(e);
 			}
 
 			@Override
-			public void widgetSelected(SelectionEvent e)
+			public void widgetSelected(final SelectionEvent e)
 			{
 				TableColumn tableColumn = (TableColumn) e.getSource();
 				ColumnOrder order = (ColumnOrder) tableColumn.getData("order");
@@ -1474,7 +1445,7 @@ public class PersonView extends ViewPart
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
 			@Override
-			public void update(ViewerCell cell)
+			public void update(final ViewerCell cell)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) cell.getElement();
 				cell.setText(link.getAddress().getWebsite());
@@ -1484,6 +1455,51 @@ public class PersonView extends ViewPart
 		this.createContextMenu();
 
 		this.getSite().setSelectionProvider(viewer);
+	}
+
+	public TableViewer getViewer()
+	{
+		return viewer;
+	}
+
+	@Override
+	public void init(final IViewSite site) throws PartInitException
+	{
+		super.init(site);
+		entityAdapter = new EntityAdapter()
+		{
+			@Override
+			public void postDelete(final AbstractEntity entity)
+			{
+				if (entity instanceof Person || entity instanceof LinkPersonAddress)
+				{
+					viewer.refresh();
+				}
+			}
+
+			@Override
+			public void postPersist(final AbstractEntity entity)
+			{
+				if (entity instanceof LinkPersonAddress)
+				{
+					PersonView.this.viewer.add(entity);
+				}
+			}
+
+			@Override
+			public void postUpdate(final AbstractEntity entity)
+			{
+				if (entity instanceof Person)
+				{
+					viewer.refresh(entity);
+				}
+				else if (entity instanceof LinkPersonAddress)
+				{
+					PersonView.this.viewer.refresh(entity);
+				}
+			}
+		};
+		EntityMediator.addListener(LinkPersonAddress.class, entityAdapter);
 	}
 
 	@Override
@@ -1537,20 +1553,9 @@ public class PersonView extends ViewPart
 		}
 	}
 
-	public TableViewer getViewer()
+	private enum ColumnOrder
 	{
-		return viewer;
-	}
-
-	private void createContextMenu()
-	{
-		MenuManager menuManager = new MenuManager();
-		menuManager.setRemoveAllWhenShown(true);
-
-		Menu menu = menuManager.createContextMenu(this.viewer.getControl());
-		this.viewer.getControl().setMenu(menu);
-
-		this.getSite().registerContextMenu(menuManager, this.viewer);
+		P_ID, L_ID, A_ID, P_BIRTHDATE, P_SEX, P_FORM, P_SALUTATION, P_TITLE, P_FIRSTNAME, P_LASTNAME, P_ANOTHERLINE, P_PROFESSION, P_PHONE, P_EMAIL, P_WEBSITE, L_FUNCTION, L_PHONE, L_EMAIL, L_PARTICIPANT, L_ADDRESS_GROUP_MEMBER, L_MEMBER, L_DONATION, L_GUIDE, A_SALUTATION, A_NAME, A_ANOTHERLINE, A_ADDRESS, A_POB, A_COUNTRY, A_ZIP, A_CITY, A_PHONE, A_FAX, A_WEBSITE;
 	}
 
 	private class TableSorter extends ViewerSorter
@@ -1559,20 +1564,8 @@ public class PersonView extends ViewPart
 
 		private boolean descending = false;
 
-		public void setColumnOrder(ColumnOrder order)
-		{
-			if (this.order.equals(order))
-			{
-				this.descending = !this.descending;
-			}
-			else
-			{
-				this.order = order;
-			}
-		}
-
 		@Override
-		public int compare(Viewer viewer, Object e1, Object e2)
+		public int compare(final Viewer viewer, final Object e1, final Object e2)
 		{
 			LinkPersonAddress l1 = null;
 			LinkPersonAddress l2 = null;
@@ -1644,7 +1637,7 @@ public class PersonView extends ViewPart
 				}
 				case P_ANOTHERLINE:
 				{
-					return l1.getPerson().getAnotherLine().compareTo(l2.getPerson().getAnotherLine());
+					return l1.getAddress().getAnotherLine().compareTo(l2.getAddress().getAnotherLine());
 				}
 				case P_PROFESSION:
 				{
@@ -1732,10 +1725,17 @@ public class PersonView extends ViewPart
 			return 0;
 		}
 
-	}
+		public void setColumnOrder(final ColumnOrder order)
+		{
+			if (this.order.equals(order))
+			{
+				this.descending = !this.descending;
+			}
+			else
+			{
+				this.order = order;
+			}
+		}
 
-	private enum ColumnOrder
-	{
-		P_ID, L_ID, A_ID, P_BIRTHDATE, P_SEX, P_FORM, P_SALUTATION, P_TITLE, P_FIRSTNAME, P_LASTNAME, P_ANOTHERLINE, P_PROFESSION, P_PHONE, P_EMAIL, P_WEBSITE, L_FUNCTION, L_PHONE, L_EMAIL, L_PARTICIPANT, L_ADDRESS_GROUP_MEMBER, L_MEMBER, L_DONATION, L_GUIDE, A_SALUTATION, A_NAME, A_ANOTHERLINE, A_ADDRESS, A_POB, A_COUNTRY, A_ZIP, A_CITY, A_PHONE, A_FAX, A_WEBSITE;
 	}
 }

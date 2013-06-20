@@ -33,6 +33,10 @@ public class AddressSalutation extends AbstractEntity
 	private Long id;
 
 	@Basic
+	@Column(name = "address_salutation_name")
+	private String name;
+
+	@Basic
 	@Column(name = "address_salutation_salutation")
 	private String salutation;
 
@@ -49,6 +53,11 @@ public class AddressSalutation extends AbstractEntity
 	public Long getId()
 	{
 		return id;
+	}
+
+	public String getName()
+	{
+		return stringValueOf(name);
 	}
 
 	public String getPolite()
@@ -71,6 +80,11 @@ public class AddressSalutation extends AbstractEntity
 	{
 		this.propertyChangeSupport.firePropertyChange("id", this.id, this.id = id);
 		this.id = id;
+	}
+
+	public void setName(final String name)
+	{
+		this.propertyChangeSupport.firePropertyChange("name", this.name, this.name = name);
 	}
 
 	public void setPolite(final String polite)
