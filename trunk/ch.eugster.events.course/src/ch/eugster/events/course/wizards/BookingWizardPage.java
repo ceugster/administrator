@@ -91,18 +91,9 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 	@Override
 	public void createControl(final Composite parent)
 	{
-		int freePlaces = this.getBooking().getCourse().getMaxParticipants()
-				- this.getBooking().getCourse().getParticipantsCount();
 		this.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("BOOKING_48"));
 		this.setTitle("Buchungsdaten");
-		if (freePlaces > 0)
-		{
-			this.setMessage(this.getBooking().getId() == null ? "Neue Buchung erfassen" : "Buchung bearbeiten");
-		}
-		else
-		{
-			this.setErrorMessage("Achtung: Kann nur in Warteliste aufgenommen werden!");
-		}
+		this.setMessage(this.getBooking().getId() == null ? "Neue Buchung erfassen" : "Buchung bearbeiten");
 
 		Composite composite = new Composite(parent, SWT.None);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -425,6 +416,12 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		return calendar;
 	}
 
+	public int getFreePlaces()
+	{
+		return this.getBooking().getCourse() == null ? 0 : this.getBooking().getCourse().getMaxParticipants()
+				- this.getBooking().getCourse().getParticipantsCount();
+	}
+
 	private Calendar getInvitationSentDate()
 	{
 		if (this.invitationSentDate.getSelection() == null)
@@ -493,7 +490,18 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 			{
 				if (ssel.getFirstElement() instanceof Course)
 				{
-					this.setBookingStateInput((Course) ssel.getFirstElement());
+					Course course = (Course) ssel.getFirstElement();
+					this.setBookingStateInput(course);
+					if (getFreePlaces() == 0)
+					{
+						this.setErrorMessage("Achtung: Kann nur in Warteliste aufgenommen werden!");
+					}
+					else
+					{
+						this.setMessage(this.getBooking().getId() == null ? "Neue Buchung erfassen"
+								: "Buchung bearbeiten");
+					}
+
 				}
 			}
 		}
