@@ -27,7 +27,7 @@
 			<property name="local_mesure_unitheight" value="mm"/>
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
 			<textField>
-				<reportElement uuid="5d69cb89-58ea-4492-b6a9-cc4894267329" x="20" y="15" width="175" height="56"/>
+				<reportElement uuid="5d69cb89-58ea-4492-b6a9-cc4894267329" x="20" y="10" width="175" height="61"/>
 				<textElement>
 					<font size="9"/>
 				</textElement>
