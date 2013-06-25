@@ -13,6 +13,8 @@ import org.eclipse.nebula.widgets.formattedtext.FormattedText;
 import org.eclipse.nebula.widgets.formattedtext.NumberFormatter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -133,7 +135,16 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 		});
 
 		this.amount = new FormattedText(amount);
-		this.amount.setFormatter(new NumberFormatter("#,###,##0.00"));
+		this.amount.setFormatter(new NumberFormatter("#,###,###.00"));
+		this.amount.getControl().addFocusListener(new FocusAdapter()
+		{
+			@Override
+			public void focusGained(FocusEvent e)
+			{
+				DonationEditor.this.amount.getControl().setSelection(0,
+						DonationEditor.this.amount.getControl().getText().length());
+			}
+		});
 
 		label = this.formToolkit.createLabel(composite, "Zweck");
 		label.setLayoutData(new GridData());

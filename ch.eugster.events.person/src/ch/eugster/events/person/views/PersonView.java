@@ -1114,12 +1114,14 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			{
 				ContentRoot root = (ContentRoot) viewer.getInput();
 				viewer.add(root, entity);
+				packColumns();
 			}
 
 			@Override
 			public void postUpdate(final AbstractEntity entity)
 			{
 				viewer.refresh(entity);
+				packColumns();
 			}
 		});
 		EntityMediator.addListener(LinkPersonAddress.class, new EntityAdapter()
@@ -1135,12 +1137,14 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			{
 				LinkPersonAddress link = (LinkPersonAddress) entity;
 				viewer.add(link.getPerson(), link);
+				packColumns();
 			}
 
 			@Override
 			public void postUpdate(final AbstractEntity entity)
 			{
 				viewer.refresh(entity);
+				packColumns();
 			}
 		});
 		EntityMediator.addListener(Address.class, new EntityAdapter()
@@ -1154,14 +1158,20 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void postPersist(final AbstractEntity entity)
 			{
-				ContentRoot root = (ContentRoot) viewer.getInput();
-				viewer.add(root, entity);
+				Address address = (Address) entity;
+				if (address.getPersonLinks().size() == 0)
+				{
+					ContentRoot root = (ContentRoot) viewer.getInput();
+					viewer.add(root, entity);
+					packColumns();
+				}
 			}
 
 			@Override
 			public void postUpdate(final AbstractEntity entity)
 			{
 				viewer.refresh(entity);
+				packColumns();
 			}
 		});
 	}

@@ -453,10 +453,7 @@ public class LinkSearcher extends Composite
 				{
 					if (!value.isEmpty())
 					{
-						if (criteria.isEmpty())
-						{
-							criteria.put(entry.getKey(), value);
-						}
+						criteria.put(entry.getKey(), value);
 					}
 				}
 			}
@@ -519,20 +516,79 @@ public class LinkSearcher extends Composite
 		connectionServiceTracker.close();
 	}
 
-	public void fillAddress(final Address address)
+	public Map<String, String> getInitialValues()
 	{
-		String text = this.dialogSettings.get("organization.text");
-		address.setName(text);
-		text = this.dialogSettings.get("address.text");
-		address.setAddress(text);
+		Map<String, String> initialValues = new HashMap<String, String>();
+		String value = dialogSettings.get("lastname.text");
+		value = toUpperCase(value);
+		if (value != null)
+		{
+			initialValues.put("lastname", value);
+		}
+		value = dialogSettings.get("firstname.text");
+		value = toUpperCase(value);
+		if (value != null)
+		{
+			initialValues.put("firstname", value);
+		}
+		value = dialogSettings.get("organization.text");
+		value = toUpperCase(value);
+		if (value != null)
+		{
+			initialValues.put("organization", value);
+		}
+		value = dialogSettings.get("address.text");
+		value = toUpperCase(value);
+		if (value != null)
+		{
+			try
+			{
+				value = Long.valueOf(value).toString();
+				initialValues.put("pob", value);
+			}
+			catch (NumberFormatException e)
+			{
+				initialValues.put("address", value);
+			}
+		}
+		value = dialogSettings.get("city.text");
+		value = toUpperCase(value);
+		if (value != null)
+		{
+			try
+			{
+				value = Integer.valueOf(value).toString();
+				initialValues.put("zip", value);
+			}
+			catch (NumberFormatException e)
+			{
+				initialValues.put("city", value);
+			}
+		}
+		value = dialogSettings.get("email.text");
+		value = toUpperCase(value);
+		if (value != null)
+		{
+			initialValues.put("email", value);
+		}
+		return initialValues;
 	}
 
-	public void fillPerson(final Person person)
+	private String toUpperCase(String value)
 	{
-		String text = this.dialogSettings.get("lastname.text");
-		person.setLastname(text);
-		text = this.dialogSettings.get("firstname.text");
-		person.setFirstname(text);
+		StringBuilder result = new StringBuilder();
+		if (value == null || value.trim().isEmpty())
+		{
+			return null;
+		}
+		String[] vals = value.split(" ");
+		for (String val : vals)
+		{
+			char[] chars = val.toCharArray();
+			chars[0] = Character.toUpperCase(chars[0]);
+			result = result.append(new String(chars) + " ");
+		}
+		return result.toString().trim();
 	}
 
 	private Collection<Person> getPersons(final Collection<LinkPersonAddress> links)
@@ -546,11 +602,6 @@ public class LinkSearcher extends Composite
 			}
 		}
 		return persons.values();
-	}
-
-	private String getText(final Widget widget)
-	{
-		return ((Text) widget).getText().trim();
 	}
 
 	private boolean hasAddressCriteria(final Map<String, String> criteria)

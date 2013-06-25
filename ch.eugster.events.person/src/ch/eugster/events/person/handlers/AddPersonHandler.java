@@ -1,6 +1,7 @@
 package ch.eugster.events.person.handlers;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -78,6 +79,7 @@ public class AddPersonHandler extends AbstractHandler implements IHandler
 		// person.setDefaultLink(link);
 		// person.addLink(link);
 
+		Map<String, String> initialValues = null;
 		IWorkbenchWindow window = (IWorkbenchWindow) context.getParent().getVariable("activeWorkbenchWindow");
 		IViewReference[] references = window.getActivePage().getViewReferences();
 		for (IViewReference reference : references)
@@ -89,7 +91,7 @@ public class AddPersonHandler extends AbstractHandler implements IHandler
 				{
 					PersonView view = (PersonView) part;
 					view.getViewer().setSelection(new StructuredSelection());
-					view.getSearcher().fillPerson(person);
+					initialValues = view.getSearcher().getInitialValues();
 				}
 			}
 		}
@@ -100,8 +102,8 @@ public class AddPersonHandler extends AbstractHandler implements IHandler
 			{
 				try
 				{
-					window.getActivePage()
-							.openEditor(editorSelector.getEditorInput(link), editorSelector.getEditorId());
+					window.getActivePage().openEditor(editorSelector.getEditorInput(link, initialValues),
+							editorSelector.getEditorId());
 					break;
 				}
 				catch (PartInitException e)

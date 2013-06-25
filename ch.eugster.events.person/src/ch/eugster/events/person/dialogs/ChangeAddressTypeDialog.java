@@ -68,12 +68,11 @@ public class ChangeAddressTypeDialog extends TitleAreaDialog
 							addressType);
 					editor.addPage(page);
 					editor.setActivePage(pageId);
-					page.setDirty();
+					page.setDirty(true);
 				}
 				catch (PartInitException e)
 				{
 				}
-				editor.setDirty();
 			}
 		}
 		this.close();

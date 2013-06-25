@@ -1,5 +1,8 @@
 package ch.eugster.events.person.editors;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.ui.IEditorInput;
 
 import ch.eugster.events.persistence.model.LinkPersonAddress;
@@ -29,15 +32,20 @@ public enum EditorSelector
 
 	public IEditorInput getEditorInput(final LinkPersonAddress link)
 	{
+		return getEditorInput(link, new HashMap<String, String>());
+	}
+
+	public IEditorInput getEditorInput(final LinkPersonAddress link, Map<String, String> initialValues)
+	{
 		switch (this)
 		{
 			case SINGLE_PAGE_EDITOR:
 			{
-				return new LinkPersonAddressEditorInput(link);
+				return new LinkPersonAddressEditorInput(link, initialValues);
 			}
 			case MULTI_PAGE_EDITOR:
 			{
-				return new PersonEditorInput(link.getPerson());
+				return new PersonEditorInput(link.getPerson(), initialValues);
 			}
 			default:
 			{

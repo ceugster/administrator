@@ -9,18 +9,21 @@
       </category>
       <command
             categoryId="category.donation"
+            defaultHandler="ch.eugster.events.donation.handlers.AddDonationHandler"
             description="Neue Spende hinzufügen"
             id="ch.eugster.events.donation.add"
             name="Hinzufügen">
       </command>
       <command
             categoryId="category.donation"
+            defaultHandler="ch.eugster.events.donation.handlers.EditDonationHandler"
             description="Ausgewählte Spende bearbeiten"
             id="ch.eugster.events.donation.edit"
             name="Bearbeiten">
       </command>
       <command
             categoryId="category.donation"
+            defaultHandler="ch.eugster.events.donation.handlers.DeleteDonationHandler"
             description="Ausgewählte Spende entfernen"
             id="ch.eugster.events.donation.delete"
             name="Entfernen">
@@ -51,6 +54,7 @@
       </command>
       <command
             categoryId="category.donation"
+            defaultHandler="ch.eugster.events.donation.handlers.AddDonationToLinkHandler"
             description="Neue Spende hinzufügen"
             id="ch.eugster.events.donation.addToLink"
             name="Hinzufügen">
@@ -74,71 +78,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
-      <handler
-            class="ch.eugster.events.donation.handlers.AddDonationToLinkHandler"
-            commandId="ch.eugster.events.donation.addToLink">
-         <enabledWhen>
-            <with
-                  variable="selection">
-               <and>
-                  <count
-                        value="1">
-                  </count>
-                  <iterate>
-                     <or>
-                        <instanceof
-                              value="ch.eugster.events.persistence.model.LinkPersonAddress">
-                        </instanceof>
-                        <instanceof
-                              value="ch.eugster.events.persistence.model.Person">
-                        </instanceof>
-                        <instanceof
-                              value="ch.eugster.events.persistence.model.Address">
-                        </instanceof>
-                     </or>
-                  </iterate>
-               </and>
-            </with>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="ch.eugster.events.donation.handlers.EditDonationHandler"
-            commandId="ch.eugster.events.donation.edit">
-         <enabledWhen>
-            <with
-                  variable="selection">
-               <and>
-                  <count
-                        value="1">
-                  </count>
-                  <iterate>
-                     <instanceof
-                           value="ch.eugster.events.persistence.model.Donation">
-                     </instanceof>
-                  </iterate>
-               </and>
-            </with>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="ch.eugster.events.donation.handlers.DeleteDonationHandler"
-            commandId="ch.eugster.events.donation.delete">
-         <enabledWhen>
-            <with
-                  variable="selection">
-               <and>
-                  <count
-                        value="1">
-                  </count>
-                  <iterate>
-                     <instanceof
-                           value="ch.eugster.events.persistence.model.Donation">
-                     </instanceof>
-                  </iterate>
-               </and>
-            </with>
-         </enabledWhen>
-      </handler>
       <handler
             class="ch.eugster.events.donation.handlers.GenerateDonationListHandler"
             commandId="ch.eugster.events.donation.generate.list">
@@ -201,35 +140,6 @@
       <handler
             class="ch.eugster.events.donation.handlers.ActivateLinkDonationViewHandler"
             commandId="ch.eugster.events.donation.activate.link.view">
-      </handler>
-      <handler
-            class="ch.eugster.events.donation.handlers.AddDonationHandler"
-            commandId="ch.eugster.events.donation.add">
-         <enabledWhen>
-            <or>
-               <with
-                     variable="activePart">
-                  <instanceof
-                        value="ch.eugster.events.donation.views.LinkDonationView">
-                  </instanceof>
-               </with>
-               <and>
-                  <count
-                        value="1">
-                  </count>
-                  <iterate>
-                     <or>
-                        <instanceof
-                              value="ch.eugster.events.persistence.model.LinkPersonAddress">
-                        </instanceof>
-                        <instanceof
-                              value="ch.eugster.events.persistence.model.Address">
-                        </instanceof>
-                     </or>
-                  </iterate>
-               </and>
-            </or>
-         </enabledWhen>
       </handler>
       <handler
             class="ch.eugster.events.donation.handlers.DeleteDonationPurposeHandler"
@@ -310,7 +220,7 @@
       <menuContribution
             locationURI="popup:ch.eugster.events.donation.linkView?after=additions">
          <command
-               commandId="ch.eugster.events.donation.add"
+               commandId="ch.eugster.events.donation.addToLink"
                disabledIcon="icons/add_grey_16.gif"
                hoverIcon="icons/money.png"
                icon="icons/add_16.gif"
@@ -340,7 +250,7 @@
       <menuContribution
             locationURI="toolbar:ch.eugster.events.donation.linkView?after=additions">
          <command
-               commandId="ch.eugster.events.donation.add"
+               commandId="ch.eugster.events.donation.addToLink"
                disabledIcon="icons/add_grey_16.gif"
                hoverIcon="icons/add_16.gif"
                icon="icons/add_16.gif"

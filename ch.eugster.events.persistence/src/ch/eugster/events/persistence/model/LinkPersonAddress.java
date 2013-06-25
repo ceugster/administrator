@@ -4,6 +4,7 @@ import static javax.persistence.CascadeType.ALL;
 
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -33,7 +34,7 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "deleted", column = @Column(name = "pa_link_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "pa_link_version")) })
 @Customizer(DeletedFilter.class)
-public class LinkPersonAddress extends AbstractEntity
+public class LinkPersonAddress extends AbstractEntity implements Donator
 {
 	/**
 	 * References
@@ -87,7 +88,7 @@ public class LinkPersonAddress extends AbstractEntity
 	private Collection<Member> members = new Vector<Member>();
 
 	@OneToMany(cascade = ALL, mappedBy = "link")
-	private Collection<Donation> donations = new Vector<Donation>();
+	private List<Donation> donations = new Vector<Donation>();
 
 	@OneToMany(cascade = ALL, mappedBy = "link")
 	private Collection<AddressGroupMember> addressGroupMembers = new Vector<AddressGroupMember>();
@@ -209,7 +210,7 @@ public class LinkPersonAddress extends AbstractEntity
 		return contacts;
 	}
 
-	public Collection<Donation> getDonations()
+	public List<Donation> getDonations()
 	{
 		return this.donations;
 	}
@@ -288,7 +289,7 @@ public class LinkPersonAddress extends AbstractEntity
 
 	public boolean hasDonationsForYear(final int year)
 	{
-		Collection<Donation> donations = this.getDonations();
+		List<Donation> donations = this.getDonations();
 		for (Donation donation : donations)
 		{
 			if (!donation.isDeleted() && donation.getDonationDate().get(Calendar.YEAR) == year)
@@ -397,7 +398,7 @@ public class LinkPersonAddress extends AbstractEntity
 		super.setDeleted(deleted);
 	}
 
-	public void setDonations(final Collection<Donation> donations)
+	public void setDonations(final List<Donation> donations)
 	{
 		this.propertyChangeSupport.firePropertyChange("donations", this.donations, this.donations = donations);
 	}

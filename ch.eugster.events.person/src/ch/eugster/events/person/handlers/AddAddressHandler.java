@@ -37,7 +37,6 @@ public class AddAddressHandler extends AbstractHandler implements IHandler
 					{
 						PersonView view = (PersonView) part;
 						view.getViewer().setSelection(new StructuredSelection());
-						view.getSearcher().fillAddress(address);
 					}
 				}
 			}

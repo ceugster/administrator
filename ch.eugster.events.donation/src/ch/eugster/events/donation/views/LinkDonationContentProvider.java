@@ -24,7 +24,7 @@ public class LinkDonationContentProvider implements IStructuredContentProvider
 		if (inputElement instanceof Person)
 		{
 			Person person = (Person) inputElement;
-			Collection<Donation> d = person.getDonations();
+			Collection<Donation> d = person.getDefaultLink().getDonations();
 			donations = d.toArray(new Donation[0]);
 		}
 		else if (inputElement instanceof LinkPersonAddress)

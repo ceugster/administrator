@@ -43,6 +43,7 @@ ch.eugster.events.addressgroup/icons/member_delete_grey_16.png -text
 ch.eugster.events.addressgroup/icons/member_edit_16.png -text
 ch.eugster.events.addressgroup/icons/member_edit_grey_16.png -text
 ch.eugster.events.addressgroup/icons/paste.png -text
+ch.eugster.events.addressgroup/icons/refresh_16.png -text
 ch.eugster.events.addressgroup/icons/remove_16.png -text
 ch.eugster.events.addressgroup/icons/reset_16.png -text
 ch.eugster.events.addressgroup/icons/reset_grey_16.png -text
@@ -83,6 +84,7 @@ ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/EditA
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/EditCategoryHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/OpenWebsiteHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/PasteHandler.java -text
+ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/RefreshHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/ResetPersonAddressGroupMemberHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/SelectAllHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/SendEmailHandler.java -text
@@ -843,6 +845,7 @@ ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Domain.jav
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Donation.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/DonationPurpose.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/DonationYear.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Donator.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/EmailAccount.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/ExtendedField.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/ExternalAddressMapping.java -text
@@ -1033,6 +1036,8 @@ ch.eugster.events.person/src/ch/eugster/events/person/editors/FieldExtensionEdit
 ch.eugster.events.person/src/ch/eugster/events/person/editors/FieldExtensionEditorInput.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/FormEditorLinkPage.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/FormEditorPersonPage.java -text
+ch.eugster.events.person/src/ch/eugster/events/person/editors/IPersonFormEditorPage.java -text
+ch.eugster.events.person/src/ch/eugster/events/person/editors/Initializable.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/LinkPersonAddressEditorInput.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/OtherPersonContentProvider.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/OtherPersonLabelProvider.java -text
@@ -1201,11 +1206,7 @@ ch.eugster.events.ui/src/ch/eugster/events/ui/dnd/LinkPersonAddressViewerDropAda
 ch.eugster.events.ui/src/ch/eugster/events/ui/editors/AbstractEntityEditor.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/editors/AbstractEntityEditorInput.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/editors/AbstractEntityFormEditor.java -text
-ch.eugster.events.ui/src/ch/eugster/events/ui/editors/Clearable.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/editors/ColorManager.java -text
-ch.eugster.events.ui/src/ch/eugster/events/ui/editors/Dirtyable.java -text
-ch.eugster.events.ui/src/ch/eugster/events/ui/editors/Saveable.java -text
-ch.eugster.events.ui/src/ch/eugster/events/ui/editors/Validateable.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/handlers/ActivateOutlineViewHandler.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/helpers/BrowseHelper.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/helpers/ClipboardHelper.java -text

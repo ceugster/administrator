@@ -182,7 +182,8 @@ public class LinkParticipantView extends AbstractEntityView implements IDoubleCl
 				else if (cell.getElement() instanceof Participant)
 				{
 					Participant participant = (Participant) cell.getElement();
-					cell.setText(LinkParticipantView.this.df.format(participant.getDate().getTime()));
+					cell.setText(participant.getDate() == null ? "" : LinkParticipantView.this.df.format(participant
+							.getDate().getTime()));
 				}
 			}
 
