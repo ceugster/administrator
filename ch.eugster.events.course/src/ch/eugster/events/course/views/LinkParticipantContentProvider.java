@@ -24,7 +24,7 @@ public class LinkParticipantContentProvider implements ITreeContentProvider
 		if (parent instanceof Person)
 		{
 			Person person = (Person) parent;
-			Collection<Participant> participants = person.getParticipants();
+			Collection<Participant> participants = person.getDefaultLink().getParticipants();
 			Collection<Booking> bookings = new ArrayList<Booking>();
 			for (Participant participant : participants)
 			{

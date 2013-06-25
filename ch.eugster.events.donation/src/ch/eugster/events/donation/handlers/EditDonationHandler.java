@@ -6,6 +6,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -32,8 +33,9 @@ public class EditDonationHandler extends AbstractHandler implements IHandler
 						Donation donation = (Donation) ssel.getFirstElement();
 						try
 						{
-							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new DonationEditorInput(donation), DonationEditor.ID);
-						} 
+							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+									.openEditor(new DonationEditorInput(donation), DonationEditor.ID);
+						}
 						catch (PartInitException e)
 						{
 							e.printStackTrace();
@@ -45,4 +47,18 @@ public class EditDonationHandler extends AbstractHandler implements IHandler
 		return null;
 	}
 
+	@Override
+	public void setEnabled(Object evaluationContext)
+	{
+		boolean enabled = false;
+		EvaluationContext context = (EvaluationContext) evaluationContext;
+		Object object = context.getVariable("selection");
+		if (object instanceof IStructuredSelection)
+		{
+			IStructuredSelection ssel = (IStructuredSelection) object;
+			object = ssel.getFirstElement();
+			enabled = object instanceof Donation;
+		}
+		setBaseEnabled(enabled);
+	}
 }

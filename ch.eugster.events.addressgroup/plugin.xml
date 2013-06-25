@@ -229,6 +229,11 @@
             id="ch.eugster.events.addressgroup.select.all"
             name="Alles auswählen">
       </command>
+      <command
+            defaultHandler="ch.eugster.events.addressgroup.handlers.RefreshHandler"
+            id="ch.eugster.events.addressgroup.command.refresh"
+            name="Refresh">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -521,6 +526,14 @@
                style="push"
                tooltip="Entfernen der ausgewählten Adressgruppe">
          </command>
+         <separator
+               name="ch.eugster.events.addressgroup.separator1">
+         </separator>
+         <command
+               commandId="ch.eugster.events.addressgroup.command.refresh"
+               icon="icons/refresh_16.png"
+               style="push">
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="popup:ch.eugster.events.addressgroup.groupView">
@@ -675,6 +688,15 @@
                   </reference>
                </and>
             </visibleWhen>
+         </command>
+         <separator
+               name="ch.eugster.events.addressgroup.separator1">
+         </separator>
+         <command
+               commandId="ch.eugster.events.addressgroup.command.refresh"
+               icon="icons/refresh_16.png"
+               label="Aktualisieren"
+               style="push">
          </command>
       </menuContribution>
       <menuContribution

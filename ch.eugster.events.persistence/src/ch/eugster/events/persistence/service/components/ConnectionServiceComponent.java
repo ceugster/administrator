@@ -499,4 +499,16 @@ public class ConnectionServiceComponent implements ConnectionService
 	{
 		this.persistenceProvider = null;
 	}
+
+	@Override
+	public AbstractEntity find(Class<AbstractEntity> clazz, Long id)
+	{
+		return this.getEntityManager().find(clazz, id);
+	}
+
+	public AbstractEntity refresh(AbstractEntity entity)
+	{
+		this.getEntityManager().refresh(entity);
+		return entity;
+	}
 }

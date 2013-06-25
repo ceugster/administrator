@@ -6,6 +6,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.ui.IViewPart;
@@ -103,5 +104,34 @@ public class AddDonationHandler extends AbstractHandler implements IHandler
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void setEnabled(Object evaluationContext)
+	{
+		boolean enabled = false;
+		EvaluationContext context = (EvaluationContext) evaluationContext;
+		Object object = context.getVariable("selection");
+		if (object instanceof IStructuredSelection)
+		{
+			IStructuredSelection ssel = (IStructuredSelection) object;
+			object = ssel.getFirstElement();
+			if (object instanceof Person)
+			{
+				Person person = (Person) object;
+				enabled = person.getDefaultLink().getId() != null;
+			}
+			else if (object instanceof LinkPersonAddress)
+			{
+				LinkPersonAddress link = (LinkPersonAddress) object;
+				enabled = link.getId() != null;
+			}
+			else if (object instanceof Address)
+			{
+				Address address = (Address) object;
+				enabled = address.getId() != null;
+			}
+		}
+		setBaseEnabled(enabled);
 	}
 }
