@@ -3,6 +3,9 @@ package ch.eugster.events.person.editors;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -83,9 +86,6 @@ import ch.eugster.events.person.Activator;
 import ch.eugster.events.person.dialogs.ChangeAddressTypeDialog;
 import ch.eugster.events.person.preferences.PreferenceInitializer;
 import ch.eugster.events.ui.dialogs.Message;
-import ch.eugster.events.ui.editors.Dirtyable;
-import ch.eugster.events.ui.editors.Saveable;
-import ch.eugster.events.ui.editors.Validateable;
 import ch.eugster.events.ui.helpers.BrowseHelper;
 import ch.eugster.events.ui.helpers.EmailHelper;
 
@@ -94,12 +94,14 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
-public class FormEditorLinkPage extends FormPage implements IContentProposalListener, IPropertyChangeListener,
-		Validateable, Saveable, Dirtyable
+public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPage, IContentProposalListener,
+		IPropertyChangeListener
 {
 	private static final String ID = FormEditorLinkPage.class.getName();
 
 	private boolean dirty;
+
+	private boolean active = true;
 
 	private static final String EMAIL_LABEL = "Email (senden)";
 
@@ -238,7 +240,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				setDirty();
+				setDirty(true);
 			}
 		});
 		phone.addFocusListener(new FocusListener()
@@ -273,7 +275,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				setDirty();
+				setDirty(true);
 			}
 		});
 		fax.addFocusListener(new FocusListener()
@@ -320,7 +322,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				setDirty();
+				setDirty(true);
 				if (email.getText().length() >= 3
 						&& email.getText().substring(1, email.getText().length() - 2).contains("@"))
 				{
@@ -371,7 +373,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				setDirty();
+				setDirty(true);
 				if (website.getText().length() > 11 && website.getText().startsWith("http://"))
 				{
 					browseWebsite.setText(FormEditorLinkPage.WEBSITE_LINK);
@@ -459,7 +461,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 				polite.setText(salutation == null ? "" : salutation.getPolite());
 				updateSingleLabel();
 				updateGroupLabel();
-				setDirty();
+				setDirty(true);
 			}
 		});
 
@@ -478,7 +480,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			{
 				updateSingleLabel();
 				updateGroupLabel();
-				setDirty();
+				setDirty(true);
 			}
 		});
 		this.name.addFocusListener(new FocusAdapter()
@@ -506,7 +508,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			{
 				updateSingleLabel();
 				updateGroupLabel();
-				setDirty();
+				setDirty(true);
 			}
 		});
 		this.anotherLine.addFocusListener(new FocusAdapter()
@@ -555,7 +557,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 				}
 				if (!address.getText().equals(value))
 				{
-					setDirty();
+					setDirty(true);
 					address.setText(value);
 				}
 			}
@@ -568,7 +570,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			{
 				updateSingleLabel();
 				updateGroupLabel();
-				setDirty();
+				setDirty(true);
 			}
 		});
 
@@ -592,7 +594,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			{
 				updateSingleLabel();
 				updateGroupLabel();
-				setDirty();
+				setDirty(true);
 			}
 		});
 		this.pob.addFocusListener(new FocusAdapter()
@@ -627,7 +629,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
-				setDirty();
+				setDirty(true);
 				StructuredSelection ssel = (StructuredSelection) event.getSelection();
 				if (ssel.getFirstElement() instanceof Country)
 				{
@@ -683,7 +685,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 				zipSelected(zip.getText());
 				updateSingleLabel();
 				updateGroupLabel();
-				setDirty();
+				setDirty(true);
 			}
 		});
 		this.zip.addFocusListener(new FocusAdapter()
@@ -695,11 +697,11 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 				text.setSelection(0, text.getText().length());
 			}
 
-			@Override
-			public void focusLost(final FocusEvent e)
-			{
-				zipSelected(zip.getText());
-			}
+			// @Override
+			// public void focusLost(final FocusEvent e)
+			// {
+			// zipSelected(zip.getText());
+			// }
 		});
 
 		this.city = toolkit.createText(client, "");
@@ -711,7 +713,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			{
 				updateSingleLabel();
 				updateGroupLabel();
-				setDirty();
+				setDirty(true);
 			}
 		});
 		this.city.addFocusListener(new FocusListener()
@@ -763,7 +765,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
-				setDirty();
+				setDirty(true);
 			}
 		});
 
@@ -963,7 +965,12 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 				"Vorschau der Adressetiketten für Einzel- und, falls gegeben, Sammeladresse.", 2);
 
 		loadValues();
-		getEditor().clearDirty();
+		IEditorInput input = this.getEditor().getEditorInput();
+		if (input instanceof Initializable)
+		{
+			Initializable init = (Initializable) input;
+			initializeFields(init.getInitialValues());
+		}
 	}
 
 	private void createLinkSectionPart(final IManagedForm managedForm, final String title, final String description,
@@ -987,7 +994,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				setDirty();
+				setDirty(true);
 			}
 		});
 		this.linkFunction.addFocusListener(new FocusAdapter()
@@ -1017,7 +1024,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				setDirty();
+				setDirty(true);
 			}
 		});
 		this.linkPhone.addFocusListener(new FocusAdapter()
@@ -1064,7 +1071,7 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				setDirty();
+				setDirty(true);
 				if (linkEmail.getText().length() >= 3
 						&& linkEmail.getText().substring(1, linkEmail.getText().length() - 2).contains("@"))
 				{
@@ -1424,13 +1431,13 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 
 	}
 
-	@Override
 	public void loadValues()
 	{
-		loadAddressValues();
-		loadAddressContactsValues();
-		loadLinkValues();
-		this.getEditor().clearDirty();
+		this.loadAddressValues();
+		this.loadAddressContactsValues();
+		this.loadLinkValues();
+		this.setDirty(false);
+		this.active = true;
 	}
 
 	@Override
@@ -1521,13 +1528,13 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		link.setEmail(this.linkEmail.getText());
 	}
 
-	@Override
 	public void saveValues()
 	{
 		saveAddressValues();
 		saveAddressContactsValues();
 		saveLinkValues();
-		getEditor().clearDirty();
+		this.setDirty(false);
+		this.active = false;
 	}
 
 	private Country[] selectCountries()
@@ -1586,17 +1593,13 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		return salutations.toArray(new AddressSalutation[0]);
 	}
 
-	@Override
-	public void setDirty()
-	{
-		this.setDirty(true);
-		this.getEditor().setDirty();
-	}
-
-	@Override
 	public void setDirty(final boolean dirty)
 	{
-		this.dirty = dirty;
+		if (isWidgetsActive())
+		{
+			this.dirty = dirty;
+			this.firePropertyChange(PROP_DIRTY);
+		}
 	}
 
 	public void setFocus(final Control control)
@@ -1835,7 +1838,6 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 		this.singleLabel.setText(label.toString());
 	}
 
-	@Override
 	public boolean validate()
 	{
 		Message msg = null;
@@ -1879,5 +1881,50 @@ public class FormEditorLinkPage extends FormPage implements IContentProposalList
 				provinceViewer.setSelection(new StructuredSelection(zipCode.getState()));
 			}
 		}
+	}
+
+	private void initializeFields(Map<String, String> values)
+	{
+		Set<Entry<String, String>> entries = values.entrySet();
+		for (Entry<String, String> entry : entries)
+		{
+			if (entry.getKey().equals("organization"))
+			{
+				this.name.setText(entry.getValue());
+				this.setDirty(true);
+			}
+			else if (entry.getKey().equals("pob"))
+			{
+				this.pob.setText(entry.getValue());
+				this.setDirty(true);
+			}
+			else if (entry.getKey().equals("address"))
+			{
+				this.address.setText(entry.getValue());
+				this.setDirty(true);
+			}
+			else if (entry.getKey().equals("zip"))
+			{
+				this.zip.setText(entry.getValue());
+				this.setDirty(true);
+			}
+			else if (entry.getKey().equals("city"))
+			{
+				this.city.setText(entry.getValue());
+				this.setDirty(true);
+			}
+		}
+	}
+
+	@Override
+	public void setWidgetsActive(boolean active)
+	{
+		this.active = active;
+	}
+
+	@Override
+	public boolean isWidgetsActive()
+	{
+		return active;
 	}
 }

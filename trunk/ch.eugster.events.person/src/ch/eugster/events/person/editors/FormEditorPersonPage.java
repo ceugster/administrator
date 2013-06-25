@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -91,9 +94,6 @@ import ch.eugster.events.person.Activator;
 import ch.eugster.events.person.preferences.PreferenceInitializer;
 import ch.eugster.events.person.views.PersonTitleSorter;
 import ch.eugster.events.ui.dialogs.Message;
-import ch.eugster.events.ui.editors.Dirtyable;
-import ch.eugster.events.ui.editors.Saveable;
-import ch.eugster.events.ui.editors.Validateable;
 import ch.eugster.events.ui.helpers.BrowseHelper;
 import ch.eugster.events.ui.helpers.EmailHelper;
 
@@ -102,11 +102,9 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
-public class FormEditorPersonPage extends FormPage implements Validateable, Saveable, Dirtyable
+public class FormEditorPersonPage extends FormPage implements IPersonFormEditorPage
 {
 	private static final String ID = FormEditorPersonPage.class.getName();
-
-	private boolean dirty;
 
 	private static final String IDENTITY_SECTION_EXPANDED = "identity.section.expanded";
 
@@ -123,6 +121,10 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 	private static final String WEBSITE_LABEL = "Webseite (öffnen)";
 
 	private static final String WEBSITE_LINK = "Webseite (<a>öffnen</a>)";
+
+	private boolean dirty;
+
+	private boolean active = true;
 
 	private EntityAdapter entityAdapter;
 
@@ -354,7 +356,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 						}
 					}
 				}
-				setDirty();
+				setDirty(true);
 			}
 		});
 
@@ -365,7 +367,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				setDirty();
+				setDirty(true);
 			}
 		});
 		phone.addFocusListener(new FocusListener()
@@ -385,7 +387,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 					FormEditorPersonPage.this.phone.setSelection(0, FormEditorPersonPage.this.phone.getText().length());
 					if (dirty)
 					{
-						setDirty();
+						setDirty(true);
 					}
 					else
 					{
@@ -415,7 +417,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 								phone.setText(phoneString);
 								if (dirty)
 								{
-									setDirty();
+									setDirty(true);
 								}
 								else
 								{
@@ -462,7 +464,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				setDirty();
+				setDirty(true);
 				boolean enabled = EmailHelper.getInstance().isEmailSupported()
 						&& EmailHelper.getInstance().isValidAddress(FormEditorPersonPage.this.email.getText());
 				if (enabled)
@@ -518,7 +520,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				setDirty();
+				setDirty(true);
 				boolean enabled = BrowseHelper.getInstance().isBrowsingSupported()
 						&& BrowseHelper.getInstance().isValidAddress(FormEditorPersonPage.this.website.getText());
 				if (enabled)
@@ -569,6 +571,12 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 		createNotesSection(managedForm, "Bemerkungen", "", 1);
 
 		loadValues();
+		IEditorInput input = this.getEditor().getEditorInput();
+		if (input instanceof Initializable)
+		{
+			Initializable init = (Initializable) input;
+			initializeFields(init.getInitialValues());
+		}
 	}
 
 	private void createFurtherSection(final IManagedForm managedForm, final String title, final String description,
@@ -594,7 +602,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				setDirty();
+				setDirty(true);
 				birthyear.setSelection(birthdate.getSelection());
 			}
 		});
@@ -617,7 +625,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				setDirty();
+				setDirty(true);
 			}
 		});
 		toolkit.adapt(this.birthyear);
@@ -635,7 +643,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				setDirty();
+				setDirty(true);
 			}
 		});
 		this.profession.addFocusListener(new FocusAdapter()
@@ -673,7 +681,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 				@Override
 				public void selectionChanged(final SelectionChangedEvent event)
 				{
-					setDirty();
+					setDirty(true);
 				}
 			});
 
@@ -731,7 +739,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 				PersonSex personSex = (PersonSex) ssel.getFirstElement();
 				salutation.setText(personSex == null ? "" : personSex.getSalutation());
 				notifyListeners(new PropertyChangeEvent(sexRadioGroupViewer, "sex", null, personSex));
-				setDirty();
+				setDirty(true);
 			}
 		});
 
@@ -751,7 +759,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				setDirty();
+				setDirty(true);
 			}
 		});
 		toolkit.adapt(radioGroup, true, false);
@@ -770,7 +778,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
-				FormEditorPersonPage.this.setDirty();
+				FormEditorPersonPage.this.setDirty(true);
 			}
 		});
 
@@ -803,7 +811,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 				StructuredSelection ssel = (StructuredSelection) event.getSelection();
 				PersonTitle title = (PersonTitle) ssel.getFirstElement();
 				notifyListeners(new PropertyChangeEvent(titleViewer, "title", null, title));
-				setDirty();
+				setDirty(true);
 			}
 		});
 
@@ -818,7 +826,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 			public void modifyText(final ModifyEvent e)
 			{
 				notifyListeners(new PropertyChangeEvent(firstname, "firstname", null, firstname.getText()));
-				setDirty();
+				setDirty(true);
 				updateLastnameDecoration();
 			}
 		});
@@ -843,7 +851,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 			public void modifyText(final ModifyEvent e)
 			{
 				notifyListeners(new PropertyChangeEvent(sexRadioGroupViewer, "lastname", null, lastname.getText()));
-				setDirty();
+				setDirty(true);
 				updateLastnameDecoration();
 			}
 		});
@@ -888,7 +896,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 						: imageRegistry.get(Activator.KEY_ON);
 				notesSelector.setImage(image);
 				notesSelector.redraw();
-				setDirty();
+				setDirty(true);
 			}
 		});
 		this.notes.addFocusListener(new FocusAdapter()
@@ -1109,7 +1117,7 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 	@Override
 	public boolean isDirty()
 	{
-		return dirty;
+		return this.dirty;
 	}
 
 	private void loadContactsValues(final Person person)
@@ -1216,14 +1224,13 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 		this.lastname.setText(person.getLastname());
 	}
 
-	@Override
 	public void loadValues()
 	{
 		Person person = getPerson();
 		this.loadIdentityValues(person);
 		this.loadContactsValues(person);
 		this.loadFurtherValues(person);
-		getEditor().clearDirty();
+		this.setDirty(false);
 	}
 
 	public void notifyListeners(final PropertyChangeEvent event)
@@ -1322,14 +1329,13 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 		person.setLastname(this.lastname.getText());
 	}
 
-	@Override
 	public void saveValues()
 	{
 		Person person = getPerson();
 		this.saveIdentityValues(person);
 		this.saveContactsValues(person);
 		this.saveFurtherValues(person);
-		getEditor().clearDirty();
+		this.setDirty(false);
 	}
 
 	private Domain[] selectDomains()
@@ -1381,32 +1387,6 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 		tracker.close();
 		return prefixes == null ? new Country[0] : prefixes.toArray(new Country[0]);
 	}
-
-	@Override
-	public void setDirty()
-	{
-		this.setDirty(true);
-		this.getEditor().setDirty();
-	}
-
-	@Override
-	public void setDirty(final boolean dirty)
-	{
-		this.dirty = dirty;
-	}
-
-	// private void setPhone(final FormattedText field, final String value)
-	// {
-	// try
-	// {
-	// field.setValue(value);
-	// }
-	// catch (IllegalArgumentException e)
-	// {
-	// field.setFormatter(new StringFormatter());
-	// field.setValue(value);
-	// }
-	// }
 
 	@Override
 	public void setFocus()
@@ -1465,7 +1445,6 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 		}
 	}
 
-	@Override
 	public boolean validate()
 	{
 		Message msg = null;
@@ -1486,4 +1465,41 @@ public class FormEditorPersonPage extends FormPage implements Validateable, Save
 		return msg == null;
 	}
 
+	private void initializeFields(Map<String, String> values)
+	{
+		Set<Entry<String, String>> entries = values.entrySet();
+		for (Entry<String, String> entry : entries)
+		{
+			if (entry.getKey().equals("lastname"))
+			{
+				this.lastname.setText(entry.getValue());
+			}
+			else if (entry.getKey().equals("firstname"))
+			{
+				this.firstname.setText(entry.getValue());
+			}
+		}
+		this.setDirty(values.size() > 0);
+	}
+
+	public void setDirty(boolean dirty)
+	{
+		if (this.isWidgetsActive())
+		{
+			this.dirty = dirty;
+			this.firePropertyChange(PROP_DIRTY);
+		}
+	}
+
+	@Override
+	public void setWidgetsActive(boolean active)
+	{
+		this.active = active;
+	}
+
+	@Override
+	public boolean isWidgetsActive()
+	{
+		return active;
+	}
 }

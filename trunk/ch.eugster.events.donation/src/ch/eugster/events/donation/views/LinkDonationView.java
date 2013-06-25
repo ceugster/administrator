@@ -35,6 +35,7 @@ import ch.eugster.events.donation.editors.DonationEditorInput;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.model.AbstractEntity;
+import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.Donation;
 import ch.eugster.events.persistence.model.DonationPurpose;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
@@ -193,6 +194,11 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 		return null;
 	}
 
+	public TableViewer getViewer()
+	{
+		return viewer;
+	}
+
 	@Override
 	public void init(final IViewSite site) throws PartInitException
 	{
@@ -272,8 +278,27 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 	{
 		if (selection instanceof StructuredSelection)
 		{
+			LinkPersonAddress link = null;
 			StructuredSelection ssel = (StructuredSelection) selection;
-			this.setInput(ssel.getFirstElement());
+			if (ssel.getFirstElement() instanceof Person)
+			{
+				Person person = (Person) ssel.getFirstElement();
+				this.setInput(person.getDefaultLink());
+			}
+			else if (ssel.getFirstElement() instanceof LinkPersonAddress)
+			{
+				link = (LinkPersonAddress) ssel.getFirstElement();
+				this.setInput(link);
+			}
+			else if (ssel.getFirstElement() instanceof Address)
+			{
+				Address address = (Address) ssel.getFirstElement();
+				this.setInput(address);
+			}
+			else
+			{
+				this.setInput(null);
+			}
 		}
 	}
 
@@ -292,5 +317,4 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 			this.packColumns();
 		}
 	}
-
 }

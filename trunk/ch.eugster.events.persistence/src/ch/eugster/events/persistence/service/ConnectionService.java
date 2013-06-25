@@ -19,4 +19,8 @@ public interface ConnectionService
 	ComponentContext getContext();
 
 	AbstractEntityQuery<? extends AbstractEntity> getQuery(Class<? extends AbstractEntity> clazz);
+
+	AbstractEntity find(Class<AbstractEntity> clazz, Long id);
+
+	AbstractEntity refresh(AbstractEntity entity);
 }

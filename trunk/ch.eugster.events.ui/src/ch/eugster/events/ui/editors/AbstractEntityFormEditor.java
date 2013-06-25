@@ -21,7 +21,7 @@ import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.Activator;
 
 public abstract class AbstractEntityFormEditor<T extends AbstractEntity> extends FormEditor implements
-		IPropertyListener, Saveable, Clearable
+		IPropertyListener
 {
 	/*
 	 * (non-Javadoc)
@@ -42,7 +42,6 @@ public abstract class AbstractEntityFormEditor<T extends AbstractEntity> extends
 		if (this.validate())
 		{
 			this.saveValues();
-			this.clearDirty();
 
 			@SuppressWarnings("unchecked")
 			AbstractEntityEditorInput<T> input = (AbstractEntityEditorInput<T>) this.getEditorInput();
@@ -59,8 +58,8 @@ public abstract class AbstractEntityFormEditor<T extends AbstractEntity> extends
 					@SuppressWarnings("unchecked")
 					AbstractEntityQuery<T> query = (AbstractEntityQuery<T>) service.getQuery(entity.getClass());
 					input.setEntity(query.merge(entity));
-					clearDirty();
 					updateControls();
+					setDirty(false);
 				}
 			}
 			catch (Exception e)
@@ -69,11 +68,12 @@ public abstract class AbstractEntityFormEditor<T extends AbstractEntity> extends
 			}
 			finally
 			{
-				clearDirty();
 				tracker.close();
 			}
 		}
 	}
+
+	protected abstract void setDirty(boolean dirty);
 
 	@Override
 	public void doSaveAs()
@@ -97,6 +97,8 @@ public abstract class AbstractEntityFormEditor<T extends AbstractEntity> extends
 
 	protected abstract void reset();
 
+	protected abstract void saveValues();
+
 	public void reset(final boolean ask)
 	{
 		if (this.isDirty())
@@ -117,4 +119,6 @@ public abstract class AbstractEntityFormEditor<T extends AbstractEntity> extends
 	protected abstract void updateControls();
 
 	protected abstract boolean validate();
+
+	protected abstract void setWidgetsActive(boolean active);
 }
