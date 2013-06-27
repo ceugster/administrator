@@ -2,6 +2,7 @@ package ch.eugster.events.persistence.queries;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -95,6 +96,14 @@ public abstract class AbstractEntityQuery<T extends AbstractEntity>
 			 * folgt.
 			 */
 			entity.setUser(User.getCurrent());
+		}
+		if (entity.getId() == null)
+		{
+			entity.setInserted(GregorianCalendar.getInstance());
+		}
+		else
+		{
+			entity.setUpdated(GregorianCalendar.getInstance());
 		}
 		EntityManager em = getEntityManager();
 		if (em != null)

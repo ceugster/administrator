@@ -124,8 +124,6 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 
 	private boolean dirty;
 
-	private boolean active = true;
-
 	private EntityAdapter entityAdapter;
 
 	private IDialogSettings dialogSettings;
@@ -1484,22 +1482,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 
 	public void setDirty(boolean dirty)
 	{
-		if (this.isWidgetsActive())
-		{
-			this.dirty = dirty;
-			this.firePropertyChange(PROP_DIRTY);
-		}
-	}
-
-	@Override
-	public void setWidgetsActive(boolean active)
-	{
-		this.active = active;
-	}
-
-	@Override
-	public boolean isWidgetsActive()
-	{
-		return active;
+		this.dirty = dirty;
+		this.firePropertyChange(PROP_DIRTY);
 	}
 }

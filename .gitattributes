@@ -280,6 +280,7 @@ ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/Partic
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/BookingConfirmationDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/CourseInvitationDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/ParticipantListDialog.java -text
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/ParticipantListReportDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/ParticipationConfirmationDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/PrintLabelDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/UpdateBookingStateQueryDialog.java -text

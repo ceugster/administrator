@@ -26,9 +26,16 @@ public class ParticipantListFactory
 
 	private Course course;
 
+	private Map<IBookingState, Integer> bookingStates;
+
 	private ParticipantListFactory(final Course course)
 	{
 		this.setCourse(course);
+	}
+
+	private ParticipantListFactory(final Course course, Map<IBookingState, Integer> bookingStates)
+	{
+		this.setCourse(course, bookingStates);
 	}
 
 	public Map<String, Object> getParticipantListReportParameters()
@@ -88,20 +95,43 @@ public class ParticipantListFactory
 			counts.put(booking.getBookingState(course.getState()), count);
 		}
 
-		int max = Math.max(BookingForthcomingState.values().length, BookingDoneState.values().length);
-		max = Math.max(max, BookingAnnulatedState.values().length);
-		for (int i = 0; i < max; i++)
+		if (bookingStates == null)
 		{
-			parameters.put("bookingTypeKey" + i, null);
-			parameters.put("bookingTypeValue" + i, null);
+			int max = Math.max(BookingForthcomingState.values().length, BookingDoneState.values().length);
+			max = Math.max(max, BookingAnnulatedState.values().length);
+			for (int i = 0; i < max; i++)
+			{
+				parameters.put("bookingTypeKey" + i, null);
+				parameters.put("bookingTypeValue" + i, null);
+			}
+			int i = 0;
+			Set<Entry<IBookingState, Integer>> bookingStates = counts.entrySet();
+			for (Entry<IBookingState, Integer> bookingState : bookingStates)
+			{
+				parameters.put("bookingTypeKey" + i, bookingState.getKey().toString());
+				parameters.put("bookingTypeValue" + i, bookingState.getValue());
+				i++;
+			}
 		}
-		int i = 0;
-		Set<Entry<IBookingState, Integer>> bookingStates = counts.entrySet();
-		for (Entry<IBookingState, Integer> bookingState : bookingStates)
+		else
 		{
-			parameters.put("bookingTypeKey" + i, bookingState.getKey().toString());
-			parameters.put("bookingTypeValue" + i, bookingState.getValue());
-			i++;
+			int i = 0;
+			Set<Entry<IBookingState, Integer>> entries = bookingStates.entrySet();
+			for (Entry<IBookingState, Integer> bookingState : entries)
+			{
+				if (bookingState.getValue().intValue() > 0)
+				{
+					parameters.put("bookingTypeKey" + i, bookingState.getKey().toString());
+					parameters.put("bookingTypeValue" + i, bookingState.getValue());
+				}
+				else
+				{
+					parameters.put("bookingTypeKey" + i, null);
+					parameters.put("bookingTypeValue" + i, null);
+				}
+				i++;
+
+			}
 		}
 		return parameters;
 	}
@@ -126,6 +156,26 @@ public class ParticipantListFactory
 		return size();
 	}
 
+	public int setCourse(final Course course, Map<IBookingState, Integer> bookingStates)
+	{
+		this.course = course;
+		this.bookingStates = bookingStates;
+		Collection<Booking> bookings = course.getBookings();
+		for (Booking booking : bookings)
+		{
+			Integer value = bookingStates.get(booking.getBookingState(course.getState()));
+			if (value != null && value.intValue() > 0)
+			{
+				Collection<Participant> participants = booking.getParticipants();
+				for (Participant participant : participants)
+				{
+					this.participantListReportItems.add(new ParticipantListReportItem(participant));
+				}
+			}
+		}
+		return size();
+	}
+
 	public int size()
 	{
 		return this.participantListReportItems.size();
@@ -134,5 +184,10 @@ public class ParticipantListFactory
 	public static ParticipantListFactory create(final Course course)
 	{
 		return new ParticipantListFactory(course);
+	}
+
+	public static ParticipantListFactory create(final Course course, Map<IBookingState, Integer> bookingStates)
+	{
+		return new ParticipantListFactory(course, bookingStates);
 	}
 }

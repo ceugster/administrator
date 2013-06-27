@@ -121,7 +121,32 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		}
 		else if (object instanceof AddressGroup)
 		{
-			this.updateMonitor((AddressGroup) object, event.getChecked());
+			AddressGroup group = (AddressGroup) object;
+			if (!event.getChecked())
+			{
+				for (AddressGroupMember member : group.getAddressGroupMembers())
+				{
+					Long id = parent.getId();
+					Class<?> clazz = parent.getClass();
+					if (clazz.equals(Address.class))
+					{
+						if (member.getAddress().getId().equals(parent.getId()))
+						{
+							this.current.put(group.getId(), member);
+							break;
+						}
+					}
+					else if (clazz.equals(LinkPersonAddress.class))
+					{
+						if (member.getLink().getId().equals(parent.getId()))
+						{
+							this.current.put(group.getId(), member);
+							break;
+						}
+					}
+				}
+			}
+			this.updateMonitor(group, event.getChecked());
 		}
 		setDirty(true);
 	}
@@ -417,6 +442,44 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		}
 	}
 
+	@Override
+	public void postDelete(AbstractEntity entity)
+	{
+		this.addressGroupViewer.refresh();
+	}
+
+	@Override
+	public void postPersist(AbstractEntity entity)
+	{
+		if (entity instanceof AddressGroup)
+		{
+			this.addressGroupViewer.refresh(((AddressGroup) entity).getAddressGroupCategory());
+		}
+		else if (entity instanceof AddressGroupMember)
+		{
+			this.addressGroupViewer.refresh(((AddressGroupMember) entity).getAddressGroup());
+		}
+	}
+
+	@Override
+	public void postRemove(AbstractEntity entity)
+	{
+		this.addressGroupViewer.refresh();
+	}
+
+	@Override
+	public void postUpdate(AbstractEntity entity)
+	{
+		if (entity instanceof AddressGroup)
+		{
+			this.addressGroupViewer.refresh(entity);
+		}
+		else if (entity instanceof AddressGroupMember)
+		{
+			this.addressGroupViewer.refresh(((AddressGroupMember) entity).getAddressGroup());
+		}
+	}
+
 	public void updateAddressGroupMembers()
 	{
 		Long[] addressGroupIds = this.monitors.keySet().toArray(new Long[0]);
@@ -447,6 +510,10 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 							query.merge(member);
 						}
 					}
+					else
+					{
+
+					}
 				}
 				else
 				{
@@ -467,8 +534,9 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 	{
 		Monitor monitor = this.monitors.get(addressGroup.getId());
 		if (monitor == null)
+		{
 			monitor = new Monitor(addressGroup);
-
+		}
 		// monitor.update = true;
 		monitor.checked = checked;
 		this.monitors.put(addressGroup.getId(), monitor);

@@ -4,7 +4,6 @@ import static javax.persistence.CascadeType.ALL;
 
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -107,7 +106,7 @@ public class Address extends AbstractEntity implements Donator
 	 * Donations
 	 */
 	@OneToMany(cascade = ALL, mappedBy = "address")
-	private final List<Donation> donations = new Vector<Donation>();
+	private final Collection<Donation> donations = new Vector<Donation>();
 
 	/*
 	 * PersonAddressLinks
@@ -224,7 +223,7 @@ public class Address extends AbstractEntity implements Donator
 		return this.country;
 	}
 
-	public List<Donation> getDonations()
+	public Collection<Donation> getDonations()
 	{
 		return donations;
 	}
@@ -314,7 +313,7 @@ public class Address extends AbstractEntity implements Donator
 
 	public boolean hasDonationsForYear(final int year)
 	{
-		List<Donation> donations = this.getDonations();
+		Collection<Donation> donations = this.getDonations();
 		for (Donation donation : donations)
 		{
 			if (!donation.isDeleted() && donation.getDonationDate().get(Calendar.YEAR) == year)

@@ -19,7 +19,10 @@ public class AddressSalutationLabelProvider extends LabelProvider
 		if (element instanceof AddressSalutation)
 		{
 			AddressSalutation addressSalutation = (AddressSalutation) element;
-			return addressSalutation.getSalutation();
+			String salutation = addressSalutation.getSalutation() == null
+					|| addressSalutation.getSalutation().isEmpty() ? " (Keine Anrede)" : " ("
+					+ addressSalutation.getSalutation() + ")";
+			return addressSalutation.getName() + salutation;
 		}
 		return "";
 	}

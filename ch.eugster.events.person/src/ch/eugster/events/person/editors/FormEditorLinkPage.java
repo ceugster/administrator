@@ -2,6 +2,7 @@ package ch.eugster.events.person.editors;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -100,8 +101,6 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	private static final String ID = FormEditorLinkPage.class.getName();
 
 	private boolean dirty;
-
-	private boolean active = true;
 
 	private static final String EMAIL_LABEL = "Email (senden)";
 
@@ -424,6 +423,15 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		groupLabel.setLayoutData(gridData);
 		groupLabel.setEnabled(getLink() == null ? false : getLink().getAddress().getPersonLinks().size() > 1);
 
+		label = toolkit.createLabel(client, "Briefanrede", SWT.NONE);
+		label.setLayoutData(new GridData());
+
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+
+		polite = toolkit.createLabel(client, "", SWT.BORDER);
+		polite.setLayoutData(gridData);
+
 		toolkit.paintBordersFor(client);
 	}
 
@@ -457,8 +465,9 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
 				StructuredSelection ssel = (StructuredSelection) event.getSelection();
-				AddressSalutation salutation = (AddressSalutation) ssel.getFirstElement();
-				polite.setText(salutation == null ? "" : salutation.getPolite());
+				AddressSalutation addressSalutation = (AddressSalutation) ssel.getFirstElement();
+				polite.setText(addressSalutation == null ? "" : addressSalutation.getPolite());
+
 				updateSingleLabel();
 				updateGroupLabel();
 				setDirty(true);
@@ -769,15 +778,6 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			}
 		});
 
-		label = toolkit.createLabel(client, "Briefanrede", SWT.NONE);
-		label.setLayoutData(new GridData());
-
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 4;
-
-		polite = toolkit.createLabel(client, "", SWT.BORDER);
-		polite.setLayoutData(gridData);
-
 		toolkit.paintBordersFor(client);
 	}
 
@@ -906,6 +906,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			@Override
 			public void linkActivated(final HyperlinkEvent e)
 			{
+				FormEditorLinkPage.this.getLink().setDeleted(true);
 				getEditor().removePage(getEditor().getActivePage());
 			}
 		});
@@ -994,6 +995,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
+				updateSingleLabel();
+				updateGroupLabel();
 				setDirty(true);
 			}
 		});
@@ -1437,7 +1440,6 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		this.loadAddressContactsValues();
 		this.loadLinkValues();
 		this.setDirty(false);
-		this.active = true;
 	}
 
 	@Override
@@ -1534,7 +1536,6 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		saveAddressContactsValues();
 		saveLinkValues();
 		this.setDirty(false);
-		this.active = false;
 	}
 
 	private Country[] selectCountries()
@@ -1595,11 +1596,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	public void setDirty(final boolean dirty)
 	{
-		if (isWidgetsActive())
-		{
-			this.dirty = dirty;
-			this.firePropertyChange(PROP_DIRTY);
-		}
+		this.dirty = dirty;
+		this.firePropertyChange(PROP_DIRTY);
 	}
 
 	public void setFocus(final Control control)
@@ -1625,217 +1623,80 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	private void updateGroupLabel()
 	{
-		Collection<String> labelLines = new ArrayList<String>();
-		String pattern = PersonSettings.getInstance().getAddressLabelFormat();
-		if (pattern.isEmpty())
+		Map<String, String> replacements = new HashMap<String, String>();
+		StructuredSelection ssel = (StructuredSelection) this.salutationViewer.getSelection();
+		String salutation = "";
+		if (ssel.getFirstElement() instanceof AddressSalutation)
 		{
-			pattern = AddressFormatter.getInstance().createVisibleAddressLabel();
-			pattern = AddressFormatter.getInstance().convertAddressLabelToStored(pattern);
+			AddressSalutation as = (AddressSalutation) ssel.getFirstElement();
+			salutation = as.getSalutation();
 		}
-		String[] lines = pattern.split("[|]");
-		for (String line : lines)
+		replacements.put("${salutation}", salutation);
+		replacements.put("${organization}", this.name.getText());
+		replacements.put("${anotherline}", this.anotherLine.getText());
+		replacements.put("${address}", this.address.getText());
+		replacements.put("${pob}", this.pob.getText());
+		ssel = (StructuredSelection) this.countryViewer.getSelection();
+		String c = null;
+		if (ssel.getFirstElement() instanceof Country)
 		{
-			if (line.contains("${"))
-			{
-				String[] variables = AddressFormatter.getInstance().getAddressLabelStoredVariables();
-				for (String variable : variables)
-				{
-					if (line.contains("${"))
-					{
-						if (variable.equals("${salutation}"))
-						{
-							StructuredSelection ssel = (StructuredSelection) this.salutationViewer.getSelection();
-							String salutation = "";
-							if (ssel.getFirstElement() instanceof AddressSalutation)
-							{
-								AddressSalutation as = (AddressSalutation) ssel.getFirstElement();
-								salutation = as.getSalutation();
-							}
-							line = line.replace(variable, salutation);
-						}
-						else if (variable.equals("${organization}"))
-						{
-							line = line.replace(variable, this.name.getText());
-						}
-						else if (variable.equals("${anotherline}"))
-						{
-							line = line.replace(variable, this.anotherLine.getText());
-						}
-						else if (variable.equals("${address}"))
-						{
-							line = line.replace(variable, this.address.getText());
-						}
-						else if (variable.equals("${pob}"))
-						{
-							line = line.replace(variable, this.pob.getText());
-						}
-						else if (variable.equals("${country}"))
-						{
-							String c = null;
-							StructuredSelection ssel = (StructuredSelection) this.countryViewer.getSelection();
-							if (ssel.getFirstElement() instanceof Country)
-							{
-								Country country = (Country) ssel.getFirstElement();
-								c = country.getIso3166alpha2();
-							}
-							else
-							{
-								c = "";
-							}
-							line = line.replace(variable, c);
-							if (c.equals(""))
-							{
-								line = line.replace("-", "");
-							}
-						}
-						else if (variable.equals("${zip}"))
-						{
-							line = line.replace(variable, this.zip.getText());
-						}
-						else if (variable.equals("${city}"))
-						{
-							line = line.replace(variable, this.city.getText());
-						}
-					}
-				}
-			}
-			if (!line.trim().isEmpty())
-			{
-				labelLines.add(line.trim());
-			}
+			Country country = (Country) ssel.getFirstElement();
+			c = country.getIso3166alpha2();
 		}
-		StringBuilder label = new StringBuilder();
-		for (String labelLine : labelLines)
+		else
 		{
-			if (label.length() > 0)
-			{
-				label = label.append("\n");
-			}
-			label = label.append(labelLine);
+			c = "";
 		}
-		this.groupLabel.setText(label.toString());
+		replacements.put("${country}", c);
+		replacements.put("${zip}", this.zip.getText());
+		replacements.put("${city}", this.city.getText());
+		this.groupLabel.setText(PersonFormatter.getInstance().replaceAddressLabelVariables(replacements));
 	}
 
 	private void updateSingleLabel()
 	{
-		Collection<String> labelLines = new ArrayList<String>();
-		String pattern = PersonSettings.getInstance().getPersonLabelFormat();
-		if (pattern.isEmpty())
+		Map<String, String> replacements = new HashMap<String, String>();
+		replacements.put("${salutation}", personPage.getPersonSex() == null ? "" : personPage.getPersonSex()
+				.getSalutation());
+		replacements.put("${title}", personPage.getPersonTitle() == null ? "" : personPage.getPersonTitle().getTitle());
+		replacements.put("${function}", this.linkFunction.getText());
+		IStructuredSelection ssel = (IStructuredSelection) this.salutationViewer.getSelection();
+		if (ssel.getFirstElement() instanceof AddressSalutation)
 		{
-			pattern = PersonFormatter.getInstance().createVisiblePersonLabel();
-			pattern = PersonFormatter.getInstance().convertPersonLabelToStored(pattern);
-		}
-		String[] lines = pattern.split("[|]");
-		for (String line : lines)
-		{
-			if (line.contains("${"))
+			AddressSalutation salutation = (AddressSalutation) ssel.getFirstElement();
+			if (salutation.isShowAddressNameForPersons())
 			{
-				String[] variables = PersonFormatter.getInstance().getPersonLabelStoredVariables();
-				for (String variable : variables)
-				{
-					if (line.contains("${"))
-					{
-						if (variable.equals("${salutation}"))
-						{
-							line = line.replace(variable, personPage.getPersonSex() == null ? "" : personPage
-									.getPersonSex().getSalutation());
-						}
-						else if (variable.equals("${title}"))
-						{
-							line = line.replace(variable, personPage.getPersonTitle() == null ? "" : personPage
-									.getPersonTitle().getTitle());
-						}
-						else if (variable.equals("${function}"))
-						{
-							line = line.replace(variable, this.linkFunction.getText());
-						}
-						else if (variable.equals("${organization}"))
-						{
-							IStructuredSelection ssel = (IStructuredSelection) this.salutationViewer.getSelection();
-							if (ssel.getFirstElement() instanceof AddressSalutation)
-							{
-								AddressSalutation salutation = (AddressSalutation) ssel.getFirstElement();
-								if (salutation.isShowAddressNameForPersons())
-								{
-									line = line.replace(variable, this.name.getText());
-								}
-								else
-								{
-									line = line.replace(variable, "").trim();
-								}
-							}
-							else
-							{
-								line = line.replace(variable, this.name.getText());
-							}
-						}
-						else if (variable.equals("${firstname}"))
-						{
-							line = line.replace(variable,
-									personPage.getFirstname() == null ? "" : personPage.getFirstname());
-						}
-						else if (variable.equals("${lastname}"))
-						{
-							line = line.replace(variable,
-									personPage.getLastname() == null ? "" : personPage.getLastname());
-						}
-						else if (variable.equals("${anotherline}"))
-						{
-							line = line.replace(variable, this.anotherLine.getText());
-						}
-						else if (variable.equals("${address}"))
-						{
-							line = line.replace(variable, this.address.getText());
-						}
-						else if (variable.equals("${pob}"))
-						{
-							line = line.replace(variable, this.pob.getText());
-						}
-						else if (variable.equals("${country}"))
-						{
-							String c = null;
-							StructuredSelection ssel = (StructuredSelection) this.countryViewer.getSelection();
-							if (ssel.getFirstElement() instanceof Country)
-							{
-								Country country = (Country) ssel.getFirstElement();
-								c = country.getIso3166alpha2();
-							}
-							else
-							{
-								c = "";
-							}
-							line = line.replace(variable, c);
-							if (c.equals(""))
-							{
-								line = line.replace("-", "");
-							}
-						}
-						else if (variable.equals("${zip}"))
-						{
-							line = line.replace(variable, this.zip.getText());
-						}
-						else if (variable.equals("${city}"))
-						{
-							line = line.replace(variable, this.city.getText());
-						}
-					}
-				}
+				replacements.put("${organization}", this.name.getText());
 			}
-			if (!line.trim().isEmpty())
+			else
 			{
-				labelLines.add(line.trim());
+				replacements.put("${organization}", "");
 			}
 		}
-		StringBuilder label = new StringBuilder();
-		for (String labelLine : labelLines)
+		else
 		{
-			if (label.length() > 0)
-			{
-				label = label.append("\n");
-			}
-			label = label.append(labelLine);
+			replacements.put("${organization}", "");
 		}
-		this.singleLabel.setText(label.toString());
+		replacements.put("${firstname}", personPage.getFirstname() == null ? "" : personPage.getFirstname());
+		replacements.put("${lastname}", personPage.getLastname() == null ? "" : personPage.getLastname());
+		replacements.put("${anotherline}", this.anotherLine.getText());
+		replacements.put("${address}", this.address.getText());
+		replacements.put("${pob}", this.pob.getText());
+		ssel = (StructuredSelection) this.countryViewer.getSelection();
+		String c = null;
+		if (ssel.getFirstElement() instanceof Country)
+		{
+			Country country = (Country) ssel.getFirstElement();
+			c = country.getIso3166alpha2();
+		}
+		else
+		{
+			c = "";
+		}
+		replacements.put("${country}", c);
+		replacements.put("${zip}", this.zip.getText());
+		replacements.put("${city}", this.city.getText());
+		this.singleLabel.setText(PersonFormatter.getInstance().replacePersonLabelVariables(replacements));
 	}
 
 	public boolean validate()
@@ -1914,17 +1775,5 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 				this.setDirty(true);
 			}
 		}
-	}
-
-	@Override
-	public void setWidgetsActive(boolean active)
-	{
-		this.active = active;
-	}
-
-	@Override
-	public boolean isWidgetsActive()
-	{
-		return active;
 	}
 }

@@ -6,6 +6,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Map;
 
 import ch.eugster.events.persistence.model.GlobalSettings;
 import ch.eugster.events.persistence.model.Person;
@@ -255,6 +256,62 @@ public class PersonFormatter extends AbstractFormatter
 			builder = builder.append(part.isEmpty() ? "" : part + " ");
 		}
 		return builder.toString().trim();
+	}
+
+	public String replaceAddressLabelVariables(Map<String, String> map)
+	{
+		String format = PersonSettings.getInstance().getAddressLabelFormat();
+		String[] lines = format == null ? new String[0] : format.split("[|]");
+		String[] variables = this.getPersonLabelStoredVariables();
+		for (String variable : variables)
+		{
+			String replacement = map.get(variable);
+			if (replacement == null)
+			{
+				replacement = "";
+			}
+			for (int i = 0; i < lines.length; i++)
+			{
+				lines[i] = lines[i].replace(variable, replacement);
+			}
+		}
+		StringBuilder builder = new StringBuilder();
+		for (String line : lines)
+		{
+			if (!line.trim().isEmpty())
+			{
+				builder = builder.append(line.trim() + "\n");
+			}
+		}
+		return builder.substring(0, builder.toString().length() - 1).toString();
+	}
+
+	public String replacePersonLabelVariables(Map<String, String> map)
+	{
+		String format = PersonSettings.getInstance().getPersonLabelFormat();
+		String[] lines = format == null ? new String[0] : format.split("[|]");
+		String[] variables = this.getPersonLabelStoredVariables();
+		for (String variable : variables)
+		{
+			String replacement = map.get(variable);
+			if (replacement == null)
+			{
+				replacement = "";
+			}
+			for (int i = 0; i < lines.length; i++)
+			{
+				lines[i] = lines[i].replace(variable, replacement);
+			}
+		}
+		StringBuilder builder = new StringBuilder();
+		for (String line : lines)
+		{
+			if (!line.trim().isEmpty())
+			{
+				builder = builder.append(line.trim() + "\n");
+			}
+		}
+		return builder.substring(0, builder.toString().length() - 1).toString();
 	}
 
 	public static PersonFormatter getInstance()

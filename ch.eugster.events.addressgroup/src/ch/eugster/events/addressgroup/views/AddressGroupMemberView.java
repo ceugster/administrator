@@ -168,7 +168,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			@Override
 			public void widgetSelected(final SelectionEvent e)
 			{
-				filter.setText("");
+				clearClearField();
 			}
 		});
 
@@ -658,13 +658,16 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 	public void postPersist(final AbstractEntity entity)
 	{
 		AddressGroup root = (AddressGroup) viewer.getInput();
-		if (entity instanceof AddressGroupMember)
+		if (root != null)
 		{
-			final AddressGroupMember member = (AddressGroupMember) entity;
-			if (isVisible(root, member))
+			if (entity instanceof AddressGroupMember)
 			{
-				root.addAddressGroupMember(member);
-				refresh();
+				final AddressGroupMember member = (AddressGroupMember) entity;
+				if (isVisible(root, member))
+				{
+					root.addAddressGroupMember(member);
+					refresh();
+				}
 			}
 		}
 	}
@@ -679,6 +682,15 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			if (isVisible(root, member))
 			{
 				refresh(member);
+			}
+		}
+		else if (entity instanceof AddressGroup)
+		{
+			AddressGroup group = (AddressGroup) entity;
+			if (root.getId().equals(group.getId()))
+			{
+				viewer.setInput(group);
+				refresh();
 			}
 		}
 		else if (entity instanceof Address)
@@ -764,6 +776,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			if (ssel.getFirstElement() instanceof AddressGroup)
 			{
 				addressGroup = (AddressGroup) ssel.getFirstElement();
+				clearClearField();
 			}
 			updateViewer(addressGroup);
 		}
@@ -797,5 +810,10 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 		updateViewer.setUser(true);
 		updateViewer.schedule();
 		AddressGroupMemberView.this.getViewer().getTable().setEnabled(true);
+	}
+
+	public void clearClearField()
+	{
+		filter.setText("");
 	}
 }
