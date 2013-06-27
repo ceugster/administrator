@@ -9,8 +9,4 @@ public interface IPersonFormEditorPage
 	void saveValues();
 
 	boolean validate();
-
-	void setWidgetsActive(boolean active);
-
-	boolean isWidgetsActive();
 }

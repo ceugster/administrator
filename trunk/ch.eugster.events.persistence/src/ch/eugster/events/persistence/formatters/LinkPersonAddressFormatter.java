@@ -32,7 +32,9 @@ public class LinkPersonAddressFormatter extends AbstractFormatter
 			{
 				if (variable.equals("${salutation}"))
 				{
-					labelFormat = labelFormat.replace(variable, link.getPerson().getSex().getSalutation());
+					String salutation = link.getPerson().getSex() == null ? "" : link.getPerson().getSex()
+							.getSalutation();
+					labelFormat = labelFormat.replace(variable, salutation);
 				}
 				else if (variable.equals("${title}"))
 				{
@@ -58,6 +60,10 @@ public class LinkPersonAddressFormatter extends AbstractFormatter
 				else if (variable.equals("${lastname}"))
 				{
 					labelFormat = labelFormat.replace(variable, link.getPerson().getLastname());
+				}
+				else if (variable.equals("${function}"))
+				{
+					labelFormat = labelFormat.replace(variable, link.getFunction() == null ? "" : link.getFunction());
 				}
 				else if (variable.equals("${anotherline}"))
 				{

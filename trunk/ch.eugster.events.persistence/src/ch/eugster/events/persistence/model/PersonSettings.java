@@ -200,7 +200,7 @@ public class PersonSettings extends AbstractEntity
 			if (service != null)
 			{
 				PersonSettingsQuery query = (PersonSettingsQuery) service.getQuery(PersonSettings.class);
-				instance = query.find(PersonSettings.class, Long.valueOf(1L));
+				PersonSettings.instance = query.find(PersonSettings.class, Long.valueOf(1L));
 			}
 			tracker.close();
 		}

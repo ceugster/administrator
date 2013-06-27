@@ -387,6 +387,7 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 						{
 							member = AddressGroupMember.newInstance(monitor.addressGroup,
 									(LinkPersonAddress) this.parent);
+							member.getAddressGroup().addAddressGroupMember(member);
 						}
 						else if (parent instanceof Address)
 						{
