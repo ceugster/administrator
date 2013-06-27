@@ -19,8 +19,11 @@ public class AddressGroupMemberNameFilter extends ViewerFilter
 				return true;
 
 			AddressGroupMember member = (AddressGroupMember) element;
-			String name = PersonFormatter.getInstance().formatLastnameFirstname(member.getLink().getPerson());
-			return name.toLowerCase().contains(this.value.toLowerCase());
+			if (member.getLink() != null)
+			{
+				String name = PersonFormatter.getInstance().formatLastnameFirstname(member.getLink().getPerson());
+				return name.toLowerCase().contains(this.value.toLowerCase());
+			}
 		}
 		return true;
 	}

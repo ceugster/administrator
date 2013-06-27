@@ -119,6 +119,4 @@ public abstract class AbstractEntityFormEditor<T extends AbstractEntity> extends
 	protected abstract void updateControls();
 
 	protected abstract boolean validate();
-
-	protected abstract void setWidgetsActive(boolean active);
 }

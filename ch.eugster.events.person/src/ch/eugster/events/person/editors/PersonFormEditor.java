@@ -93,20 +93,6 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 		}
 	}
 
-	@Override
-	protected void setWidgetsActive(boolean active)
-	{
-		Collection<IFormPage> pages = this.getPages();
-		for (IFormPage page : pages)
-		{
-			if (page instanceof IPersonFormEditorPage)
-			{
-				IPersonFormEditorPage editorPage = (IPersonFormEditorPage) page;
-				editorPage.setWidgetsActive(active);
-			}
-		}
-	}
-
 	protected Person getPerson()
 	{
 		return ((PersonEditorInput) this.getEditorInput()).getEntity();
@@ -127,9 +113,18 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 		if (object instanceof FormEditorLinkPage)
 		{
 			FormEditorLinkPage linkPage = (FormEditorLinkPage) object;
-			linkPage.getLink().setDeleted(true);
 			linkPage.removePropertyListener(this);
 			super.removePage(page);
+
+			IFormPage[] pages = this.getPages().toArray(new IFormPage[0]);
+			for (int i = 0; i < pages.length; i++)
+			{
+				if (pages[i] instanceof FormEditorPersonPage)
+				{
+					FormEditorPersonPage personPage = (FormEditorPersonPage) pages[i];
+					personPage.setDirty(true);
+				}
+			}
 		}
 	}
 
@@ -138,7 +133,12 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 		IFormPage[] pages = this.getPages().toArray(new IFormPage[0]);
 		for (int i = 0; i < pages.length; i++)
 		{
-			if (pages[i] instanceof IFormPage)
+			if (pages[i] instanceof FormEditorPersonPage)
+			{
+				FormEditorPersonPage personPage = (FormEditorPersonPage) pages[i];
+				personPage.setDirty(true);
+			}
+			else if (pages[i] instanceof IFormPage)
 			{
 				if (pages[i].getId().equals(id))
 				{
