@@ -64,21 +64,29 @@
 				</reportElement>
 			</line>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="c04c8185-eaad-4f10-b595-f0fa10bb9a4c" stretchType="RelativeToTallestObject" x="30" y="0" width="598" height="15"/>
+				<reportElement uuid="c04c8185-eaad-4f10-b595-f0fa10bb9a4c" stretchType="RelativeToTallestObject" x="30" y="0" width="598" height="12">
+					<property name="local_mesure_unitheight" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
 				<textElement>
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{organization}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="1bd19a20-5466-4e4a-81a6-f8311be374c0" stretchType="RelativeToTallestObject" x="30" y="15" width="598" height="15"/>
+				<reportElement uuid="1bd19a20-5466-4e4a-81a6-f8311be374c0" stretchType="RelativeToTallestObject" x="30" y="12" width="600" height="12">
+					<property name="local_mesure_unitheight" value="mm"/>
+				</reportElement>
 				<textElement>
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="59c0f6ac-8e5b-48ca-87ae-b5e80be438eb" stretchType="RelativeToTallestObject" x="30" y="30" width="597" height="13"/>
+				<reportElement uuid="59c0f6ac-8e5b-48ca-87ae-b5e80be438eb" stretchType="RelativeToTallestObject" x="31" y="25" width="599" height="14">
+					<property name="local_mesure_unitheight" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
 				<textElement>
 					<font size="9"/>
 				</textElement>
@@ -123,7 +131,7 @@
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="41" splitType="Stretch">
+		<band height="25" splitType="Stretch">
 			<staticText>
 				<reportElement uuid="675637b6-6d51-4c3e-87d7-70bae706bdfa" x="31" y="2" width="99" height="14">
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
@@ -175,7 +183,7 @@
 				<text><![CDATA[Buchungen]]></text>
 			</staticText>
 			<line>
-				<reportElement uuid="2713bec1-845f-4023-843d-376ca9d13850" x="53" y="18" width="760" height="4">
+				<reportElement uuid="2713bec1-845f-4023-843d-376ca9d13850" x="31" y="18" width="749" height="1">
 					<property name="local_mesure_unitheight" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 				</reportElement>

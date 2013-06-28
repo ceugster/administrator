@@ -248,7 +248,7 @@ public class CourseFormatter
 	public String formatMediumDate(final Course course)
 	{
 		StringBuffer dates = new StringBuffer("");
-		SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd.MMMM.yyyy HH:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd. MMMM yyyy HH:mm");
 		CourseDetail[] details = course.getCourseDetails().toArray(new CourseDetail[0]);
 		if (details.length == 0)
 		{

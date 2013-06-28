@@ -40,7 +40,6 @@ import ch.eugster.events.documents.maps.DataMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
-import ch.eugster.events.persistence.model.IBookingState;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.model.UserProperty;
 import ch.eugster.events.persistence.queries.UserQuery;
@@ -55,8 +54,6 @@ public class BookingConfirmationDialog extends TitleAreaDialog
 	private final StructuredSelection selection;
 
 	private UserProperty userPropertyTemplatePath;
-
-	private Map<IBookingState, Boolean> bookingStates = new HashMap<IBookingState, Boolean>();
 
 	private final String message = "Wählen Sie das Dokument, das als Vorlage verwendet werden soll.";
 
@@ -189,11 +186,7 @@ public class BookingConfirmationDialog extends TitleAreaDialog
 	{
 		if (!booking.isDeleted())
 		{
-			Boolean checked = bookingStates.get(booking.getBookingState(booking.getCourse().getState()));
-			if (checked != null && checked.booleanValue() && dataMaps.get(booking.getId()) == null)
-			{
-				dataMaps.put(booking.getId(), new BookingMap(booking, true));
-			}
+			dataMaps.put(booking.getId(), new BookingMap(booking, true));
 		}
 	}
 

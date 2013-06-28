@@ -24,13 +24,17 @@ public class ParticipantMap extends AbstractDataMap
 			numberFormatter.setMaximumFractionDigits(currency.getDefaultFractionDigits());
 			numberFormatter.setMinimumFractionDigits(currency.getDefaultFractionDigits());
 		}
+		for (Key key : Key.values())
+		{
+			this.setProperty(key.getKey(), key.getValue(participant));
+		}
 		this.setProperties(new LinkMap(participant.getLink()).getProperties());
 		this.setProperties(new BookingTypeMap(participant.getBookingType()).getProperties());
 	}
 
 	public enum Key implements DataMapKey
 	{
-		ID, BOOKING_TYPE_CODE, BOOKING_TYPE_NAME, PRICE, ANOTHER_LINE, SALUTATION, POLITE, MAILING_ADDRESS;
+		ID, BOOKING_TYPE_CODE, BOOKING_TYPE_NAME, PRICE, ANOTHER_LINE, SALUTATION, POLITE, MAILING_ADDRESS, COUNT, AMOUNT;
 
 		@Override
 		public String getDescription()
@@ -50,6 +54,14 @@ public class ParticipantMap extends AbstractDataMap
 					return "Bezeichnung Buchungsart";
 				}
 				case PRICE:
+				{
+					return "Preis";
+				}
+				case COUNT:
+				{
+					return "Anzahl";
+				}
+				case AMOUNT:
 				{
 					return "Betrag";
 				}
@@ -97,6 +109,14 @@ public class ParticipantMap extends AbstractDataMap
 				{
 					return "participant_price";
 				}
+				case COUNT:
+				{
+					return "participant_count";
+				}
+				case AMOUNT:
+				{
+					return "participant_amount";
+				}
 				case ANOTHER_LINE:
 				{
 					return "participant_another_line";
@@ -138,6 +158,14 @@ public class ParticipantMap extends AbstractDataMap
 					return "Bezeichnung";
 				}
 				case PRICE:
+				{
+					return "Preis";
+				}
+				case COUNT:
+				{
+					return "Anzahl";
+				}
+				case AMOUNT:
 				{
 					return "Betrag";
 				}
@@ -183,6 +211,14 @@ public class ParticipantMap extends AbstractDataMap
 				case PRICE:
 				{
 					return numberFormatter.format(participant.getBookingType().getPrice());
+				}
+				case COUNT:
+				{
+					return DecimalFormat.getIntegerInstance().format(participant.getCount());
+				}
+				case AMOUNT:
+				{
+					return numberFormatter.format(participant.getBookingType().getPrice() * participant.getCount());
 				}
 				case ANOTHER_LINE:
 				{

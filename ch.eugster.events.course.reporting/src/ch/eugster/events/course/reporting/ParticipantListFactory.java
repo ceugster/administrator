@@ -67,9 +67,28 @@ public class ParticipantListFactory
 			builder = builder.append(AddressFormatter.getInstance().formatCityLine(
 					guide.getGuide().getLink().getAddress())
 					+ ", ");
-			builder = builder.append(LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(
-					guide.getGuide().getLink().getPerson().getCountry(), guide.getGuide().getLink().getPhone())
-					+ "\n");
+			String phone = LinkPersonAddressFormatter
+					.getInstance()
+					.formatPhoneWithOptionalPrefix(guide.getGuide().getLink().getPerson().getCountry(),
+							guide.getGuide().getLink().getPerson().getPhone()).trim();
+			if (phone.isEmpty())
+			{
+				phone = LinkPersonAddressFormatter
+						.getInstance()
+						.formatPhoneWithOptionalPrefix(guide.getGuide().getLink().getAddress().getCountry(),
+								guide.getGuide().getLink().getPhone()).trim();
+			}
+			if (phone.isEmpty())
+			{
+				phone = LinkPersonAddressFormatter
+						.getInstance()
+						.formatPhoneWithOptionalPrefix(guide.getGuide().getLink().getAddress().getCountry(),
+								guide.getGuide().getLink().getAddress().getPhone()).trim();
+			}
+			if (!phone.isEmpty())
+			{
+				builder = builder.append(", " + phone + "\n");
+			}
 		}
 		parameters.put("guidance", builder.toString());
 

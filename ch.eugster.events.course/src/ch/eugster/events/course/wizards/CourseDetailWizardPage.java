@@ -88,7 +88,7 @@ public class CourseDetailWizardPage extends WizardPage implements SelectionListe
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
-		label.setText("Beginn");
+		label.setText("Ende");
 
 		this.end = new CDateTime(composite, CDT.BORDER | CDT.SPINNER | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
 		this.end.setLayoutData(new GridData());

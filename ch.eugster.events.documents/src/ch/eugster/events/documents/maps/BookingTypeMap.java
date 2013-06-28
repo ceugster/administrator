@@ -155,7 +155,8 @@ public class BookingTypeMap extends AbstractDataMap
 				}
 				case NAME:
 				{
-					return bookingType.getName();
+					return bookingType.getName() == null || bookingType.getName().isEmpty() ? "Betrag "
+							+ Key.PRICE.getValue(bookingType) : bookingType.getName();
 				}
 				case ANNULATION_CHARGE:
 				{

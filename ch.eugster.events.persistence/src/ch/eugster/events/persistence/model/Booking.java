@@ -191,7 +191,7 @@ public class Booking extends AbstractEntity
 		for (Participant participant : this.participants)
 		{
 			if (!participant.isDeleted() && participant.getBookingType() != null)
-				amount += participant.getBookingType().getPrice();
+				amount += participant.getBookingType().getPrice() * participant.getCount();
 		}
 		return amount;
 	}

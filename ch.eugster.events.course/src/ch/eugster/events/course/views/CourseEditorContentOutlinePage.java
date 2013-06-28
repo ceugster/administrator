@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -35,6 +36,7 @@ import ch.eugster.events.course.editors.CourseEditorInput;
 import ch.eugster.events.course.wizards.BookingTypeWizard;
 import ch.eugster.events.course.wizards.CourseDetailWizard;
 import ch.eugster.events.course.wizards.CourseGuideWizard;
+import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.formatters.CourseFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.Booking;
@@ -265,6 +267,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		TreeViewer viewer = this.getTreeViewer();
 		viewer.setContentProvider(new CourseEditorContentOutlineContentProvider());
 		viewer.setLabelProvider(new CourseEditorContentOutlineLabelProvider());
+		viewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
 		viewer.setSorter(new CourseEditorContentOutlineSorter());
 		viewer.setInput(this.root);
 		viewer.addDoubleClickListener(this);
@@ -546,7 +549,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 	public void propertyChange(final PropertyChangeEvent event)
 	{
 		this.editor.propertyChange(event);
-		this.getTreeViewer().refresh(event.getSource());
+		this.getTreeViewer().refresh();
 	}
 
 	@Override
@@ -598,7 +601,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		@Override
 		public String toString()
 		{
-			return "Buchungsarten";
+			return "Buchungsarten (" + bookingTypes.size() + ")";
 		}
 
 		public void updateBookingTypes()
@@ -665,7 +668,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		@Override
 		public String toString()
 		{
-			return "Kursdaten";
+			return "Kursdaten (" + courseDetails.size() + ")";
 		}
 
 		public void updateCourseDetails()
@@ -890,7 +893,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		@Override
 		public String toString()
 		{
-			return "Kursleitung";
+			return "Kursleitung (" + courseGuides.size() + ")";
 		}
 
 		public void updateCourseGuides()

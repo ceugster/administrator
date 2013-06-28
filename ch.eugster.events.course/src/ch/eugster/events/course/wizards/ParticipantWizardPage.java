@@ -165,22 +165,21 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 
 	private boolean canAdd(final int count)
 	{
+		boolean canAdd = true;
 		BookingWizard wizard = (BookingWizard) this.getWizard();
 		if (wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.BOOKED)
 				|| wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
 		{
 			int max = wizard.getBooking().getCourse().getMaxParticipants();
 			int existing = wizard.getBooking().getCourse().getParticipantsCount();
-			return max - existing >= count;
+			canAdd = max - existing >= count;
 		}
-		else
-		{
-			return true;
-		}
+		return canAdd;
 	}
 
 	private boolean canAdd(final Participant participant, final int count)
 	{
+		boolean canAdd = true;
 		BookingWizard wizard = (BookingWizard) this.getWizard();
 		if (wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.BOOKED)
 				|| wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
@@ -199,12 +198,9 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 					}
 				}
 			}
-			return count - existingParticipantCount <= max - existing;
+			canAdd = count - existingParticipantCount <= max - existing;
 		}
-		else
-		{
-			return true;
-		}
+		return canAdd;
 	}
 
 	@Override
@@ -368,8 +364,10 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 						Collection<LinkPersonAddress> links = person.getLinks();
 						for (LinkPersonAddress link : links)
 						{
-							// if (!root.isAlreadyParticipant(link))
-							revisedLinks.add(link);
+							if (!root.isAlreadyParticipant(link))
+							{
+								revisedLinks.add(link);
+							}
 						}
 					}
 				}
@@ -1138,10 +1136,18 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			{
 				if (value != null)
 				{
-					Participant participant = (Participant) element;
-					participant.setCount(Integer.valueOf(value.toString()).intValue());
-					participantViewer.update(participant, null);
-					setPageComplete(true);
+					try
+					{
+						int val = Integer.valueOf(value.toString()).intValue();
+						Participant participant = (Participant) element;
+						participant.setCount(val);
+						participantViewer.update(participant, null);
+						setPageComplete(true);
+					}
+					catch (NumberFormatException e)
+					{
+
+					}
 				}
 			}
 
@@ -1608,7 +1614,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				Collection<Booking> bookings = this.booking.getCourse().getBookings();
 				for (Booking booking : bookings)
 				{
-					if (!booking.isDeleted())
+					if (booking != this.booking && !booking.isDeleted())
 					{
 						Collection<Participant> participants = booking.getParticipants();
 						for (Participant participant : participants)
@@ -1621,13 +1627,13 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 					}
 				}
 			}
-			for (Participant participant : this.participants)
-			{
-				if (alreadyExists(participant, link))
-				{
-					return true;
-				}
-			}
+			// for (Participant participant : this.participants)
+			// {
+			// if (alreadyExists(participant, link))
+			// {
+			// return true;
+			// }
+			// }
 			return false;
 		}
 

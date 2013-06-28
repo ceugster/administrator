@@ -101,7 +101,6 @@ public class AddressGroup extends AbstractEntity
 	{
 		super();
 		this.setAddressGroupCategory(category);
-		category.addAddressGroup(this);
 	}
 
 	// public void addChild(final AddressGroupLink child)
@@ -131,7 +130,7 @@ public class AddressGroup extends AbstractEntity
 		copy.setName(this.getName());
 		for (AddressGroupMember addressGroupMember : this.addressGroupMembers)
 		{
-			addressGroupMember.copy(copy);
+			copy.addAddressGroupMember(addressGroupMember.copy(copy));
 		}
 		return copy;
 	}
