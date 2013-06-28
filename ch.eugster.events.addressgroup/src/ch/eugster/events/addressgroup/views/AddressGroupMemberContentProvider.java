@@ -4,9 +4,6 @@
  */
 package ch.eugster.events.addressgroup.views;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -15,28 +12,11 @@ import ch.eugster.events.persistence.model.AddressGroupMember;
 
 public class AddressGroupMemberContentProvider implements IStructuredContentProvider
 {
+	private AddressGroupMemberView view;
+
 	public AddressGroupMemberContentProvider(final AddressGroupMemberView view)
 	{
-	}
-
-	private void addMembers(final AddressGroup addressGroup, final Collection<AddressGroupMember> members)
-	{
-		Collection<AddressGroupMember> groupMembers = addressGroup.getAddressGroupMembers();
-		for (AddressGroupMember groupMember : groupMembers)
-		{
-			if (!members.contains(groupMember) && !groupMember.isDeleted())
-			{
-				members.add(groupMember);
-			}
-		}
-		// Collection<AddressGroupLink> children = addressGroup.getChildren();
-		// for (AddressGroupLink child : children)
-		// {
-		// if (!child.isDeleted() && !child.getChild().isDeleted())
-		// {
-		// addMembers(child.getChild(), members);
-		// }
-		// }
+		this.view = view;
 	}
 
 	@Override
@@ -47,13 +27,12 @@ public class AddressGroupMemberContentProvider implements IStructuredContentProv
 	@Override
 	public Object[] getElements(final Object object)
 	{
-		Collection<AddressGroupMember> members = new ArrayList<AddressGroupMember>();
 		if (object instanceof AddressGroup)
 		{
 			AddressGroup group = (AddressGroup) object;
-			addMembers(group, members);
+			return group.getAddressGroupMembers().toArray(new AddressGroupMember[0]);
 		}
-		return members.toArray(new AddressGroupMember[0]);
+		return new AddressGroupMember[0];
 	}
 
 	@Override
