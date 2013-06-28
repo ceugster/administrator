@@ -133,23 +133,14 @@ public class PasteHandler extends AbstractHandler implements IHandler
 											AddressGroupMemberTransfer.getTransfer().getOperation()));
 								}
 							}
-							// else if (name.equals(CourseTransfer.TYPE_NAME))
-							// {
-							// Object content =
-							// ClipboardHelper.getClipboard().getContents(
-							// CourseTransfer.getTransfer());
-							// if (content instanceof Object[])
-							// {
-							// Collection<Booking> bookings =
-							// getBookings((Object[]) content);
-							// if (!bookings.isEmpty())
-							// {
-							// this.insert(target, bookings.toArray(new
-							// Booking[0]), CourseTransfer
-							// .getTransfer().getOperation());
-							// }
-							// }
-							// }
+							else if (name.equals(CourseTransfer.TYPE_NAME))
+							{
+								Object contents = ClipboardHelper.getClipboard().getContents(
+										CourseTransfer.getTransfer());
+								if (contents instanceof Object[])
+								{
+								}
+							}
 						}
 					}
 				}
@@ -360,7 +351,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 			if (!found(target, sourceMember))
 			{
 				inserted = true;
-				sourceMember.copy(target);
+				target.addAddressGroupMember(sourceMember.copy(target));
 			}
 			if (type == DND.DROP_MOVE)
 			{
