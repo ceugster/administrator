@@ -320,11 +320,13 @@ public class AddressMap extends AbstractDataMap
 				}
 				case PHONE:
 				{
-					return address.getPhone();
+					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(address.getCountry(),
+							address.getPhone());
 				}
 				case FAX:
 				{
-					return address.getFax();
+					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(address.getCountry(),
+							address.getFax());
 				}
 				case SALUTATION:
 				{
@@ -406,7 +408,8 @@ public class AddressMap extends AbstractDataMap
 				}
 				case PHONE:
 				{
-					return address.getPhone();
+					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(address.getCountry(),
+							address.getPhone());
 				}
 				case FAX:
 				{

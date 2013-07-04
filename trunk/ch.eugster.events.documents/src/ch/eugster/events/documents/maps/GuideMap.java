@@ -1,5 +1,6 @@
 package ch.eugster.events.documents.maps;
 
+import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.Guide;
 
 public class GuideMap extends AbstractDataMap
@@ -87,7 +88,8 @@ public class GuideMap extends AbstractDataMap
 				}
 				case PHONE:
 				{
-					return guide.getPhone();
+					return PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(
+							guide.getLink().getPerson().getCountry(), guide.getPhone());
 				}
 				default:
 				{
