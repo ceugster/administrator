@@ -21,9 +21,15 @@ import ch.eugster.events.addressgroup.dnd.AddressGroupMemberTransfer;
 import ch.eugster.events.addressgroup.dnd.AddressGroupTransfer;
 import ch.eugster.events.addressgroup.views.AddressGroupMemberView;
 import ch.eugster.events.addressgroup.views.AddressGroupView;
+import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressGroup;
 import ch.eugster.events.persistence.model.AddressGroupCategory;
 import ch.eugster.events.persistence.model.AddressGroupMember;
+import ch.eugster.events.persistence.model.Booking;
+import ch.eugster.events.persistence.model.Course;
+import ch.eugster.events.persistence.model.LinkPersonAddress;
+import ch.eugster.events.persistence.model.Participant;
+import ch.eugster.events.persistence.model.Season;
 import ch.eugster.events.persistence.queries.AddressGroupCategoryQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.dnd.CourseTransfer;
@@ -139,6 +145,52 @@ public class PasteHandler extends AbstractHandler implements IHandler
 										CourseTransfer.getTransfer());
 								if (contents instanceof Object[])
 								{
+									boolean updateCategory = false;
+									Object[] objects = (Object[]) contents;
+									for (Object object : objects)
+									{
+										if (object instanceof Season)
+										{
+											Season season = (Season) object;
+											if (insertSeason(target, season, CourseTransfer.getTransfer()
+													.getOperation()))
+											{
+												updateCategory = true;
+											}
+										}
+										else if (object instanceof Course)
+										{
+											Course course = (Course) object;
+											if (insertCourse(target, course, CourseTransfer.getTransfer()
+													.getOperation()))
+											{
+												updateCategory = true;
+											}
+										}
+										else if (object instanceof Booking)
+										{
+											Booking booking = (Booking) object;
+											if (insertBooking(target, booking, CourseTransfer.getTransfer()
+													.getOperation()))
+											{
+												updateCategory = true;
+											}
+										}
+										else if (object instanceof Participant)
+										{
+											Participant participant = (Participant) object;
+											if (insertParticipant(target, participant, CourseTransfer.getTransfer()
+													.getOperation()))
+											{
+												updateCategory = true;
+											}
+										}
+									}
+									if (updateCategory)
+									{
+										this.updateCategories(new AddressGroupCategory[] { target
+												.getAddressGroupCategory() });
+									}
 								}
 							}
 						}
@@ -197,32 +249,48 @@ public class PasteHandler extends AbstractHandler implements IHandler
 	// return bookings;
 	// }
 
-	private boolean found(final AddressGroup target, final AddressGroupMember sourceMember)
+	private boolean found(final AddressGroup target, final LinkPersonAddress link)
 	{
 		boolean found = false;
 		Collection<AddressGroupMember> targetMembers = target.getAddressGroupMembers();
 		for (AddressGroupMember targetMember : targetMembers)
 		{
-			if (targetMember.getLink() == null)
+			if (targetMember.getLink() != null)
 			{
-				if (sourceMember.getLink() == null)
+				if (targetMember.getLink().getPerson().getId().equals(link.getPerson().getId()))
 				{
-					if (targetMember.getAddress().getId().equals(sourceMember.getAddress().getId()))
-					{
-						found = true;
-						break;
-					}
+					found = true;
+					break;
 				}
 			}
-			else
+		}
+		return found;
+	}
+
+	private boolean found(final AddressGroup target, final AddressGroupMember member)
+	{
+		if (member.getLink() == null)
+		{
+			return found(target, member.getAddress());
+		}
+		else
+		{
+			return found(target, member.getLink());
+		}
+	}
+
+	private boolean found(final AddressGroup target, final Address address)
+	{
+		boolean found = false;
+		Collection<AddressGroupMember> targetMembers = target.getAddressGroupMembers();
+		for (AddressGroupMember targetMember : targetMembers)
+		{
+			if (targetMember.getLink() != null)
 			{
-				if (sourceMember.getLink() != null)
+				if (targetMember.getAddress().getId().equals(address.getId()))
 				{
-					if (targetMember.getLink().getPerson().getId().equals(sourceMember.getLink().getPerson().getId()))
-					{
-						found = true;
-						break;
-					}
+					found = true;
+					break;
 				}
 			}
 		}
@@ -403,6 +471,69 @@ public class PasteHandler extends AbstractHandler implements IHandler
 			}
 		}
 		return categoriesToUpdate.toArray(new AddressGroupCategory[0]);
+	}
+
+	private boolean insertSeason(final AddressGroup target, final Season season, final int type)
+	{
+		boolean inserted = false;
+		if (!season.isDeleted())
+		{
+			for (Course course : season.getCourses())
+			{
+				if (insertCourse(target, course, type))
+				{
+					inserted = true;
+				}
+			}
+		}
+		return inserted;
+	}
+
+	private boolean insertCourse(final AddressGroup target, final Course course, final int type)
+	{
+		boolean inserted = false;
+		if (!course.isDeleted())
+		{
+			for (Booking booking : course.getBookings())
+			{
+				if (insertBooking(target, booking, type))
+				{
+					inserted = true;
+				}
+			}
+		}
+		return inserted;
+	}
+
+	private boolean insertBooking(final AddressGroup target, final Booking booking, final int type)
+	{
+		boolean inserted = false;
+		if (!booking.isDeleted())
+		{
+			for (Participant participant : booking.getParticipants())
+			{
+				if (insertParticipant(target, participant, type))
+				{
+					inserted = true;
+				}
+			}
+		}
+		return inserted;
+	}
+
+	private boolean insertParticipant(final AddressGroup target, final Participant participant, final int type)
+	{
+		boolean inserted = false;
+		if (!participant.isDeleted())
+		{
+			if (!found(target, participant.getLink()))
+			{
+				inserted = true;
+				AddressGroupMember member = AddressGroupMember.newInstance(target, participant.getLink());
+				target.addAddressGroupMember(member);
+			}
+		}
+		return inserted;
 	}
 
 	// private boolean insertAddressGroupMembers(final AddressGroupCategory
