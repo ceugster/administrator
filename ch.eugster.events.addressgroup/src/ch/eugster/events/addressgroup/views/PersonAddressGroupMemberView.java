@@ -451,33 +451,19 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 	@Override
 	public void postPersist(AbstractEntity entity)
 	{
-		if (entity instanceof AddressGroup)
-		{
-			this.addressGroupViewer.refresh(((AddressGroup) entity).getAddressGroupCategory());
-		}
-		else if (entity instanceof AddressGroupMember)
-		{
-			this.addressGroupViewer.refresh(((AddressGroupMember) entity).getAddressGroup());
-		}
+		reset();
 	}
 
 	@Override
 	public void postRemove(AbstractEntity entity)
 	{
-		this.addressGroupViewer.refresh();
+		reset();
 	}
 
 	@Override
 	public void postUpdate(AbstractEntity entity)
 	{
-		if (entity instanceof AddressGroup)
-		{
-			this.addressGroupViewer.refresh(entity);
-		}
-		else if (entity instanceof AddressGroupMember)
-		{
-			this.addressGroupViewer.refresh(((AddressGroupMember) entity).getAddressGroup());
-		}
+		reset();
 	}
 
 	public void updateAddressGroupMembers()

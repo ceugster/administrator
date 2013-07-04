@@ -19,8 +19,6 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.eclipse.persistence.annotations.Customizer;
-
 @Entity
 @Table(name = "events_participant")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "participant_user_id")) })
@@ -28,7 +26,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "participant_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "participant_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "participant_version")) })
-@Customizer(DeletedFilter.class)
 public class Participant extends AbstractEntity
 {
 	@ManyToOne

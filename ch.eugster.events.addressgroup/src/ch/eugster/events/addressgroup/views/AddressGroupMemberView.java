@@ -665,7 +665,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				final AddressGroupMember member = (AddressGroupMember) entity;
 				if (isVisible(root, member))
 				{
-					root.addAddressGroupMember(member);
+					// root.addAddressGroupMember(member);
 					refresh();
 				}
 			}

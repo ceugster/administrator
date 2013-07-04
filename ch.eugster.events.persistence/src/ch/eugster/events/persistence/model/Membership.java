@@ -23,7 +23,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Customizer;
 
 @Entity
 @Table(name = "events_membership")
@@ -32,7 +31,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "membership_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "membership_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "membership_version")) })
-@Customizer(DeletedFilter.class)
 public class Membership extends AbstractEntity
 {
 	@Id

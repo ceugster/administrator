@@ -3,6 +3,9 @@ package ch.eugster.events.addressgroup.views;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -24,6 +27,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
@@ -76,12 +81,37 @@ public class AddressGroupView extends AbstractEntityView implements IDoubleClick
 		EntityMediator.addListener(AddressGroup.class, this);
 		// EntityMediator.addListener(AddressGroupLink.class, this);
 		EntityMediator.addListener(AddressGroupMember.class, this);
+
+		IWorkbenchWindow activeWorkbenchWindow = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		IPartService partService = activeWorkbenchWindow.getPartService();
+		partService.addPartListener(AddressGroupStateFactory.getViewState());
+	}
+
+	public AddressGroupCategory getSelectedCategory()
+	{
+		IStructuredSelection ssel = (IStructuredSelection) addressGroupViewer.getSelection();
+		return ssel.getFirstElement() instanceof AddressGroupCategory ? (AddressGroupCategory) ssel.getFirstElement()
+				: null;
 	}
 
 	private void createContextMenu()
 	{
 		MenuManager menuManager = new MenuManager();
 		menuManager.setRemoveAllWhenShown(true);
+
+		IMenuListener listener = new IMenuListener()
+		{
+			@Override
+			public void menuAboutToShow(IMenuManager manager)
+			{
+				IContributionItem[] items = manager.getItems();
+				for (IContributionItem item : items)
+				{
+					System.out.println(item.getId());
+				}
+			}
+		};
+		menuManager.addMenuListener(listener);
 
 		Menu menu = menuManager.createContextMenu(this.addressGroupViewer.getControl());
 		this.addressGroupViewer.getControl().setMenu(menu);

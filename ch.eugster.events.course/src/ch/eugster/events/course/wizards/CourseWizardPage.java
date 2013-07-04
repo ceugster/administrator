@@ -477,7 +477,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 			{
 				messageLabel.setText("Die maximale Anzahl der Buchungen ist bereits erreicht.");
 				imageLabel.setImage(Activator.getDefault().getImageRegistry().get("error"));
-				this.setPageComplete(false);
+				this.setPageComplete(true);
 				return;
 			}
 			if (course.getBookingTypes().size() == 0)

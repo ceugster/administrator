@@ -21,7 +21,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
-import org.eclipse.persistence.annotations.Customizer;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.Activator;
@@ -35,7 +34,6 @@ import ch.eugster.events.persistence.service.ConnectionService;
 		@AttributeOverride(name = "updated", column = @Column(name = "user_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "user_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "user_version")) })
-@Customizer(DeletedFilter.class)
 public class User extends AbstractEntity
 {
 	@Transient

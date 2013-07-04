@@ -131,19 +131,11 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 	protected void createCell(final HSSFRow row, final int col, final String value, final HSSFFont font,
 			final HSSFCellStyle style)
 	{
-		try
-		{
-			double doubleValue = Double.valueOf(value);
-			createCell(row, col, doubleValue, font, style);
-		}
-		catch (NumberFormatException e)
-		{
-			HSSFRichTextString string = new HSSFRichTextString(value);
-			string.applyFont(font);
-			HSSFCell cell = row.createCell(col);
-			cell.setCellStyle(style);
-			cell.setCellValue(string);
-		}
+		HSSFRichTextString string = new HSSFRichTextString(value);
+		string.applyFont(font);
+		HSSFCell cell = row.createCell(col);
+		cell.setCellStyle(style);
+		cell.setCellValue(string);
 	}
 
 	protected HSSFFont createFont(final HSSFWorkbook workbook, final String name, final short type, final short height)

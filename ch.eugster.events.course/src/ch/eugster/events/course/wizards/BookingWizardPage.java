@@ -520,7 +520,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 			BookingForthcomingState[] availableBookingStates = null;
 			if (courseState.equals(CourseState.FORTHCOMING))
 			{
-				if (course.getParticipantsCount() + 1 < course.getMaxParticipants())
+				if (course.getBookedParticipantsCount() + 1 < course.getMaxParticipants())
 				{
 					availableBookingStates = BookingForthcomingState.values();
 				}

@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
@@ -91,7 +90,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	 * participants are copied to the originals residing in booking and new
 	 * participants added.
 	 */
-	private ViewerRoot root;
+	// private ViewerRoot root;
 
 	private final Map<Long, BookingType> bookingTypes = new HashMap<Long, BookingType>();
 
@@ -148,7 +147,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			{
 				BookingWizard wizard = (BookingWizard) this.getWizard();
 				Participant participant = Participant.newInstance(link, wizard.getBooking());
-				this.root.addParticipant(participant);
+				wizard.getBooking().addParticipant(participant);
+				this.participantViewer.refresh();
 			}
 			else
 			{
@@ -170,9 +170,11 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		if (wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.BOOKED)
 				|| wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
 		{
+			int booked = wizard.getBooking().getParticipantCount();
 			int max = wizard.getBooking().getCourse().getMaxParticipants();
-			int existing = wizard.getBooking().getCourse().getParticipantsCount();
-			canAdd = max - existing >= count;
+			int existing = wizard.getBooking().getCourse().getBookedParticipantsCount();
+
+			canAdd = count < max - existing - booked;
 		}
 		return canAdd;
 	}
@@ -185,7 +187,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				|| wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
 		{
 			int max = wizard.getBooking().getCourse().getMaxParticipants();
-			int existing = wizard.getBooking().getCourse().getParticipantsCount();
+			int existing = wizard.getBooking().getCourse().getBookedParticipantsCount();
 			int existingParticipantCount = 0;
 			if (participant.getId() != null)
 			{
@@ -336,7 +338,10 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			{
 				StructuredSelection ssel = (StructuredSelection) ParticipantWizardPage.this.selectionViewer
 						.getSelection();
-				ParticipantWizardPage.this.addParticipants(ssel);
+				if (canAdd(1))
+				{
+					ParticipantWizardPage.this.addParticipants(ssel);
+				}
 			}
 		});
 		this.selectionViewer.addSelectionChangedListener(new ISelectionChangedListener()
@@ -355,7 +360,9 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			public void criteriaChanged(final AbstractEntity[] entities)
 			{
 				Collection<LinkPersonAddress> revisedLinks = new ArrayList<LinkPersonAddress>();
-				ViewerRoot root = (ViewerRoot) ParticipantWizardPage.this.participantViewer.getInput();
+				// BookingWizard wizard = (BookingWizard) this.getWizard();
+				// ViewerRoot root = (ViewerRoot)
+				// ParticipantWizardPage.this.participantViewer.getInput();
 				for (AbstractEntity entity : entities)
 				{
 					if (entity instanceof Person)
@@ -364,10 +371,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 						Collection<LinkPersonAddress> links = person.getLinks();
 						for (LinkPersonAddress link : links)
 						{
-							if (!root.isAlreadyParticipant(link))
-							{
-								revisedLinks.add(link);
-							}
+							revisedLinks.add(link);
 						}
 					}
 				}
@@ -818,11 +822,12 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 
 		BookingWizard wizard = (BookingWizard) this.getWizard();
 		if (wizard.getBooking().getCourse() != null)
+		{
 			this.loadBookingTypes(wizard.getBooking().getCourse());
-
-		this.root = new ViewerRoot(this.participantViewer);
-		this.root.addSelectionChangedListener(this);
-		this.root.setBooking(wizard.getBooking());
+		}
+		// this.root = new ViewerRoot(this.participantViewer);
+		// this.root.addSelectionChangedListener(this);
+		// this.root.setBooking(wizard.getBooking());
 
 		tableViewerColumn = new TableViewerColumn(this.participantViewer, SWT.LEFT);
 		tableViewerColumn.setLabelProvider(new ColumnLabelProvider()
@@ -837,11 +842,11 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 					Person person = participant.getLink().getPerson();
 					cell.setText(PersonFormatter.getInstance().formatId(person));
 
-					ViewerRoot root = (ViewerRoot) ParticipantWizardPage.this.participantViewer.getInput();
-					Participant defaultParticipant = root.getDefaultParticipant();
-					if (defaultParticipant != null)
+					BookingWizard wizard = (BookingWizard) getWizard();
+					Booking booking = wizard.getBooking();
+					if (booking.getParticipant() != null)
 					{
-						if (participant.getLink().getId().equals(defaultParticipant.getLink().getId()))
+						if (participant == booking.getParticipant())
 						{
 							cell.setImage(Activator.getDefault().getImageRegistry().get("BOOKING_RED"));
 							return;
@@ -1161,7 +1166,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		this.participantViewer.addDropSupport(ops, transfers, new ParticipantViewerDropAdapter(this.participantViewer,
 				wizard.getBooking()));
 
-		this.participantViewer.setInput(this.root);
+		this.participantViewer.setInput(wizard.getBooking());
 
 		ParticipantWizardPage.this.packColumns(this.participantViewer);
 
@@ -1181,15 +1186,19 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			public void run()
 			{
 				super.run();
+				BookingWizard wizard = (BookingWizard) getWizard();
 				StructuredSelection ssel = (StructuredSelection) ParticipantWizardPage.this.participantViewer
 						.getSelection();
 				Iterator iter = ssel.iterator();
 				while (iter.hasNext())
 				{
 					Participant participant = (Participant) iter.next();
-					ViewerRoot parent = (ViewerRoot) ParticipantWizardPage.this.participantViewer.getInput();
-					parent.removeParticipant(participant);
+					wizard.getBooking().removeParticipant(participant);
+					// ViewerRoot parent = (ViewerRoot)
+					// ParticipantWizardPage.this.participantViewer.getInput();
+					// parent.removeParticipant(participant);
 				}
+				participantViewer.refresh();
 			}
 		};
 		action.setText("Teilnehmer entfernen");
@@ -1205,13 +1214,16 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			public void run()
 			{
 				super.run();
+				BookingWizard wizard = (BookingWizard) getWizard();
 				StructuredSelection ssel = (StructuredSelection) ParticipantWizardPage.this.participantViewer
 						.getSelection();
 				if (ssel.size() == 1)
 				{
 					Participant participant = (Participant) ssel.getFirstElement();
-					((ViewerRoot) ParticipantWizardPage.this.participantViewer.getInput())
-							.setDefaultParticipant(participant);
+					// ((ViewerRoot)
+					// ParticipantWizardPage.this.participantViewer.getInput())
+					// .setDefaultParticipant(participant);
+					wizard.getBooking().setParticipant(participant);
 				}
 			}
 		};
@@ -1247,14 +1259,16 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		if (this.participantViewer.getSelection().isEmpty())
 			return false;
 
-		Participant currentDefaultParticipant = ((ViewerRoot) ParticipantWizardPage.this.participantViewer.getInput())
-				.getDefaultParticipant();
-		if (currentDefaultParticipant == null)
+		BookingWizard wizard = (BookingWizard) getWizard();
+		// Participant currentDefaultParticipant = ((ViewerRoot)
+		// ParticipantWizardPage.this.participantViewer.getInput())
+		// .getDefaultParticipant();
+		if (wizard.getBooking().getParticipant() == null)
 			return true;
 
 		Participant selectedParticipant = (Participant) ((StructuredSelection) this.participantViewer.getSelection())
 				.getFirstElement();
-		return !selectedParticipant.equals(currentDefaultParticipant);
+		return !selectedParticipant.equals(wizard.getBooking().getParticipant());
 	}
 
 	private void loadBookingTypes(final Course course)
@@ -1282,7 +1296,10 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		{
 			this.participantViewer.refresh();
 			this.packColumns(this.participantViewer);
-			this.setPageComplete(this.root.isValid());
+
+			BookingWizard wizard = (BookingWizard) getWizard();
+			this.setPageComplete(wizard.getBooking().getParticipant() != null
+					&& wizard.getBooking().getParticipantCount() > 0);
 
 			ISelectionChangedListener[] listeners = this.selectionChangedListeners
 					.toArray(new ISelectionChangedListener[0]);
@@ -1305,28 +1322,6 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 
 	public void update(final Booking booking)
 	{
-		Map<Long, Participant> existingParticipants = new HashMap<Long, Participant>();
-		for (Participant participant : booking.getParticipants())
-		{
-			existingParticipants.put(participant.getLink().getId(), participant);
-		}
-		Collection<Participant> participants = this.root.getParticipants();
-		for (Participant participant : participants)
-		{
-			if (existingParticipants.containsKey(participant.getLink().getId()))
-			{
-				Participant target = existingParticipants.get(participant.getLink().getId());
-				Participant.copy(participant, target);
-			}
-			else
-			{
-				booking.addParticipant(participant);
-			}
-		}
-		if (this.root.getDefaultParticipant() != null)
-		{
-			booking.setParticipant(this.root.getDefaultParticipant());
-		}
 	}
 
 	public void updatePageState()
@@ -1361,8 +1356,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		@Override
 		public Object[] getElements(final Object inputElement)
 		{
-			if (inputElement instanceof ViewerRoot)
-				return ((ViewerRoot) inputElement).getParticipants().toArray(new Participant[0]);
+			if (inputElement instanceof Booking)
+				return ((Booking) inputElement).getParticipants().toArray(new Participant[0]);
 			return new Participant[0];
 		}
 
@@ -1440,9 +1435,9 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		{
 			if (data instanceof LinkPersonAddress[])
 			{
-				if (this.getViewer().getInput() instanceof ViewerRoot)
+				if (this.getViewer().getInput() instanceof Booking)
 				{
-					ViewerRoot root = (ViewerRoot) this.getViewer().getInput();
+					Booking booking = (Booking) this.getViewer().getInput();
 					Collection<Participant> participants = new ArrayList<Participant>();
 					LinkPersonAddress[] links = (LinkPersonAddress[]) data;
 					for (LinkPersonAddress link : links)
@@ -1450,8 +1445,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 						Participant participant = Participant.newInstance(link, this.booking);
 						setBookingType(participant);
 						participants.add(participant);
-						if (!root.isAlreadyParticipant(link))
-							root.addParticipant(participant);
+						booking.addParticipant(participant);
 					}
 					this.getViewer().refresh();
 					ParticipantWizardPage.this.packColumns((TableViewer) this.getViewer());
@@ -1508,174 +1502,140 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 
 	}
 
-	public class ViewerRoot
-	{
-		private final TableViewer viewer;
-
-		private Booking booking;
-
-		private Participant defaultParticipant;
-
-		private final Collection<Participant> participants = new Vector<Participant>();
-
-		private final Collection<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
-
-		public ViewerRoot(final TableViewer viewer)
-		{
-			this.viewer = viewer;
-		}
-
-		public void addParticipant(final Participant participant)
-		{
-			// if (!this.isAlreadyParticipant(participant.getLink()))
-			// {
-			int count = this.countParticipants();
-			this.participants.add(participant);
-			if (count == 0)
-				this.defaultParticipant = participant;
-			this.fireSelectionChanged();
-			// }
-
-		}
-
-		public void addSelectionChangedListener(final ISelectionChangedListener listener)
-		{
-			this.selectionChangedListeners.add(listener);
-		}
-
-		private boolean alreadyExists(final Participant participant, final LinkPersonAddress link)
-		{
-			if (!participant.isDeleted() && !participant.getLink().isDeleted()
-					&& !participant.getLink().getPerson().isDeleted())
-			{
-				if (participant.getLink().getId().equals(link.getId()))
-				{
-					return true;
-				}
-				else if (participant.getLink().getPerson().getId().equals(link.getPerson().getId()))
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public int countParticipants()
-		{
-			return this.getSelection().size();
-		}
-
-		private void fireSelectionChanged()
-		{
-			SelectionChangedEvent event = new SelectionChangedEvent(this.viewer, this.getSelection());
-			ISelectionChangedListener[] listeners = this.selectionChangedListeners
-					.toArray(new ISelectionChangedListener[0]);
-			for (ISelectionChangedListener listener : listeners)
-				listener.selectionChanged(event);
-		}
-
-		public Participant getDefaultParticipant()
-		{
-			return this.defaultParticipant;
-		}
-
-		public int getParticipantCount()
-		{
-			int count = 0;
-			Collection<Participant> participants = getParticipants();
-			for (Participant participant : participants)
-			{
-				count += participant.getCount();
-			}
-			return count;
-		}
-
-		public Collection<Participant> getParticipants()
-		{
-			return this.participants;
-		}
-
-		public StructuredSelection getSelection()
-		{
-			Collection<Participant> selection = new ArrayList<Participant>();
-			for (Participant participant : this.participants)
-			{
-				if (!participant.isDeleted())
-					if (!participant.getLink().isDeleted())
-						selection.add(participant);
-			}
-			return new StructuredSelection(this.participants.toArray(new Participant[0]));
-		}
-
-		public boolean isAlreadyParticipant(final LinkPersonAddress link)
-		{
-			if (this.booking.getCourse() != null)
-			{
-				Collection<Booking> bookings = this.booking.getCourse().getBookings();
-				for (Booking booking : bookings)
-				{
-					if (booking != this.booking && !booking.isDeleted())
-					{
-						Collection<Participant> participants = booking.getParticipants();
-						for (Participant participant : participants)
-						{
-							if (alreadyExists(participant, link))
-							{
-								return true;
-							}
-						}
-					}
-				}
-			}
-			// for (Participant participant : this.participants)
-			// {
-			// if (alreadyExists(participant, link))
-			// {
-			// return true;
-			// }
-			// }
-			return false;
-		}
-
-		public boolean isValid()
-		{
-			return !this.getSelection().isEmpty() && this.defaultParticipant != null;
-		}
-
-		public void removeParticipant(final Participant participant)
-		{
-			if (this.isAlreadyParticipant(participant.getLink()))
-			{
-				if (participant.getId() == null)
-					this.participants.remove(participant);
-				else
-					participant.setDeleted(true);
-
-				this.fireSelectionChanged();
-			}
-
-		}
-
-		public void setBooking(final Booking booking)
-		{
-			this.booking = booking;
-
-			Collection<Participant> participants = booking.getParticipants();
-			for (Participant participant : participants)
-			{
-				Participant target = Participant.newInstance();
-				Participant.copy(participant, target);
-				this.participants.add(target);
-			}
-
-			this.setDefaultParticipant(booking.getParticipant());
-		}
-
-		public void setDefaultParticipant(final Participant participant)
-		{
-			this.defaultParticipant = participant;
-			this.fireSelectionChanged();
-		}
-
-	}
+	// public class ViewerRoot
+	// {
+	// private long tempId = 0L;
+	//
+	// private final TableViewer viewer;
+	//
+	// private Participant defaultParticipant;
+	//
+	// private final Collection<Participant> participants = new
+	// Vector<Participant>();
+	//
+	// private final Collection<ISelectionChangedListener>
+	// selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
+	//
+	// public ViewerRoot(final TableViewer viewer)
+	// {
+	// this.viewer = viewer;
+	// }
+	//
+	// public void addParticipant(final Participant participant)
+	// {
+	// if (participant.getId() == null)
+	// {
+	// participant.setId(--tempId);
+	// }
+	// this.participants.add(participant);
+	// if (participants.size() == 1)
+	// {
+	// this.defaultParticipant = participant;
+	// }
+	// this.fireSelectionChanged();
+	// }
+	//
+	// public void addSelectionChangedListener(final ISelectionChangedListener
+	// listener)
+	// {
+	// this.selectionChangedListeners.add(listener);
+	// }
+	//
+	// public int countParticipants()
+	// {
+	// return this.getSelection().size();
+	// }
+	//
+	// private void fireSelectionChanged()
+	// {
+	// SelectionChangedEvent event = new SelectionChangedEvent(this.viewer,
+	// this.getSelection());
+	// ISelectionChangedListener[] listeners = this.selectionChangedListeners
+	// .toArray(new ISelectionChangedListener[0]);
+	// for (ISelectionChangedListener listener : listeners)
+	// listener.selectionChanged(event);
+	// }
+	//
+	// public Participant getDefaultParticipant()
+	// {
+	// return this.defaultParticipant;
+	// }
+	//
+	// public int getParticipantCount()
+	// {
+	// int count = 0;
+	// Collection<Participant> participants = getParticipants();
+	// for (Participant participant : participants)
+	// {
+	// count += participant.getCount();
+	// }
+	// return count;
+	// }
+	//
+	// public Collection<Participant> getParticipants()
+	// {
+	// return this.participants;
+	// }
+	//
+	// public StructuredSelection getSelection()
+	// {
+	// Collection<Participant> selection = new ArrayList<Participant>();
+	// for (Participant participant : this.participants)
+	// {
+	// if (!participant.isDeleted())
+	// {
+	// if (!participant.getLink().isDeleted())
+	// {
+	// selection.add(participant);
+	// }
+	// }
+	// }
+	// return new StructuredSelection(this.participants.toArray(new
+	// Participant[0]));
+	// }
+	//
+	// public boolean isValid()
+	// {
+	// return !this.getSelection().isEmpty() && this.defaultParticipant != null;
+	// }
+	//
+	// public void removeParticipant(final Participant participant)
+	// {
+	// if (participant.getId() == null)
+	// {
+	// this.participants.remove(participant);
+	// }
+	// else
+	// {
+	// participant.setDeleted(true);
+	// }
+	// this.fireSelectionChanged();
+	// }
+	//
+	// public void setBooking(final Booking booking)
+	// {
+	// Collection<Participant> participants = booking.getParticipants();
+	// for (Participant participant : participants)
+	// {
+	// Participant target = Participant.newInstance();
+	// Participant.copy(participant, target);
+	// if (target.getId() == null)
+	// {
+	// target.setId(new Long(--tempId));
+	// }
+	// if (participant == booking.getParticipant())
+	// {
+	// this.setDefaultParticipant(target);
+	// }
+	// this.participants.add(target);
+	// }
+	// }
+	//
+	// public void setDefaultParticipant(final Participant participant)
+	// {
+	// this.defaultParticipant = participant;
+	// this.fireSelectionChanged();
+	// }
+	//
+	// }
 }

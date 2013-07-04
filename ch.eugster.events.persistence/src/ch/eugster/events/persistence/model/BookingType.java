@@ -20,8 +20,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
-import org.eclipse.persistence.annotations.Customizer;
-
 @Entity
 @Table(name = "events_booking_type")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "booking_type_user_id")) })
@@ -29,7 +27,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "booking_type_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "booking_type_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "booking_type_version")) })
-@Customizer(DeletedFilter.class)
 public class BookingType extends AbstractEntity
 {
 
