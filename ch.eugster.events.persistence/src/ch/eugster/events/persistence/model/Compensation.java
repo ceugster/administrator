@@ -14,8 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.eclipse.persistence.annotations.Customizer;
-
 @Entity
 @Table(name = "events_compensation")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "compensation_user_id")) })
@@ -23,7 +21,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "compensation_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "compensation_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "compensation_version")) })
-@Customizer(DeletedFilter.class)
 public class Compensation extends AbstractEntity
 {
 	/**

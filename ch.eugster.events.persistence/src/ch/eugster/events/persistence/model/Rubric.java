@@ -13,8 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.eclipse.persistence.annotations.Customizer;
-
 @Entity
 @Table(name = "events_rubric")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "rubric_user_id")) })
@@ -22,7 +20,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "rubric_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "rubric_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "rubric_version")) })
-@Customizer(DeletedFilter.class)
 public class Rubric extends AbstractEntity
 {
 

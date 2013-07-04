@@ -12,8 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.eclipse.persistence.annotations.Customizer;
-
 @Entity
 @Table(name = "events_zip_code")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "zip_code_user_id")) })
@@ -21,7 +19,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "zip_code_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "zip_code_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "zip_code_version")) })
-@Customizer(DeletedFilter.class)
 public class ZipCode extends AbstractEntity
 {
 	/*

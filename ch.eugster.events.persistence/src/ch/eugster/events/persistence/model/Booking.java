@@ -2,6 +2,7 @@ package ch.eugster.events.persistence.model;
 
 import static javax.persistence.CascadeType.ALL;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Vector;
@@ -26,8 +27,6 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.eclipse.persistence.annotations.Customizer;
-
 @Entity
 @Table(name = "events_booking")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "booking_user_id")) })
@@ -35,7 +34,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "booking_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "booking_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "booking_version")) })
-@Customizer(DeletedFilter.class)
 public class Booking extends AbstractEntity
 {
 	/**
@@ -276,7 +274,15 @@ public class Booking extends AbstractEntity
 
 	public Collection<Participant> getParticipants()
 	{
-		return this.participants;
+		Collection<Participant> ps = new ArrayList<Participant>();
+		for (Participant participant : this.participants)
+		{
+			if (!participant.isDeleted())
+			{
+				ps.add(participant);
+			}
+		}
+		return ps;
 	}
 
 	public Calendar getParticipationConfirmationSentDate()
@@ -384,10 +390,11 @@ public class Booking extends AbstractEntity
 	@Override
 	public void setDeleted(final boolean deleted)
 	{
-		super.setDeleted(deleted);
 		for (Participant participant : this.participants)
-			if (!participant.isDeleted())
-				participant.setDeleted(deleted);
+		{
+			participant.setDeleted(deleted);
+		}
+		super.setDeleted(deleted);
 	}
 
 	public void setDoneState(final BookingDoneState doneState)

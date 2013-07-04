@@ -1059,79 +1059,6 @@
       <menuContribution
             locationURI="toolbar:ch.eugster.events.course.views.courseBookingView?after=additions">
          <command
-               commandId="ch.eugster.events.course.command.editBooking"
-               disabledIcon="icons/edit_grey_16.png"
-               hoverIcon="icons/edit_16.png"
-               icon="icons/edit_16.png"
-               label="Bearbeiten"
-               style="push"
-               tooltip="Bearbeiten der ausgewählten Buchung">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <and>
-                     <count
-                           value="1">
-                     </count>
-                     <iterate>
-                        <instanceof
-                              value="ch.eugster.events.persistence.model.Booking">
-                        </instanceof>
-                     </iterate>
-                  </and>
-               </with>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="ch.eugster.events.course.command.deleteBooking"
-               disabledIcon="icons/delete_grey_16.png"
-               hoverIcon="icons/delete_16.png"
-               icon="icons/delete_16.png"
-               label="Entfernen"
-               style="push"
-               tooltip="Entfernen der ausgewählten Buchung">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate>
-                     <instanceof
-                           value="ch.eugster.events.persistence.model.Booking">
-                     </instanceof>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-         <separator
-               name="ch.eugster.events.course.separator1"
-               visible="true">
-         </separator>
-         <command
-               commandId="ch.eugster.events.course.command.setBookingType"
-               disabledIcon="icons/edit_grey_16.png"
-               hoverIcon="icons/booking_48.png"
-               icon="icons/edit_16.png"
-               label="Buchungsart ändern"
-               style="push"
-               tooltip="Buchungsart ändern">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate>
-                     <instanceof
-                           value="ch.eugster.events.persistence.model.Participant">
-                     </instanceof>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-         <separator
-               name="ch.eugster.events.course.separator2"
-               visible="true">
-         </separator>
-         <command
                commandId="ch.eugster.events.course.command.addParticipant"
                disabledIcon="icons/add_grey_16.gif"
                hoverIcon="icons/add_16.gif"
@@ -1156,10 +1083,24 @@
                </with>
             </visibleWhen>
          </command>
-         <separator
-               name="ch.eugster.events.course.separator3"
-               visible="true">
-         </separator>
+         <command
+               commandId="ch.eugster.events.course.command.editBooking"
+               disabledIcon="icons/edit_grey_16.png"
+               hoverIcon="icons/edit_16.png"
+               icon="icons/edit_16.png"
+               label="Bearbeiten"
+               style="push"
+               tooltip="Bearbeiten der ausgewählten Buchung">
+         </command>
+         <command
+               commandId="ch.eugster.events.course.command.deleteBooking"
+               disabledIcon="icons/delete_grey_16.png"
+               hoverIcon="icons/delete_16.png"
+               icon="icons/delete_16.png"
+               label="Entfernen"
+               style="push"
+               tooltip="Entfernen der ausgewählten Buchung">
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="popup:org.eclipse.ui.views.ContentOutline?after=additions">

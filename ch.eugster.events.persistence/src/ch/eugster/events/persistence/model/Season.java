@@ -22,7 +22,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Customizer;
 
 @Entity
 @Table(name = "events_season")
@@ -31,7 +30,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "season_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "season_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "season_version")) })
-@Customizer(DeletedFilter.class)
 public class Season extends AbstractEntity
 {
 	@Transient

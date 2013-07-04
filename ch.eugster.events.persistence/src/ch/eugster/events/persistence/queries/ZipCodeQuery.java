@@ -28,6 +28,13 @@ public class ZipCodeQuery extends AbstractEntityQuery<ZipCode>
 		return this.select(ZipCode.class, expression);
 	}
 
+	public Collection<ZipCode> selectByZipCode(String code)
+	{
+		Expression expression = new ExpressionBuilder().get("deleted").equal(false);
+		expression = expression.and(new ExpressionBuilder().get("zip").equal(code));
+		return this.select(ZipCode.class, expression);
+	}
+
 	@SuppressWarnings("unchecked")
 	public Collection<String> selectStates(Country country)
 	{

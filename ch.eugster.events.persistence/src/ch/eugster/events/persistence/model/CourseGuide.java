@@ -20,8 +20,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.eclipse.persistence.annotations.Customizer;
-
 @Entity
 @Table(name = "events_course_guide")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "course_guide_user_id")) })
@@ -29,7 +27,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "course_guide_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "course_guide_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "course_guide_version")) })
-@Customizer(DeletedFilter.class)
 public class CourseGuide extends AbstractEntity
 {
 	/**

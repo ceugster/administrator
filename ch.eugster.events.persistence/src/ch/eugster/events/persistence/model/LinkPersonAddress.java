@@ -24,8 +24,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.eclipse.persistence.annotations.Customizer;
-
 @Entity
 @Table(name = "events_pa_link")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "pa_link_user_id")) })
@@ -33,7 +31,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "pa_link_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "pa_link_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "pa_link_version")) })
-@Customizer(DeletedFilter.class)
 public class LinkPersonAddress extends AbstractEntity implements Donator
 {
 	/**
@@ -380,6 +377,10 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		for (Member member : this.members)
 		{
 			member.setDeleted(deleted);
+		}
+		if (this.getAddress().getPersonLinks().size() == 1)
+		{
+			this.getAddress().setDeleted(deleted);
 		}
 		// if (this.guide != null)
 		// guide.setDeleted(deleted);

@@ -14,7 +14,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Customizer;
 
 @Entity
 @Table(name = "events_address_salutation")
@@ -23,7 +22,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "address_salutation_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "address_salutation_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "address_salutation_version")) })
-@Customizer(DeletedFilter.class)
 public class AddressSalutation extends AbstractEntity
 {
 	@Id

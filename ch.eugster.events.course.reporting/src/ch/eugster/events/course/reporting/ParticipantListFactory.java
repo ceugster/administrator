@@ -65,8 +65,7 @@ public class ParticipantListFactory
 					guide.getGuide().getLink().getAddress())
 					+ ", ");
 			builder = builder.append(AddressFormatter.getInstance().formatCityLine(
-					guide.getGuide().getLink().getAddress())
-					+ ", ");
+					guide.getGuide().getLink().getAddress()));
 			String phone = LinkPersonAddressFormatter
 					.getInstance()
 					.formatPhoneWithOptionalPrefix(guide.getGuide().getLink().getPerson().getCountry(),

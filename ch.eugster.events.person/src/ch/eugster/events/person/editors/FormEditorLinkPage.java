@@ -691,9 +691,9 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				zipSelected(zip.getText());
 				updateSingleLabel();
 				updateGroupLabel();
+				city.setEnabled(zip.getData("zipCode") == null);
 				setDirty(true);
 			}
 		});
@@ -712,6 +712,11 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			// zipSelected(zip.getText());
 			// }
 		});
+
+		proposalAdapter = new ContentProposalAdapter(this.zip, new TextContentAdapter(),
+				new CityContentProposalProvider(countryViewer, zip), null, null);
+		proposalAdapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
+		proposalAdapter.addContentProposalListener(this);
 
 		this.city = toolkit.createText(client, "");
 		this.city.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -753,10 +758,11 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			}
 		});
 
-		proposalAdapter = new ContentProposalAdapter(this.city, new TextContentAdapter(),
-				new CityContentProposalProvider(countryViewer, zip), null, null);
-		proposalAdapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
-		proposalAdapter.addContentProposalListener(this);
+		// proposalAdapter = new ContentProposalAdapter(this.city, new
+		// TextContentAdapter(),
+		// new CityContentProposalProvider(countryViewer, zip), null, null);
+		// proposalAdapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
+		// proposalAdapter.addContentProposalListener(this);
 
 		gridData = new GridData();
 
@@ -1267,9 +1273,12 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		Collection<LinkPersonAddress> links = input.getEntity().getLinks();
 		for (LinkPersonAddress link : links)
 		{
-			if (link.getAddressType().getId().equals(this.addressType.getId()))
+			if (!link.isDeleted())
 			{
-				return link;
+				if (link.getAddressType().getId().equals(this.addressType.getId()))
+				{
+					return link;
+				}
 			}
 		}
 		return null;
@@ -1467,7 +1476,11 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		else if (contentProposal instanceof CityContentProposal)
 		{
 			CityContentProposal proposal = (CityContentProposal) contentProposal;
+			zip.setData("zipCode", proposal.getZipCode());
+			zip.setText(proposal.getZipCode().getZip());
 			city.setText(proposal.getZipCode().getCity());
+			countryViewer.setSelection(new StructuredSelection(proposal.getZipCode().getCountry()));
+			countryViewer.setData("country", proposal.getZipCode().getCountry());
 		}
 	}
 
@@ -1519,6 +1532,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			link.getAddress().setCountry(null);
 		}
 		link.getAddress().setZip(this.zip.getText());
+		link.getAddress().setZipCode((ZipCode) this.zip.getData("zipCode"));
 		link.getAddress().setCity(this.city.getText());
 	}
 

@@ -52,7 +52,7 @@ public class CourseBookingContentProvider implements ITreeContentProvider
 		if (element instanceof Booking)
 		{
 			Booking booking = (Booking) element;
-			return booking.getParticipants().size() > 1;
+			return booking.getParticipantCount() > 1;
 		}
 		return false;
 	}

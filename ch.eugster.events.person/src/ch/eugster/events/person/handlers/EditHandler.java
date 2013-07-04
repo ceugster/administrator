@@ -97,7 +97,7 @@ public class EditHandler extends AbstractHandler implements IHandler
 	{
 		for (EditorSelector editorSelector : EditorSelector.values())
 		{
-			if (editorSelector.equals(PersonSettings.getInstance().getEditorSelector()))
+			if (editorSelector.equals(EditorSelector.values()[PersonSettings.getInstance().getEditorSelector()]))
 			{
 				try
 				{

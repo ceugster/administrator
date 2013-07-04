@@ -283,7 +283,12 @@ public class PersonFormatter extends AbstractFormatter
 				builder = builder.append(line.trim() + "\n");
 			}
 		}
-		return builder.substring(0, builder.toString().length() - 1).toString();
+		String value = builder.toString().trim();
+		if (value.endsWith("\n"))
+		{
+			value = builder.substring(0, builder.toString().length() - 1).toString();
+		}
+		return value;
 	}
 
 	public String replacePersonLabelVariables(Map<String, String> map)

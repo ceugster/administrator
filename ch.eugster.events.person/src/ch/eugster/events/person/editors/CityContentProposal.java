@@ -22,8 +22,9 @@ public class CityContentProposal implements IContentProposal
 	public String getContent()
 	{
 		if (this.zipCode == null)
+		{
 			return "";
-
+		}
 		return this.zipCode.getCity();
 	}
 
@@ -43,9 +44,10 @@ public class CityContentProposal implements IContentProposal
 	public String getLabel()
 	{
 		if (this.zipCode == null)
+		{
 			return "";
-
-		return this.zipCode.getCity();
+		}
+		return this.zipCode.getCity() + " (" + zipCode.getCountry().getIso3166alpha2() + ")";
 	}
 
 }
