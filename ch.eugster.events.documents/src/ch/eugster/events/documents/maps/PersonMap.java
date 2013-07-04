@@ -287,7 +287,8 @@ public class PersonMap extends AbstractDataMap
 				}
 				case PHONE:
 				{
-					return person.getPhone();
+					return PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(person.getCountry(),
+							person.getPhone());
 				}
 				case EMAIL:
 				{

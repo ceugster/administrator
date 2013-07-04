@@ -191,7 +191,8 @@ public class LinkMap extends AbstractDataMap
 			{
 				case PHONE:
 				{
-					return link.getPhone();
+					return LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(
+							link.getAddress().getCountry(), link.getPhone());
 				}
 				case FUNCTION:
 				{
@@ -227,7 +228,8 @@ public class LinkMap extends AbstractDataMap
 			{
 				case PHONE:
 				{
-					return link.getPhone();
+					return LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(
+							link.getAddress().getCountry(), link.getPhone());
 				}
 				case FUNCTION:
 				{
