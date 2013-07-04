@@ -1,22 +1,50 @@
 package ch.eugster.events.addressgroup.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.menus.UIElement;
 
 import ch.eugster.events.addressgroup.editors.AddressGroupEditor;
 import ch.eugster.events.addressgroup.editors.AddressGroupEditorInput;
 import ch.eugster.events.addressgroup.views.AddressGroupView;
+import ch.eugster.events.addressgroup.views.UpdateableRightCommandHandler;
 import ch.eugster.events.persistence.model.AddressGroup;
 import ch.eugster.events.persistence.model.AddressGroupCategory;
 
-public class AddAddressGroupHandler extends AbstractHandler implements IHandler
+public class NewAddressGroupHandler extends UpdateableRightCommandHandler
 {
+	public static final String COMMAND_ID = "ch.eugster.events.addressgroup.add";
+
+	public static final String STATE_ID = "addressgroup.state";
+
+	private AddressGroupView view;
+
+	public NewAddressGroupHandler()
+	{
+		super();
+	}
+
+	public String getCommandId()
+	{
+		return COMMAND_ID;
+	}
+
+	@Override
+	public Collection<String> getAvailableStateIds()
+	{
+		return Collections.singleton(STATE_ID);
+	}
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException
 	{
@@ -49,24 +77,33 @@ public class AddAddressGroupHandler extends AbstractHandler implements IHandler
 		return null;
 	}
 
-	@Override
-	public void setEnabled(Object evaluationContext)
+	public void updateElement(UIElement element, Map parameters)
 	{
-		boolean enabled = false;
-		EvaluationContext context = (EvaluationContext) evaluationContext;
-		if (context instanceof EvaluationContext)
+		if (view instanceof AddressGroupView)
 		{
-			Object object = context.getVariable("activePart");
-			if (object instanceof AddressGroupView)
+			IStructuredSelection ssel = (IStructuredSelection) view.getViewer().getSelection();
+			if (ssel.getFirstElement() instanceof AddressGroupCategory)
 			{
-				AddressGroupView view = (AddressGroupView) object;
-				StructuredSelection ssel = (StructuredSelection) view.getViewer().getSelection();
-				if (ssel.size() == 1 && ssel.getFirstElement() instanceof AddressGroupCategory)
+				AddressGroupCategory category = (AddressGroupCategory) ssel.getFirstElement();
+				String name = category.getName();
+				if (name.length() > 1 && name.endsWith("n"))
 				{
-					enabled = true;
+					name = name.substring(0, name.length() - 1);
 				}
+
+				element.setText("Neue " + name);
+				return;
 			}
 		}
-		setBaseEnabled(enabled);
+		element.setText("Neue Gruppe");
+	}
+
+	public void handleStateChange(State state, Object oldValue)
+	{
+		Object value = state.getValue();
+		if (value instanceof AddressGroupView)
+		{
+			this.view = (AddressGroupView) value;
+		}
 	}
 }

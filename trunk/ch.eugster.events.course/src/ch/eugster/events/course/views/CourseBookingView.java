@@ -146,7 +146,8 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 				{
 					Participant participant = (Participant) cell.getElement();
 					cell.setImage(CourseBookingView.this.getImage(participant));
-					cell.setText(PersonFormatter.getInstance().formatId(participant.getLink().getPerson()));
+					cell.setText(PersonFormatter.getInstance().formatId(participant.getLink().getPerson()) + " ("
+							+ participant.getCount() + ")");
 				}
 			}
 

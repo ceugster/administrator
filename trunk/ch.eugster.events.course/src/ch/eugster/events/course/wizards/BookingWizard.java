@@ -85,6 +85,12 @@ public class BookingWizard extends Wizard implements IBookingWizard
 		return true;
 	}
 
+	@Override
+	public boolean performCancel()
+	{
+		return this.resetBooking();
+	}
+
 	private IStatus printBookingConfirmation(final BookingWizardPage bookingPage)
 	{
 		IStatus status = Status.OK_STATUS;
@@ -189,5 +195,29 @@ public class BookingWizard extends Wizard implements IBookingWizard
 			tracker.close();
 		}
 		return status;
+	}
+
+	private boolean resetBooking()
+	{
+		if (booking.getId() != null)
+		{
+			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class.getName(), null);
+			tracker.open();
+			try
+			{
+				Object service = tracker.getService();
+				if (service instanceof ConnectionService)
+				{
+					ConnectionService connectionService = (ConnectionService) service;
+					this.booking = (Booking) connectionService.refresh(this.booking);
+				}
+			}
+			finally
+			{
+				tracker.close();
+			}
+		}
+		return true;
 	}
 }

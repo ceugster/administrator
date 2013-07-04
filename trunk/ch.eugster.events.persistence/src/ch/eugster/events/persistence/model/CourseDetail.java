@@ -19,7 +19,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Customizer;
 
 @Entity
 @Table(name = "events_course_detail")
@@ -28,7 +27,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "course_detail_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "course_detail_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "course_detail_version")) })
-@Customizer(DeletedFilter.class)
 public class CourseDetail extends AbstractEntity implements Comparable<CourseDetail>
 {
 	/**

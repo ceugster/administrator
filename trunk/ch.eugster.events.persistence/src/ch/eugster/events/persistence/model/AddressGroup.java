@@ -23,8 +23,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.eclipse.persistence.annotations.Customizer;
-
 @Entity
 @Table(name = "events_address_group")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "address_group_user_id")) })
@@ -32,7 +30,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "address_group_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "address_group_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "address_group_version")) })
-@Customizer(DeletedFilter.class)
 public class AddressGroup extends AbstractEntity
 {
 	/**

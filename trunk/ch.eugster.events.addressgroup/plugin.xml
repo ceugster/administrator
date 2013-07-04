@@ -135,8 +135,13 @@
       <command
             categoryId="ch.eugster.events.addressgroup.group"
             description="Neue Adressgruppe hinzufügen"
-            id="ch.eugster.events.addressgroup.command.add.group"
+            id="ch.eugster.events.addressgroup.add"
+            defaultHandler="ch.eugster.events.addressgroup.handlers.NewAddressGroupHandler"
             name="Adressgruppe hinzufügen">
+         <state
+               class="ch.eugster.events.addressgroup.views.AddressGroupStateFactory"
+               id="addressgroup.state">
+         </state>
       </command>
       <command
             categoryId="ch.eugster.events.addressgroup.group"
@@ -627,7 +632,7 @@
                visible="true">
          </separator>
          <command
-               commandId="ch.eugster.events.addressgroup.command.add.group"
+               commandId="ch.eugster.events.addressgroup.add"
                disabledIcon="icons/addressgroup_add_grey_16.png"
                hoverIcon="icons/addressgroup_add_16.png"
                icon="icons/addressgroup_add_16.png"

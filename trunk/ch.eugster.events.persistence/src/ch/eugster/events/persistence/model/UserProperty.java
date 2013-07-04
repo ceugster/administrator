@@ -14,8 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.eclipse.persistence.annotations.Customizer;
-
 @Entity
 @Table(name = "events_user_property")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "user_property_user_id")) })
@@ -23,7 +21,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "user_property_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "user_property_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "user_property_version")) })
-@Customizer(DeletedFilter.class)
 public class UserProperty extends AbstractEntity
 {
 	/**

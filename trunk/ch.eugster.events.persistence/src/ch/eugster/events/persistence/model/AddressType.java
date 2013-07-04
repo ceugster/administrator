@@ -19,7 +19,6 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.eclipse.persistence.annotations.Customizer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -33,7 +32,6 @@ import org.eclipse.swt.widgets.Display;
 		@AttributeOverride(name = "updated", column = @Column(name = "address_type_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "address_type_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "address_type_version")) })
-@Customizer(DeletedFilter.class)
 public class AddressType extends AbstractEntity
 {
 	/**

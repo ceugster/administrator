@@ -17,7 +17,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Customizer;
 
 @Entity
 @Table(name = "events_field_extension")
@@ -26,7 +25,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "field_extension_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "field_extension_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "field_extension_version")) })
-@Customizer(DeletedFilter.class)
 public class FieldExtension extends AbstractEntity
 {
 	/*

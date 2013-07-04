@@ -13,8 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.eclipse.persistence.annotations.Customizer;
-
 @Entity
 @Table(name = "events_external_address_provider")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "external_address_provider_user_id")) })
@@ -23,7 +21,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "external_address_provider_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "external_address_provider_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "external_address_provider_version")) })
-@Customizer(DeletedFilter.class)
 public class ExternalAddressProvider extends AbstractEntity
 {
 	/*

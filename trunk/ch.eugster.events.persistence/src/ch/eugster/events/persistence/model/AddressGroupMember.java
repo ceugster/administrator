@@ -13,8 +13,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.eclipse.persistence.annotations.Customizer;
-
 @Entity
 @Table(name = "events_address_group_member")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "address_group_member_user_id")) })
@@ -22,7 +20,6 @@ import org.eclipse.persistence.annotations.Customizer;
 		@AttributeOverride(name = "updated", column = @Column(name = "address_group_member_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "address_group_member_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "address_group_member_version")) })
-@Customizer(DeletedFilter.class)
 public class AddressGroupMember extends AbstractEntity
 {
 	/**
@@ -62,14 +59,12 @@ public class AddressGroupMember extends AbstractEntity
 	{
 		super();
 		this.setAddressGroup(addressGroup);
-		// addressGroup.addAddressGroupMember(this);
 	}
 
 	private AddressGroupMember(final AddressGroup addressGroup, final Address address)
 	{
 		super();
 		this.setAddressGroup(addressGroup);
-		// addressGroup.addAddressGroupMember(this);
 		this.setParent(null, address);
 	}
 
@@ -77,7 +72,6 @@ public class AddressGroupMember extends AbstractEntity
 	{
 		super();
 		this.setAddressGroup(addressGroup);
-		// addressGroup.addAddressGroupMember(this);
 		this.setParent(link, link.getAddress());
 	}
 
