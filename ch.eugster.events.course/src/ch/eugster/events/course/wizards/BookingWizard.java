@@ -51,23 +51,29 @@ public class BookingWizard extends Wizard implements IBookingWizard
 	{
 		CourseWizardPage coursePage = (CourseWizardPage) this.getPage("courseWizardPage");
 		if (coursePage != null)
+		{
 			coursePage.update(this.booking);
-
+		}
 		BookingWizardPage bookingPage = (BookingWizardPage) this.getPage("bookingWizardPage");
 		if (bookingPage != null)
+		{
 			bookingPage.update(this.booking);
-
+		}
 		ParticipantWizardPage participantPage = (ParticipantWizardPage) this.getPage("participantWizardPage");
 		if (participantPage != null)
+		{
 			participantPage.update(this.booking);
-
+		}
 		if (bookingPage != null)
 		{
 			if (bookingPage.printBookingConfirmation())
+			{
 				this.booking.setBookingConfirmationSentDate(GregorianCalendar.getInstance());
-
+			}
 			if (bookingPage.printInvitation())
+			{
 				this.booking.setInvitationSentDate(GregorianCalendar.getInstance());
+			}
 		}
 
 		IStatus status = saveBooking();
@@ -177,7 +183,6 @@ public class BookingWizard extends Wizard implements IBookingWizard
 				ConnectionService connectionService = (ConnectionService) service;
 				BookingQuery query = (BookingQuery) connectionService.getQuery(Booking.class);
 				this.booking = query.merge(this.booking);
-				// this.booking.getCourse().addBooking(this.booking);
 			}
 			else
 			{

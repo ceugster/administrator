@@ -54,6 +54,8 @@ import ch.eugster.events.course.views.SeasonFilter;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
+import ch.eugster.events.persistence.model.CourseState;
+import ch.eugster.events.persistence.model.IBookingState;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Season;
 import ch.eugster.events.persistence.service.ConnectionService;
@@ -445,7 +447,6 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 				Course course = (Course) ssel.getFirstElement();
 				BookingWizard wizard = (BookingWizard) this.getWizard();
 				wizard.getBooking().setCourse(course);
-				this.updatePageState();
 				ISelectionChangedListener[] listeners = this.selectionChangedListeners
 						.toArray(new ISelectionChangedListener[0]);
 				for (ISelectionChangedListener listener : listeners)
@@ -453,6 +454,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 					listener.selectionChanged(event);
 				}
 			}
+			this.updatePageState();
 		}
 		else if (event.getSource() instanceof TableViewer && !event.getSelection().isEmpty()
 				&& event.getSelection() instanceof StructuredSelection)
@@ -473,7 +475,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		if (ssel.getFirstElement() instanceof Course)
 		{
 			Course course = (Course) ssel.getFirstElement();
-			if (course.getParticipantsCount() + 1 > course.getMaxParticipants())
+			if (course.getBookedParticipantsCount() + 1 > course.getMaxParticipants())
 			{
 				messageLabel.setText("Die maximale Anzahl der Buchungen ist bereits erreicht.");
 				imageLabel.setImage(Activator.getDefault().getImageRegistry().get("error"));
@@ -489,7 +491,13 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 			}
 			else
 			{
-				messageLabel.setText("");
+				StringBuilder msg = new StringBuilder();
+				CourseState state = course.getState();
+				for (IBookingState bookingState : state.getBookingStates())
+				{
+					msg = msg.append(bookingState.toString() + ": " + course.getParticipantsCount(bookingState) + "; ");
+				}
+				messageLabel.setText(msg.substring(0, msg.length() - 2));
 				imageLabel.setImage(null);
 				this.setPageComplete(true);
 				return;

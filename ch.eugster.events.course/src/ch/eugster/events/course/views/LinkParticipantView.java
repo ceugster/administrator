@@ -305,8 +305,9 @@ public class LinkParticipantView extends AbstractEntityView implements IDoubleCl
 	}
 
 	@Override
-	public void postDelete(final AbstractEntity entity)
+	public void postDelete(AbstractEntity entity)
 	{
+		entity = refreshEntity(entity);
 		if (this.getViewer().getInput() != null)
 		{
 			if (entity instanceof Booking)
@@ -316,9 +317,28 @@ public class LinkParticipantView extends AbstractEntityView implements IDoubleCl
 		}
 	}
 
-	@Override
-	public void postPersist(final AbstractEntity entity)
+	private AbstractEntity refreshEntity(AbstractEntity entity)
 	{
+		// ServiceTracker tracker = new
+		// ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+		// ConnectionService.class.getName(), null);
+		// tracker.open();
+		// try
+		// {
+		// ConnectionService service = (ConnectionService) tracker.getService();
+		// return service.refresh(entity);
+		// }
+		// finally
+		// {
+		// tracker.close();
+		// }
+		return entity;
+	}
+
+	@Override
+	public void postPersist(AbstractEntity entity)
+	{
+		entity = refreshEntity(entity);
 		if (entity instanceof Participant)
 		{
 			Participant participant = (Participant) entity;
@@ -349,8 +369,9 @@ public class LinkParticipantView extends AbstractEntityView implements IDoubleCl
 	}
 
 	@Override
-	public void postUpdate(final AbstractEntity entity)
+	public void postUpdate(AbstractEntity entity)
 	{
+		entity = refreshEntity(entity);
 		if (entity instanceof Participant)
 		{
 			Participant participant = (Participant) entity;
