@@ -419,7 +419,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 	public int getFreePlaces()
 	{
 		return this.getBooking().getCourse() == null ? 0 : this.getBooking().getCourse().getMaxParticipants()
-				- this.getBooking().getCourse().getParticipantsCount();
+				- this.getBooking().getCourse().getBookedParticipantsCount();
 	}
 
 	private Calendar getInvitationSentDate()

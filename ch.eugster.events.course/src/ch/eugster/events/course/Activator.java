@@ -104,6 +104,7 @@ public class Activator extends AbstractUIPlugin
 		imageRegistry.put("GENERATE", ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/work_16.png")));
 		imageRegistry.put("CLEAR", ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/clear_16.png")));
 		imageRegistry.put("error", ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/exclamation.png")));
+		imageRegistry.put("ok", ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/ok_16.gif")));
 	}
 
 }

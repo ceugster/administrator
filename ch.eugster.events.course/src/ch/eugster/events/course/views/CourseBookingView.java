@@ -466,8 +466,9 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 	}
 
 	@Override
-	public void postDelete(final AbstractEntity entity)
+	public void postDelete(AbstractEntity entity)
 	{
+		entity = refreshEntity(entity);
 		if (this.viewer.getInput() != null)
 		{
 			if (entity instanceof Season)
@@ -482,12 +483,15 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 	}
 
 	@Override
-	public void postPersist(final AbstractEntity entity)
+	public void postPersist(AbstractEntity entity)
 	{
+		entity = refreshEntity(entity);
 		if (this.viewer.getInput() != null)
 		{
 			if (entity instanceof Season)
+			{
 				this.viewer.add(this, entity);
+			}
 			else if (entity instanceof Course)
 			{
 				Course course = (Course) entity;
@@ -508,14 +512,19 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 	}
 
 	@Override
-	public void postUpdate(final AbstractEntity entity)
+	public void postUpdate(AbstractEntity entity)
 	{
+		entity = refreshEntity(entity);
 		if (this.viewer.getInput() != null)
 		{
 			if (entity instanceof Season)
+			{
 				this.viewer.refresh();
+			}
 			else if (entity instanceof Course)
+			{
 				this.viewer.refresh(entity);
+			}
 			else if (entity instanceof Booking)
 			{
 				Booking booking = (Booking) entity;
@@ -540,6 +549,24 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 
 			this.packColumns();
 		}
+	}
+
+	private AbstractEntity refreshEntity(AbstractEntity entity)
+	{
+		// ServiceTracker tracker = new
+		// ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+		// ConnectionService.class.getName(), null);
+		// tracker.open();
+		// try
+		// {
+		// ConnectionService service = (ConnectionService) tracker.getService();
+		// return service.refresh(entity);
+		// }
+		// finally
+		// {
+		// tracker.close();
+		// }
+		return entity;
 	}
 
 	@Override
