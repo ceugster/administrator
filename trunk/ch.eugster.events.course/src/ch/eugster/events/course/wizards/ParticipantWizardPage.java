@@ -147,6 +147,10 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			{
 				BookingWizard wizard = (BookingWizard) this.getWizard();
 				Participant participant = Participant.newInstance(link, wizard.getBooking());
+				if (wizard.getBooking().getParticipant() == null)
+				{
+					wizard.getBooking().setParticipant(participant);
+				}
 				wizard.getBooking().addParticipant(participant);
 				this.participantViewer.refresh();
 			}
@@ -338,7 +342,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			{
 				StructuredSelection ssel = (StructuredSelection) ParticipantWizardPage.this.selectionViewer
 						.getSelection();
-				if (canAdd(1))
+				if (canAdd(ssel.size()))
 				{
 					ParticipantWizardPage.this.addParticipants(ssel);
 				}
@@ -1322,6 +1326,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 
 	public void update(final Booking booking)
 	{
+		System.out.println(booking);
 	}
 
 	public void updatePageState()
@@ -1357,7 +1362,10 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		public Object[] getElements(final Object inputElement)
 		{
 			if (inputElement instanceof Booking)
-				return ((Booking) inputElement).getParticipants().toArray(new Participant[0]);
+			{
+				Booking booking = (Booking) inputElement;
+				return booking.getParticipants().toArray(new Participant[0]);
+			}
 			return new Participant[0];
 		}
 

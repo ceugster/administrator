@@ -1,9 +1,5 @@
 package ch.eugster.events.course.handlers;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -17,7 +13,6 @@ import ch.eugster.events.course.wizards.BookingWizard;
 import ch.eugster.events.course.wizards.BookingWizardPage;
 import ch.eugster.events.course.wizards.CourseWizardPage;
 import ch.eugster.events.course.wizards.ParticipantWizardPage;
-import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseState;
@@ -38,16 +33,22 @@ public class AddBookingHandler extends AbstractHandler implements IHandler
 			BookingWizard wizard = null;
 			if (ssel.getFirstElement() instanceof Course)
 			{
-				Booking booking = Booking.newInstance((Course) ssel.getFirstElement());
-				wizard = new BookingWizard(booking);
-				BookingWizardPage bookingPage = new BookingWizardPage("bookingWizardPage", wizard);
-				wizard.addPage(bookingPage);
-				ParticipantWizardPage participantPage = new ParticipantWizardPage("participantWizardPage", wizard);
-				wizard.addPage(participantPage);
+				Course course = (Course) ssel.getFirstElement();
+				wizard = prepareBooking(course);
 			}
 			else
 			{
-				wizard = prepareBooking(ssel);
+				LinkPersonAddress link = null;
+				if (ssel.getFirstElement() instanceof Person)
+				{
+					Person person = (Person) ssel.getFirstElement();
+					wizard = prepareBooking(person.getDefaultLink());
+				}
+				else if (ssel.getFirstElement() instanceof LinkPersonAddress)
+				{
+					link = (LinkPersonAddress) ssel.getFirstElement();
+					wizard = prepareBooking(link);
+				}
 			}
 			if (wizard != null)
 			{
@@ -59,43 +60,34 @@ public class AddBookingHandler extends AbstractHandler implements IHandler
 		return Status.OK_STATUS;
 	}
 
-	private BookingWizard prepareBooking(final IStructuredSelection ssel)
+	private BookingWizard prepareBooking(final Course course)
+	{
+		BookingWizard wizard = null;
+		Booking booking = Booking.newInstance(course);
+		wizard = new BookingWizard(booking);
+		BookingWizardPage bookingPage = new BookingWizardPage("bookingWizardPage", wizard);
+		wizard.addPage(bookingPage);
+		ParticipantWizardPage participantPage = new ParticipantWizardPage("participantWizardPage", wizard);
+		wizard.addPage(participantPage);
+		return wizard;
+	}
+
+	private BookingWizard prepareBooking(LinkPersonAddress link)
 	{
 		Booking booking = Booking.newInstance();
-
-		Collection<Participant> participants = new ArrayList<Participant>();
-		List<AbstractEntity> entities = ssel.toList();
-		for (AbstractEntity entity : entities)
-		{
-			if (entity instanceof LinkPersonAddress)
-			{
-				participants.add(Participant.newInstance((LinkPersonAddress) entity, booking));
-			}
-			else if (entity instanceof Person)
-			{
-				Person person = (Person) entity;
-				if (person.getDefaultLink() != null)
-				{
-					participants.add(Participant.newInstance(person.getDefaultLink(), booking));
-				}
-			}
-		}
-		BookingWizard wizard = null;
-		if (participants.size() > 0)
-		{
-			booking.setParticipants(participants);
-			booking.setParticipant(participants.toArray(new Participant[0])[0]);
-			wizard = new BookingWizard(booking);
-			CourseWizardPage coursePage = new CourseWizardPage("courseWizardPage", wizard);
-			ParticipantWizardPage participantPage = new ParticipantWizardPage("participantWizardPage", wizard);
-			BookingWizardPage bookingPage = new BookingWizardPage("bookingWizardPage", wizard);
-			coursePage.addSelectionChangedListener(bookingPage);
-			coursePage.addSelectionChangedListener(participantPage);
-			wizard.addPage(coursePage);
-			wizard.addPage(bookingPage);
-			wizard.addPage(participantPage);
-			participantPage.addSelectionChangedListener(coursePage);
-		}
+		Participant participant = Participant.newInstance(link, booking);
+		booking.setParticipant(participant);
+		booking.addParticipant(participant);
+		BookingWizard wizard = new BookingWizard(booking);
+		CourseWizardPage coursePage = new CourseWizardPage("courseWizardPage", wizard);
+		ParticipantWizardPage participantPage = new ParticipantWizardPage("participantWizardPage", wizard);
+		BookingWizardPage bookingPage = new BookingWizardPage("bookingWizardPage", wizard);
+		coursePage.addSelectionChangedListener(bookingPage);
+		coursePage.addSelectionChangedListener(participantPage);
+		wizard.addPage(coursePage);
+		wizard.addPage(bookingPage);
+		wizard.addPage(participantPage);
+		participantPage.addSelectionChangedListener(coursePage);
 		return wizard;
 	}
 
