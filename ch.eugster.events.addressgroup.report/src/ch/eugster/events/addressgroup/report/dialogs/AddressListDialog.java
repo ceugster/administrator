@@ -1,7 +1,9 @@
 package ch.eugster.events.addressgroup.report.dialogs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,7 +74,7 @@ public class AddressListDialog extends TitleAreaDialog
 		this.selection = selection;
 	}
 
-	private IStatus buildDocument(final DataMapKey[] keys, final Collection<DataMap> dataMaps)
+	private IStatus buildDocument(final DataMapKey[] keys, final DataMap[] dataMaps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
@@ -217,6 +219,7 @@ public class AddressListDialog extends TitleAreaDialog
 		keys.add(AddressGroupMemberMap.Key.ANOTHER_LINE);
 		keys.add(PersonMap.Key.BIRTHDATE);
 		keys.add(PersonMap.Key.PROFESSION);
+		keys.add(LinkMap.Key.FUNCTION);
 		keys.add(LinkMap.Key.PHONE);
 		keys.add(AddressMap.Key.PHONE);
 		keys.add(PersonMap.Key.PHONE);
@@ -246,8 +249,35 @@ public class AddressListDialog extends TitleAreaDialog
 	{
 		setCurrentUser();
 		final DataMapKey[] keys = getKeys();
-		final Collection<DataMap> dataMaps = createDataMaps(selection);
-
+		final DataMap[] dataMaps = createDataMaps(selection).toArray(new DataMap[0]);
+		Arrays.sort(dataMaps, new Comparator<DataMap>()
+		{
+			@Override
+			public int compare(DataMap map1, DataMap map2)
+			{
+				String value1 = map1.getProperty(PersonMap.Key.LASTNAME.getKey());
+				String value2 = map2.getProperty(PersonMap.Key.LASTNAME.getKey());
+				if (value1.equals(value2))
+				{
+					value1 = map1.getProperty(PersonMap.Key.FIRSTNAME.getKey());
+					value2 = map2.getProperty(PersonMap.Key.FIRSTNAME.getKey());
+					if (value1.equals(value2))
+					{
+						value1 = map1.getProperty(AddressMap.Key.NAME.getKey());
+						value2 = map2.getProperty(AddressMap.Key.NAME.getKey());
+						return value1.compareTo(value2);
+					}
+					else
+					{
+						return value1.compareTo(value2);
+					}
+				}
+				else
+				{
+					return value1.compareTo(value2);
+				}
+			}
+		});
 		super.okPressed();
 
 		UIJob job = new UIJob("Dokument wird generiert...")
