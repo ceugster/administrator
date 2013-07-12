@@ -383,15 +383,41 @@ public class Course extends AbstractEntity
 	{
 		for (Booking booking : this.getBookings())
 		{
-			if (booking.hasParticipant(person))
+			if (!booking.isDeleted() && booking.hasParticipant(person))
+			{
 				return booking;
+			}
 		}
 		return null;
 	}
 
 	public Collection<Booking> getBookings()
 	{
-		return this.bookings;
+		Collection<Booking> bookings = new Vector<Booking>();
+		for (Booking booking : this.bookings)
+		{
+			if (!booking.isDeleted())
+			{
+				bookings.add(booking);
+			}
+		}
+		return bookings;
+	}
+
+	public Collection<Booking> getBookings(IBookingState bookingState)
+	{
+		Collection<Booking> bookings = new Vector<Booking>();
+		for (Booking booking : this.bookings)
+		{
+			if (!booking.isDeleted())
+			{
+				if (booking.getBookingState(booking.getCourse().getState()).equals(bookingState))
+				{
+					bookings.add(booking);
+				}
+			}
+		}
+		return bookings;
 	}
 
 	public IBookingState[] getBookingStates(final CourseState courseState)
@@ -610,51 +636,16 @@ public class Course extends AbstractEntity
 		return count;
 	}
 
-	public int getParticipantsCount(final BookingAnnulatedState state)
+	public int getParticipantsCount(final IBookingState state)
 	{
 		int count = 0;
-
 		for (Booking booking : this.getBookings())
 		{
 			if (!booking.isDeleted())
 			{
-				if (booking.getAnnulatedState().equals(state))
+				if (booking.getState().equals(state))
 				{
-					count = booking.getParticipantCount();
-				}
-			}
-		}
-		return count;
-	}
-
-	public int getParticipantsCount(final BookingDoneState state)
-	{
-		int count = 0;
-
-		for (Booking booking : this.getBookings())
-		{
-			if (!booking.isDeleted())
-			{
-				if (booking.getDoneState().equals(state))
-				{
-					count = booking.getParticipantCount();
-				}
-			}
-		}
-		return count;
-	}
-
-	public int getParticipantsCount(final BookingForthcomingState state)
-	{
-		int count = 0;
-
-		for (Booking booking : this.getBookings())
-		{
-			if (!booking.isDeleted())
-			{
-				if (booking.getForthcomingState().equals(state))
-				{
-					count = booking.getParticipantCount();
+					count += booking.getParticipantCount();
 				}
 			}
 		}
