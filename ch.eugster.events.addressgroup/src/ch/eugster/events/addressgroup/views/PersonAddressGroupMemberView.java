@@ -138,7 +138,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 					}
 					else if (clazz.equals(LinkPersonAddress.class))
 					{
-						if (member.getLink().getId().equals(parent.getId()))
+						if (member.getLink() != null && member.getLink().getId().equals(parent.getId()))
 						{
 							this.current.put(group.getId(), member);
 							break;
