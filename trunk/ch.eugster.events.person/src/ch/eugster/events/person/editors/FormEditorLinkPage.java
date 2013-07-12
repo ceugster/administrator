@@ -72,7 +72,12 @@ import ch.eugster.events.persistence.model.AddressSalutation;
 import ch.eugster.events.persistence.model.AddressType;
 import ch.eugster.events.persistence.model.Country;
 import ch.eugster.events.persistence.model.Domain;
+import ch.eugster.events.persistence.model.ExtendedField;
+import ch.eugster.events.persistence.model.FieldExtension;
+import ch.eugster.events.persistence.model.FieldExtensionTarget;
+import ch.eugster.events.persistence.model.FieldExtensionType;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
+import ch.eugster.events.persistence.model.LinkPersonAddressExtendedField;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.PersonSettings;
 import ch.eugster.events.persistence.model.PersonTitle;
@@ -81,6 +86,7 @@ import ch.eugster.events.persistence.model.ZipCode;
 import ch.eugster.events.persistence.queries.AddressSalutationQuery;
 import ch.eugster.events.persistence.queries.AddressTypeQuery;
 import ch.eugster.events.persistence.queries.CountryQuery;
+import ch.eugster.events.persistence.queries.FieldExtensionQuery;
 import ch.eugster.events.persistence.queries.ZipCodeQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.person.Activator;
@@ -117,6 +123,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	private static final String ADDRESS_SECTION_EXPANDED = "address.section.expanded";
 
 	private static final String ADDRESS_SALUTATION_SECTION_EXPANDED = "address.salutation.section.expanded";
+
+	private static final String EXTENDED_FIELD_SECTION_EXPANDED = "extended.field.section.expanded";
 
 	private final FormEditorPersonPage personPage;
 
@@ -182,6 +190,12 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
+	private Collection<FieldExtension> extensions = new ArrayList<FieldExtension>();
+
+	private Map<Long, ExtendedField> extendedFields = new HashMap<Long, ExtendedField>();
+
+	private Map<Long, Control> extendedFieldControls = new HashMap<Long, Control>();
+
 	public FormEditorLinkPage(final FormEditor editor, final FormEditorPersonPage personPage, final String id,
 			final LinkPersonAddress link)
 	{
@@ -195,6 +209,86 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		this.personPage = personPage;
 		this.addressType = addressType;
 		this.setTitleImage(link.getAddressType().getImage());
+	}
+
+	private void addExtendedFields(final Composite parent, FormToolkit toolkit, int numColumns)
+	{
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		tracker.open();
+		try
+		{
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				FieldExtensionQuery query = (FieldExtensionQuery) service.getQuery(FieldExtension.class);
+				Collection<FieldExtension> extensions = query.selectByTarget(FieldExtensionTarget.PERSON, false);
+				if (extensions.size() > 0)
+				{
+					LinkPersonAddress link = getLink();
+					for (LinkPersonAddressExtendedField field : link.getExtendedFields())
+					{
+						this.extendedFields.put(field.getFieldExtension().getId(), field);
+					}
+					for (FieldExtension extension : extensions)
+					{
+						ExtendedField field = this.extendedFields.get(extension.getId());
+						if (field == null)
+						{
+							if (extension.getTarget().equals(FieldExtensionTarget.PERSON))
+							{
+								field = LinkPersonAddressExtendedField.newInstance(link, extension);
+								field.setValue(extension.getDefaultValue());
+								extendedFields.put(field.getFieldExtension().getId(), field);
+							}
+						}
+						Label label = toolkit.createLabel(parent, extension.getLabel());
+						label.setLayoutData(new GridData());
+
+						GridData gridData = extension.getWidthHint() == 0 ? new GridData(GridData.FILL_HORIZONTAL)
+								: new GridData();
+						gridData.horizontalSpan = numColumns - 1;
+						if (extension.getWidthHint() != 0)
+						{
+							gridData.widthHint = extension.getWidthHint();
+						}
+						if (extension.getHeightHint() != 0)
+						{
+							gridData.heightHint = extension.getHeightHint();
+						}
+						if (extension.getType().equals(FieldExtensionType.TEXT))
+						{
+							Text text = toolkit.createText(parent, "");
+							text.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+							text.setLayoutData(gridData);
+							extension.getType().addListeners(text, this);
+							extendedFieldControls.put(extension.getId(), text);
+						}
+						else
+						{
+							Control control = extension.getType().createControl(parent, extension.getStyle());
+							control.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+							control.setLayoutData(gridData);
+							extension.getType().addListeners(control, this);
+							extendedFieldControls.put(extension.getId(), control);
+						}
+					}
+				}
+			}
+		}
+		finally
+		{
+			tracker.close();
+		}
+	}
+
+	private void loadExtendedFieldValues()
+	{
+		for (ExtendedField field : extendedFields.values())
+		{
+			Control control = extendedFieldControls.get(field.getFieldExtension().getId());
+			field.getFieldExtension().getType().setInput(control, AbstractEntity.stringValueOf(field.getValue()));
+		}
 	}
 
 	private void addAddressPage(final AddressType addressType, final String id)
@@ -432,6 +526,17 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		polite = toolkit.createLabel(client, "", SWT.BORDER);
 		polite.setLayoutData(gridData);
 
+		toolkit.paintBordersFor(client);
+	}
+
+	private void createExtendedFieldsSection(final IManagedForm managedForm, final String title,
+			final String description, final int numColumns)
+	{
+		Section section = createSection(managedForm, title, description, Section.TWISTIE | Section.TITLE_BAR
+				| Section.DESCRIPTION | Section.EXPANDED, EXTENDED_FIELD_SECTION_EXPANDED);
+		FormToolkit toolkit = managedForm.getToolkit();
+		Composite client = createClientComposite(toolkit, section, numColumns);
+		addExtendedFields(client, toolkit, numColumns);
 		toolkit.paintBordersFor(client);
 	}
 
@@ -961,16 +1066,32 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 				"Anschrift",
 				"Geben Sie hier die gewünschten Adressdaten ein. Im Feld Strasse können Sie CTRL+Space verwenden, um aus bestehenden Adressen auszuwählen.",
 				5);
-
 		createAddressContactsSectionPart(managedForm, "Kontakte", "Adressenbezogene Kontaktmöglichkeiten", 3);
-
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		tracker.open();
+		try
+		{
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				FieldExtensionQuery query = (FieldExtensionQuery) service.getQuery(FieldExtension.class);
+				extensions = query.selectByTarget(FieldExtensionTarget.PA_LINK, false);
+				if (extensions.size() > 0)
+				{
+					createExtendedFieldsSection(managedForm, "Zusatzinformationen", "", 4);
+				}
+			}
+		}
+		finally
+		{
+			tracker.close();
+		}
 		createLinkSectionPart(managedForm, "Zusatzinformationen",
 				"Hier können zusätzliche Informationen zu " + this.getText()
 						+ " erfasst werden, die sich auf diese Adresse beziehen.", 3);
-
 		createAddressLabelExampleSectionPart(managedForm, "Vorschau Adressetikette",
 				"Vorschau der Adressetiketten für Einzel- und, falls gegeben, Sammeladresse.", 2);
-
 		loadValues();
 		IEditorInput input = this.getEditor().getEditorInput();
 		if (input instanceof Initializable)
@@ -1448,7 +1569,24 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		this.loadAddressValues();
 		this.loadAddressContactsValues();
 		this.loadLinkValues();
+		this.loadExtendedFieldValues();
 		this.setDirty(false);
+	}
+
+	private void saveExtendedFieldValues()
+	{
+		for (ExtendedField field : extendedFields.values())
+		{
+			Control control = extendedFieldControls.get(field.getFieldExtension().getId());
+			field.setValue(field.getFieldExtension().getType().getInput(control));
+			if (field.getId() == null && !field.getValue().isEmpty())
+			{
+				if (field.getFieldExtension().getTarget().equals(FieldExtensionTarget.PA_LINK))
+				{
+					getLink().addExtendedFields((LinkPersonAddressExtendedField) field);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -1549,6 +1687,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		saveAddressValues();
 		saveAddressContactsValues();
 		saveLinkValues();
+		saveExtendedFieldValues();
 		this.setDirty(false);
 	}
 
