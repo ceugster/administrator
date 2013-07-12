@@ -267,8 +267,12 @@ public class Booking extends AbstractEntity
 	{
 		int count = 0;
 		for (Participant participant : this.participants)
+		{
 			if (!participant.isDeleted())
+			{
 				count += participant.getCount();
+			}
+		}
 		return count;
 	}
 
