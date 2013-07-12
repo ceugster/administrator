@@ -70,6 +70,12 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 	@Override
 	public IStatus buildDocument(final DataMapKey[] keys, final Collection<DataMap> maps)
 	{
+		return buildDocument(keys, maps.toArray(new DataMap[0]));
+	}
+
+	@Override
+	public IStatus buildDocument(final DataMapKey[] keys, final DataMap[] maps)
+	{
 		IStatus status = Status.OK_STATUS;
 		try
 		{
@@ -94,7 +100,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 				this.addRow(keys, map, sheet, ++counter, style, normal);
 			}
 			this.packColumns(sheet, 0, keys.length);
-			if (maps.size() > 0)
+			if (maps.length > 0)
 			{
 				this.showDocument(workbook);
 			}

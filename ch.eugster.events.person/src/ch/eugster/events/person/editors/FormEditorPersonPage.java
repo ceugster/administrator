@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -72,12 +73,18 @@ import ch.eugster.events.persistence.events.EntityAdapter;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
+import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressType;
 import ch.eugster.events.persistence.model.Country;
 import ch.eugster.events.persistence.model.Domain;
+import ch.eugster.events.persistence.model.ExtendedField;
+import ch.eugster.events.persistence.model.FieldExtension;
+import ch.eugster.events.persistence.model.FieldExtensionTarget;
+import ch.eugster.events.persistence.model.FieldExtensionType;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
+import ch.eugster.events.persistence.model.PersonExtendedField;
 import ch.eugster.events.persistence.model.PersonForm;
 import ch.eugster.events.persistence.model.PersonSettings;
 import ch.eugster.events.persistence.model.PersonSex;
@@ -86,6 +93,7 @@ import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.queries.AddressTypeQuery;
 import ch.eugster.events.persistence.queries.CountryQuery;
 import ch.eugster.events.persistence.queries.DomainQuery;
+import ch.eugster.events.persistence.queries.FieldExtensionQuery;
 import ch.eugster.events.persistence.queries.PersonQuery;
 import ch.eugster.events.persistence.queries.PersonSexQuery;
 import ch.eugster.events.persistence.queries.PersonTitleQuery;
@@ -168,18 +176,102 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 
 	private Text website;
 
+	private Collection<FieldExtension> extensions = new ArrayList<FieldExtension>();
+
 	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
 	private final Collection<IPropertyChangeListener> listeners = new ArrayList<IPropertyChangeListener>();
+
+	private Map<Long, ExtendedField> extendedFields = new HashMap<Long, ExtendedField>();
+
+	private Map<Long, Control> extendedFieldControls = new HashMap<Long, Control>();
 
 	public FormEditorPersonPage(final FormEditor editor, final String id, final String title)
 	{
 		super(editor, id, title);
 	}
 
+	private void addExtendedFields(final Composite parent, FormToolkit toolkit, int numColumns)
+	{
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		tracker.open();
+		try
+		{
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				if (extensions.size() > 0)
+				{
+					Person person = getPerson();
+					for (PersonExtendedField field : person.getExtendedFields())
+					{
+						this.extendedFields.put(field.getFieldExtension().getId(), field);
+					}
+					for (FieldExtension extension : extensions)
+					{
+						ExtendedField field = this.extendedFields.get(extension.getId());
+						if (field == null)
+						{
+							if (extension.getTarget().equals(FieldExtensionTarget.PERSON))
+							{
+								field = PersonExtendedField.newInstance(person, extension);
+								field.setValue(extension.getDefaultValue());
+								extendedFields.put(field.getFieldExtension().getId(), field);
+							}
+						}
+						Label label = toolkit.createLabel(parent, extension.getLabel());
+						label.setLayoutData(new GridData());
+
+						GridData gridData = extension.getWidthHint() == 0 ? new GridData(GridData.FILL_HORIZONTAL)
+								: new GridData();
+						gridData.horizontalSpan = numColumns - 1;
+						if (extension.getWidthHint() != 0)
+						{
+							gridData.widthHint = extension.getWidthHint();
+						}
+						if (extension.getHeightHint() != 0)
+						{
+							gridData.heightHint = extension.getHeightHint();
+						}
+						if (extension.getType().equals(FieldExtensionType.TEXT))
+						{
+							Text text = toolkit.createText(parent, "");
+							text.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+							text.setLayoutData(gridData);
+							extension.getType().addListeners(text, this);
+							extendedFieldControls.put(extension.getId(), text);
+						}
+						else
+						{
+							Control control = extension.getType().createControl(parent, extension.getStyle());
+							control.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+							control.setLayoutData(gridData);
+							extension.getType().addListeners(control, this);
+							extendedFieldControls.put(extension.getId(), control);
+						}
+					}
+				}
+			}
+		}
+		finally
+		{
+			tracker.close();
+		}
+	}
+
 	public void addListener(final IPropertyChangeListener listener)
 	{
 		this.listeners.add(listener);
+	}
+
+	private void loadExtendedFieldValues()
+	{
+		for (ExtendedField field : extendedFields.values())
+		{
+			Control control = extendedFieldControls.get(field.getFieldExtension().getId());
+			field.getFieldExtension().getType().setInput(control, AbstractEntity.stringValueOf(field.getValue()));
+		}
 	}
 
 	private void createButtons(final IManagedForm managedForm, final String title, final String description)
@@ -565,6 +657,27 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 		createButtons(managedForm, "Adressen", "Adressen hinzufügen und bearbeiten");
 		createIdentitySectionPart(managedForm, "Identität", "", 2);
 		createContactsSectionPart(managedForm, "Kontakt", "", 3);
+
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		tracker.open();
+		try
+		{
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				FieldExtensionQuery query = (FieldExtensionQuery) service.getQuery(FieldExtension.class);
+				extensions = query.selectByTarget(FieldExtensionTarget.PERSON, false);
+				if (extensions.size() > 0)
+				{
+					createExtendedFieldsSection(managedForm, "Zusatzinformationen", "", 4);
+				}
+			}
+		}
+		finally
+		{
+			tracker.close();
+		}
 		createFurtherSection(managedForm, "Weitere Angaben", "", 4);
 		createNotesSection(managedForm, "Bemerkungen", "", 1);
 
@@ -691,6 +804,16 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 			tracker.close();
 		}
 
+		toolkit.paintBordersFor(client);
+	}
+
+	private void createExtendedFieldsSection(final IManagedForm managedForm, final String title,
+			final String description, final int numColumns)
+	{
+		Section section = createSection(managedForm, title, description, FURTHER_SECTION_EXPANDED);
+		FormToolkit toolkit = managedForm.getToolkit();
+		Composite client = createClientComposite(toolkit, section, numColumns);
+		addExtendedFields(client, toolkit, numColumns);
 		toolkit.paintBordersFor(client);
 	}
 
@@ -1228,7 +1351,24 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 		this.loadIdentityValues(person);
 		this.loadContactsValues(person);
 		this.loadFurtherValues(person);
+		this.loadExtendedFieldValues();
 		this.setDirty(false);
+	}
+
+	private void saveExtendedFieldValues(final Person person)
+	{
+		for (ExtendedField field : extendedFields.values())
+		{
+			Control control = extendedFieldControls.get(field.getFieldExtension().getId());
+			field.setValue(field.getFieldExtension().getType().getInput(control));
+			if (field.getId() == null && !field.getValue().isEmpty())
+			{
+				if (field.getFieldExtension().getTarget().equals(FieldExtensionTarget.PERSON))
+				{
+					person.addExtendedFields((PersonExtendedField) field);
+				}
+			}
+		}
 	}
 
 	public void notifyListeners(final PropertyChangeEvent event)
@@ -1333,6 +1473,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 		this.saveIdentityValues(person);
 		this.saveContactsValues(person);
 		this.saveFurtherValues(person);
+		saveExtendedFieldValues(person);
 		this.setDirty(false);
 	}
 
