@@ -1,6 +1,8 @@
 package ch.eugster.events.person.editors;
 
-public interface IPersonFormEditorPage
+import ch.eugster.events.persistence.model.DirtyMarkable;
+
+public interface IPersonFormEditorPage extends DirtyMarkable
 {
 	void setDirty(boolean dirty);
 

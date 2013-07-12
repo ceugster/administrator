@@ -12,6 +12,8 @@ public interface DocumentBuilderService
 {
 	IStatus buildDocument(DataMapKey[] keys, Collection<DataMap> maps);
 
+	IStatus buildDocument(DataMapKey[] keys, DataMap[] maps);
+
 	IStatus buildDocument(File file, Collection<DataMap> maps);
 
 	IStatus buildDocument(File file, DataMap map);
