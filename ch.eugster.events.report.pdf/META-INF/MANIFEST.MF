@@ -7,7 +7,7 @@ Bundle-Activator: ch.eugster.colibri.report.pdf.Activator
 Bundle-Vendor: Christian Eugster
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/iText-2.1.7.js1.jar,
  .
