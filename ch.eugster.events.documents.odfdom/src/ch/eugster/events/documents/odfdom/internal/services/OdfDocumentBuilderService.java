@@ -71,6 +71,12 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		return status;
 	}
 
+	@Override
+	public IStatus buildDocument(DataMapKey[] keys, DataMap[] maps)
+	{
+		return Status.CANCEL_STATUS;
+	}
+
 	private IStatus buildTextDocument(final File template, final Collection<DataMap> maps)
 	{
 		IStatus status = Status.OK_STATUS;
@@ -381,4 +387,5 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 	{
 		Runtime.getRuntime().exec(writer + " " + file.getAbsolutePath());
 	}
+
 }
