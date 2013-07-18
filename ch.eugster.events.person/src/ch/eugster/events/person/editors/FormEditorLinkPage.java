@@ -456,7 +456,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			}
 		});
 
-		gridData = new GridData();
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
 
 		this.website = toolkit.createText(client, "");
@@ -1092,13 +1092,14 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 						+ " erfasst werden, die sich auf diese Adresse beziehen.", 3);
 		createAddressLabelExampleSectionPart(managedForm, "Vorschau Adressetikette",
 				"Vorschau der Adressetiketten für Einzel- und, falls gegeben, Sammeladresse.", 2);
-		loadValues();
+
 		IEditorInput input = this.getEditor().getEditorInput();
 		if (input instanceof Initializable)
 		{
 			Initializable init = (Initializable) input;
 			initializeFields(init.getInitialValues());
 		}
+		loadValues();
 	}
 
 	private void createLinkSectionPart(final IManagedForm managedForm, final String title, final String description,
@@ -1531,6 +1532,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		LinkPersonAddress link = getLink();
 		phone.setText(formatPhoneNumber(link.getAddress().getPhone()));
 		fax.setText(formatPhoneNumber(link.getAddress().getFax()));
+		email.setText(link.getAddress().getEmail());
 		this.website.setText(link.getAddress().getWebsite());
 	}
 
@@ -1553,6 +1555,12 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		this.countryViewer.setSelection(new StructuredSelection(link.getAddress().getCountry()));
 		this.zip.setText(link.getAddress().getZip());
 		this.city.setText(link.getAddress().getCity());
+		String province = link.getAddress().getZipCode() == null ? link.getAddress().getProvince() : link.getAddress()
+				.getZipCode().getState();
+		if (province != null)
+		{
+			provinceViewer.setSelection(new StructuredSelection(new String[] { province }));
+		}
 	}
 
 	private void loadLinkValues()
