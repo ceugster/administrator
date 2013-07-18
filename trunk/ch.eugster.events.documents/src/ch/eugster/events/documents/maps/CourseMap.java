@@ -698,7 +698,10 @@ public class CourseMap extends AbstractDataMap
 					Collection<Booking> bookings = course.getBookings();
 					for (Booking booking : bookings)
 					{
-						tableMaps.add(new BookingMap(booking));
+						if (!booking.isDeleted())
+						{
+							tableMaps.add(new BookingMap(booking));
+						}
 					}
 					return tableMaps;
 				}
@@ -708,7 +711,10 @@ public class CourseMap extends AbstractDataMap
 					Collection<BookingType> bookingTypes = course.getBookingTypes();
 					for (BookingType bookingType : bookingTypes)
 					{
-						tableMaps.add(new BookingTypeMap(bookingType));
+						if (!bookingType.isDeleted())
+						{
+							tableMaps.add(new BookingTypeMap(bookingType));
+						}
 					}
 					return tableMaps;
 				}
@@ -718,7 +724,10 @@ public class CourseMap extends AbstractDataMap
 					Collection<CourseDetail> details = course.getCourseDetails();
 					for (CourseDetail detail : details)
 					{
-						tableMaps.add(new CourseDetailMap(detail));
+						if (!detail.isDeleted())
+						{
+							tableMaps.add(new CourseDetailMap(detail));
+						}
 					}
 					return tableMaps;
 				}
@@ -728,7 +737,10 @@ public class CourseMap extends AbstractDataMap
 					Collection<CourseGuide> guides = course.getCourseGuides();
 					for (CourseGuide guide : guides)
 					{
-						tableMaps.add(new CourseGuideMap(guide));
+						if (!guide.isDeleted())
+						{
+							tableMaps.add(new CourseGuideMap(guide));
+						}
 					}
 					return tableMaps;
 				}

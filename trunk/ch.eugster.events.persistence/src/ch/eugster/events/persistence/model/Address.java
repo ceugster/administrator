@@ -375,7 +375,7 @@ public class Address extends AbstractEntity implements Donator
 
 	public void setCity(final String city)
 	{
-		this.propertyChangeSupport.firePropertyChange("city", this.city, this.city = city.trim());
+		this.propertyChangeSupport.firePropertyChange("city", this.city, this.city = city == null ? null : city.trim());
 	}
 
 	public void setCountry(final Country country)
@@ -453,7 +453,7 @@ public class Address extends AbstractEntity implements Donator
 	{
 		if (this.zip != zip)
 		{
-			this.propertyChangeSupport.firePropertyChange("zip", this.zip, this.zip = zip.trim());
+			this.propertyChangeSupport.firePropertyChange("zip", this.zip, this.zip = zip == null ? null : zip.trim());
 		}
 	}
 
@@ -462,8 +462,8 @@ public class Address extends AbstractEntity implements Donator
 		if (this.zipCode != zipCode)
 		{
 			this.propertyChangeSupport.firePropertyChange("zipCode", this.zipCode, this.zipCode = zipCode);
-			setZip(zipCode.getZip());
-			setCity(zipCode.getCity());
+			setZip(zipCode == null ? null : zipCode.getZip());
+			setCity(zipCode == null ? null : zipCode.getCity());
 		}
 	}
 

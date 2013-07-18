@@ -636,6 +636,25 @@ public class Course extends AbstractEntity
 		return count;
 	}
 
+	public int getBookedParticipantsCount(boolean saved)
+	{
+		int count = 0;
+
+		for (Booking booking : this.getBookings())
+		{
+			if (!booking.isDeleted())
+			{
+				if (booking.getBookingState(booking.getCourse().getState()).equals(BookingForthcomingState.BOOKED)
+						|| booking.getBookingState(booking.getCourse().getState()).equals(
+								BookingForthcomingState.PROVISIONAL_BOOKED))
+				{
+					count += booking.getBookedParticipantCount(saved);
+				}
+			}
+		}
+		return count;
+	}
+
 	public int getParticipantsCount(final IBookingState state)
 	{
 		int count = 0;
