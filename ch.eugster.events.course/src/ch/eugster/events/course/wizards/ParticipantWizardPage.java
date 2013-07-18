@@ -106,6 +106,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 
 	private IDialogSettings dialogSettings;
 
+	private int startCountParticipants;
+
 	private final Collection<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
 
 	public ParticipantWizardPage(final String pageName, final IBookingWizard wizard)
@@ -170,15 +172,13 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	private boolean canAdd(final int count)
 	{
 		boolean canAdd = true;
-		BookingWizard wizard = (BookingWizard) this.getWizard();
-		if (wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.BOOKED)
-				|| wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
+		Booking booking = ((BookingWizard) this.getWizard()).getBooking();
+		if (booking.getForthcomingState().equals(BookingForthcomingState.BOOKED)
+				|| booking.getForthcomingState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
 		{
-			int booked = wizard.getBooking().getParticipantCount();
-			int max = wizard.getBooking().getCourse().getMaxParticipants();
-			int existing = wizard.getBooking().getCourse().getBookedParticipantsCount();
-
-			canAdd = count < max - existing - booked;
+			int max = booking.getCourse().getMaxParticipants();
+			int courseBooked = booking.getCourse().getBookedParticipantsCount();
+			canAdd = count <= max - courseBooked;
 		}
 		return canAdd;
 	}
@@ -186,25 +186,13 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	private boolean canAdd(final Participant participant, final int count)
 	{
 		boolean canAdd = true;
-		BookingWizard wizard = (BookingWizard) this.getWizard();
-		if (wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.BOOKED)
-				|| wizard.getBooking().getForthcomingState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
+		Booking booking = ((BookingWizard) this.getWizard()).getBooking();
+		if (booking.getForthcomingState().equals(BookingForthcomingState.BOOKED)
+				|| booking.getForthcomingState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
 		{
-			int max = wizard.getBooking().getCourse().getMaxParticipants();
-			int existing = wizard.getBooking().getCourse().getBookedParticipantsCount();
-			int existingParticipantCount = 0;
-			if (participant.getId() != null)
-			{
-				Collection<Participant> bookedParticipants = wizard.getBooking().getParticipants();
-				for (Participant bookedParticipant : bookedParticipants)
-				{
-					if (participant.getId().equals(bookedParticipant.getId()))
-					{
-						existingParticipantCount = bookedParticipant.getCount();
-					}
-				}
-			}
-			canAdd = count - existingParticipantCount <= max - existing;
+			int max = booking.getCourse().getMaxParticipants();
+			int courseBooked = booking.getCourse().getBookedParticipantsCount(true);
+			canAdd = count <= max - courseBooked;
 		}
 		return canAdd;
 	}
@@ -212,6 +200,9 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	@Override
 	public void createControl(final Composite parent)
 	{
+		Booking booking = ((BookingWizard) this.getWizard()).getBooking();
+		startCountParticipants = booking.getParticipantCount();
+
 		this.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("BOOKING_48"));
 		this.setTitle("Auswahl Teilnehmer");
 		this.setMessage("Bearbeiten der Teilnehmerauswahl");
@@ -1245,8 +1236,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 
 	private String[] getBookingTypeLabels()
 	{
-		String[] labels = null;
-		if (this.bookingTypes == null)
+		String[] labels = new String[0];
+		if (this.bookingTypes != null)
 			labels = new String[0];
 		else
 		{
@@ -1280,8 +1271,12 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		this.bookingTypes.clear();
 		// this.bookingTypes.put(Long.valueOf(0l), BookingType.newInstance());
 		for (BookingType bookingType : course.getBookingTypes())
-			this.bookingTypes.put(bookingType.getId(), bookingType);
-
+		{
+			if (!bookingType.isDeleted())
+			{
+				this.bookingTypes.put(bookingType.getId(), bookingType);
+			}
+		}
 		this.participantViewer.refresh(true);
 
 	}
