@@ -530,7 +530,8 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 					Collection<Participant> otherCourseParticipants = participant.getLink().getParticipants();
 					for (Participant otherCourseParticipant : otherCourseParticipants)
 					{
-						if (!otherCourseParticipant.isDeleted() && !otherCourseParticipant.getLink().isDeleted())
+						if (!otherCourseParticipant.isDeleted() && !otherCourseParticipant.getLink().isDeleted()
+								&& !otherCourseParticipant.getBooking().isDeleted())
 						{
 							if (!this.courses.contains(otherCourseParticipant.getBooking().getCourse()))
 								this.courses.add(otherCourseParticipant.getBooking().getCourse());

@@ -276,6 +276,20 @@ public class Booking extends AbstractEntity
 		return count;
 	}
 
+	public int getBookedParticipantCount(boolean saved)
+	{
+		int count = 0;
+		for (Participant participant : this.participants)
+		{
+
+			if ((saved ? participant.getId() != null : participant.getId() == null) && !participant.isDeleted())
+			{
+				count += participant.getCount();
+			}
+		}
+		return count;
+	}
+
 	public Collection<Participant> getParticipants()
 	{
 		Collection<Participant> ps = new ArrayList<Participant>();

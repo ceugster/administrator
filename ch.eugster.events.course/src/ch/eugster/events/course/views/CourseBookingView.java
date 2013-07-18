@@ -1,6 +1,8 @@
 package ch.eugster.events.course.views;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -53,7 +55,6 @@ import ch.eugster.events.persistence.model.BookingAnnulatedState;
 import ch.eugster.events.persistence.model.BookingDoneState;
 import ch.eugster.events.persistence.model.BookingForthcomingState;
 import ch.eugster.events.persistence.model.Course;
-import ch.eugster.events.persistence.model.CourseState;
 import ch.eugster.events.persistence.model.IBookingState;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Participant;
@@ -264,7 +265,7 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		composite.setLayout(new GridLayout(2, true));
+		composite.setLayout(new GridLayout());
 
 		this.bookingStateLabelColumn1 = new Label(composite, SWT.NONE);
 		this.bookingStateLabelColumn1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -634,66 +635,74 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 				for (int i = 0; i < rows; i++)
 				{
 					this.bookingStateLabelColumn1.setText(this.bookingStateLabelColumn1.getText() + "\n");
-					this.bookingStateLabelColumn2.setText(this.bookingStateLabelColumn2.getText() + "\n");
+					// this.bookingStateLabelColumn2.setText(this.bookingStateLabelColumn2.getText()
+					// + "\n");
 				}
 			}
 			else if (object instanceof Course)
 			{
-				int[] count = null;
-				IBookingState[] states = null;
-				this.bookingStateLabelColumn1.setText("");
-				this.bookingStateLabelColumn2.setText("");
-
+				Map<IBookingState, BookingStateCount> states = new HashMap<IBookingState, BookingStateCount>();
 				Course course = (Course) object;
+				this.bookingStateLabelColumn1.setText("Minimale Teilnehmerzahl: " + course.getMinParticipants()
+						+ " | Maximale Teilnehmerzahl: " + course.getMaxParticipants());
 				Collection<Booking> bookings = course.getBookings();
-
-				if (course.getState().equals(CourseState.FORTHCOMING))
+				for (Booking booking : bookings)
 				{
-					states = BookingForthcomingState.values();
-					count = new int[states.length];
-					for (Booking booking : bookings)
+					BookingStateCount state = states.get(booking.getState());
+					if (state == null)
 					{
-						count[booking.getForthcomingState().ordinal()] = count[booking.getForthcomingState().ordinal()]
-								+ booking.getParticipantCount();
+						state = new BookingStateCount(booking.getState(), booking.getParticipantCount());
+						states.put(booking.getState(), state);
+					}
+					else
+					{
+						state.addCount(booking.getParticipantCount());
 					}
 				}
-				else if (course.getState().equals(CourseState.DONE))
+				StringBuilder text = new StringBuilder();
+				for (BookingStateCount state : states.values())
 				{
-					states = BookingDoneState.values();
-					count = new int[states.length];
-					for (Booking booking : bookings)
-					{
-						count[booking.getDoneState().ordinal()] = count[booking.getDoneState().ordinal()]
-								+ booking.getParticipantCount();
-					}
+					text = text.append(state.getBookingStateName() + ": " + state.getCount() + " ");
 				}
-				if (course.getState().equals(CourseState.ANNULATED))
-				{
-					states = BookingAnnulatedState.values();
-					count = new int[states.length];
-					for (Booking booking : bookings)
-					{
-						count[booking.getAnnulatedState().ordinal()] = count[booking.getAnnulatedState().ordinal()]
-								+ booking.getParticipantCount();
-					}
-				}
-				for (int i = 0; i < rows; i++)
-				{
-					this.bookingStateLabelColumn1.setText(this.bookingStateLabelColumn1.getText()
-							+ states[i].toString() + ": " + count[i]);
-					if (!this.bookingStateLabelColumn1.getText().isEmpty())
-						this.bookingStateLabelColumn1.setText(this.bookingStateLabelColumn1.getText() + "\n");
-				}
-				for (int i = rows; i < count.length; i++)
-				{
-					this.bookingStateLabelColumn2.setText(this.bookingStateLabelColumn2.getText()
-							+ states[i].toString() + ": " + count[i]);
-					if (!this.bookingStateLabelColumn2.getText().isEmpty())
-						this.bookingStateLabelColumn2.setText(this.bookingStateLabelColumn2.getText() + "\n");
-				}
+				this.bookingStateLabelColumn2.setText(text.toString().trim());
+				// for (int i = rows; i < count.length; i++)
+				// {
+				// this.bookingStateLabelColumn2.setText(this.bookingStateLabelColumn2.getText()
+				// + states[i].toString() + ": " + count[i]);
+				// if (!this.bookingStateLabelColumn2.getText().isEmpty())
+				// this.bookingStateLabelColumn2.setText(this.bookingStateLabelColumn2.getText()
+				// + "\n");
+				// }
 			}
 			this.bookingStateLabelColumn1.getParent().getParent().layout();
 		}
 	}
 
+	private class BookingStateCount
+	{
+		int count;
+
+		IBookingState state;
+
+		public BookingStateCount(IBookingState state, int count)
+		{
+			this.count = count;
+			this.state = state;
+		}
+
+		public String getBookingStateName()
+		{
+			return state.toString();
+		}
+
+		public int getCount()
+		{
+			return this.count;
+		}
+
+		public void addCount(int count)
+		{
+			this.count += count;
+		}
+	}
 }

@@ -570,9 +570,12 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 			Collection<BookingType> sources = course.getBookingTypes();
 			for (BookingType source : sources)
 			{
-				BookingType target = BookingType.newInstance();
-				CourseEditorContentOutlinePage.this.copy(source, target);
-				this.bookingTypes.add(target);
+				if (!source.isDeleted())
+				{
+					BookingType target = BookingType.newInstance();
+					CourseEditorContentOutlinePage.this.copy(source, target);
+					this.bookingTypes.add(target);
+				}
 			}
 		}
 
@@ -637,9 +640,12 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 			Collection<CourseDetail> sources = course.getCourseDetails();
 			for (CourseDetail source : sources)
 			{
-				CourseDetail target = CourseDetail.newInstance(source.getCourse());
-				CourseEditorContentOutlinePage.this.copy(source, target);
-				this.courseDetails.add(target);
+				if (!source.isDeleted())
+				{
+					CourseDetail target = CourseDetail.newInstance(source.getCourse());
+					CourseEditorContentOutlinePage.this.copy(source, target);
+					this.courseDetails.add(target);
+				}
 			}
 		}
 
@@ -668,7 +674,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		@Override
 		public String toString()
 		{
-			return "Kursdaten (" + courseDetails.size() + ")";
+			return "Kursdaten (" + this.courseDetails.size() + ")";
 		}
 
 		public void updateCourseDetails()
@@ -862,9 +868,12 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 			Collection<CourseGuide> sources = course.getCourseGuides();
 			for (CourseGuide source : sources)
 			{
-				CourseGuide target = CourseGuide.newInstance(source.getCourse());
-				CourseEditorContentOutlinePage.this.copy(source, target);
-				this.courseGuides.add(target);
+				if (!source.isDeleted())
+				{
+					CourseGuide target = CourseGuide.newInstance(source.getCourse());
+					CourseEditorContentOutlinePage.this.copy(source, target);
+					this.courseGuides.add(target);
+				}
 			}
 		}
 
