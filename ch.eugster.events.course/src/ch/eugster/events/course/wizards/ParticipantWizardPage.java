@@ -106,8 +106,6 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 
 	private IDialogSettings dialogSettings;
 
-	private int startCountParticipants;
-
 	private final Collection<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
 
 	public ParticipantWizardPage(final String pageName, final IBookingWizard wizard)
@@ -200,9 +198,6 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	@Override
 	public void createControl(final Composite parent)
 	{
-		Booking booking = ((BookingWizard) this.getWizard()).getBooking();
-		startCountParticipants = booking.getParticipantCount();
-
 		this.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("BOOKING_48"));
 		this.setTitle("Auswahl Teilnehmer");
 		this.setMessage("Bearbeiten der Teilnehmerauswahl");
@@ -1237,14 +1232,18 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	private String[] getBookingTypeLabels()
 	{
 		String[] labels = new String[0];
-		if (this.bookingTypes != null)
+		if (this.bookingTypes == null)
+		{
 			labels = new String[0];
+		}
 		else
 		{
 			BookingType[] bookingTypes = this.bookingTypes.values().toArray(new BookingType[0]);
 			labels = new String[bookingTypes.length];
 			for (int i = 0; i < bookingTypes.length; i++)
+			{
 				labels[i] = bookingTypes[i].getComboLabel();
+			}
 		}
 		return labels;
 	}
@@ -1269,7 +1268,6 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	private void loadBookingTypes(final Course course)
 	{
 		this.bookingTypes.clear();
-		// this.bookingTypes.put(Long.valueOf(0l), BookingType.newInstance());
 		for (BookingType bookingType : course.getBookingTypes())
 		{
 			if (!bookingType.isDeleted())

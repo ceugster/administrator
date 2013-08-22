@@ -41,6 +41,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.events.EntityAdapter;
 import ch.eugster.events.persistence.events.EntityMediator;
@@ -53,6 +54,7 @@ import ch.eugster.events.persistence.model.Country;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.PersonSettings;
+import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.person.Activator;
 import ch.eugster.events.person.editors.AddressEditor;
 import ch.eugster.events.person.editors.AddressEditorInput;
@@ -971,6 +973,40 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 		super.dispose();
 	}
 
+	private Address refreshEntity(Address address)
+	{
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		try
+		{
+			tracker.open();
+			ConnectionService service = (ConnectionService) tracker.getService();
+			address = (Address) service.refresh(address);
+		}
+		finally
+		{
+			tracker.close();
+		}
+		return address;
+	}
+
+	private LinkPersonAddress refreshEntity(LinkPersonAddress link)
+	{
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		try
+		{
+			tracker.open();
+			ConnectionService service = (ConnectionService) tracker.getService();
+			link = (LinkPersonAddress) service.refresh(link);
+		}
+		finally
+		{
+			tracker.close();
+		}
+		return link;
+	}
+
 	@Override
 	public void doubleClick(final DoubleClickEvent event)
 	{
@@ -979,16 +1015,17 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 		if (object instanceof Person)
 		{
 			Person person = (Person) object;
-			this.editLink(person.getDefaultLink());
+			this.editLink(refreshEntity(person.getDefaultLink()));
 		}
 		else if (object instanceof LinkPersonAddress)
 		{
 			LinkPersonAddress link = (LinkPersonAddress) object;
-			this.editLink(link.getPerson().getDefaultLink());
+			this.editLink(refreshEntity(link.getPerson().getDefaultLink()));
 		}
 		else if (object instanceof Address)
 		{
-			this.editAddress((Address) object);
+			Address address = refreshEntity((Address) object);
+			this.editAddress(address);
 		}
 	}
 

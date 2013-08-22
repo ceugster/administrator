@@ -34,4 +34,10 @@ public enum BookingAnnulatedState implements IBookingState
 				return "";
 		}
 	}
+
+	@Override
+	public int compareTo(IBookingState otherBookingState)
+	{
+		return this.ordinal() - otherBookingState.ordinal();
+	}
 }

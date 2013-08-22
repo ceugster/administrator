@@ -315,50 +315,60 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="60" splitType="Stretch">
+		<band height="27" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="33f2fd09-eae0-4c09-a245-7d309b490f83" x="690" y="20" width="32" height="27"/>
+				<reportElement uuid="33f2fd09-eae0-4c09-a245-7d309b490f83" x="690" y="4" width="34" height="18">
+					<property name="local_mesure_unitheight" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<text><![CDATA[Seite]]></text>
 			</staticText>
 			<textField evaluationTime="Report">
-				<reportElement uuid="faf65fde-6b47-40ae-be4f-e390e994991d" x="756" y="20" width="25" height="26"/>
+				<reportElement uuid="faf65fde-6b47-40ae-be4f-e390e994991d" x="756" y="4" width="28" height="18">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="a8779f13-c472-4cd6-80e1-3f6f75fe8d87" x="735" y="20" width="27" height="29"/>
+				<reportElement uuid="a8779f13-c472-4cd6-80e1-3f6f75fe8d87" x="734" y="4" width="30" height="18">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<text><![CDATA[von]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="77a9d108-72ed-401e-b3a5-0fcc88484787" x="716" y="20" width="25" height="26"/>
+				<reportElement uuid="77a9d108-72ed-401e-b3a5-0fcc88484787" x="716" y="4" width="28" height="18">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
 	<lastPageFooter>
-		<band height="129" splitType="Stretch">
+		<band height="25" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="f16de281-c5a6-4efc-85b9-94eb6bde06c4" x="627" y="68" width="113" height="14">
+				<reportElement uuid="f16de281-c5a6-4efc-85b9-94eb6bde06c4" x="431" y="5" width="46" height="15">
 					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 					<property name="local_mesure_unity" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+					<property name="local_mesure_unitheight" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 				</reportElement>
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[Gesamt]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="b09f85bf-20e9-4f95-a418-a40558a0db06" x="739" y="68" width="39" height="14">
+				<reportElement uuid="b09f85bf-20e9-4f95-a418-a40558a0db06" x="476" y="5" width="35" height="15">
 					<property name="local_mesure_unitheight" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font size="9"/>
@@ -366,129 +376,126 @@
 				<textFieldExpression><![CDATA[$V{totalCount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="30b05772-dcb1-42b7-980e-086e6de60e25" x="627" y="10" width="113" height="14" isRemoveLineWhenBlank="true">
-					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				<reportElement uuid="30b05772-dcb1-42b7-980e-086e6de60e25" x="30" y="5" width="49" height="15" isRemoveLineWhenBlank="true">
+					<property name="local_mesure_unitwidth" value="mm"/>
 				</reportElement>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Left">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{bookingTypeKey0}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="2899d960-9ea8-4124-b873-d99b78578cfc" x="739" y="10" width="39" height="14" isRemoveLineWhenBlank="true">
+				<reportElement uuid="2899d960-9ea8-4124-b873-d99b78578cfc" x="84" y="5" width="43" height="15" isRemoveLineWhenBlank="true">
 					<property name="local_mesure_unitheight" value="mm"/>
 					<property name="local_mesure_unity" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 				</reportElement>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Left">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{bookingTypeValue0}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="4a27ff5d-50cd-4d8e-9648-0ae8939dac70" x="627" y="39" width="113" height="14" isRemoveLineWhenBlank="true">
+				<reportElement uuid="4a27ff5d-50cd-4d8e-9648-0ae8939dac70" x="230" y="5" width="49" height="15" isRemoveLineWhenBlank="true">
 					<property name="local_mesure_unitheight" value="mm"/>
 					<property name="local_mesure_unity" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 				</reportElement>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Left">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{bookingTypeKey2}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="29665e20-af02-4a38-90d6-19924fdd55cb" x="739" y="39" width="39" height="14" isRemoveLineWhenBlank="true">
+				<reportElement uuid="29665e20-af02-4a38-90d6-19924fdd55cb" x="284" y="5" width="45" height="15" isRemoveLineWhenBlank="true">
 					<property name="local_mesure_unitheight" value="mm"/>
 					<property name="local_mesure_unity" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 				</reportElement>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Left">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{bookingTypeValue2}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="84034984-eb39-49c3-bdb8-86676f37e274" x="627" y="53" width="113" height="14" isRemoveLineWhenBlank="true">
+				<reportElement uuid="84034984-eb39-49c3-bdb8-86676f37e274" x="330" y="5" width="50" height="15" isRemoveLineWhenBlank="true">
 					<property name="local_mesure_unity" value="mm"/>
 					<property name="local_mesure_unitwidth" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 				</reportElement>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Left">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{bookingTypeKey3}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="ed9d4053-53f5-4933-ba17-2374c5925474" x="739" y="53" width="39" height="14" isRemoveLineWhenBlank="true">
+				<reportElement uuid="ed9d4053-53f5-4933-ba17-2374c5925474" x="382" y="5" width="40" height="15" isRemoveLineWhenBlank="true">
 					<property name="local_mesure_unitheight" value="mm"/>
 					<property name="local_mesure_unity" value="mm"/>
 					<property name="local_mesure_unitwidth" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
 					<property name="local_mesure_unitx" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 				</reportElement>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Left">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{bookingTypeValue3}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="2c002e30-9373-49aa-a9c4-ea9d004d6ddc" x="739" y="25" width="39" height="14" isRemoveLineWhenBlank="true">
+				<reportElement uuid="2c002e30-9373-49aa-a9c4-ea9d004d6ddc" x="180" y="5" width="40" height="15" isRemoveLineWhenBlank="true">
 					<property name="local_mesure_unitheight" value="mm"/>
 					<property name="local_mesure_unity" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 					<property name="local_mesure_unitwidth" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 				</reportElement>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Left">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{bookingTypeValue1}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="ef6dff00-9128-4c86-9ab7-9978c5e7382c" x="627" y="25" width="113" height="14" isRemoveLineWhenBlank="true">
+				<reportElement uuid="ef6dff00-9128-4c86-9ab7-9978c5e7382c" x="130" y="5" width="50" height="15" isRemoveLineWhenBlank="true">
 					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 				</reportElement>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Left">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{bookingTypeKey1}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="20645782-406f-47ad-a722-ef6010a00a7c" x="690" y="95" width="32" height="23"/>
+				<reportElement uuid="20645782-406f-47ad-a722-ef6010a00a7c" x="684" y="5" width="40" height="15">
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+				</reportElement>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<text><![CDATA[Seite]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="7fd8dabf-90bc-43ec-814f-629b21642fee" x="720" y="95" width="21" height="22"/>
+				<reportElement uuid="7fd8dabf-90bc-43ec-814f-629b21642fee" x="714" y="5" width="30" height="15">
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+				</reportElement>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement uuid="8881d391-cca7-49a9-85d9-1be1823ea02c" x="760" y="95" width="21" height="22"/>
+				<reportElement uuid="8881d391-cca7-49a9-85d9-1be1823ea02c" x="754" y="5" width="30" height="15">
+					<property name="local_mesure_unitheight" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+				</reportElement>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="7e7e7daa-9fdf-47aa-81f7-9cf6d9cc5c20" x="739" y="95" width="23" height="25"/>
+				<reportElement uuid="7e7e7daa-9fdf-47aa-81f7-9cf6d9cc5c20" x="732" y="5" width="32" height="15">
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+				</reportElement>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="9"/>
 				</textElement>

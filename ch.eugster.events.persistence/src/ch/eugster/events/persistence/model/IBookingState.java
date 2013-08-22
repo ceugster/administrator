@@ -9,4 +9,8 @@ public interface IBookingState
 	String name();
 
 	void setCount(int count);
+
+	int ordinal();
+
+	int compareTo(IBookingState otherBookingState);
 }

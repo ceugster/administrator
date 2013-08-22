@@ -299,7 +299,9 @@ public class Address extends AbstractEntity implements Donator
 	public String getZip()
 	{
 		if (zipCode == null)
+		{
 			return AbstractEntity.stringValueOf(this.zip).trim();
+		}
 		else
 		{
 			return zipCode.getZip();

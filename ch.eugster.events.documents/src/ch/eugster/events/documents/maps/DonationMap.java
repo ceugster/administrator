@@ -264,7 +264,8 @@ public class DonationMap extends AbstractDataMap
 					}
 					else
 					{
-						return donation.getLink().getPerson().getSex().getSalutation();
+						Person person = donation.getLink().getPerson();
+						return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
 					}
 				}
 				case POLITE:
@@ -282,7 +283,7 @@ public class DonationMap extends AbstractDataMap
 					else
 					{
 						Person person = donation.getLink().getPerson();
-						polite = PersonFormatter.getInstance().replaceSalutationVariables(person,
+						polite = person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance().replaceSalutationVariables(person,
 								person.getSex().getForm(person.getForm()));
 					}
 					return polite;

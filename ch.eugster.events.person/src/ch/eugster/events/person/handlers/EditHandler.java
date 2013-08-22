@@ -10,12 +10,15 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.PersonSettings;
+import ch.eugster.events.persistence.service.ConnectionService;
+import ch.eugster.events.person.Activator;
 import ch.eugster.events.person.editors.AddressEditor;
 import ch.eugster.events.person.editors.AddressEditorInput;
 import ch.eugster.events.person.editors.EditorSelector;
@@ -81,11 +84,45 @@ public class EditHandler extends AbstractHandler implements IHandler
 		return null;
 	}
 
+	private Address refreshEntity(Address address)
+	{
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		try
+		{
+			tracker.open();
+			ConnectionService service = (ConnectionService) tracker.getService();
+			address = (Address) service.refresh(address);
+		}
+		finally
+		{
+			tracker.close();
+		}
+		return address;
+	}
+
+	private LinkPersonAddress refreshEntity(LinkPersonAddress link)
+	{
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		try
+		{
+			tracker.open();
+			ConnectionService service = (ConnectionService) tracker.getService();
+			link = (LinkPersonAddress) service.refresh(link);
+		}
+		finally
+		{
+			tracker.close();
+		}
+		return link;
+	}
+
 	private void openAddressEditor(final IWorkbenchWindow window, final Address address)
 	{
 		try
 		{
-			window.getActivePage().openEditor(new AddressEditorInput(address), AddressEditor.ID);
+			window.getActivePage().openEditor(new AddressEditorInput(refreshEntity(address)), AddressEditor.ID);
 		}
 		catch (PartInitException e)
 		{
@@ -101,8 +138,8 @@ public class EditHandler extends AbstractHandler implements IHandler
 			{
 				try
 				{
-					window.getActivePage()
-							.openEditor(editorSelector.getEditorInput(link), editorSelector.getEditorId());
+					window.getActivePage().openEditor(editorSelector.getEditorInput(refreshEntity(link)),
+							editorSelector.getEditorId());
 					break;
 				}
 				catch (PartInitException e)

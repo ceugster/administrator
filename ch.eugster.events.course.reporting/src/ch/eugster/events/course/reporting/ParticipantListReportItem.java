@@ -3,6 +3,7 @@ package ch.eugster.events.course.reporting;
 import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
+import ch.eugster.events.persistence.model.IBookingState;
 import ch.eugster.events.persistence.model.Participant;
 
 public class ParticipantListReportItem implements Comparable<ParticipantListReportItem>
@@ -27,11 +28,23 @@ public class ParticipantListReportItem implements Comparable<ParticipantListRepo
 	@Override
 	public int compareTo(final ParticipantListReportItem other)
 	{
+		int comparison = 0;
 		ParticipantListReportItem participant = other;
-		int comparison = this.getName().compareTo(participant.getName());
-		if (comparison == 0)
+		if (this.getState().ordinal() < other.getState().ordinal())
 		{
-			return this.getId().compareTo(participant.getId());
+			comparison = 1;
+		}
+		else if (this.getState().ordinal() < this.getState().ordinal())
+		{
+			comparison = -1;
+		}
+		else
+		{
+			comparison = this.getName().compareTo(participant.getName());
+			if (comparison == 0)
+			{
+				return this.getId().compareTo(participant.getId());
+			}
 		}
 		return comparison;
 	}
@@ -93,6 +106,11 @@ public class ParticipantListReportItem implements Comparable<ParticipantListRepo
 					participant.getLink().getAddress().getCountry(), participant.getLink().getAddress().getPhone());
 		}
 		return phone;
+	}
+
+	private IBookingState getState()
+	{
+		return participant.getBooking().getBookingState(participant.getBooking().getCourse().getState());
 	}
 
 	public String getStatus()
