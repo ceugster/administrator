@@ -152,9 +152,15 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 
 	private void extract(final AddressGroupMember member)
 	{
-		if (RecipientListFactory.addRecipient(member))
+		if (!member.isDeleted())
 		{
-			RecipientListFactory.addAddressGroup(member.getAddressGroup());
+			if ((member.getLink() != null && !member.getLink().isDeleted()) || !member.getAddress().isDeleted())
+			{
+				if (RecipientListFactory.addRecipient(member))
+				{
+					RecipientListFactory.addAddressGroup(member.getAddressGroup());
+				}
+			}
 		}
 	}
 

@@ -179,7 +179,8 @@ public class AddressGroupMemberMap extends AbstractDataMap
 					}
 					else
 					{
-						return member.getLink().getPerson().getSex().getSalutation();
+						Person person = member.getLink().getPerson();
+						return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
 					}
 				}
 				case POLITE:
@@ -197,8 +198,8 @@ public class AddressGroupMemberMap extends AbstractDataMap
 					else
 					{
 						Person person = member.getLink().getPerson();
-						polite = PersonFormatter.getInstance().replaceSalutationVariables(person,
-								person.getSex().getForm(person.getForm()));
+						polite = person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
+								.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
 					}
 					return polite;
 				}

@@ -267,7 +267,7 @@ public class PersonMap extends AbstractDataMap
 				}
 				case SALUTATION:
 				{
-					return person.getSex().getSalutation();
+					return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
 				}
 				case TITLE:
 				{
@@ -300,7 +300,7 @@ public class PersonMap extends AbstractDataMap
 				}
 				case SEX:
 				{
-					return person.getSex().getSymbol();
+					return person.getSex() == null ? "Fehler!" : person.getSex().getSymbol();
 				}
 				case BIRTHDATE:
 				{
@@ -326,8 +326,8 @@ public class PersonMap extends AbstractDataMap
 				}
 				case POLITE:
 				{
-					return PersonFormatter.getInstance().replaceSalutationVariables(person,
-							person.getSex().getForm(person.getForm()));
+					return person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
+							.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
 				}
 				default:
 				{

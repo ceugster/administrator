@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.Locale;
 
 import ch.eugster.events.persistence.model.Booking;
-import ch.eugster.events.persistence.model.BookingAnnulatedState;
-import ch.eugster.events.persistence.model.BookingDoneState;
-import ch.eugster.events.persistence.model.BookingForthcomingState;
 import ch.eugster.events.persistence.model.CourseDetail;
 import ch.eugster.events.persistence.model.IBookingState;
 import ch.eugster.events.persistence.model.Participant;
@@ -302,7 +299,7 @@ public class BookingMap extends AbstractDataMap
 				}
 				case ANNULATION_STATE:
 				{
-					BookingAnnulatedState state = booking.getAnnulatedState();
+					IBookingState state = booking.getAnnulatedState();
 					return state == null ? "" : state.toString();
 				}
 				case BOOKING_CONFIRMATION_SENT_DATE:
@@ -322,12 +319,12 @@ public class BookingMap extends AbstractDataMap
 				}
 				case DONE_STATE:
 				{
-					BookingDoneState state = booking.getDoneState();
+					IBookingState state = booking.getDoneState();
 					return state == null ? "" : state.toString();
 				}
 				case FORTHCOMING_STATE:
 				{
-					BookingForthcomingState state = booking.getForthcomingState();
+					IBookingState state = booking.getForthcomingState();
 					return state == null ? "" : state.toString();
 				}
 				case INVITATION_SENT_DATE:

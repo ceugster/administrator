@@ -109,21 +109,27 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 
 	private void extract(final AddressGroupMember member)
 	{
-		addAddress(member.getAddress().getEmail());
-		if (member.getLink() != null)
+		if (!member.isDeleted())
 		{
-			addAddress(member.getLink().getPerson().getEmail());
-			addAddress(member.getLink().getEmail());
+			addAddress(member.getAddress().getEmail());
+			if (member.getLink() != null && !member.getLink().isDeleted())
+			{
+				addAddress(member.getLink().getPerson().getEmail());
+				addAddress(member.getLink().getEmail());
+			}
 		}
 	}
 
 	private boolean hasValidEmailAddress(final AddressGroup addressGroup)
 	{
-		for (AddressGroupMember member : addressGroup.getAddressGroupMembers())
+		if (!addressGroup.isDeleted())
 		{
-			if (hasValidEmailAddress(member))
+			for (AddressGroupMember member : addressGroup.getAddressGroupMembers())
 			{
-				return true;
+				if (hasValidEmailAddress(member))
+				{
+					return true;
+				}
 			}
 		}
 		return false;
@@ -131,11 +137,14 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 
 	private boolean hasValidEmailAddress(final AddressGroupCategory category)
 	{
-		for (AddressGroup addressGroup : category.getAddressGroups())
+		if (!category.isDeleted())
 		{
-			if (hasValidEmailAddress(addressGroup))
+			for (AddressGroup addressGroup : category.getAddressGroups())
 			{
-				return true;
+				if (hasValidEmailAddress(addressGroup))
+				{
+					return true;
+				}
 			}
 		}
 		return false;
@@ -143,22 +152,25 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 
 	private boolean hasValidEmailAddress(final AddressGroupMember member)
 	{
-		if (member.getLink() == null)
+		if (!member.isDeleted())
 		{
-			if (EmailHelper.getInstance().isValidAddress(member.getAddress().getEmail()))
+			if (member.getLink() == null)
 			{
-				return true;
+				if (EmailHelper.getInstance().isValidAddress(member.getAddress().getEmail()))
+				{
+					return true;
+				}
 			}
-		}
-		else
-		{
-			if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
+			else
 			{
-				return true;
-			}
-			if (EmailHelper.getInstance().isValidAddress(member.getLink().getEmail()))
-			{
-				return true;
+				if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
+				{
+					return true;
+				}
+				if (EmailHelper.getInstance().isValidAddress(member.getLink().getEmail()))
+				{
+					return true;
+				}
 			}
 		}
 		return false;

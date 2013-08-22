@@ -14,14 +14,21 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.util.tracker.ServiceTracker;
@@ -54,6 +61,10 @@ public class AddressListDialog extends TitleAreaDialog
 
 	private boolean isPageComplete = false;
 
+	private IDialogSettings settings;
+
+	private ComboViewer sortViewer;
+
 	/**
 	 * @param parentShell
 	 * @param parent
@@ -72,6 +83,15 @@ public class AddressListDialog extends TitleAreaDialog
 	{
 		super(parentShell);
 		this.selection = selection;
+		settings = Activator.getDefault().getDialogSettings().getSection("address.list.dialog");
+		if (settings == null)
+		{
+			settings = Activator.getDefault().getDialogSettings().addNewSection("address.list.dialog");
+		}
+		if (settings.getBoolean("selected.sort"))
+		{
+			settings.put("selected.sort", 0);
+		}
 	}
 
 	private IStatus buildDocument(final DataMapKey[] keys, final DataMap[] dataMaps)
@@ -191,17 +211,53 @@ public class AddressListDialog extends TitleAreaDialog
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setLayout(new GridLayout());
+		composite.setLayout(new GridLayout(2, false));
 
 		if (EditorSelector.values()[PersonSettings.getInstance().getEditorSelector()]
 				.equals(EditorSelector.MULTI_PAGE_EDITOR))
 		{
+			GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+			gridData.horizontalSpan = 2;
+
 			collectionSelector = new Button(composite, SWT.CHECK);
 			collectionSelector.setText("Gruppenadressen nur einmal auflisten");
-			collectionSelector.setLayoutData(new GridData());
+			collectionSelector.setLayoutData(gridData);
 		}
 
+		Label label = new Label(composite, SWT.None);
+		label.setLayoutData(new GridData());
+		label.setText("Sortierung");
+
+		DataMapKey[] keys = this.getSortKeys();
+		Combo combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		sortViewer = new ComboViewer(combo);
+		sortViewer.setContentProvider(new ArrayContentProvider());
+		sortViewer.setLabelProvider(new LabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				if (element instanceof DataMapKey)
+				{
+					DataMapKey key = (DataMapKey) element;
+					return key.getName();
+				}
+				return "";
+			}
+		});
+		sortViewer.setInput(this.getSortKeys());
+		sortViewer.setSelection(new StructuredSelection(new DataMapKey[] { keys[0] }));
+
 		return parent;
+	}
+
+	private DataMapKey[] getSortKeys()
+	{
+		Collection<DataMapKey> keys = new ArrayList<DataMapKey>();
+		keys.add(PersonMap.Key.LASTNAME);
+		keys.add(LinkMap.Key.MEMBER);
+		return keys.toArray(new DataMapKey[0]);
 	}
 
 	private DataMapKey[] getKeys()
@@ -234,6 +290,7 @@ public class AddressListDialog extends TitleAreaDialog
 		keys.add(AddressMap.Key.COUNTY);
 		keys.add(AddressGroupMemberMap.Key.POLITE);
 		keys.add(AddressGroupMap.Key.NAME);
+		keys.add(LinkMap.Key.MEMBER);
 		keys.addAll(PersonMap.getExtendedFieldKeys());
 		keys.addAll(LinkMap.getExtendedFieldKeys());
 		return keys.toArray(new DataMapKey[0]);
@@ -255,27 +312,25 @@ public class AddressListDialog extends TitleAreaDialog
 			@Override
 			public int compare(DataMap map1, DataMap map2)
 			{
-				String value1 = map1.getProperty(PersonMap.Key.LASTNAME.getKey());
-				String value2 = map2.getProperty(PersonMap.Key.LASTNAME.getKey());
-				if (value1.equals(value2))
+				if (sortViewer.getSelection() instanceof IStructuredSelection)
 				{
-					value1 = map1.getProperty(PersonMap.Key.FIRSTNAME.getKey());
-					value2 = map2.getProperty(PersonMap.Key.FIRSTNAME.getKey());
-					if (value1.equals(value2))
+					IStructuredSelection ssel = (IStructuredSelection) sortViewer.getSelection();
+					if (ssel.getFirstElement() instanceof DataMapKey)
 					{
-						value1 = map1.getProperty(AddressMap.Key.NAME.getKey());
-						value2 = map2.getProperty(AddressMap.Key.NAME.getKey());
-						return value1.compareTo(value2);
-					}
-					else
-					{
-						return value1.compareTo(value2);
+						try
+						{
+							DataMapKey key = (DataMapKey) ssel.getFirstElement();
+							String value1 = map1.getProperty(key.getKey());
+							String value2 = map2.getProperty(key.getKey());
+							return value1.compareTo(value2);
+						}
+						catch (Exception e)
+						{
+							return 0;
+						}
 					}
 				}
-				else
-				{
-					return value1.compareTo(value2);
-				}
+				return 0;
 			}
 		});
 		super.okPressed();

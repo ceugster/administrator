@@ -17,6 +17,7 @@ import ch.eugster.events.persistence.model.FieldExtension;
 import ch.eugster.events.persistence.model.FieldExtensionTarget;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.LinkPersonAddressExtendedField;
+import ch.eugster.events.persistence.model.Member;
 import ch.eugster.events.persistence.model.PersonExtendedField;
 import ch.eugster.events.persistence.queries.FieldExtensionQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
@@ -99,7 +100,7 @@ public class LinkMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		PHONE, FUNCTION, MAILING_ADDRESS, TOTAL_DONATIONS;
+		PHONE, FUNCTION, MAILING_ADDRESS, TOTAL_DONATIONS, MEMBER;
 
 		@Override
 		public String getDescription()
@@ -121,6 +122,10 @@ public class LinkMap extends AbstractDataMap
 				case TOTAL_DONATIONS:
 				{
 					return "Gesamter Spendenbetrag";
+				}
+				case MEMBER:
+				{
+					return "Mitglied";
 				}
 				default:
 				{
@@ -150,6 +155,10 @@ public class LinkMap extends AbstractDataMap
 				{
 					return "total_donations";
 				}
+				case MEMBER:
+				{
+					return "member";
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -177,6 +186,10 @@ public class LinkMap extends AbstractDataMap
 				case TOTAL_DONATIONS:
 				{
 					return "Spendenbetrag";
+				}
+				case MEMBER:
+				{
+					return "Mitglied";
 				}
 				default:
 				{
@@ -214,6 +227,20 @@ public class LinkMap extends AbstractDataMap
 						}
 					}
 					return amountFormatter.format(totalAmount);
+				}
+				case MEMBER:
+				{
+					StringBuilder builder = new StringBuilder();
+					Member[] members = link.getMembers().toArray(new Member[0]);
+					for (int i = 0; i < members.length; i++)
+					{
+						builder = builder.append(members[i].getMembership().getName());
+						if (i < members.length - 1)
+						{
+							builder = builder.append(", ");
+						}
+					}
+					return builder.toString();
 				}
 				default:
 				{
@@ -254,6 +281,20 @@ public class LinkMap extends AbstractDataMap
 						}
 					}
 					return amountFormatter.format(totalAmount);
+				}
+				case MEMBER:
+				{
+					StringBuilder builder = new StringBuilder();
+					Member[] members = link.getMembers().toArray(new Member[0]);
+					for (int i = 0; i < members.length; i++)
+					{
+						builder = builder.append(members[i].getMembership().getName());
+						if (i < members.length - 1)
+						{
+							builder = builder.append(", ");
+						}
+					}
+					return builder.toString();
 				}
 				default:
 				{
