@@ -194,8 +194,26 @@ public class Booking extends AbstractEntity
 		return amount;
 	}
 
-	public BookingAnnulatedState getAnnulatedState()
+	public IBookingState getAnnulatedState()
 	{
+		if (this.annulatedState == null)
+		{
+			switch (this.getCourse().getState())
+			{
+				case ANNULATED:
+				{
+					return BookingAnnulatedState.COURSE_CANCELED;
+				}
+				case DONE:
+				{
+					return getDoneState();
+				}
+				case FORTHCOMING:
+				{
+					return getForthcomingState();
+				}
+			}
+		}
 		return this.annulatedState == null ? BookingAnnulatedState.ANNULATED : this.annulatedState;
 	}
 
@@ -232,13 +250,57 @@ public class Booking extends AbstractEntity
 		return this.date;
 	}
 
-	public BookingDoneState getDoneState()
+	public IBookingState getDoneState()
 	{
+		if (this.doneState == null)
+		{
+			switch (this.getCourse().getState())
+			{
+				case ANNULATED:
+				{
+					return getAnnulatedState();
+				}
+				case DONE:
+				{
+					IBookingState state = getForthcomingState();
+					if (state.equals(BookingForthcomingState.BOOKED))
+					{
+						return BookingDoneState.PARTICIPATED;
+					}
+					else
+					{
+						return state;
+					}
+				}
+				case FORTHCOMING:
+				{
+					return getForthcomingState();
+				}
+			}
+		}
 		return this.doneState == null ? BookingDoneState.PARTICIPATED : this.doneState;
 	}
 
-	public BookingForthcomingState getForthcomingState()
+	public IBookingState getForthcomingState()
 	{
+		if (this.forthcomingState == null)
+		{
+			switch (this.getCourse().getState())
+			{
+				case ANNULATED:
+				{
+					return getAnnulatedState();
+				}
+				case DONE:
+				{
+					return getDoneState();
+				}
+				case FORTHCOMING:
+				{
+					return BookingForthcomingState.BOOKED;
+				}
+			}
+		}
 		return this.forthcomingState == null ? BookingForthcomingState.BOOKED : this.forthcomingState;
 	}
 

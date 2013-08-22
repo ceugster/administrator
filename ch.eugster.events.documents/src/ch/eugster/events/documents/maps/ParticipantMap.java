@@ -226,13 +226,14 @@ public class ParticipantMap extends AbstractDataMap
 				}
 				case SALUTATION:
 				{
-					return participant.getLink().getPerson().getSex().getSalutation();
+					Person person = participant.getLink().getPerson();
+					return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
 				}
 				case POLITE:
 				{
 					Person person = participant.getLink().getPerson();
-					return PersonFormatter.getInstance().replaceSalutationVariables(person,
-							person.getSex().getForm(person.getForm()));
+					return person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
+							.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
 				}
 				case MAILING_ADDRESS:
 				{

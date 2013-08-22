@@ -1011,6 +1011,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	{
 		setPhone(phone, address.getPhone());
 		setPhone(fax, address.getFax());
+		this.email.setText(address.getEmail());
 		this.website.setText(address.getWebsite());
 	}
 
@@ -1108,6 +1109,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	{
 		address.setPhone((String) this.phone.getValue());
 		address.setFax((String) this.fax.getValue());
+		address.setEmail(this.email.getText());
 		address.setWebsite(this.website.getText());
 	}
 
