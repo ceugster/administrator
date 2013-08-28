@@ -32,11 +32,11 @@ public class ParticipantListReportItem implements Comparable<ParticipantListRepo
 		ParticipantListReportItem participant = other;
 		if (this.getState().ordinal() < other.getState().ordinal())
 		{
-			comparison = 1;
-		}
-		else if (this.getState().ordinal() < this.getState().ordinal())
-		{
 			comparison = -1;
+		}
+		else if (this.getState().ordinal() > other.getState().ordinal())
+		{
+			comparison = 1;
 		}
 		else
 		{
@@ -71,7 +71,16 @@ public class ParticipantListReportItem implements Comparable<ParticipantListRepo
 
 	public String getEmail()
 	{
-		return participant.getLink().getEmail();
+		String email = participant.getLink().getEmail();
+		if (email.isEmpty())
+		{
+			email = participant.getLink().getPerson().getEmail();
+		}
+		if (email.isEmpty())
+		{
+			email = participant.getLink().getAddress().getEmail();
+		}
+		return email;
 	}
 
 	public String getId()
@@ -115,6 +124,11 @@ public class ParticipantListReportItem implements Comparable<ParticipantListRepo
 
 	public String getStatus()
 	{
-		return participant.getBooking().getBookingState(participant.getBooking().getCourse().getState()).toString();
+		return participant.getBooking().getBookingState(participant.getBooking().getCourse().getState()).shortName();
+	}
+
+	public String getBookingType()
+	{
+		return participant.getBookingType().getName();
 	}
 }

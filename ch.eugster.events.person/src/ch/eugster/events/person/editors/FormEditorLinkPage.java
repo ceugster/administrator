@@ -754,24 +754,28 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 					phonePrefix.setText(country.getPhonePrefix());
 					faxPrefix.setText(country.getPhonePrefix());
 
-					phone.setText(formatPhoneNumber(phone.getText()));
+					String number = formatPhoneNumber(phone.getText());
+					phone.setText(number);
 					fax.setText(formatPhoneNumber(fax.getText()));
 					linkPhone.setText(formatPhoneNumber(linkPhone.getText()));
 
-					LinkPersonAddress link = getLink();
-					if (link != null)
-					{
-						String p = link.getAddress().getPhone();
-						p = p.startsWith(phonePrefix.getText()) ? p.substring(phonePrefix.getText().length()) : p;
-						FormEditorLinkPage.this.phone.setText(formatPhoneNumber(p));
-						p = link.getAddress().getFax();
-						p = p.startsWith(faxPrefix.getText()) ? p.substring(faxPrefix.getText().length()) : p;
-						FormEditorLinkPage.this.fax.setText(formatPhoneNumber(p));
-						p = link.getPhone();
-						p = p.startsWith(linkPhonePrefix.getText()) ? p.substring(linkPhonePrefix.getText().length())
-								: p;
-						FormEditorLinkPage.this.linkPhone.setText(formatPhoneNumber(p));
-					}
+					// LinkPersonAddress link = getLink();
+					// if (link != null)
+					// {
+					// String p = link.getAddress().getPhone();
+					// p = p.startsWith(phonePrefix.getText()) ?
+					// p.substring(phonePrefix.getText().length()) : p;
+					// FormEditorLinkPage.this.phone.setText(formatPhoneNumber(p));
+					// p = link.getAddress().getFax();
+					// p = p.startsWith(faxPrefix.getText()) ?
+					// p.substring(faxPrefix.getText().length()) : p;
+					// FormEditorLinkPage.this.fax.setText(formatPhoneNumber(p));
+					// p = link.getPhone();
+					// p = p.startsWith(linkPhonePrefix.getText()) ?
+					// p.substring(linkPhonePrefix.getText().length())
+					// : p;
+					// FormEditorLinkPage.this.linkPhone.setText(formatPhoneNumber(p));
+					// }
 
 					String[] states = selectProvinceCodes(country);
 					provinceViewer.setInput(states);
@@ -798,7 +802,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			{
 				updateSingleLabel();
 				updateGroupLabel();
-				city.setEnabled(zip.getData("zipCode") == null);
+				// city.setEnabled(zip.getData("zipCode") == null);
 				setDirty(true);
 			}
 		});
@@ -1574,10 +1578,10 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	public void loadValues()
 	{
-		this.loadAddressValues();
 		this.loadAddressContactsValues();
 		this.loadLinkValues();
 		this.loadExtendedFieldValues();
+		this.loadAddressValues();
 		this.setDirty(false);
 	}
 

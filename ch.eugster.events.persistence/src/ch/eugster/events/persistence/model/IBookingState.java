@@ -8,6 +8,8 @@ public interface IBookingState
 
 	String name();
 
+	String shortName();
+
 	void setCount(int count);
 
 	int ordinal();

@@ -3,6 +3,7 @@ package ch.eugster.events.course.reporting;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -22,7 +23,7 @@ import ch.eugster.events.persistence.model.Participant;
 
 public class ParticipantListFactory
 {
-	private Collection<ParticipantListReportItem> participantListReportItems = new ArrayList<ParticipantListReportItem>();
+	private List<ParticipantListReportItem> participantListReportItems = new ArrayList<ParticipantListReportItem>();
 
 	private Course course;
 
@@ -70,24 +71,27 @@ public class ParticipantListFactory
 					.getInstance()
 					.formatPhoneWithOptionalPrefix(guide.getGuide().getLink().getPerson().getCountry(),
 							guide.getGuide().getLink().getPerson().getPhone()).trim();
-			if (phone.isEmpty())
-			{
-				phone = LinkPersonAddressFormatter
-						.getInstance()
-						.formatPhoneWithOptionalPrefix(guide.getGuide().getLink().getAddress().getCountry(),
-								guide.getGuide().getLink().getPhone()).trim();
-			}
-			if (phone.isEmpty())
-			{
-				phone = LinkPersonAddressFormatter
-						.getInstance()
-						.formatPhoneWithOptionalPrefix(guide.getGuide().getLink().getAddress().getCountry(),
-								guide.getGuide().getLink().getAddress().getPhone()).trim();
-			}
 			if (!phone.isEmpty())
 			{
-				builder = builder.append(", " + phone + "\n");
+				builder = builder.append(", " + phone);
 			}
+			phone = LinkPersonAddressFormatter
+					.getInstance()
+					.formatPhoneWithOptionalPrefix(guide.getGuide().getLink().getAddress().getCountry(),
+							guide.getGuide().getLink().getPhone()).trim();
+			if (!phone.isEmpty())
+			{
+				builder = builder.append(", " + phone);
+			}
+			phone = LinkPersonAddressFormatter
+					.getInstance()
+					.formatPhoneWithOptionalPrefix(guide.getGuide().getLink().getAddress().getCountry(),
+							guide.getGuide().getLink().getAddress().getPhone()).trim();
+			if (!phone.isEmpty())
+			{
+				builder = builder.append(", " + phone);
+			}
+			builder = builder.append("\n");
 		}
 		parameters.put("guidance", builder.toString());
 
@@ -154,9 +158,14 @@ public class ParticipantListFactory
 		return parameters;
 	}
 
-	public ParticipantListReportItem[] getParticipants()
+	public ParticipantListReportItem[] getParticipantsAsArray()
 	{
 		return participantListReportItems.toArray(new ParticipantListReportItem[0]);
+	}
+
+	public List<ParticipantListReportItem> getParticipants()
+	{
+		return participantListReportItems;
 	}
 
 	public int setCourse(final Course course)

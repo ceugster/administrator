@@ -449,6 +449,14 @@ public class LinkSearcher extends Composite
 				else if (entry.getKey().equals(PHONE))
 				{
 				}
+				else if (entry.getKey().equals(CITY))
+				{
+					if (value.contains("."))
+					{
+						value = value.replace(".", ".%");
+						criteria.put(entry.getKey(), value);
+					}
+				}
 				else
 				{
 					if (!value.isEmpty())

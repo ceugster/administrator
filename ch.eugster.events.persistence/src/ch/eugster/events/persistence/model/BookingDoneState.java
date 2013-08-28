@@ -42,4 +42,20 @@ public enum BookingDoneState implements IBookingState
 	{
 		return this.ordinal() - otherBookingState.ordinal();
 	}
+
+	@Override
+	public String shortName()
+	{
+		switch (this)
+		{
+			case PARTICIPATED:
+				return "T";
+			case PARTICIPATION_BROKE_OFF:
+				return "G";
+			case NOT_PARTICIPATED:
+				return "N";
+			default:
+				return "";
+		}
+	}
 }

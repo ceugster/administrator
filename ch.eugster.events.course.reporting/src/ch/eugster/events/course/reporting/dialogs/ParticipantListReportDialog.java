@@ -2,6 +2,7 @@ package ch.eugster.events.course.reporting.dialogs;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,114 +100,102 @@ public class ParticipantListReportDialog extends TitleAreaDialog
 
 		Group group = new Group(composite, SWT.SHADOW_ETCHED_IN);
 		group.setLayoutData(gridData);
-		group.setLayout(new GridLayout(states.size(), true));
+		group.setLayout(new GridLayout(3, true));
 		group.setText("Auswahl Status");
 
-		int max = 0;
-		for (CourseState state : states.values())
-		{
-			max = Math.max(max, state.getBookingStates().length);
-		}
+		int max = Math.max(BookingForthcomingState.values().length, BookingDoneState.values().length);
+		max = Math.max(max, BookingAnnulatedState.values().length);
 		for (int i = 0; i < max; i++)
 		{
-			if (states.get(CourseState.FORTHCOMING) != null)
+			if (i < BookingForthcomingState.values().length)
 			{
-				if (i < BookingForthcomingState.values().length)
+				final IBookingState state = BookingForthcomingState.values()[i];
+				boolean selected = settings.getBoolean(state.name());
+				selectedStates.put(state, selected);
+				final Button button = new Button(group, SWT.CHECK);
+				button.setText(state.toString());
+				button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				button.setSelection(selected);
+				button.addSelectionListener(new SelectionListener()
 				{
-					final IBookingState state = BookingForthcomingState.values()[i];
-					boolean selected = settings.getBoolean(state.name());
-					selectedStates.put(state, selected);
-					final Button button = new Button(group, SWT.CHECK);
-					button.setText(BookingForthcomingState.values()[i].toString());
-					button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-					button.setSelection(selected);
-					button.addSelectionListener(new SelectionListener()
+					@Override
+					public void widgetDefaultSelected(final SelectionEvent e)
 					{
-						@Override
-						public void widgetDefaultSelected(final SelectionEvent e)
-						{
-							widgetSelected(e);
-						}
+						widgetSelected(e);
+					}
 
-						@Override
-						public void widgetSelected(final SelectionEvent e)
-						{
-							selectedStates.put(state, button.getSelection());
-							settings.put(state.name(), button.getSelection());
-						}
-					});
-				}
-				else
-				{
-					Label label = new Label(group, SWT.None);
-					label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				}
+					@Override
+					public void widgetSelected(final SelectionEvent e)
+					{
+						selectedStates.put(state, button.getSelection());
+						settings.put(state.name(), button.getSelection());
+					}
+				});
 			}
-			if (states.get(CourseState.DONE) != null)
+			else
 			{
-				if (i < BookingDoneState.values().length)
-				{
-					final IBookingState state = BookingDoneState.values()[i];
-					boolean selected = settings.getBoolean(state.name());
-					selectedStates.put(state, selected);
-					final Button button = new Button(group, SWT.CHECK);
-					button.setText(BookingDoneState.values()[i].toString());
-					button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-					button.setSelection(selected);
-					button.addSelectionListener(new SelectionListener()
-					{
-						@Override
-						public void widgetDefaultSelected(final SelectionEvent e)
-						{
-							widgetSelected(e);
-						}
-
-						@Override
-						public void widgetSelected(final SelectionEvent e)
-						{
-							selectedStates.put(state, button.getSelection());
-							settings.put(state.name(), button.getSelection());
-						}
-					});
-				}
-				else
-				{
-					Label label = new Label(group, SWT.None);
-					label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				}
+				Label label = new Label(group, SWT.None);
+				label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			}
-			if (states.get(CourseState.ANNULATED) != null)
+			if (i < BookingDoneState.values().length)
 			{
-				if (i < BookingAnnulatedState.values().length)
+				final IBookingState state = BookingDoneState.values()[i];
+				boolean selected = settings.getBoolean(state.name());
+				selectedStates.put(state, selected);
+				final Button button = new Button(group, SWT.CHECK);
+				button.setText(state.toString());
+				button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				button.setSelection(selected);
+				button.addSelectionListener(new SelectionListener()
 				{
-					final IBookingState state = BookingAnnulatedState.values()[i];
-					boolean selected = settings.getBoolean(state.name());
-					selectedStates.put(state, selected);
-					final Button button = new Button(group, SWT.CHECK);
-					button.setText(BookingAnnulatedState.values()[i].toString());
-					button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-					button.setSelection(selected);
-					button.addSelectionListener(new SelectionListener()
+					@Override
+					public void widgetDefaultSelected(final SelectionEvent e)
 					{
-						@Override
-						public void widgetDefaultSelected(final SelectionEvent e)
-						{
-							widgetSelected(e);
-						}
+						widgetSelected(e);
+					}
 
-						@Override
-						public void widgetSelected(final SelectionEvent e)
-						{
-							selectedStates.put(state, button.getSelection());
-							settings.put(state.name(), button.getSelection());
-						}
-					});
-				}
-				else
+					@Override
+					public void widgetSelected(final SelectionEvent e)
+					{
+						selectedStates.put(state, button.getSelection());
+						settings.put(state.name(), button.getSelection());
+					}
+				});
+			}
+			else
+			{
+				Label label = new Label(group, SWT.None);
+				label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			}
+			if (i < BookingAnnulatedState.values().length)
+			{
+				final IBookingState state = BookingAnnulatedState.values()[i];
+				boolean selected = settings.getBoolean(state.name());
+				selectedStates.put(state, selected);
+				final Button button = new Button(group, SWT.CHECK);
+				button.setText(state.toString());
+				button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				button.setSelection(selected);
+				button.addSelectionListener(new SelectionListener()
 				{
-					Label label = new Label(group, SWT.None);
-					label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				}
+					@Override
+					public void widgetDefaultSelected(final SelectionEvent e)
+					{
+						widgetSelected(e);
+					}
+
+					@Override
+					public void widgetSelected(final SelectionEvent e)
+					{
+						selectedStates.put(state, button.getSelection());
+						settings.put(state.name(), button.getSelection());
+					}
+				});
+			}
+			else
+			{
+				Label label = new Label(group, SWT.None);
+				label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			}
 		}
 
@@ -253,6 +242,7 @@ public class ParticipantListReportDialog extends TitleAreaDialog
 				}
 				else
 				{
+					Collections.sort(factory.getParticipants());
 					printParticipantListReport(factory);
 				}
 				return Status.OK_STATUS;
@@ -316,7 +306,7 @@ public class ParticipantListReportDialog extends TitleAreaDialog
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/participant_list.jrxml");
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.export(url, factory.getParticipants(), parameters, format, file);
+				reportService.export(url, factory.getParticipantsAsArray(), parameters, format, file);
 				return true;
 			}
 		}
@@ -343,7 +333,7 @@ public class ParticipantListReportDialog extends TitleAreaDialog
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/participant_list.jrxml");
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.view(url, factory.getParticipants(), parameters);
+				reportService.view(url, factory.getParticipantsAsArray(), parameters);
 				return true;
 			}
 		}
@@ -370,7 +360,7 @@ public class ParticipantListReportDialog extends TitleAreaDialog
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/participant_list.jrxml");
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.print(url, factory.getParticipants(), parameters, showPrintDialog);
+				reportService.print(url, factory.getParticipantsAsArray(), parameters, showPrintDialog);
 				return true;
 			}
 		}

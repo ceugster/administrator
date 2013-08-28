@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
@@ -170,6 +171,13 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 		this.createContextMenu();
 
 		this.getSite().setSelectionProvider(this.viewer);
+
+		PersonView view = (PersonView) this.getSite().getPage().findView(PersonView.ID);
+		if (view != null)
+		{
+			IStructuredSelection ssel = (IStructuredSelection) view.getViewer().getSelection();
+			this.viewer.setInput(ssel.getFirstElement());
+		}
 
 		this.getSite().getPage().addSelectionListener(PersonView.ID, this);
 	}

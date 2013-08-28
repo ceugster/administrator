@@ -40,4 +40,18 @@ public enum BookingAnnulatedState implements IBookingState
 	{
 		return this.ordinal() - otherBookingState.ordinal();
 	}
+
+	@Override
+	public String shortName()
+	{
+		switch (this)
+		{
+			case COURSE_CANCELED:
+				return "C";
+			case ANNULATED:
+				return "A";
+			default:
+				return "";
+		}
+	}
 }
