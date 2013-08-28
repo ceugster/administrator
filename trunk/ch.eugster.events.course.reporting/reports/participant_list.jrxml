@@ -38,6 +38,7 @@
 	<field name="email" class="java.lang.String"/>
 	<field name="count" class="java.lang.Integer"/>
 	<field name="status" class="java.lang.String"/>
+	<field name="bookingType" class="java.lang.String"/>
 	<variable name="totalCount" class="java.lang.Integer" calculation="Sum">
 		<variableExpression><![CDATA[$F{count}]]></variableExpression>
 	</variable>
@@ -163,16 +164,6 @@
 				<text><![CDATA[PLZ Ort]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="4edccf79-22fb-49fe-8fa0-b4a95a55f747" x="355" y="2" width="74" height="16">
-					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
-				</reportElement>
-				<textElement>
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[Privat]]></text>
-			</staticText>
-			<staticText>
 				<reportElement uuid="6b6f6b73-f67b-4f11-a9fd-928530e50152" x="727" y="2" width="54" height="14">
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
@@ -189,28 +180,7 @@
 				</reportElement>
 			</line>
 			<staticText>
-				<reportElement uuid="d4c2836a-8a2d-4c10-a5c4-1ebd8f471897" x="432" y="2" width="83" height="16">
-					<property name="local_mesure_unity" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
-					<property name="local_mesure_unitheight" value="mm"/>
-				</reportElement>
-				<textElement>
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[Mobile]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="3b357998-f151-4972-9fad-279457c63de1" x="512" y="2" width="118" height="16">
-					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
-					<property name="local_mesure_unitheight" value="mm"/>
-				</reportElement>
-				<textElement>
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[Email]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="b2a850b2-afdc-45ea-afca-954e6ff24b3e" x="654" y="2" width="77" height="14">
+				<reportElement uuid="b2a850b2-afdc-45ea-afca-954e6ff24b3e" x="716" y="2" width="15" height="14">
 					<property name="local_mesure_unitheight" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 					<property name="local_mesure_unity" value="mm"/>
@@ -221,13 +191,55 @@
 				</textElement>
 				<text><![CDATA[Status]]></text>
 			</staticText>
+			<staticText>
+				<reportElement uuid="f639b1e0-0068-4d98-ab54-ce82b1b2511f" x="619" y="2" width="95" height="14">
+					<property name="local_mesure_unitheight" value="mm"/>
+					<property name="local_mesure_unity" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Buchung]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4edccf79-22fb-49fe-8fa0-b4a95a55f747" x="353" y="1" width="80" height="18">
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+					<property name="local_mesure_unitheight" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Privat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d4c2836a-8a2d-4c10-a5c4-1ebd8f471897" x="430" y="1" width="73" height="14">
+					<property name="local_mesure_unity" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+					<property name="local_mesure_unitheight" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Mobile]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3b357998-f151-4972-9fad-279457c63de1" x="504" y="1" width="122" height="16">
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+					<property name="local_mesure_unitheight" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Email]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="15" splitType="Stretch">
+		<band height="17" splitType="Stretch">
 			<property name="local_mesure_unitheight" value="mm"/>
 			<textField>
-				<reportElement uuid="4f5686a0-d585-4b8b-a673-a4cf28831168" stretchType="RelativeToBandHeight" x="225" y="1" width="108" height="12" printWhenGroupChanges="name_group">
+				<reportElement uuid="4f5686a0-d585-4b8b-a673-a4cf28831168" stretchType="RelativeToBandHeight" x="225" y="1" width="124" height="12" printWhenGroupChanges="name_group">
 					<property name="local_mesure_unitheight" value="mm"/>
 					<property name="local_mesure_unity" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
@@ -241,7 +253,6 @@
 				<reportElement uuid="9a584da8-558d-4551-b1d1-6f2c45a09d94" x="715" y="1" width="63" height="12">
 					<property name="local_mesure_unitheight" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font size="9"/>
@@ -270,7 +281,7 @@
 				<textFieldExpression><![CDATA[$F{address}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="9dc0aebc-1efc-4c57-8ecd-19aba061849f" x="655" y="1" width="72" height="12">
+				<reportElement uuid="9dc0aebc-1efc-4c57-8ecd-19aba061849f" x="717" y="1" width="10" height="12">
 					<property name="local_mesure_unitheight" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
@@ -281,10 +292,9 @@
 				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="e41c13cf-27d7-492c-b500-047534f5a037" x="355" y="1" width="82" height="12">
+				<reportElement uuid="e41c13cf-27d7-492c-b500-047534f5a037" x="349" y="0" width="77" height="12">
 					<property name="local_mesure_unitheight" value="mm"/>
 					<property name="local_mesure_unity" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 				</reportElement>
 				<textElement>
 					<font size="9"/>
@@ -292,10 +302,11 @@
 				<textFieldExpression><![CDATA[$F{phone}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="0b3c7544-0901-498c-96ff-69a358212e38" x="432" y="1" width="85" height="12">
+				<reportElement uuid="0b3c7544-0901-498c-96ff-69a358212e38" x="426" y="0" width="78" height="12">
 					<property name="local_mesure_unitheight" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 					<property name="local_mesure_unitwidth" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 				</reportElement>
 				<textElement>
 					<font size="9"/>
@@ -303,19 +314,30 @@
 				<textFieldExpression><![CDATA[$F{mobile}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="d5cd4516-557a-4a05-a49e-cda3ac6fc6cb" x="512" y="1" width="120" height="12">
+				<reportElement uuid="d5cd4516-557a-4a05-a49e-cda3ac6fc6cb" x="504" y="1" width="110" height="12">
 					<property name="local_mesure_unitheight" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 				</reportElement>
 				<textElement>
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement uuid="884be63d-bbee-433b-8797-04359065d50f" x="615" y="0" width="103" height="12">
+					<property name="local_mesure_unitheight" value="mm"/>
+					<property name="local_mesure_unity" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bookingType}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="27" splitType="Stretch">
+		<band height="29" splitType="Stretch">
 			<staticText>
 				<reportElement uuid="33f2fd09-eae0-4c09-a245-7d309b490f83" x="690" y="4" width="34" height="18">
 					<property name="local_mesure_unitheight" value="mm"/>
@@ -352,7 +374,7 @@
 		</band>
 	</pageFooter>
 	<lastPageFooter>
-		<band height="25" splitType="Stretch">
+		<band height="38" splitType="Stretch">
 			<staticText>
 				<reportElement uuid="f16de281-c5a6-4efc-85b9-94eb6bde06c4" x="431" y="5" width="46" height="15">
 					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
@@ -500,6 +522,16 @@
 					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<text><![CDATA[von]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1016b7cb-b055-4bc4-a24e-c81de8744ba4" x="30" y="20" width="654" height="11">
+					<property name="local_mesure_unitheight" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[B=Gebucht, W=Warteliste, P=Provisorisch gebucht, A=Annulliert, T=Teilgenommen, G=Teilnahme abgebrochen, N=Nicht teilgenommen, C=Kurs abgesagt]]></text>
 			</staticText>
 		</band>
 	</lastPageFooter>

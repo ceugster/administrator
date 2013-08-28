@@ -1,5 +1,6 @@
 package ch.eugster.events.persistence.model;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Vector;
@@ -492,12 +493,28 @@ public class Course extends AbstractEntity
 
 	public Collection<CourseDetail> getCourseDetails()
 	{
-		return this.courseDetails;
+		Collection<CourseDetail> details = new ArrayList<CourseDetail>();
+		for (CourseDetail detail : this.courseDetails)
+		{
+			if (!detail.isDeleted())
+			{
+				details.add(detail);
+			}
+		}
+		return details;
 	}
 
 	public Collection<CourseGuide> getCourseGuides()
 	{
-		return this.courseGuides;
+		Collection<CourseGuide> guides = new ArrayList<CourseGuide>();
+		for (CourseGuide guide : this.courseGuides)
+		{
+			if (!guide.isDeleted() && !guide.getGuide().isDeleted())
+			{
+				guides.add(guide);
+			}
+		}
+		return guides;
 	}
 
 	public String getDescription()
