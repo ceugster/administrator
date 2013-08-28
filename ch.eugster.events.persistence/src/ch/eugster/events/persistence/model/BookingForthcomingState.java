@@ -44,4 +44,22 @@ public enum BookingForthcomingState implements IBookingState
 	{
 		return this.ordinal() - otherBookingState.ordinal();
 	}
+
+	@Override
+	public String shortName()
+	{
+		switch (this)
+		{
+			case BOOKED:
+				return "B";
+			case WAITING_LIST:
+				return "W";
+			case PROVISIONAL_BOOKED:
+				return "P";
+			case BOOKING_CANCELED:
+				return "A";
+			default:
+				return "";
+		}
+	}
 }
