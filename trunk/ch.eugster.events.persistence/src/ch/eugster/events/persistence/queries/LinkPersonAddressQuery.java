@@ -24,37 +24,37 @@ public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddres
 	private Expression createCriteriaExpression(final Map<String, String> criteria,
 			final Map<String, FieldExtension> extensions, Expression expression)
 	{
-		Expression lastname = null, firstname = null, street = null, city = null, phone = null, email = null, extended = null;
+		Expression lastname = null, firstname = null, organization = null, street = null, city = null, phone = null, email = null, extended = null;
 		Set<Entry<String, String>> entries = criteria.entrySet();
 		for (Entry<String, String> entry : entries)
 		{
 			if (entry.getKey().equals("lastname"))
 			{
-				lastname = getLastnameExpression(entry.getValue());
+				expression = expression.and(getLastnameExpression(entry.getValue()));
 			}
 			else if (entry.getKey().equals("firstname"))
 			{
-				firstname = getFirstnameExpression(entry.getValue());
+				expression = expression.and(getFirstnameExpression(entry.getValue()));
 			}
 			else if (entry.getKey().equals("organization"))
 			{
-				firstname = getOrganizationExpression(entry.getValue());
+				expression = expression.and(getOrganizationExpression(entry.getValue()));
 			}
 			else if (entry.getKey().equals("address"))
 			{
-				street = getAddressExpression(entry.getValue());
+				expression = expression.and(getAddressExpression(entry.getValue()));
 			}
 			else if (entry.getKey().equals("city"))
 			{
-				city = getCityExpression(entry.getValue());
+				expression = expression.and(getCityExpression(entry.getValue()));
 			}
 			else if (entry.getKey().equals("phone"))
 			{
-				phone = getPhoneExpression(entry.getValue());
+				expression = expression.and(getPhoneExpression(entry.getValue()));
 			}
 			else if (entry.getKey().equals("email"))
 			{
-				email = getEmailExpression(entry.getValue());
+				expression = expression.and(getEmailExpression(entry.getValue()));
 			}
 			else
 			{
@@ -76,104 +76,104 @@ public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddres
 				}
 			}
 		}
-		Expression name = null, address = null, contacts = null;
-		if (lastname != null)
-		{
-			if (firstname != null)
-			{
-				name = lastname.and(firstname);
-			}
-			else
-			{
-				name = lastname;
-			}
-		}
-		else if (firstname != null)
-		{
-			name = firstname;
-		}
-
-		if (street != null)
-		{
-			if (city != null)
-			{
-				address = street.and(city);
-			}
-			else
-			{
-				address = street;
-			}
-		}
-		else if (city != null)
-		{
-			address = city;
-		}
-
-		if (phone != null)
-		{
-			if (email != null)
-			{
-				contacts = phone.and(email);
-			}
-			else
-			{
-				contacts = phone;
-			}
-		}
-		else if (email != null)
-		{
-			contacts = email;
-		}
-
-		Expression complex = null;
-		if (name != null)
-		{
-			if (address != null)
-			{
-				complex = name.and(address);
-			}
-			else
-			{
-				complex = name;
-			}
-		}
-		else if (address != null)
-		{
-			complex = address;
-		}
-
-		if (contacts != null)
-		{
-			if (complex != null)
-			{
-				expression = contacts.and(complex);
-			}
-			else
-			{
-				expression = contacts;
-			}
-		}
-
-		if (contacts != null)
-		{
-			if (complex != null)
-			{
-				expression = contacts.and(complex);
-			}
-			else
-			{
-				expression = contacts;
-			}
-		}
-		else if (complex != null)
-		{
-			expression = complex;
-		}
-
-		if (extended != null)
-		{
-			expression = expression.and(extended);
-		}
+		// Expression name = null, address = null, contacts = null;
+		// if (lastname != null)
+		// {
+		// if (firstname != null)
+		// {
+		// name = lastname.and(firstname);
+		// }
+		// else
+		// {
+		// name = lastname;
+		// }
+		// }
+		// else if (firstname != null)
+		// {
+		// name = firstname;
+		// }
+		//
+		// if (street != null)
+		// {
+		// if (city != null)
+		// {
+		// address = street.and(city);
+		// }
+		// else
+		// {
+		// address = street;
+		// }
+		// }
+		// else if (city != null)
+		// {
+		// address = city;
+		// }
+		//
+		// if (phone != null)
+		// {
+		// if (email != null)
+		// {
+		// contacts = phone.and(email);
+		// }
+		// else
+		// {
+		// contacts = phone;
+		// }
+		// }
+		// else if (email != null)
+		// {
+		// contacts = email;
+		// }
+		//
+		// Expression complex = null;
+		// if (name != null)
+		// {
+		// if (address != null)
+		// {
+		// complex = name.and(address);
+		// }
+		// else
+		// {
+		// complex = name;
+		// }
+		// }
+		// else if (address != null)
+		// {
+		// complex = address;
+		// }
+		//
+		// if (contacts != null)
+		// {
+		// if (complex != null)
+		// {
+		// expression = contacts.and(complex);
+		// }
+		// else
+		// {
+		// expression = contacts;
+		// }
+		// }
+		//
+		// if (contacts != null)
+		// {
+		// if (complex != null)
+		// {
+		// expression = contacts.and(complex);
+		// }
+		// else
+		// {
+		// expression = contacts;
+		// }
+		// }
+		// else if (complex != null)
+		// {
+		// expression = complex;
+		// }
+		//
+		// if (extended != null)
+		// {
+		// expression = expression.and(extended);
+		// }
 		return expression;
 	}
 
@@ -184,8 +184,16 @@ public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddres
 
 	private Expression getCityExpression(final String value)
 	{
-		Expression city = new ExpressionBuilder().get("address").get("zip").containsSubstringIgnoringCase(value)
-				.or(new ExpressionBuilder().get("address").get("city").containsSubstringIgnoringCase(value));
+		Expression city = null;
+		try
+		{
+			Integer.valueOf(value);
+			city = new ExpressionBuilder().get("address").get("zip").containsSubstringIgnoringCase(value);
+		}
+		catch (NumberFormatException e)
+		{
+			city = (new ExpressionBuilder().get("address").get("city").containsSubstringIgnoringCase(value));
+		}
 		return city;
 	}
 

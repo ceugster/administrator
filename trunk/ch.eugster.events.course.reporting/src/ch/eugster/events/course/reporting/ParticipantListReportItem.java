@@ -129,6 +129,10 @@ public class ParticipantListReportItem implements Comparable<ParticipantListRepo
 
 	public String getBookingType()
 	{
+		if (participant.getBookingType() == null)
+		{
+			return "";
+		}
 		return participant.getBookingType().getName();
 	}
 }

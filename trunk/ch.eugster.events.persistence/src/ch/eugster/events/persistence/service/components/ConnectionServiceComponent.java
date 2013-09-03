@@ -462,7 +462,7 @@ public class ConnectionServiceComponent implements ConnectionService
 		return null;
 	}
 
-	private void log(final int level, final String message)
+	public void log(final int level, final String message)
 	{
 		Activator.log(level, message);
 	}

@@ -648,9 +648,7 @@ public class Course extends AbstractEntity
 		{
 			if (!booking.isDeleted())
 			{
-				if (booking.getBookingState(booking.getCourse().getState()).equals(BookingForthcomingState.BOOKED)
-						|| booking.getBookingState(booking.getCourse().getState()).equals(
-								BookingForthcomingState.PROVISIONAL_BOOKED))
+				if (booking.getBookingState(booking.getCourse().getState()).equals(BookingForthcomingState.BOOKED))
 				{
 					count += booking.getParticipantCount();
 				}

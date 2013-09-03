@@ -7,15 +7,32 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.osgi.util.tracker.ServiceTracker;
 
+import ch.eugster.events.addressgroup.Activator;
 import ch.eugster.events.addressgroup.dialogs.AddressGroupMemberDialog;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
+import ch.eugster.events.persistence.queries.AddressQuery;
+import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
+import ch.eugster.events.persistence.queries.PersonQuery;
+import ch.eugster.events.persistence.service.ConnectionService;
 
 public class EditAddressGroupMembers extends AbstractHandler implements IHandler
 {
+	private ServiceTracker tracker;
+
+	private ConnectionService connectionService;
+
+	public EditAddressGroupMembers()
+	{
+		tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		tracker.open();
+		connectionService = (ConnectionService) tracker.getService();
+	}
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
@@ -29,24 +46,24 @@ public class EditAddressGroupMembers extends AbstractHandler implements IHandler
 			Address address = null;
 			if (ssel.getFirstElement() instanceof LinkPersonAddress)
 			{
-				link = (LinkPersonAddress) ssel.getFirstElement();
+				link = refresh((LinkPersonAddress) ssel.getFirstElement());
 			}
 			else if (ssel.getFirstElement() instanceof Person)
 			{
 				Person person = (Person) ssel.getFirstElement();
-				link = person.getDefaultLink();
+				link = refresh(person.getDefaultLink());
 			}
 			else if (ssel.getFirstElement() instanceof Address)
 			{
-				address = ((Address) ssel.getFirstElement());
+				address = refresh((Address) ssel.getFirstElement());
 			}
 			else if (ssel.getFirstElement() instanceof AddressGroupMember)
 			{
 				AddressGroupMember member = ((AddressGroupMember) ssel.getFirstElement());
-				link = member.getLink();
+				link = refresh(member.getLink());
 				if (link == null)
 				{
-					address = member.getAddress();
+					address = refresh(member.getAddress());
 				}
 
 			}
@@ -65,6 +82,52 @@ public class EditAddressGroupMembers extends AbstractHandler implements IHandler
 			}
 		}
 		return null;
+	}
+
+	private Person refresh(Person person)
+	{
+		ConnectionService service = (ConnectionService) tracker.getService();
+		try
+		{
+			PersonQuery query = (PersonQuery) service.getQuery(Person.class);
+			return (Person) query.refresh(person);
+		}
+		catch (Exception e)
+		{
+			PersonQuery query = (PersonQuery) service.getQuery(Person.class);
+			return query.find(Person.class, person.getId());
+		}
+	}
+
+	private Address refresh(Address address)
+	{
+		ConnectionService service = (ConnectionService) tracker.getService();
+		try
+		{
+			AddressQuery query = (AddressQuery) service.getQuery(Address.class);
+			return (Address) query.refresh(address);
+		}
+		catch (Exception e)
+		{
+			AddressQuery query = (AddressQuery) service.getQuery(Address.class);
+			return query.find(Address.class, address.getId());
+		}
+	}
+
+	private LinkPersonAddress refresh(LinkPersonAddress link)
+	{
+		ConnectionService service = (ConnectionService) tracker.getService();
+		try
+		{
+			LinkPersonAddressQuery query = (LinkPersonAddressQuery) service.getQuery(LinkPersonAddress.class);
+			link = (LinkPersonAddress) query.refresh(link);
+			return link;
+		}
+		catch (Exception e)
+		{
+			LinkPersonAddressQuery query = (LinkPersonAddressQuery) service.getQuery(LinkPersonAddress.class);
+			return query.find(LinkPersonAddress.class, link.getId());
+		}
 	}
 
 	@Override

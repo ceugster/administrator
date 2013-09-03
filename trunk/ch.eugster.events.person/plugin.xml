@@ -589,6 +589,11 @@
             id="ch.eugster.events.person.commands.field.extension.delete"
             name="Zusatzfeld entfernen">
       </command>
+      <command
+            defaultHandler="ch.eugster.events.person.handlers.RefreshHandler"
+            id="ch.eugster.events.person.command.refresh"
+            name="Refresh">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -993,6 +998,12 @@
                name="ch.eugster.events.person.separator3"
                visible="true">
          </separator>
+         <command
+               commandId="ch.eugster.events.person.command.refresh"
+               icon="icons/refresh_16.png"
+               label="Refresh"
+               style="push">
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="popup:ch.eugster.events.person.view?after=additions">
@@ -1064,6 +1075,12 @@
                   </and>
                </with>
             </visibleWhen>
+         </command>
+         <command
+               commandId="ch.eugster.events.person.command.refresh"
+               icon="icons/refresh_16.png"
+               label="Refresh"
+               style="push">
          </command>
          <separator
                name="ch.eugster.events.person.separator2"
