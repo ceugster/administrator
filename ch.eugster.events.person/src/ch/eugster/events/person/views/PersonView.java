@@ -52,8 +52,12 @@ import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.Country;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
+import ch.eugster.events.persistence.model.Member;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.PersonSettings;
+import ch.eugster.events.persistence.queries.AddressQuery;
+import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
+import ch.eugster.events.persistence.queries.PersonQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.person.Activator;
 import ch.eugster.events.person.editors.AddressEditor;
@@ -952,6 +956,9 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
+				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
+				Object object = ssel.getFirstElement();
+
 				PersonView.this.selected.setText("Ausgewählt: " + ((StructuredSelection) event.getSelection()).size());
 			}
 		});
@@ -961,6 +968,75 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 		this.getSite().setSelectionProvider(this.viewer);
 
 		this.searcher.initialize();
+	}
+
+	private Person refresh(Person person)
+	{
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		tracker.open();
+		try
+		{
+			ConnectionService service = (ConnectionService) tracker.getService();
+			PersonQuery query = (PersonQuery) service.getQuery(Person.class);
+			return (Person) query.refresh(person);
+		}
+		catch (Exception e)
+		{
+			ConnectionService service = (ConnectionService) tracker.getService();
+			PersonQuery query = (PersonQuery) service.getQuery(Person.class);
+			return query.find(Person.class, person.getId());
+		}
+		finally
+		{
+			tracker.close();
+		}
+	}
+
+	private Address refresh(Address address)
+	{
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		tracker.open();
+		try
+		{
+			ConnectionService service = (ConnectionService) tracker.getService();
+			AddressQuery query = (AddressQuery) service.getQuery(Address.class);
+			return (Address) query.refresh(address);
+		}
+		catch (Exception e)
+		{
+			ConnectionService service = (ConnectionService) tracker.getService();
+			AddressQuery query = (AddressQuery) service.getQuery(Address.class);
+			return query.find(Address.class, address.getId());
+		}
+		finally
+		{
+			tracker.close();
+		}
+	}
+
+	private LinkPersonAddress refresh(LinkPersonAddress link)
+	{
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		tracker.open();
+		try
+		{
+			ConnectionService service = (ConnectionService) tracker.getService();
+			LinkPersonAddressQuery query = (LinkPersonAddressQuery) service.getQuery(LinkPersonAddress.class);
+			return (LinkPersonAddress) query.refresh(link);
+		}
+		catch (Exception e)
+		{
+			ConnectionService service = (ConnectionService) tracker.getService();
+			LinkPersonAddressQuery query = (LinkPersonAddressQuery) service.getQuery(LinkPersonAddress.class);
+			return query.find(LinkPersonAddress.class, link.getId());
+		}
+		finally
+		{
+			tracker.close();
+		}
 	}
 
 	@Override
@@ -1198,6 +1274,26 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			{
 				viewer.refresh(entity);
 				packColumns();
+			}
+		});
+		EntityMediator.addListener(Member.class, new EntityAdapter()
+		{
+			@Override
+			public void postDelete(final AbstractEntity entity)
+			{
+				viewer.refresh();
+			}
+
+			@Override
+			public void postPersist(final AbstractEntity entity)
+			{
+				viewer.refresh();
+			}
+
+			@Override
+			public void postUpdate(final AbstractEntity entity)
+			{
+				viewer.refresh();
 			}
 		});
 	}

@@ -23,4 +23,6 @@ public interface ConnectionService
 	AbstractEntity find(Class<AbstractEntity> clazz, Long id);
 
 	AbstractEntity refresh(AbstractEntity entity);
+
+	void log(int level, String message);
 }

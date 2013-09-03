@@ -5,6 +5,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
@@ -23,8 +24,7 @@ public class StartWwfWizard extends AbstractHandler implements IHandler
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.setPageSize(new Point(600, 400));
 		int result = dialog.open();
-		// TODO Auto-generated method stub
-		return null;
+		return Status.OK_STATUS;
 	}
 
 }

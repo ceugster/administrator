@@ -5,6 +5,7 @@ import java.util.GregorianCalendar;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.osgi.util.tracker.ServiceTracker;
@@ -79,6 +80,13 @@ public class BookingWizard extends Wizard implements IBookingWizard
 		IStatus status = saveBooking();
 		if (bookingPage != null)
 		{
+			if (status.getSeverity() == IStatus.ERROR)
+			{
+				MessageDialog dialog = new MessageDialog(this.getShell(), "Fehler", null,
+						"Beim Speichern der Buchung ist ein Fehler aufgetreten.", MessageDialog.ERROR,
+						new String[] { "OK" }, 0);
+				dialog.open();
+			}
 			if (status.isOK() && bookingPage.printBookingConfirmation())
 			{
 				printBookingConfirmation(bookingPage);

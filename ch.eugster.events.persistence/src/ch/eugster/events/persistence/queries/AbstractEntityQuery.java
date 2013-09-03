@@ -7,12 +7,14 @@ import java.util.GregorianCalendar;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
 import org.eclipse.persistence.jpa.JpaEntityManager;
 import org.eclipse.persistence.jpa.JpaHelper;
 import org.eclipse.persistence.queries.ReadAllQuery;
 import org.eclipse.persistence.queries.ReportQuery;
+import org.osgi.service.log.LogService;
 
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.User;
@@ -114,6 +116,15 @@ public abstract class AbstractEntityQuery<T extends AbstractEntity>
 				entity = em.merge(entity);
 				em.flush();
 				em.getTransaction().commit();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				this.connectionService.log(LogService.LOG_ERROR, e.getLocalizedMessage());
+				MessageDialog dialog = new MessageDialog(null, "Fehler beim Speichern", null,
+						"Beim Versuch, die Änderungen zu speichern, ist ein Fehler aufgetreten.", MessageDialog.ERROR,
+						new String[] { "OK" }, 0);
+				dialog.open();
 			}
 			finally
 			{

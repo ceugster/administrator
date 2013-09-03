@@ -111,13 +111,21 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 					{
 						Monitor monitor = this.monitors.get(addressGroup.getId());
 						if (monitor != null)
+						{
 							if (monitor.checked)
+							{
 								checked++;
+							}
+						}
 					}
 					if (checked == addressGroups.size())
+					{
 						this.addressGroupViewer.setChecked(category, true);
+					}
 					else if (checked > 0)
+					{
 						this.addressGroupViewer.setGrayChecked(category, true);
+					}
 				}
 			}
 		}
@@ -162,26 +170,26 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		if (service != null)
 		{
 			Collection<AddressGroupMember> members = null;
+			AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
 			if (this.parent instanceof LinkPersonAddress)
 			{
-				AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
 				members = query.selectByLink((LinkPersonAddress) this.parent);
 			}
 			else if (this.parent instanceof Address)
 			{
-				AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
 				members = query.selectByAddress((Address) this.parent);
 			}
 			if (members != null)
 			{
 				for (AddressGroupMember member : members)
 				{
-					AddressGroupMember addressGroupMember = member;
+					member = (AddressGroupMember) query.refresh(member);
 					if (member.getAddressGroup() != null)
 					{
-						this.monitors.put(addressGroupMember.getAddressGroup().getId(),
-								new Monitor(addressGroupMember.getAddressGroup(), !addressGroupMember.isDeleted()));
-						this.current.put(addressGroupMember.getAddressGroup().getId(), addressGroupMember);
+						Monitor monitor = new Monitor(member.getAddressGroup(), !member.isDeleted());
+						monitor.checked = !member.isDeleted();
+						this.monitors.put(member.getAddressGroup().getId(), monitor);
+						this.current.put(member.getAddressGroup().getId(), member);
 					}
 				}
 			}
@@ -392,6 +400,7 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 						else if (parent instanceof Address)
 						{
 							member = AddressGroupMember.newInstance(monitor.addressGroup, (Address) this.parent);
+							member.getAddressGroup().addAddressGroupMember(member);
 						}
 						if (member != null)
 						{
@@ -403,7 +412,7 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 				}
 				else
 				{
-					if (monitor.checked != !member.isDeleted())
+					if (monitor.checked == member.isDeleted())
 					{
 						member.setDeleted(!monitor.checked);
 						member.setUpdated(GregorianCalendar.getInstance());
@@ -421,8 +430,9 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 	{
 		Monitor monitor = this.monitors.get(addressGroup.getId());
 		if (monitor == null)
+		{
 			monitor = new Monitor(addressGroup);
-
+		}
 		monitor.checked = checked;
 		this.monitors.put(addressGroup.getId(), monitor);
 	}
