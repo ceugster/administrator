@@ -14,6 +14,18 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class AddressGroupMemberTreeContentProvider implements ITreeContentProvider
 {
+	private ConnectionService connectionService;
+
+	private ServiceTracker connectionServiceTracker;
+
+	public AddressGroupMemberTreeContentProvider()
+	{
+		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		connectionServiceTracker.open();
+		connectionService = (ConnectionService) connectionServiceTracker.getService();
+	}
+
 	@Override
 	public Object[] getElements(Object object)
 	{
@@ -26,25 +38,29 @@ public class AddressGroupMemberTreeContentProvider implements ITreeContentProvid
 		if (object instanceof Domain)
 		{
 			AddressGroupCategory[] categories = new AddressGroupCategory[0];
-			ServiceTracker connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle()
-					.getBundleContext(), ConnectionService.class.getName(), null);
-			connectionServiceTracker.open();
-
-			ConnectionService con = (ConnectionService) connectionServiceTracker.getService();
-			if (con != null)
-			{
-				Domain domain = (Domain) object;
-				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) con.getQuery(AddressGroupCategory.class);
-				categories = query.selectByDomain(domain).toArray(new AddressGroupCategory[0]);
-			}
-			connectionServiceTracker.close();
+			Domain domain = (Domain) object;
+			AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) connectionService
+					.getQuery(AddressGroupCategory.class);
+			categories = query.selectByDomain(domain).toArray(new AddressGroupCategory[0]);
 			return categories;
 		}
 		else if (object instanceof AddressGroupCategory)
 		{
-			return ((AddressGroupCategory) object).getAddressGroups().toArray(new AddressGroup[0]);
+			AddressGroupCategory category = (AddressGroupCategory) object;
+			AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) connectionService
+					.getQuery(AddressGroupCategory.class);
+			try
+			{
+				category = (AddressGroupCategory) query.refresh(category);
+				return category.getAddressGroups().toArray(new AddressGroup[0]);
+			}
+			catch (Exception e)
+			{
+				category = query.find(AddressGroupCategory.class, category.getId());
+				return category.getAddressGroups().toArray(new AddressGroup[0]);
+			}
 		}
-		return new AddressGroupMember[0];
+		return new AddressGroup[0];
 	}
 
 	@Override
@@ -52,28 +68,25 @@ public class AddressGroupMemberTreeContentProvider implements ITreeContentProvid
 	{
 		if (object instanceof Domain)
 		{
-			long count = 0l;
-			ServiceTracker connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle()
-					.getBundleContext(), ConnectionService.class.getName(), null);
-			connectionServiceTracker.open();
-
-			ConnectionService con = (ConnectionService) connectionServiceTracker.getService();
-			if (con != null)
-			{
-				Domain domain = (Domain) object;
-				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) con.getQuery(AddressGroupCategory.class);
-				count = query.countByDomain(domain);
-			}
-			connectionServiceTracker.close();
-			return count > 0;
+			Domain domain = (Domain) object;
+			AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) connectionService
+					.getQuery(AddressGroupCategory.class);
+			return query.countByDomain(domain) > 0;
 		}
 		else if (object instanceof AddressGroupCategory)
 		{
-			return ((AddressGroupCategory) object).getAddressGroups().size() > 0;
-		}
-		else if (object instanceof AddressGroup)
-		{
-			return false;
+			AddressGroupCategory category = (AddressGroupCategory) object;
+			AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) connectionService
+					.getQuery(AddressGroupCategory.class);
+			try
+			{
+				category = (AddressGroupCategory) query.refresh(category);
+			}
+			catch (Exception e)
+			{
+				category = query.find(AddressGroupCategory.class, category.getId());
+			}
+			return category.getAddressGroups().size() > 0;
 		}
 		return false;
 	}
@@ -104,6 +117,7 @@ public class AddressGroupMemberTreeContentProvider implements ITreeContentProvid
 	@Override
 	public void dispose()
 	{
+		connectionServiceTracker.close();
 	}
 
 }

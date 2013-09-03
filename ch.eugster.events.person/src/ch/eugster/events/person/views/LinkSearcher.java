@@ -454,8 +454,8 @@ public class LinkSearcher extends Composite
 					if (value.contains("."))
 					{
 						value = value.replace(".", ".%");
-						criteria.put(entry.getKey(), value);
 					}
+					criteria.put(entry.getKey(), value);
 				}
 				else
 				{
@@ -619,15 +619,55 @@ public class LinkSearcher extends Composite
 		{
 			String key = keys.next();
 			if (key.equals(ORGANISATION))
+			{
 				return true;
+			}
 			if (key.equals(ADDRESS))
+			{
 				return true;
+			}
 			if (key.equals(CITY))
+			{
 				return true;
+			}
 			if (key.equals(PHONE))
+			{
 				return true;
+			}
 			if (key.equals(EMAIL))
+			{
 				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean hasPersonCriteria(final Map<String, String> criteria)
+	{
+		Iterator<String> keys = criteria.keySet().iterator();
+		while (keys.hasNext())
+		{
+			String key = keys.next();
+			if (key.equals(LASTNAME))
+			{
+				return true;
+			}
+			if (key.equals(FIRSTNAME))
+			{
+				return true;
+			}
+			if (key.equals(PHONE))
+			{
+				return true;
+			}
+			if (key.equals(EMAIL))
+			{
+				return true;
+			}
+			if (key.equals(EMAIL))
+			{
+				return true;
+			}
 		}
 		return false;
 	}
@@ -728,10 +768,7 @@ public class LinkSearcher extends Composite
 	private AbstractEntity[] selectItems(final Map<String, String> criteria)
 	{
 		AbstractEntity[] entities = new AbstractEntity[0];
-		if (criteria == null || criteria.isEmpty())
-		{
-		}
-		else
+		if (criteria != null && !criteria.isEmpty())
 		{
 			String id = criteria.get(ID);
 			if (id != null && !id.trim().isEmpty())
@@ -751,7 +788,7 @@ public class LinkSearcher extends Composite
 
 					if (this.searchAddresses)
 					{
-						if (hasAddressCriteria(criteria))
+						if (hasAddressCriteria(criteria) && !hasPersonCriteria(criteria))
 						{
 							AddressQuery addressQuery = (AddressQuery) connectionService.getQuery(Address.class);
 							selected.addAll(addressQuery.selectByCriteria(criteria, maxRows - selected.size()));

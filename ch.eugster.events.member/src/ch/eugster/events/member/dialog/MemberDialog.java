@@ -323,8 +323,8 @@ public class MemberDialog extends TitleAreaDialog implements ICheckStateListener
 	@Override
 	protected void okPressed()
 	{
-		super.okPressed();
 		this.updateMembers();
+		super.okPressed();
 	}
 
 	@Override

@@ -171,8 +171,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	{
 		boolean canAdd = true;
 		Booking booking = ((BookingWizard) this.getWizard()).getBooking();
-		if (booking.getForthcomingState().equals(BookingForthcomingState.BOOKED)
-				|| booking.getForthcomingState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
+		if (booking.getForthcomingState().equals(BookingForthcomingState.BOOKED))
 		{
 			int max = booking.getCourse().getMaxParticipants();
 			int courseBooked = booking.getCourse().getBookedParticipantsCount();

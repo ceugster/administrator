@@ -6,6 +6,7 @@ import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
 
 import ch.eugster.events.persistence.model.Address;
+import ch.eugster.events.persistence.model.AddressGroup;
 import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.service.ConnectionService;
@@ -27,6 +28,21 @@ public class AddressGroupMemberQuery extends AbstractEntityQuery<AddressGroupMem
 	public Collection<AddressGroupMember> selectByAddress(Address address)
 	{
 		Expression expression = new ExpressionBuilder(AddressGroupMember.class).get("address").equal(address);
+		return select(AddressGroupMember.class, expression);
+	}
+
+	public Collection<AddressGroupMember> selectByAddressAndAddressGroup(Address address, AddressGroup addressGroup)
+	{
+		Expression expression = new ExpressionBuilder(AddressGroupMember.class).get("address").equal(address);
+		expression = expression.and(new ExpressionBuilder().get("addressGroup").equal(addressGroup));
+		return select(AddressGroupMember.class, expression);
+	}
+
+	public Collection<AddressGroupMember> selectByLinkPersonAddressAndAddressGroup(LinkPersonAddress link,
+			AddressGroup addressGroup)
+	{
+		Expression expression = new ExpressionBuilder(AddressGroupMember.class).get("link").equal(link);
+		expression = expression.and(new ExpressionBuilder().get("addressGroup").equal(addressGroup));
 		return select(AddressGroupMember.class, expression);
 	}
 }

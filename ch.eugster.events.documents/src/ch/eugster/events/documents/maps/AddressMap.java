@@ -13,6 +13,7 @@ import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressSalutation;
 import ch.eugster.events.persistence.model.Donation;
+import ch.eugster.events.persistence.model.Member;
 
 public class AddressMap extends AbstractDataMap
 {
@@ -56,7 +57,7 @@ public class AddressMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		NAME, ANOTHER_LINE, ADDRESS, POB, ZIP, CITY, COUNTRY, PHONE, FAX, SALUTATION, EMAIL, WEBSITE, POLITE, MAILING_ADDRESS, COUNTY, TOTAL_DONATIONS;
+		NAME, ANOTHER_LINE, ADDRESS, POB, ZIP, CITY, COUNTRY, PHONE, FAX, SALUTATION, EMAIL, WEBSITE, POLITE, MAILING_ADDRESS, COUNTY, TOTAL_DONATIONS, MEMBER;
 
 		@Override
 		public String getDescription()
@@ -126,6 +127,10 @@ public class AddressMap extends AbstractDataMap
 				case TOTAL_DONATIONS:
 				{
 					return "Spendenbetrag";
+				}
+				case MEMBER:
+				{
+					return "Mitglied";
 				}
 				default:
 				{
@@ -203,6 +208,10 @@ public class AddressMap extends AbstractDataMap
 				{
 					return "total_donations";
 				}
+				case MEMBER:
+				{
+					return "member";
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -278,6 +287,10 @@ public class AddressMap extends AbstractDataMap
 				case TOTAL_DONATIONS:
 				{
 					return "Spendenbetrag";
+				}
+				case MEMBER:
+				{
+					return "Mitglied";
 				}
 				default:
 				{
@@ -456,6 +469,20 @@ public class AddressMap extends AbstractDataMap
 						}
 					}
 					return amountFormatter.format(totalAmount);
+				}
+				case MEMBER:
+				{
+					StringBuilder builder = new StringBuilder();
+					Member[] members = address.getMembers().toArray(new Member[0]);
+					for (int i = 0; i < members.length; i++)
+					{
+						builder = builder.append(members[i].getMembership().getName());
+						if (i < members.length - 1)
+						{
+							builder = builder.append(", ");
+						}
+					}
+					return builder.toString();
 				}
 				default:
 				{

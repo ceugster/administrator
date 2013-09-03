@@ -8,10 +8,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -39,6 +35,8 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.eugster.events.importer.Activator;
 
+import com.sun.media.sound.InvalidFormatException;
+
 public class SelectSourceWizardPage extends WizardPage implements ISelectionProvider, ISelectionChangedListener
 {
 	private final ImportWizard wizard;
@@ -56,8 +54,6 @@ public class SelectSourceWizardPage extends WizardPage implements ISelectionProv
 	private static final String[] FILE_VERSIONS = new String[] { "Excel-Arbeitsmappe (bis 2003)",
 			"Excel-Arbeitsmappe (ab 2007)" };
 
-	private Workbook workbook;
-
 	private final Collection<ISelectionChangedListener> sheetSelectorListeners = new ArrayList<ISelectionChangedListener>();
 
 	public SelectSourceWizardPage(ImportWizard wizard)
@@ -67,11 +63,12 @@ public class SelectSourceWizardPage extends WizardPage implements ISelectionProv
 		init();
 	}
 
-	public Sheet getSelectedSheet()
-	{
-		StructuredSelection ssel = (StructuredSelection) this.sheetSelector.getSelection();
-		return ssel.isEmpty() ? null : (Sheet) ssel.getFirstElement();
-	}
+	// public Sheet getSelectedSheet()
+	// {
+	// StructuredSelection ssel = (StructuredSelection)
+	// this.sheetSelector.getSelection();
+	// return ssel.isEmpty() ? null : (Sheet) ssel.getFirstElement();
+	// }
 
 	private void init()
 	{

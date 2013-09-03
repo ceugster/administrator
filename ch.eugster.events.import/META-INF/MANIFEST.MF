@@ -7,7 +7,9 @@ Bundle-Activator: ch.eugster.events.importer.Activator
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Import-Package: ch.eugster.events.ui.actions,
+Import-Package: ch.eugster.events.documents.maps,
+ ch.eugster.events.documents.services,
+ ch.eugster.events.ui.actions,
  ch.eugster.events.ui.dialogs,
  ch.eugster.events.ui.dnd,
  ch.eugster.events.ui.editors,

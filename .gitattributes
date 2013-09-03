@@ -1006,6 +1006,7 @@ ch.eugster.events.person/icons/person_grey_16.png_with_star_16.png -text
 ch.eugster.events.person/icons/person_red_16.png -text
 ch.eugster.events.person/icons/phone_16.png -text
 ch.eugster.events.person/icons/propeller_16x16.png -text
+ch.eugster.events.person/icons/refresh_16.png -text
 ch.eugster.events.person/icons/reset_16.png -text
 ch.eugster.events.person/icons/reset_grey_16.png -text
 ch.eugster.events.person/icons/save_16.png -text
@@ -1084,6 +1085,7 @@ ch.eugster.events.person/src/ch/eugster/events/person/handlers/EditSexHandler.ja
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/EditTitleHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/OpenWebsiteHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/ReactivateHandler.java -text
+ch.eugster.events.person/src/ch/eugster/events/person/handlers/RefreshHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/SendEmailHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/SetDefaultLinkHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/preferences/AddressLinesListFieldEditor.java -text
