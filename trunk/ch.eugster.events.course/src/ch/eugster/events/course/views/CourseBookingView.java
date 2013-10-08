@@ -39,6 +39,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import ch.eugster.events.course.Activator;
 import ch.eugster.events.course.editors.BookingEditor;
@@ -467,107 +468,113 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 	}
 
 	@Override
-	public void postDelete(AbstractEntity entity)
+	public void postDelete(final AbstractEntity entity)
 	{
-		entity = refreshEntity(entity);
-		if (this.viewer.getInput() != null)
+		UIJob job = new UIJob("")
 		{
-			if (entity instanceof Season)
-				this.viewer.refresh();
-			else if (entity instanceof Course)
-				this.viewer.refresh();
-			else if (entity instanceof Booking)
-				this.viewer.refresh(((Booking) entity).getCourse());
-			else if (entity instanceof Participant)
-				this.viewer.refresh(((Participant) entity).getBooking());
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (viewer.getInput() != null)
+				{
+					if (entity instanceof Season)
+						viewer.refresh();
+					else if (entity instanceof Course)
+						viewer.refresh();
+					else if (entity instanceof Booking)
+						viewer.refresh(((Booking) entity).getCourse());
+					else if (entity instanceof Participant)
+						viewer.refresh(((Participant) entity).getBooking());
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
-	public void postPersist(AbstractEntity entity)
+	public void postPersist(final AbstractEntity entity)
 	{
-		entity = refreshEntity(entity);
-		if (this.viewer.getInput() != null)
+		UIJob job = new UIJob("")
 		{
-			if (entity instanceof Season)
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
 			{
-				this.viewer.add(this, entity);
+				if (viewer.getInput() != null)
+				{
+					if (entity instanceof Season)
+					{
+						viewer.add(this, entity);
+					}
+					else if (entity instanceof Course)
+					{
+						Course course = (Course) entity;
+						viewer.add(course.getSeason(), course);
+					}
+					else if (entity instanceof Booking)
+					{
+						Booking booking = (Booking) entity;
+						viewer.add(booking.getCourse(), booking);
+					}
+					else if (entity instanceof Participant)
+					{
+						Participant participant = (Participant) entity;
+						viewer.refresh(participant.getBooking());
+					}
+					packColumns();
+				}
+				return Status.OK_STATUS;
 			}
-			else if (entity instanceof Course)
-			{
-				Course course = (Course) entity;
-				this.viewer.add(course.getSeason(), course);
-			}
-			else if (entity instanceof Booking)
-			{
-				Booking booking = (Booking) entity;
-				this.viewer.add(booking.getCourse(), booking);
-			}
-			else if (entity instanceof Participant)
-			{
-				Participant participant = (Participant) entity;
-				this.viewer.refresh(participant.getBooking());
-			}
-			this.packColumns();
-		}
+		};
+		job.schedule();
 	}
 
 	@Override
-	public void postUpdate(AbstractEntity entity)
+	public void postUpdate(final AbstractEntity entity)
 	{
-		entity = refreshEntity(entity);
-		if (this.viewer.getInput() != null)
+		UIJob job = new UIJob("")
 		{
-			if (entity instanceof Season)
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
 			{
-				this.viewer.refresh();
-			}
-			else if (entity instanceof Course)
-			{
-				this.viewer.refresh(entity);
-			}
-			else if (entity instanceof Booking)
-			{
-				Booking booking = (Booking) entity;
-				Course course = booking.getCourse();
-				if (this.viewer.getInput().equals(course))
+				if (viewer.getInput() != null)
 				{
-					this.viewer.refresh(entity);
-					this.setSummaryLabels(course);
-				}
-			}
-			else if (entity instanceof Participant)
-			{
-				Participant participant = (Participant) entity;
-				Booking booking = participant.getBooking();
-				Course course = booking.getCourse();
-				if (this.viewer.getInput().equals(course))
-				{
-					this.viewer.refresh(booking);
-					this.setSummaryLabels(course);
-				}
-			}
+					if (entity instanceof Season)
+					{
+						viewer.refresh();
+					}
+					else if (entity instanceof Course)
+					{
+						viewer.refresh(entity);
+					}
+					else if (entity instanceof Booking)
+					{
+						Booking booking = (Booking) entity;
+						Course course = booking.getCourse();
+						if (viewer.getInput().equals(course))
+						{
+							viewer.refresh(entity);
+							setSummaryLabels(course);
+						}
+					}
+					else if (entity instanceof Participant)
+					{
+						Participant participant = (Participant) entity;
+						Booking booking = participant.getBooking();
+						Course course = booking.getCourse();
+						if (viewer.getInput().equals(course))
+						{
+							viewer.refresh(booking);
+							setSummaryLabels(course);
+						}
+					}
 
-			this.packColumns();
-		}
-	}
-
-	private AbstractEntity refreshEntity(AbstractEntity entity)
-	{
-		// ServiceTracker tracker = new
-		// ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-		// ConnectionService.class.getName(), null);
-		// tracker.open();
-		// try
-		// {
-		// ConnectionService service = (ConnectionService) tracker.getService();
-		// return service.refresh(entity);
-		// }
-		// finally
-		// {
-		// tracker.close();
-		// }
-		return entity;
+					packColumns();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override

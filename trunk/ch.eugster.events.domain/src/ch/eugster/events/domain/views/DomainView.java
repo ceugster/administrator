@@ -1,5 +1,8 @@
 package ch.eugster.events.domain.views;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -23,6 +26,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -223,32 +227,59 @@ public class DomainView extends AbstractEntityView implements IDoubleClickListen
 	}
 
 	@Override
-	public void postPersist(AbstractEntity entity)
+	public void postPersist(final AbstractEntity entity)
 	{
-		if (entity instanceof Domain)
+		UIJob job = new UIJob("")
 		{
-			viewer.add(entity);
-			packColumns();
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof Domain)
+				{
+					viewer.add(entity);
+					packColumns();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
-	public void postUpdate(AbstractEntity entity)
+	public void postUpdate(final AbstractEntity entity)
 	{
-		if (entity instanceof Domain)
+		UIJob job = new UIJob("")
 		{
-			viewer.refresh(entity);
-			packColumns();
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof Domain)
+				{
+					viewer.refresh(entity);
+					packColumns();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
-	public void postDelete(AbstractEntity entity)
+	public void postDelete(final AbstractEntity entity)
 	{
-		if (entity instanceof Domain)
+		UIJob job = new UIJob("")
 		{
-			viewer.refresh();
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof Domain)
+				{
+					viewer.refresh();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	/**

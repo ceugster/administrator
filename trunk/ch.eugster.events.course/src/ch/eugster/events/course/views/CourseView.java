@@ -6,6 +6,9 @@ import java.util.Collection;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.State;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -48,6 +51,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -493,40 +497,67 @@ public class CourseView extends AbstractEntityView implements IDoubleClickListen
 	@Override
 	public void postDelete(final AbstractEntity entity)
 	{
-		if (entity instanceof Season)
-			refreshViewer(null);
-		else if (entity instanceof Course)
-			refreshViewer(null);
+		UIJob job = new UIJob("")
+		{
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof Season)
+					refreshViewer(null);
+				else if (entity instanceof Course)
+					refreshViewer(null);
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
 	public void postPersist(final AbstractEntity entity)
 	{
-		if (entity instanceof Season)
+		UIJob job = new UIJob("")
 		{
-			this.viewer.add(this, entity);
-			this.viewer.refresh();
-		}
-		else if (entity instanceof Course)
-		{
-			Course course = (Course) entity;
-			this.viewer.add(course.getSeason(), course);
-		}
-		this.packColumns();
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof Season)
+				{
+					viewer.add(this, entity);
+					viewer.refresh();
+				}
+				else if (entity instanceof Course)
+				{
+					Course course = (Course) entity;
+					viewer.add(course.getSeason(), course);
+				}
+				packColumns();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
 	public void postUpdate(final AbstractEntity entity)
 	{
-		if (entity instanceof Season)
+		UIJob job = new UIJob("")
 		{
-			refreshViewer(null);
-		}
-		else if (entity instanceof Course)
-		{
-			refreshViewer(entity);
-		}
-		this.packColumns();
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof Season)
+				{
+					refreshViewer(null);
+				}
+				else if (entity instanceof Course)
+				{
+					refreshViewer(entity);
+				}
+				packColumns();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	private void refreshViewer(final AbstractEntity entity)

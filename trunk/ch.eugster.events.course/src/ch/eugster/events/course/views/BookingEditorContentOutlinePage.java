@@ -69,48 +69,75 @@ public class BookingEditorContentOutlinePage extends ContentOutlinePage implemen
 			@Override
 			public void postDelete(final AbstractEntity entity)
 			{
-				if (entity instanceof Participant)
+				UIJob job = new UIJob("")
 				{
-					Participant participant = (Participant) entity;
-					if (BookingEditorContentOutlinePage.this.root.getBooking().getId() != null
-							&& BookingEditorContentOutlinePage.this.root.getBooking().getId()
-									.equals(participant.getBooking().getId()))
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						BookingEditorContentOutlinePage.this.root.getParticipantGroup().removeParticipant(
-								(Participant) entity);
-						BookingEditorContentOutlinePage.this.getTreeViewer().refresh();
+						if (entity instanceof Participant)
+						{
+							Participant participant = (Participant) entity;
+							if (BookingEditorContentOutlinePage.this.root.getBooking().getId() != null
+									&& BookingEditorContentOutlinePage.this.root.getBooking().getId()
+											.equals(participant.getBooking().getId()))
+							{
+								BookingEditorContentOutlinePage.this.root.getParticipantGroup().removeParticipant(
+										(Participant) entity);
+								BookingEditorContentOutlinePage.this.getTreeViewer().refresh();
+							}
+						}
+						return Status.OK_STATUS;
 					}
-				}
+				};
+				job.schedule();
 			}
 
 			@Override
 			public void postPersist(final AbstractEntity entity)
 			{
-				if (entity instanceof Participant)
+				UIJob job = new UIJob("")
 				{
-					Participant participant = (Participant) entity;
-					if (BookingEditorContentOutlinePage.this.root.getBooking().getId() != null
-							&& BookingEditorContentOutlinePage.this.root.getBooking().getId()
-									.equals(participant.getBooking().getId()))
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						BookingEditorContentOutlinePage.this.root.getParticipantGroup().updateBooking(
-								(Participant) entity);
+						if (entity instanceof Participant)
+						{
+							Participant participant = (Participant) entity;
+							if (BookingEditorContentOutlinePage.this.root.getBooking().getId() != null
+									&& BookingEditorContentOutlinePage.this.root.getBooking().getId()
+											.equals(participant.getBooking().getId()))
+							{
+								BookingEditorContentOutlinePage.this.root.getParticipantGroup().updateBooking(
+										(Participant) entity);
+							}
+						}
+						return Status.OK_STATUS;
 					}
-				}
+				};
+				job.schedule();
 			}
 
 			@Override
 			public void postUpdate(final AbstractEntity entity)
 			{
-				if (entity instanceof Participant)
+				UIJob job = new UIJob("")
 				{
-					Participant participant = (Participant) entity;
-					if (BookingEditorContentOutlinePage.this.root.getBooking().getId() != null
-							&& BookingEditorContentOutlinePage.this.root.getBooking().getId()
-									.equals(participant.getBooking().getId()))
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
+						if (entity instanceof Participant)
+						{
+							Participant participant = (Participant) entity;
+							if (BookingEditorContentOutlinePage.this.root.getBooking().getId() != null
+									&& BookingEditorContentOutlinePage.this.root.getBooking().getId()
+											.equals(participant.getBooking().getId()))
+							{
+							}
+						}
+						return Status.OK_STATUS;
 					}
-				}
+				};
+				job.schedule();
 			}
 		};
 		EntityMediator.addListener(Participant.class, this.entityAdapter);

@@ -150,7 +150,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				String value = AddressGroupMemberView.this.filter.getText();
 				AddressGroupMemberView.this.dialogSettings.put("member.filter", value);
 				nameFilter.setFilter(value);
-				AddressGroupMemberView.this.refresh();
+				internalRefresh();
 			}
 		});
 
@@ -249,7 +249,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 					AddressGroupMemberView.this.sorter.setColumn(0);
 
 				}
-				AddressGroupMemberView.this.viewer.refresh();
+				internalRefresh();
 			}
 		});
 
@@ -301,7 +301,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 					AddressGroupMemberView.this.sorter.setColumn(1);
 
 				}
-				AddressGroupMemberView.this.viewer.refresh();
+				internalRefresh();
 			}
 		});
 
@@ -345,7 +345,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 					AddressGroupMemberView.this.sorter.setColumn(2);
 
 				}
-				AddressGroupMemberView.this.viewer.refresh();
+				internalRefresh();
 			}
 		});
 
@@ -396,7 +396,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 					AddressGroupMemberView.this.sorter.setColumn(3);
 
 				}
-				AddressGroupMemberView.this.viewer.refresh();
+				internalRefresh();
 			}
 		});
 
@@ -454,7 +454,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 					AddressGroupMemberView.this.sorter.setColumn(3);
 
 				}
-				AddressGroupMemberView.this.viewer.refresh();
+				internalRefresh();
 			}
 		});
 
@@ -463,8 +463,6 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 		this.viewer.addDropSupport(ops, transfers, new AddressGroupViewerDropAdapter(this.viewer));
 
 		this.createContextMenu();
-
-		this.getSite().setSelectionProvider(this.viewer);
 
 		Composite bottomComposite = new Composite(composite, SWT.NONE);
 		bottomComposite.setLayout(new GridLayout(2, true));
@@ -475,18 +473,26 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 
 		this.selectedLabel = new Label(bottomComposite, SWT.NONE);
 		this.selectedLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		this.getSite().setSelectionProvider(this.viewer);
+		this.getSite().getPage().addSelectionListener(AddressGroupView.ID, this);
+
+		EntityMediator.addListener(AddressGroupMember.class, this);
+		EntityMediator.addListener(LinkPersonAddress.class, this);
+		EntityMediator.addListener(Address.class, this);
+		EntityMediator.addListener(Person.class, this);
 	}
 
 	@Override
 	public void dispose()
 	{
-		IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
-		ctxService.deactivateContext(ctxActivation);
+		this.getSite().getPage().removeSelectionListener(AddressGroupView.ID, this);
 		EntityMediator.removeListener(AddressGroupMember.class, this);
 		EntityMediator.removeListener(LinkPersonAddress.class, this);
 		EntityMediator.removeListener(Person.class, this);
 		EntityMediator.removeListener(Address.class, this);
-		this.getSite().getPage().removeSelectionListener(AddressGroupView.ID, this);
+		IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
+		ctxService.deactivateContext(ctxActivation);
 		super.dispose();
 	}
 
@@ -596,28 +602,67 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			this.dialogSettings.put("member.sorter.ascending", "true");
 
 		}
-
-		EntityMediator.addListener(AddressGroupMember.class, this);
-		EntityMediator.addListener(LinkPersonAddress.class, this);
-		EntityMediator.addListener(Address.class, this);
-		EntityMediator.addListener(Person.class, this);
-		this.getSite().getPage().addSelectionListener(AddressGroupView.ID, this);
 	}
 
 	private void internalRefresh()
 	{
-		viewer.refresh();
-		packColumns();
+		if (!viewer.getControl().isDisposed())
+		{
+			viewer.refresh();
+			packColumns();
+			updateCountLabel();
+		}
+	}
+
+	private void internalRefresh(Object object)
+	{
+		if (!viewer.getControl().isDisposed())
+		{
+			while (viewer.isBusy())
+			{
+			}
+			viewer.refresh(object);
+			packColumns();
+			updateCountLabel();
+		}
+	}
+
+	private void refreshViewer()
+	{
+		UIJob job = new UIJob("")
+		{
+
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				internalRefresh();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+
+	private void refreshViewer(final Object object)
+	{
+		UIJob job = new UIJob("")
+		{
+
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				internalRefresh(object);
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+
+	private void updateCountLabel()
+	{
 		if (countLabel != null && !countLabel.isDisposed())
 		{
 			countLabel.setText("Adressen: " + viewer.getTable().getItemCount());
 		}
-	}
-
-	private void internalRefresh(final Object object)
-	{
-		viewer.refresh(object);
-		packColumns();
 	}
 
 	private boolean isVisible(final AddressGroup addressGroup, final AddressGroupMember addressGroupMember)
@@ -631,12 +676,17 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 
 	public void packColumns()
 	{
-		TableColumn[] tableColumns = this.viewer.getTable().getColumns();
-		for (TableColumn tableColumn : tableColumns)
+		if (!viewer.getTable().isDisposed())
 		{
-			tableColumn.pack();
+			TableColumn[] tableColumns = this.viewer.getTable().getColumns();
+			for (TableColumn tableColumn : tableColumns)
+			{
+				if (tableColumn != null && !tableColumn.isDisposed())
+				{
+					tableColumn.pack();
+				}
+			}
 		}
-
 	}
 
 	@Override
@@ -649,7 +699,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			if (isVisible(root, member))
 			{
 				root.removeAddressGroupMember(member);
-				refresh();
+				refreshViewer();
 			}
 		}
 	}
@@ -665,8 +715,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				final AddressGroupMember member = (AddressGroupMember) entity;
 				if (isVisible(root, member))
 				{
-					// root.addAddressGroupMember(member);
-					refresh();
+					refreshViewer();
 				}
 			}
 		}
@@ -675,13 +724,13 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 	@Override
 	public void postUpdate(final AbstractEntity entity)
 	{
-		final AddressGroup root = (AddressGroup) this.viewer.getInput();
+		final AddressGroup root = (AddressGroup) AddressGroupMemberView.this.viewer.getInput();
 		if (entity instanceof AddressGroupMember)
 		{
 			final AddressGroupMember member = (AddressGroupMember) entity;
 			if (isVisible(root, member))
 			{
-				refresh(member);
+				refreshViewer(member);
 			}
 		}
 		else if (entity instanceof AddressGroup)
@@ -690,7 +739,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			if (root.getId().equals(group.getId()))
 			{
 				viewer.setInput(group);
-				refresh();
+				refreshViewer();
 			}
 		}
 		else if (entity instanceof Address)
@@ -700,7 +749,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			{
 				if (isVisible(root, member))
 				{
-					refresh(member);
+					refreshViewer(member);
 				}
 			}
 		}
@@ -711,7 +760,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			{
 				if (isVisible(root, member))
 				{
-					refresh(member);
+					refreshViewer(member);
 				}
 			}
 		}
@@ -724,42 +773,27 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				{
 					if (isVisible(root, member))
 					{
-						refresh(member);
+						refreshViewer(member);
 					}
 				}
 			}
 		}
 	}
 
-	private void refresh()
-	{
-		UIJob job = new UIJob("Aktualisiere Sicht...")
-		{
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor)
-			{
-				internalRefresh();
-				return Status.OK_STATUS;
-			}
-		};
-		job.setUser(true);
-		job.schedule();
-	}
-
-	private void refresh(final Object object)
-	{
-		UIJob job = new UIJob("Aktualisiere Sicht...")
-		{
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor)
-			{
-				internalRefresh(object);
-				return Status.OK_STATUS;
-			}
-		};
-		job.setUser(true);
-		job.schedule();
-	}
+	// private void refresh()
+	// {
+	// UIJob job = new UIJob("Aktualisiere Sicht...")
+	// {
+	// @Override
+	// public IStatus runInUIThread(final IProgressMonitor monitor)
+	// {
+	// internalRefresh();
+	// return Status.OK_STATUS;
+	// }
+	// };
+	// job.setUser(true);
+	// job.schedule();
+	// }
 
 	@Override
 	public void selectionChanged(final IWorkbenchPart part, final ISelection selection)
@@ -793,23 +827,37 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 
 	private void updateViewer(final AddressGroup addressGroup)
 	{
-		AddressGroupMemberView.this.getViewer().getTable().setEnabled(false);
 		UIJob updateViewer = new UIJob("Adressen werden aufbereitet...")
 		{
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor)
 			{
-				AddressGroupMemberView.this.showBusy(true);
-				AddressGroupMemberView.this.getViewer().setInput(addressGroup);
-				AddressGroupMemberView.this.internalRefresh();
-				AddressGroupMemberView.this.showBusy(false);
+				if (!AddressGroupMemberView.this.getViewer().getControl().isDisposed())
+				{
+					String partName = (addressGroup.getCode() == null ? (addressGroup.getName() == null ? "???"
+							: addressGroup.getName()) : addressGroup.getCode());
+					AddressGroupMemberView.this.getViewer().getTable().setEnabled(false);
+					AddressGroupMemberView.this.showBusy(true);
+					AddressGroupMemberView.this.setPartName(partName);
+					AddressGroupMemberView.this.setInput(addressGroup);
+					AddressGroupMemberView.this.internalRefresh();
+					AddressGroupMemberView.this.showBusy(false);
+					AddressGroupMemberView.this.getViewer().getTable().setEnabled(true);
+				}
 				return Status.OK_STATUS;
 			}
 
 		};
 		updateViewer.setUser(true);
 		updateViewer.schedule();
-		AddressGroupMemberView.this.getViewer().getTable().setEnabled(true);
+	}
+
+	private void setInput(Object object)
+	{
+		if (!this.viewer.getTable().isDisposed())
+		{
+			this.viewer.setInput(object);
+		}
 	}
 
 	public void clearClearField()

@@ -472,32 +472,59 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 	@Override
 	public void postDelete(final AbstractEntity entity)
 	{
-		if (entity instanceof Donation)
+		UIJob job = new UIJob("")
 		{
-			Donation donation = (Donation) entity;
-			DonationYear year = new DonationYear(donation.getDonationYear());
-			this.viewer.refresh(year);
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof Donation)
+				{
+					Donation donation = (Donation) entity;
+					DonationYear year = new DonationYear(donation.getDonationYear());
+					viewer.refresh(year);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
 	public void postPersist(final AbstractEntity entity)
 	{
-		if (entity instanceof Donation)
+		UIJob job = new UIJob("")
 		{
-			Donation donation = (Donation) entity;
-			DonationYear year = new DonationYear(donation.getDonationYear());
-			this.viewer.add(year, donation.getDonationYear());
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof Donation)
+				{
+					Donation donation = (Donation) entity;
+					DonationYear year = new DonationYear(donation.getDonationYear());
+					viewer.add(year, donation.getDonationYear());
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
 	public void postUpdate(final AbstractEntity entity)
 	{
-		if (entity instanceof Donation)
+		UIJob job = new UIJob("")
 		{
-			this.viewer.refresh(entity);
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof Donation)
+				{
+					viewer.refresh(entity);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override

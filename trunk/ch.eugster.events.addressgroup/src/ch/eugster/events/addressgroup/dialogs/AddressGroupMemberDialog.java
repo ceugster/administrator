@@ -44,7 +44,6 @@ import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.queries.AddressGroupMemberQuery;
-import ch.eugster.events.persistence.queries.AddressGroupQuery;
 import ch.eugster.events.persistence.queries.DomainQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
@@ -287,10 +286,7 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 	public boolean isChecked(final AddressGroup addressGroup)
 	{
 		Monitor monitor = monitors.get(addressGroup.getId());
-		if (monitor == null)
-			return false;
-		else
-			return monitor.checked;
+		return monitor == null ? false : monitor.checked;
 	}
 
 	public boolean isPageComplete()
@@ -405,8 +401,9 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 						if (member != null)
 						{
 							member.setInserted(GregorianCalendar.getInstance());
-							AddressGroupQuery query = (AddressGroupQuery) service.getQuery(AddressGroup.class);
-							query.merge(member.getAddressGroup());
+							AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
+									.getQuery(AddressGroupMember.class);
+							current.put(addressGroupId, query.merge(member));
 						}
 					}
 				}
@@ -418,7 +415,7 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 						member.setUpdated(GregorianCalendar.getInstance());
 						AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
 								.getQuery(AddressGroupMember.class);
-						query.merge(member);
+						current.put(addressGroupId, query.merge(member));
 					}
 				}
 			}
@@ -432,9 +429,9 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		if (monitor == null)
 		{
 			monitor = new Monitor(addressGroup);
+			this.monitors.put(addressGroup.getId(), monitor);
 		}
 		monitor.checked = checked;
-		this.monitors.put(addressGroup.getId(), monitor);
 	}
 
 	private class Monitor
