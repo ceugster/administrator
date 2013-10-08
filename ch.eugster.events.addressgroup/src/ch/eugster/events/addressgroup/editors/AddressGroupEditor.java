@@ -93,12 +93,13 @@ public class AddressGroupEditor extends AbstractEntityEditor<AddressGroup>
 		{
 			public void modifyText(ModifyEvent e)
 			{
-				if (AddressGroupEditor.this.name.getText().isEmpty()
-						|| AddressGroupEditor.this.name.getText().equals(
-								AddressGroupEditor.this.code.getText().substring(0,
-										AddressGroupEditor.this.code.getText().length() - 1)))
+				String name = AddressGroupEditor.this.name.getText();
+				String code = AddressGroupEditor.this.code.getText();
+				int min = Math.min(name.length(), code.length());
+				if (name.length() == 0 || (min > 0 && name.substring(0, min - 1).equals(code.substring(0, min - 1))))
+				{
 					AddressGroupEditor.this.name.setText(AddressGroupEditor.this.code.getText());
-				AddressGroupEditor.this.setDirty(true);
+				}
 			}
 		});
 

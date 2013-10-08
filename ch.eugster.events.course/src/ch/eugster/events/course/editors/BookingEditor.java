@@ -6,6 +6,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -37,6 +40,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.progress.UIJob;
 
 import ch.eugster.events.course.Activator;
 import ch.eugster.events.persistence.events.EntityMediator;
@@ -528,38 +532,47 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 	@Override
 	public void postDelete(final AbstractEntity entity)
 	{
-		if (entity instanceof Course)
+		UIJob job = new UIJob("")
 		{
-			Course course = (Course) entity;
-			Booking booking = ((BookingEditorInput) this.getEditorInput()).getEntity();
-			if (course.equals(booking.getCourse()))
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
 			{
-				if (course.getState().equals(CourseState.FORTHCOMING))
+				if (entity instanceof Course)
 				{
-					if (!(this.stateViewer.getInput() instanceof BookingForthcomingState[]))
+					Course course = (Course) entity;
+					Booking booking = ((BookingEditorInput) getEditorInput()).getEntity();
+					if (course.equals(booking.getCourse()))
 					{
-						this.stateViewer.setInput(BookingForthcomingState.values());
-						this.stateViewer.setSelection(new StructuredSelection(booking.getForthcomingState()));
+						if (course.getState().equals(CourseState.FORTHCOMING))
+						{
+							if (!(stateViewer.getInput() instanceof BookingForthcomingState[]))
+							{
+								stateViewer.setInput(BookingForthcomingState.values());
+								stateViewer.setSelection(new StructuredSelection(booking.getForthcomingState()));
+							}
+						}
+						if (course.getState().equals(CourseState.DONE))
+						{
+							if (!(stateViewer.getInput() instanceof BookingDoneState[]))
+							{
+								stateViewer.setInput(BookingDoneState.values());
+								stateViewer.setSelection(new StructuredSelection(booking.getDoneState()));
+							}
+						}
+						if (course.getState().equals(CourseState.ANNULATED))
+						{
+							if (!(stateViewer.getInput() instanceof BookingAnnulatedState[]))
+							{
+								stateViewer.setInput(BookingAnnulatedState.values());
+								stateViewer.setSelection(new StructuredSelection(booking.getAnnulatedState()));
+							}
+						}
 					}
 				}
-				if (course.getState().equals(CourseState.DONE))
-				{
-					if (!(this.stateViewer.getInput() instanceof BookingDoneState[]))
-					{
-						this.stateViewer.setInput(BookingDoneState.values());
-						this.stateViewer.setSelection(new StructuredSelection(booking.getDoneState()));
-					}
-				}
-				if (course.getState().equals(CourseState.ANNULATED))
-				{
-					if (!(this.stateViewer.getInput() instanceof BookingAnnulatedState[]))
-					{
-						this.stateViewer.setInput(BookingAnnulatedState.values());
-						this.stateViewer.setSelection(new StructuredSelection(booking.getAnnulatedState()));
-					}
-				}
+				return Status.OK_STATUS;
 			}
-		}
+		};
+		job.schedule();
 	}
 
 	@Override
@@ -585,38 +598,47 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 	@Override
 	public void postUpdate(final AbstractEntity entity)
 	{
-		if (entity instanceof Course)
+		UIJob job = new UIJob("")
 		{
-			Course course = (Course) entity;
-			Booking booking = ((BookingEditorInput) this.getEditorInput()).getEntity();
-			if (course.equals(booking.getCourse()))
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
 			{
-				if (course.getState().equals(CourseState.FORTHCOMING))
+				if (entity instanceof Course)
 				{
-					if (!(this.stateViewer.getInput() instanceof BookingForthcomingState[]))
+					Course course = (Course) entity;
+					Booking booking = ((BookingEditorInput) getEditorInput()).getEntity();
+					if (course.equals(booking.getCourse()))
 					{
-						this.stateViewer.setInput(BookingForthcomingState.values());
-						this.stateViewer.setSelection(new StructuredSelection(booking.getForthcomingState()));
+						if (course.getState().equals(CourseState.FORTHCOMING))
+						{
+							if (!(stateViewer.getInput() instanceof BookingForthcomingState[]))
+							{
+								stateViewer.setInput(BookingForthcomingState.values());
+								stateViewer.setSelection(new StructuredSelection(booking.getForthcomingState()));
+							}
+						}
+						if (course.getState().equals(CourseState.DONE))
+						{
+							if (!(stateViewer.getInput() instanceof BookingDoneState[]))
+							{
+								stateViewer.setInput(BookingDoneState.values());
+								stateViewer.setSelection(new StructuredSelection(booking.getDoneState()));
+							}
+						}
+						if (course.getState().equals(CourseState.ANNULATED))
+						{
+							if (!(stateViewer.getInput() instanceof BookingAnnulatedState[]))
+							{
+								stateViewer.setInput(BookingAnnulatedState.values());
+								stateViewer.setSelection(new StructuredSelection(booking.getAnnulatedState()));
+							}
+						}
 					}
 				}
-				if (course.getState().equals(CourseState.DONE))
-				{
-					if (!(this.stateViewer.getInput() instanceof BookingDoneState[]))
-					{
-						this.stateViewer.setInput(BookingDoneState.values());
-						this.stateViewer.setSelection(new StructuredSelection(booking.getDoneState()));
-					}
-				}
-				if (course.getState().equals(CourseState.ANNULATED))
-				{
-					if (!(this.stateViewer.getInput() instanceof BookingAnnulatedState[]))
-					{
-						this.stateViewer.setInput(BookingAnnulatedState.values());
-						this.stateViewer.setSelection(new StructuredSelection(booking.getAnnulatedState()));
-					}
-				}
+				return Status.OK_STATUS;
 			}
-		}
+		};
+		job.schedule();
 	}
 
 	@Override

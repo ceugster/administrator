@@ -6,6 +6,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -43,6 +46,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -1316,13 +1320,22 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 	@Override
 	public void postDelete(final AbstractEntity entity)
 	{
-		if (entity instanceof Course)
+		UIJob job = new UIJob("")
 		{
-			CourseEditorInput input = (CourseEditorInput) this.getEditorInput();
-			if (input.getEntity().getId().equals(entity.getId()))
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeEditor(this, false);
-		}
-
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof Course)
+				{
+					CourseEditorInput input = (CourseEditorInput) getEditorInput();
+					if (input.getEntity().getId().equals(entity.getId()))
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+								.closeEditor(CourseEditor.this, false);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override

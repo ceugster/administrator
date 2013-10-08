@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -32,6 +35,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.addressgroup.Activator;
@@ -132,60 +136,86 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		else if (object instanceof AddressGroup)
 		{
 			AddressGroup addressGroup = (AddressGroup) object;
-			if (!event.getChecked())
-			{
-				updateCurrent(addressGroup);
-			}
+			// if (event.getChecked())
+			// {
+			// for (AddressGroupMember member :
+			// addressGroup.getAddressGroupMembers())
+			// {
+			// Class<?> clazz = parent.getClass();
+			// if (clazz.equals(Address.class))
+			// {
+			// if (member.getAddress().getId().equals(parent.getId()))
+			// {
+			// this.current.put(addressGroup.getId(), member);
+			// break;
+			// }
+			// }
+			// else if (clazz.equals(LinkPersonAddress.class))
+			// {
+			// if (member.getLink() != null &&
+			// member.getLink().getId().equals(parent.getId()))
+			// {
+			// this.current.put(addressGroup.getId(), member);
+			// break;
+			// }
+			// }
+			// }
+			// }
+			// if (event.getChecked())
+			// {
+			// updateCurrent(addressGroup);
+			// }
 			this.updateMonitor(addressGroup, event.getChecked());
 		}
 		setDirty(true);
 	}
 
-	private void updateCurrent(AddressGroup addressGroup)
-	{
-		ConnectionService service = (ConnectionService) connectionServiceTracker.getService();
-		if (service != null)
-		{
-			Collection<AddressGroupMember> members = new ArrayList<AddressGroupMember>();
-			if (this.parent instanceof Address)
-			{
-				Address address = (Address) this.parent;
-				AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
-				members = query.selectByAddressAndAddressGroup(address, addressGroup);
-			}
-			else if (this.parent instanceof LinkPersonAddress)
-			{
-				LinkPersonAddress link = (LinkPersonAddress) this.parent;
-				AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
-				members = query.selectByLinkPersonAddressAndAddressGroup(link, addressGroup);
-			}
-			else
-			{
-				System.out.println();
-			}
-			for (AddressGroupMember member : members)
-			{
-				Long id = parent.getId();
-				Class<?> clazz = parent.getClass();
-				if (clazz.equals(Address.class))
-				{
-					if (member.getAddress().getId().equals(parent.getId()))
-					{
-						this.current.put(addressGroup.getId(), member);
-						break;
-					}
-				}
-				else if (clazz.equals(LinkPersonAddress.class))
-				{
-					if (member.getLink() != null && member.getLink().getId().equals(parent.getId()))
-					{
-						this.current.put(addressGroup.getId(), member);
-						break;
-					}
-				}
-			}
-		}
-	}
+	// private void updateCurrent(AddressGroup addressGroup)
+	// {
+	// ConnectionService service = (ConnectionService)
+	// connectionServiceTracker.getService();
+	// if (service != null)
+	// {
+	// Collection<AddressGroupMember> members = new
+	// ArrayList<AddressGroupMember>();
+	// if (this.parent instanceof Address)
+	// {
+	// Address address = (Address) this.parent;
+	// AddressGroupMemberQuery query = (AddressGroupMemberQuery)
+	// service.getQuery(AddressGroupMember.class);
+	// members = query.selectByAddressAndAddressGroup(address, addressGroup);
+	// }
+	// else if (this.parent instanceof LinkPersonAddress)
+	// {
+	// LinkPersonAddress link = (LinkPersonAddress) this.parent;
+	// AddressGroupMemberQuery query = (AddressGroupMemberQuery)
+	// service.getQuery(AddressGroupMember.class);
+	// members = query.selectByLinkPersonAddressAndAddressGroup(link,
+	// addressGroup);
+	// }
+	// for (AddressGroupMember member : members)
+	// {
+	// Class<?> clazz = parent.getClass();
+	// if (clazz.equals(Address.class))
+	// {
+	// if (member.getAddress().getId().equals(parent.getId()))
+	// {
+	// this.current.put(addressGroup.getId(), member);
+	// break;
+	// }
+	// }
+	// else if (clazz.equals(LinkPersonAddress.class))
+	// {
+	// if (member.getLink() != null &&
+	// member.getLink().getId().equals(parent.getId()))
+	// {
+	// this.current.put(addressGroup.getId(), member);
+	// break;
+	// }
+	// }
+	// }
+	// }
+	// }
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -353,16 +383,17 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 				}
 			}
 
+			Collection<Domain> domains = new ArrayList<Domain>();
 			if (this.parent == null)
 			{
-				domainViewer.setInput(new Domain[] { Domain.newInstance() });
+				domains.add(Domain.newInstance());
 			}
 			else
 			{
 				DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
-				Collection<Domain> domains = query.selectAll();
-				domainViewer.setInput(domains.toArray(new Domain[0]));
+				domains = query.selectAll();
 			}
+			domainViewer.setInput(domains.toArray(new Domain[0]));
 
 			Domain domain = Domain.newInstance();
 			if (this.parent instanceof LinkPersonAddress)
@@ -429,11 +460,11 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 			StructuredSelection ssel = (StructuredSelection) comboViewer.getSelection();
 			if (ssel.isEmpty())
 			{
-				this.addressGroupViewer.setInput(Domain.newInstance());
+				updateViewer(Domain.newInstance());
 			}
 			else
 			{
-				this.addressGroupViewer.setInput(ssel.getFirstElement());
+				updateViewer(ssel.getFirstElement());
 				this.checkCategory(ssel.getFirstElement());
 			}
 		}
@@ -481,25 +512,25 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 	@Override
 	public void postDelete(AbstractEntity entity)
 	{
-		this.addressGroupViewer.refresh();
+		refreshViewer();
 	}
 
 	@Override
 	public void postPersist(AbstractEntity entity)
 	{
-		this.addressGroupViewer.refresh();
+		refreshViewer();
 	}
 
 	@Override
 	public void postRemove(AbstractEntity entity)
 	{
-		this.addressGroupViewer.refresh();
+		refreshViewer();
 	}
 
 	@Override
-	public void postUpdate(AbstractEntity entity)
+	public void postUpdate(final AbstractEntity entity)
 	{
-		this.addressGroupViewer.refresh();
+		refreshViewer(entity);
 	}
 
 	public void updateAddressGroupMembers()
@@ -514,6 +545,10 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 				Monitor monitor = this.monitors.get(addressGroupId);
 				if (member == null)
 				{
+					if (addressGroupId == 866)
+					{
+						System.out.println();
+					}
 					if (monitor == null)
 					{
 						System.out.println();
@@ -533,23 +568,94 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 						{
 							AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
 									.getQuery(AddressGroupMember.class);
-							query.merge(member);
+							current.put(addressGroupId, query.merge(member));
 						}
 					}
 				}
 				else
 				{
-					if (monitor.checked != !member.isDeleted())
+					if (monitor.checked == member.isDeleted())
 					{
 						member.setDeleted(!monitor.checked);
 						AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
 								.getQuery(AddressGroupMember.class);
-						query.merge(member);
+						current.put(addressGroupId, query.merge(member));
 					}
 				}
 			}
 		}
 		this.setDirty(false);
+	}
+
+	private void internalRefresh()
+	{
+		if (!addressGroupViewer.getControl().isDisposed())
+		{
+			addressGroupViewer.refresh();
+			checkCategory(addressGroupViewer.getInput());
+		}
+	}
+
+	private void internalRefresh(Object object)
+	{
+		if (!addressGroupViewer.getControl().isDisposed())
+		{
+			addressGroupViewer.refresh(object);
+			checkCategory(object);
+		}
+	}
+
+	private void refreshViewer()
+	{
+		UIJob job = new UIJob("")
+		{
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				internalRefresh();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+
+	private void refreshViewer(final Object object)
+	{
+		UIJob job = new UIJob("")
+		{
+
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				internalRefresh(object);
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+
+	private void updateViewer(final Object object)
+	{
+		UIJob updateViewer = new UIJob("")
+		{
+			@Override
+			public IStatus runInUIThread(final IProgressMonitor monitor)
+			{
+				if (!addressGroupViewer.getControl().isDisposed())
+				{
+					PersonAddressGroupMemberView.this.addressGroupViewer.getControl().setEnabled(false);
+					PersonAddressGroupMemberView.this.showBusy(true);
+					PersonAddressGroupMemberView.this.addressGroupViewer.setInput(object);
+					PersonAddressGroupMemberView.this.internalRefresh();
+					PersonAddressGroupMemberView.this.showBusy(false);
+					PersonAddressGroupMemberView.this.addressGroupViewer.getControl().setEnabled(true);
+				}
+				return Status.OK_STATUS;
+			}
+
+		};
+		updateViewer.setUser(true);
+		updateViewer.schedule();
 	}
 
 	private void updateMonitor(final AddressGroup addressGroup, final boolean checked)
@@ -611,11 +717,6 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		public boolean checked = false;
 
 		public AddressGroup addressGroup = null;
-
-		public Monitor(final AddressGroup addressGroup)
-		{
-			this.addressGroup = addressGroup;
-		}
 
 		public Monitor(final AddressGroup addressGroup, final boolean checked)
 		{

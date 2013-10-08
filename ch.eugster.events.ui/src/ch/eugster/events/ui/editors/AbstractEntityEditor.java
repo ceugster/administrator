@@ -7,6 +7,8 @@
 package ch.eugster.events.ui.editors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.Color;
@@ -25,6 +27,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.events.EntityListener;
@@ -171,13 +174,22 @@ public abstract class AbstractEntityEditor<T extends AbstractEntity> extends Edi
 	@Override
 	public void postDelete(final AbstractEntity entity)
 	{
-		AbstractEntityEditorInput<T> input = (AbstractEntityEditorInput<T>) this.getEditorInput();
-		T edited = input.getEntity();
-		if (edited.getId() != null)
+		UIJob job = new UIJob("")
 		{
-			if (entity.getId().equals(edited.getId()))
-				this.getSite().getWorkbenchWindow().getActivePage().closeEditor(this, false);
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				AbstractEntityEditorInput<T> input = (AbstractEntityEditorInput<T>) getEditorInput();
+				T edited = input.getEntity();
+				if (edited.getId() != null)
+				{
+					if (entity.getId().equals(edited.getId()))
+						getSite().getWorkbenchWindow().getActivePage().closeEditor(AbstractEntityEditor.this, false);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
@@ -194,13 +206,22 @@ public abstract class AbstractEntityEditor<T extends AbstractEntity> extends Edi
 	@Override
 	public void postRemove(final AbstractEntity entity)
 	{
-		AbstractEntityEditorInput<T> input = (AbstractEntityEditorInput<T>) this.getEditorInput();
-		T edited = input.getEntity();
-		if (edited.getId() != null)
+		UIJob job = new UIJob("")
 		{
-			if (entity.getId().equals(edited.getId()))
-				this.getSite().getWorkbenchWindow().getActivePage().closeEditor(this, false);
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				AbstractEntityEditorInput<T> input = (AbstractEntityEditorInput<T>) getEditorInput();
+				T edited = input.getEntity();
+				if (edited.getId() != null)
+				{
+					if (entity.getId().equals(edited.getId()))
+						getSite().getWorkbenchWindow().getActivePage().closeEditor(AbstractEntityEditor.this, false);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override

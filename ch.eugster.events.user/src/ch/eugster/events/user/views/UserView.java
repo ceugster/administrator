@@ -1,5 +1,8 @@
 package ch.eugster.events.user.views;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -19,6 +22,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -153,10 +157,10 @@ public class UserView extends AbstractEntityView implements IDoubleClickListener
 				{
 					display = Display.getDefault();
 				}
-				display.asyncExec(new Runnable() 
+				display.asyncExec(new Runnable()
 				{
 					@Override
-					public void run() 
+					public void run()
 					{
 						viewer.setInput(connectionService);
 						packColumns();
@@ -173,10 +177,10 @@ public class UserView extends AbstractEntityView implements IDoubleClickListener
 				{
 					display = Display.getDefault();
 				}
-				display.asyncExec(new Runnable() 
+				display.asyncExec(new Runnable()
 				{
 					@Override
-					public void run() 
+					public void run()
 					{
 						if (viewer.getContentProvider() != null)
 						{
@@ -241,32 +245,59 @@ public class UserView extends AbstractEntityView implements IDoubleClickListener
 	}
 
 	@Override
-	public void postPersist(AbstractEntity entity)
+	public void postPersist(final AbstractEntity entity)
 	{
-		if (entity instanceof User)
+		UIJob job = new UIJob("")
 		{
-			this.viewer.add(entity);
-			this.packColumns();
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof User)
+				{
+					viewer.add(entity);
+					packColumns();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
-	public void postUpdate(AbstractEntity entity)
+	public void postUpdate(final AbstractEntity entity)
 	{
-		if (entity instanceof User)
+		UIJob job = new UIJob("")
 		{
-			this.viewer.refresh(entity);
-			this.packColumns();
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof User)
+				{
+					viewer.refresh(entity);
+					packColumns();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
-	public void postDelete(AbstractEntity entity)
+	public void postDelete(final AbstractEntity entity)
 	{
-		if (entity instanceof User)
+		UIJob job = new UIJob("")
 		{
-			this.viewer.refresh();
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof User)
+				{
+					viewer.refresh();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	/**

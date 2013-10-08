@@ -5,6 +5,9 @@ import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellLabelProvider;
@@ -29,6 +32,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import ch.eugster.events.donation.Activator;
 import ch.eugster.events.donation.editors.DonationEditor;
@@ -237,48 +241,75 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 	@Override
 	public void postDelete(final AbstractEntity entity)
 	{
-		if (entity instanceof Donation)
+		UIJob job = new UIJob("")
 		{
-			this.viewer.refresh();
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof Donation)
+				{
+					viewer.refresh();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
 	public void postPersist(final AbstractEntity entity)
 	{
-		if (entity instanceof Donation)
+		UIJob job = new UIJob("")
 		{
-			LinkPersonAddress link = null;
-			if (this.viewer.getInput() instanceof Person)
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
 			{
-				link = ((Person) this.viewer.getInput()).getDefaultLink();
+				if (entity instanceof Donation)
+				{
+					LinkPersonAddress link = null;
+					if (viewer.getInput() instanceof Person)
+					{
+						link = ((Person) viewer.getInput()).getDefaultLink();
+					}
+					if (viewer.getInput() instanceof LinkPersonAddress)
+					{
+						link = (LinkPersonAddress) viewer.getInput();
+					}
+					if (((Donation) entity).getLink().getId().equals(link.getId()))
+					{
+						viewer.add(entity);
+						packColumns();
+					}
+				}
+				return Status.OK_STATUS;
 			}
-			if (this.viewer.getInput() instanceof LinkPersonAddress)
-			{
-				link = (LinkPersonAddress) this.viewer.getInput();
-			}
-			if (((Donation) entity).getLink().getId().equals(link.getId()))
-			{
-				this.viewer.add(entity);
-				packColumns();
-			}
-		}
+		};
+		job.schedule();
 	}
 
 	@Override
 	public void postUpdate(final AbstractEntity entity)
 	{
-		if (entity instanceof Donation)
+		UIJob job = new UIJob("")
 		{
-			if (this.viewer.getInput() instanceof LinkPersonAddress)
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
 			{
-				LinkPersonAddress link = (LinkPersonAddress) this.viewer.getInput();
-				if (((Donation) entity).getLink().getId().equals(link.getId()))
+				if (entity instanceof Donation)
 				{
-					this.viewer.refresh(entity);
+					if (viewer.getInput() instanceof LinkPersonAddress)
+					{
+						LinkPersonAddress link = (LinkPersonAddress) viewer.getInput();
+						if (((Donation) entity).getLink().getId().equals(link.getId()))
+						{
+							viewer.refresh(entity);
+						}
+					}
 				}
+				return Status.OK_STATUS;
 			}
-		}
+		};
+		job.schedule();
 	}
 
 	@Override

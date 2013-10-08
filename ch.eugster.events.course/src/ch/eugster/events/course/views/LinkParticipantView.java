@@ -1,7 +1,8 @@
 package ch.eugster.events.course.views;
 
-import java.text.DateFormat;
-
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -30,6 +31,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import ch.eugster.events.course.Activator;
 import ch.eugster.events.course.editors.BookingEditor;
@@ -54,8 +56,6 @@ public class LinkParticipantView extends AbstractEntityView implements IDoubleCl
 	public static final String ID = "ch.eugster.events.course.views.linkParticipantView";
 
 	private TreeViewer viewer;
-
-	private final DateFormat df = DateFormat.getDateInstance();
 
 	public LinkParticipantView()
 	{
@@ -305,101 +305,107 @@ public class LinkParticipantView extends AbstractEntityView implements IDoubleCl
 	}
 
 	@Override
-	public void postDelete(AbstractEntity entity)
+	public void postDelete(final AbstractEntity entity)
 	{
-		entity = refreshEntity(entity);
-		if (this.getViewer().getInput() != null)
+		UIJob job = new UIJob("")
 		{
-			if (entity instanceof Booking)
-				this.viewer.remove(entity);
-			else if (entity instanceof Participant)
-				this.viewer.remove(entity);
-		}
-	}
-
-	private AbstractEntity refreshEntity(AbstractEntity entity)
-	{
-		// ServiceTracker tracker = new
-		// ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-		// ConnectionService.class.getName(), null);
-		// tracker.open();
-		// try
-		// {
-		// ConnectionService service = (ConnectionService) tracker.getService();
-		// return service.refresh(entity);
-		// }
-		// finally
-		// {
-		// tracker.close();
-		// }
-		return entity;
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (getViewer().getInput() != null)
+				{
+					if (entity instanceof Booking)
+						viewer.remove(entity);
+					else if (entity instanceof Participant)
+						viewer.remove(entity);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
-	public void postPersist(AbstractEntity entity)
+	public void postPersist(final AbstractEntity entity)
 	{
-		entity = refreshEntity(entity);
-		if (entity instanceof Participant)
+		UIJob job = new UIJob("")
 		{
-			Participant participant = (Participant) entity;
-			if (this.getViewer().getInput() instanceof Person)
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
 			{
-				Person person = (Person) this.getViewer().getInput();
-				if (participant.getLink().getPerson().getId().equals(person.getId()))
+				if (entity instanceof Participant)
 				{
-					if (person.getDefaultLink() != null)
+					Participant participant = (Participant) entity;
+					if (getViewer().getInput() instanceof Person)
 					{
-						person.getDefaultLink().addParticipant(participant);
+						Person person = (Person) getViewer().getInput();
+						if (participant.getLink().getPerson().getId().equals(person.getId()))
+						{
+							if (person.getDefaultLink() != null)
+							{
+								person.getDefaultLink().addParticipant(participant);
+							}
+							getViewer().refresh();
+							packColumns();
+						}
 					}
-					this.getViewer().refresh();
-					this.packColumns();
+					else if (getViewer().getInput() instanceof LinkPersonAddress)
+					{
+						LinkPersonAddress link = (LinkPersonAddress) getViewer().getInput();
+						if (participant.getLink().getId().equals(link.getId()))
+						{
+							link.addParticipant(participant);
+							getViewer().refresh();
+							packColumns();
+						}
+					}
 				}
+				return Status.OK_STATUS;
 			}
-			else if (this.getViewer().getInput() instanceof LinkPersonAddress)
-			{
-				LinkPersonAddress link = (LinkPersonAddress) this.getViewer().getInput();
-				if (participant.getLink().getId().equals(link.getId()))
-				{
-					link.addParticipant(participant);
-					this.getViewer().refresh();
-					this.packColumns();
-				}
-			}
-		}
+		};
+		job.schedule();
 	}
 
 	@Override
-	public void postUpdate(AbstractEntity entity)
+	public void postUpdate(final AbstractEntity entity)
 	{
-		entity = refreshEntity(entity);
-		if (entity instanceof Participant)
+		UIJob job = new UIJob("")
 		{
-			Participant participant = (Participant) entity;
-			if (this.getViewer().getInput() instanceof Person)
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
 			{
-				Person person = (Person) this.getViewer().getInput();
-				if (participant.getLink().getPerson().getId().equals(person.getId()))
+				if (entity instanceof Participant)
 				{
-					this.getViewer().refresh(participant);
-					this.packColumns();
+					Participant participant = (Participant) entity;
+					if (getViewer().getInput() instanceof Person)
+					{
+						Person person = (Person) getViewer().getInput();
+						if (participant.getLink().getPerson().getId().equals(person.getId()))
+						{
+							getViewer().refresh(participant);
+							packColumns();
+						}
+					}
+					else if (getViewer().getInput() instanceof LinkPersonAddress)
+					{
+						LinkPersonAddress link = (LinkPersonAddress) getViewer().getInput();
+						if (participant.getLink().getId().equals(link.getId()))
+						{
+							getViewer().refresh(participant);
+							packColumns();
+						}
+					}
 				}
-			}
-			else if (this.getViewer().getInput() instanceof LinkPersonAddress)
-			{
-				LinkPersonAddress link = (LinkPersonAddress) this.getViewer().getInput();
-				if (participant.getLink().getId().equals(link.getId()))
+				else if (entity instanceof Booking)
 				{
-					this.getViewer().refresh(participant);
-					this.packColumns();
+					Booking booking = (Booking) entity;
+					getViewer().refresh(booking);
+					packColumns();
 				}
+				return Status.OK_STATUS;
 			}
-		}
-		else if (entity instanceof Booking)
-		{
-			Booking booking = (Booking) entity;
-			this.getViewer().refresh(booking);
-			this.packColumns();
-		}
+		};
+		job.schedule();
 	}
 
 	@Override
