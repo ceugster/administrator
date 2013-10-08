@@ -380,6 +380,20 @@ public class AddressMap extends AbstractDataMap
 					}
 					return amountFormatter.format(totalAmount);
 				}
+				case MEMBER:
+				{
+					StringBuilder builder = new StringBuilder();
+					Member[] members = address.getMembers().toArray(new Member[0]);
+					for (int i = 0; i < members.length; i++)
+					{
+						builder = builder.append(members[i].getMembership().getName());
+						if (i < members.length - 1)
+						{
+							builder = builder.append(", ");
+						}
+					}
+					return builder.toString();
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");

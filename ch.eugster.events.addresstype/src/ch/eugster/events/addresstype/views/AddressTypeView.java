@@ -1,5 +1,8 @@
 package ch.eugster.events.addresstype.views;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -22,6 +25,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -228,31 +232,58 @@ public class AddressTypeView extends AbstractEntityView implements IDoubleClickL
 	@Override
 	public void postDelete(final AbstractEntity entity)
 	{
-		if (entity instanceof AddressType)
+		UIJob job = new UIJob("")
 		{
-			viewer.refresh();
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof AddressType)
+				{
+					viewer.refresh();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
 	public void postPersist(final AbstractEntity entity)
 	{
-		if (entity instanceof AddressType)
+		UIJob job = new UIJob("")
 		{
-			viewer.add(entity);
-			viewer.setSelection(new StructuredSelection(entity));
-			packColumns();
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof AddressType)
+				{
+					viewer.add(entity);
+					viewer.setSelection(new StructuredSelection(entity));
+					packColumns();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
 	public void postUpdate(final AbstractEntity entity)
 	{
-		if (entity instanceof AddressType)
+		UIJob job = new UIJob("")
 		{
-			viewer.refresh(entity);
-			packColumns();
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof AddressType)
+				{
+					viewer.refresh(entity);
+					packColumns();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	/**
