@@ -4,6 +4,9 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -14,16 +17,15 @@ import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.nebula.widgets.formattedtext.FormattedText;
-import org.eclipse.nebula.widgets.formattedtext.MaskFormatter;
-import org.eclipse.nebula.widgets.formattedtext.StringFormatter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -44,6 +46,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.events.EntityAdapter;
@@ -71,6 +74,11 @@ import ch.eugster.events.ui.editors.AbstractEntityEditor;
 import ch.eugster.events.ui.editors.AbstractEntityEditorInput;
 import ch.eugster.events.ui.helpers.BrowseHelper;
 import ch.eugster.events.ui.helpers.EmailHelper;
+
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 public class AddressEditor extends AbstractEntityEditor<Address> implements PropertyChangeListener,
 		IContentProposalListener
@@ -101,11 +109,11 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private Text phonePrefix;
 
-	private FormattedText phone;
+	private Text phone;
 
 	private Text faxPrefix;
 
-	private FormattedText fax;
+	private Text fax;
 
 	private Link browseWebsite;
 
@@ -132,6 +140,8 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	private Section addressSection;
 
 	private Section contactSection;
+
+	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
 	public AddressEditor()
 	{
@@ -520,16 +530,34 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 					countryViewer.setData("country", country);
 					// linkPhonePrefix.setText(country.getPhonePrefix());
 					phonePrefix.setText(country.getPhonePrefix());
-					faxPrefix.setText(country.getPhonePrefix());
-					if (country.getPhonePattern().isEmpty())
+					String numValue = getNumValue(phone.getText());
+					if (!numValue.isEmpty())
 					{
-						phone.setFormatter(null);
-						fax.setFormatter(null);
+						try
+						{
+							PhoneNumber phoneNumber = phoneUtil.parse(numValue, country.getIso3166alpha2());
+							String number = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
+							phone.setText(number);
+						}
+						catch (NumberParseException e)
+						{
+
+						}
 					}
-					else
+					faxPrefix.setText(country.getPhonePrefix());
+					numValue = getNumValue(fax.getText());
+					if (!numValue.isEmpty())
 					{
-						phone.setFormatter(new MaskFormatter(country.getPhonePattern()));
-						fax.setFormatter(new MaskFormatter(country.getPhonePattern()));
+						try
+						{
+							PhoneNumber phoneNumber = phoneUtil.parse(numValue, country.getIso3166alpha2());
+							String number = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
+							phone.setText(number);
+						}
+						catch (NumberParseException e)
+						{
+
+						}
 					}
 					String[] states = selectProvinceCodes(country);
 					provinceViewer.setInput(states);
@@ -641,6 +669,32 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 		return composite;
 	}
 
+	private String getNumValue(final String value)
+	{
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < value.length(); i++)
+		{
+			if ("0123456789".contains(value.substring(i, i + 1)))
+			{
+				builder.append(value.substring(i, i + 1));
+			}
+		}
+		return builder.toString();
+	}
+
+	private String removeSpaces(final String value)
+	{
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < value.length(); i++)
+		{
+			if ("0123456789".contains(value.substring(i, i + 1)))
+			{
+				builder = builder.append(value.substring(i, i + 1));
+			}
+		}
+		return builder.toString();
+	}
+
 	private Composite fillContactSection(final Section parent)
 	{
 		Composite composite = this.formToolkit.createComposite(parent);
@@ -657,9 +711,9 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 		phonePrefix.setLayoutData(gridData);
 		phonePrefix.setEnabled(false);
 
-		Text phoneControl = formToolkit.createText(composite, "");
-		phoneControl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		phoneControl.addModifyListener(new ModifyListener()
+		this.phone = formToolkit.createText(composite, "");
+		this.phone.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.phone.addModifyListener(new ModifyListener()
 		{
 			@Override
 			public void modifyText(final ModifyEvent e)
@@ -667,35 +721,67 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 				setDirty(true);
 			}
 		});
-		phoneControl.addFocusListener(new FocusAdapter()
+		phone.addFocusListener(new FocusListener()
 		{
 			@Override
 			public void focusGained(final FocusEvent e)
 			{
-				Text text = (Text) e.getSource();
-				text.setSelection(0, text.getText().length());
+				IStructuredSelection ssel = (IStructuredSelection) AddressEditor.this.countryViewer.getSelection();
+				if (ssel.getFirstElement() instanceof Country)
+				{
+					String value = AddressEditor.this.phone.getText().trim();
+					value = removeSpaces(value);
+					boolean dirty = isDirty();
+					AddressEditor.this.phone.setText(value);
+					AddressEditor.this.phone.setSelection(0, AddressEditor.this.phone.getText().length());
+					if (dirty)
+					{
+						setDirty(true);
+					}
+					else
+					{
+						setDirty(false);
+					}
+				}
+			}
+
+			@Override
+			public void focusLost(final FocusEvent e)
+			{
+				if (!AddressEditor.this.countryViewer.getSelection().isEmpty())
+				{
+					IStructuredSelection ssel = (IStructuredSelection) AddressEditor.this.countryViewer.getSelection();
+					if (ssel.getFirstElement() instanceof Country)
+					{
+						String phoneString = phone.getText();
+						if (!phoneString.isEmpty())
+						{
+							Country country = (Country) ssel.getFirstElement();
+							try
+							{
+								PhoneNumber phoneNumber = phoneUtil.parse(phoneString, country.getIso3166alpha2());
+								phoneString = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
+								boolean dirty = isDirty();
+								phone.setText(phoneString);
+								if (dirty)
+								{
+									setDirty(true);
+								}
+								else
+								{
+									setDirty(false);
+								}
+
+							}
+							catch (NumberParseException ex)
+							{
+
+							}
+						}
+					}
+				}
 			}
 		});
-
-		this.phone = new FormattedText(phoneControl);
-		if (countryViewer.getSelection() != null)
-		{
-			StructuredSelection ssel = (StructuredSelection) countryViewer.getSelection();
-			if (ssel.getFirstElement() instanceof Country)
-			{
-				Country country = (Country) ssel.getFirstElement();
-				if (country.getPhonePattern().isEmpty())
-				{
-					this.phone.setFormatter(null);
-					fax.setFormatter(null);
-				}
-				else
-				{
-					this.phone.setFormatter(new MaskFormatter(country.getPhonePattern()));
-					fax.setFormatter(new MaskFormatter(country.getPhonePattern()));
-				}
-			}
-		}
 
 		label = formToolkit.createLabel(composite, "Fax", SWT.NONE);
 		label.setLayoutData(new GridData());
@@ -707,9 +793,9 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 		faxPrefix.setLayoutData(gridData);
 		faxPrefix.setEnabled(false);
 
-		phoneControl = formToolkit.createText(composite, "");
-		phoneControl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		phoneControl.addModifyListener(new ModifyListener()
+		this.fax = formToolkit.createText(composite, "");
+		this.fax.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.fax.addModifyListener(new ModifyListener()
 		{
 			@Override
 			public void modifyText(final ModifyEvent e)
@@ -717,26 +803,67 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 				setDirty(true);
 			}
 		});
-		phoneControl.addFocusListener(new FocusAdapter()
+		this.fax.addFocusListener(new FocusListener()
 		{
 			@Override
 			public void focusGained(final FocusEvent e)
 			{
-				Text text = (Text) e.getSource();
-				text.setSelection(0, text.getText().length());
+				IStructuredSelection ssel = (IStructuredSelection) AddressEditor.this.countryViewer.getSelection();
+				if (ssel.getFirstElement() instanceof Country)
+				{
+					String value = AddressEditor.this.fax.getText().trim();
+					value = removeSpaces(value);
+					boolean dirty = isDirty();
+					AddressEditor.this.fax.setText(value);
+					AddressEditor.this.fax.setSelection(0, AddressEditor.this.fax.getText().length());
+					if (dirty)
+					{
+						setDirty(true);
+					}
+					else
+					{
+						setDirty(false);
+					}
+				}
+			}
+
+			@Override
+			public void focusLost(final FocusEvent e)
+			{
+				if (!AddressEditor.this.countryViewer.getSelection().isEmpty())
+				{
+					IStructuredSelection ssel = (IStructuredSelection) AddressEditor.this.countryViewer.getSelection();
+					if (ssel.getFirstElement() instanceof Country)
+					{
+						String faxString = fax.getText();
+						if (!faxString.isEmpty())
+						{
+							Country country = (Country) ssel.getFirstElement();
+							try
+							{
+								PhoneNumber faxNumber = phoneUtil.parse(faxString, country.getIso3166alpha2());
+								faxString = phoneUtil.format(faxNumber, PhoneNumberFormat.NATIONAL);
+								boolean dirty = isDirty();
+								fax.setText(faxString);
+								if (dirty)
+								{
+									setDirty(true);
+								}
+								else
+								{
+									setDirty(false);
+								}
+
+							}
+							catch (NumberParseException ex)
+							{
+
+							}
+						}
+					}
+				}
 			}
 		});
-
-		this.fax = new FormattedText(phoneControl);
-		if (countryViewer.getSelection() != null)
-		{
-			StructuredSelection ssel = (StructuredSelection) countryViewer.getSelection();
-			if (ssel.getFirstElement() instanceof Country)
-			{
-				Country country = (Country) ssel.getFirstElement();
-				this.fax.setFormatter(new MaskFormatter(country.getPhonePattern()));
-			}
-		}
 
 		sendEmail = new Link(composite, SWT.NONE);
 		sendEmail.setText(AddressEditor.EMAIL_LABEL);
@@ -1009,8 +1136,8 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private void loadContactValues(final Address address)
 	{
-		setPhone(phone, address.getPhone());
-		setPhone(fax, address.getFax());
+		this.phone.setText(address.getPhone());
+		this.fax.setText(address.getFax());
 		this.email.setText(address.getEmail());
 		this.website.setText(address.getWebsite());
 	}
@@ -1037,13 +1164,22 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	@Override
 	public void postDelete(final AbstractEntity entity)
 	{
-		if (entity instanceof Address)
+		UIJob job = new UIJob("")
 		{
-			AddressEditorInput input = (AddressEditorInput) this.getEditorInput();
-			if (input.getEntity().getId().equals(entity.getId()))
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeEditor(this, false);
-		}
-
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof Address)
+				{
+					AddressEditorInput input = (AddressEditorInput) getEditorInput();
+					if (input.getEntity().getId().equals(entity.getId()))
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+								.closeEditor(AddressEditor.this, false);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override
@@ -1107,8 +1243,8 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private void saveContactValues(final Address address)
 	{
-		address.setPhone((String) this.phone.getValue());
-		address.setFax((String) this.fax.getValue());
+		address.setPhone(removeSpaces(this.phone.getText()));
+		address.setFax(removeSpaces(this.fax.getText()));
 		address.setEmail(this.email.getText());
 		address.setWebsite(this.website.getText());
 	}
@@ -1198,19 +1334,6 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	public void setFocus()
 	{
 		this.name.setFocus();
-	}
-
-	private void setPhone(final FormattedText phoneField, final String phone)
-	{
-		try
-		{
-			phoneField.setValue(phone);
-		}
-		catch (IllegalArgumentException e)
-		{
-			phoneField.setFormatter(new StringFormatter());
-			phoneField.setValue(phone);
-		}
 	}
 
 	private void updateAddressLabel()

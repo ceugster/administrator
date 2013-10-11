@@ -2,6 +2,9 @@ package ch.eugster.events.person.views;
 
 import java.util.Locale;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -41,6 +44,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.events.EntityAdapter;
@@ -55,9 +59,6 @@ import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Member;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.PersonSettings;
-import ch.eugster.events.persistence.queries.AddressQuery;
-import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
-import ch.eugster.events.persistence.queries.PersonQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.person.Activator;
 import ch.eugster.events.person.editors.AddressEditor;
@@ -956,9 +957,9 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
-				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
-				Object object = ssel.getFirstElement();
-
+				// IStructuredSelection ssel = (IStructuredSelection)
+				// event.getSelection();
+				// Object object = ssel.getFirstElement();
 				PersonView.this.selected.setText("Ausgewählt: " + ((StructuredSelection) event.getSelection()).size());
 			}
 		});
@@ -970,74 +971,79 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 		this.searcher.initialize();
 	}
 
-	private Person refresh(Person person)
-	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		try
-		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			PersonQuery query = (PersonQuery) service.getQuery(Person.class);
-			return (Person) query.refresh(person);
-		}
-		catch (Exception e)
-		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			PersonQuery query = (PersonQuery) service.getQuery(Person.class);
-			return query.find(Person.class, person.getId());
-		}
-		finally
-		{
-			tracker.close();
-		}
-	}
+	// private Person refresh(Person person)
+	// {
+	// ServiceTracker tracker = new
+	// ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+	// ConnectionService.class.getName(), null);
+	// tracker.open();
+	// try
+	// {
+	// ConnectionService service = (ConnectionService) tracker.getService();
+	// PersonQuery query = (PersonQuery) service.getQuery(Person.class);
+	// return (Person) query.refresh(person);
+	// }
+	// catch (Exception e)
+	// {
+	// ConnectionService service = (ConnectionService) tracker.getService();
+	// PersonQuery query = (PersonQuery) service.getQuery(Person.class);
+	// return query.find(Person.class, person.getId());
+	// }
+	// finally
+	// {
+	// tracker.close();
+	// }
+	// }
 
-	private Address refresh(Address address)
-	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		try
-		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			AddressQuery query = (AddressQuery) service.getQuery(Address.class);
-			return (Address) query.refresh(address);
-		}
-		catch (Exception e)
-		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			AddressQuery query = (AddressQuery) service.getQuery(Address.class);
-			return query.find(Address.class, address.getId());
-		}
-		finally
-		{
-			tracker.close();
-		}
-	}
+	// private Address refresh(Address address)
+	// {
+	// ServiceTracker tracker = new
+	// ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+	// ConnectionService.class.getName(), null);
+	// tracker.open();
+	// try
+	// {
+	// ConnectionService service = (ConnectionService) tracker.getService();
+	// AddressQuery query = (AddressQuery) service.getQuery(Address.class);
+	// return (Address) query.refresh(address);
+	// }
+	// catch (Exception e)
+	// {
+	// ConnectionService service = (ConnectionService) tracker.getService();
+	// AddressQuery query = (AddressQuery) service.getQuery(Address.class);
+	// return query.find(Address.class, address.getId());
+	// }
+	// finally
+	// {
+	// tracker.close();
+	// }
+	// }
 
-	private LinkPersonAddress refresh(LinkPersonAddress link)
-	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		try
-		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			LinkPersonAddressQuery query = (LinkPersonAddressQuery) service.getQuery(LinkPersonAddress.class);
-			return (LinkPersonAddress) query.refresh(link);
-		}
-		catch (Exception e)
-		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			LinkPersonAddressQuery query = (LinkPersonAddressQuery) service.getQuery(LinkPersonAddress.class);
-			return query.find(LinkPersonAddress.class, link.getId());
-		}
-		finally
-		{
-			tracker.close();
-		}
-	}
+	// private LinkPersonAddress refresh(LinkPersonAddress link)
+	// {
+	// ServiceTracker tracker = new
+	// ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+	// ConnectionService.class.getName(), null);
+	// tracker.open();
+	// try
+	// {
+	// ConnectionService service = (ConnectionService) tracker.getService();
+	// LinkPersonAddressQuery query = (LinkPersonAddressQuery)
+	// service.getQuery(LinkPersonAddress.class);
+	// return (LinkPersonAddress) query.refresh(link);
+	// }
+	// catch (Exception e)
+	// {
+	// ConnectionService service = (ConnectionService) tracker.getService();
+	// LinkPersonAddressQuery query = (LinkPersonAddressQuery)
+	// service.getQuery(LinkPersonAddress.class);
+	// return query.find(LinkPersonAddress.class, link.getId());
+	// }
+	// finally
+	// {
+	// tracker.close();
+	// }
+	// }
 
 	@Override
 	public void dispose()
@@ -1208,22 +1214,49 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void postDelete(final AbstractEntity entity)
 			{
-				viewer.refresh();
+				UIJob job = new UIJob("")
+				{
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
+					{
+						viewer.refresh();
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 			}
 
 			@Override
 			public void postPersist(final AbstractEntity entity)
 			{
-				ContentRoot root = (ContentRoot) viewer.getInput();
-				viewer.add(root, entity);
-				packColumns();
+				UIJob job = new UIJob("")
+				{
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
+					{
+						ContentRoot root = (ContentRoot) viewer.getInput();
+						viewer.add(root, entity);
+						packColumns();
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 			}
 
 			@Override
 			public void postUpdate(final AbstractEntity entity)
 			{
-				viewer.refresh(entity);
-				packColumns();
+				UIJob job = new UIJob("")
+				{
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
+					{
+						viewer.refresh(entity);
+						packColumns();
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 			}
 		});
 		EntityMediator.addListener(LinkPersonAddress.class, new EntityAdapter()
@@ -1231,22 +1264,49 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void postDelete(final AbstractEntity entity)
 			{
-				viewer.refresh();
+				UIJob job = new UIJob("")
+				{
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
+					{
+						viewer.refresh();
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 			}
 
 			@Override
 			public void postPersist(final AbstractEntity entity)
 			{
-				LinkPersonAddress link = (LinkPersonAddress) entity;
-				viewer.add(link.getPerson(), link);
-				packColumns();
+				UIJob job = new UIJob("")
+				{
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
+					{
+						LinkPersonAddress link = (LinkPersonAddress) entity;
+						viewer.add(link.getPerson(), link);
+						packColumns();
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 			}
 
 			@Override
 			public void postUpdate(final AbstractEntity entity)
 			{
-				viewer.refresh(entity);
-				packColumns();
+				UIJob job = new UIJob("")
+				{
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
+					{
+						viewer.refresh(entity);
+						packColumns();
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 			}
 		});
 		EntityMediator.addListener(Address.class, new EntityAdapter()
@@ -1254,26 +1314,53 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void postDelete(final AbstractEntity entity)
 			{
-				viewer.refresh();
+				UIJob job = new UIJob("")
+				{
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
+					{
+						viewer.refresh();
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 			}
 
 			@Override
 			public void postPersist(final AbstractEntity entity)
 			{
-				Address address = (Address) entity;
-				if (address.getPersonLinks().size() == 0)
+				UIJob job = new UIJob("")
 				{
-					ContentRoot root = (ContentRoot) viewer.getInput();
-					viewer.add(root, entity);
-					packColumns();
-				}
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
+					{
+						Address address = (Address) entity;
+						if (address.getPersonLinks().size() == 0)
+						{
+							ContentRoot root = (ContentRoot) viewer.getInput();
+							viewer.add(root, entity);
+							packColumns();
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 			}
 
 			@Override
 			public void postUpdate(final AbstractEntity entity)
 			{
-				viewer.refresh(entity);
-				packColumns();
+				UIJob job = new UIJob("")
+				{
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
+					{
+						viewer.refresh(entity);
+						packColumns();
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 			}
 		});
 		EntityMediator.addListener(Member.class, new EntityAdapter()
@@ -1281,19 +1368,46 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void postDelete(final AbstractEntity entity)
 			{
-				viewer.refresh();
+				UIJob job = new UIJob("")
+				{
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
+					{
+						viewer.refresh();
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 			}
 
 			@Override
 			public void postPersist(final AbstractEntity entity)
 			{
-				viewer.refresh();
+				UIJob job = new UIJob("")
+				{
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
+					{
+						viewer.refresh();
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 			}
 
 			@Override
 			public void postUpdate(final AbstractEntity entity)
 			{
-				viewer.refresh();
+				UIJob job = new UIJob("")
+				{
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
+					{
+						viewer.refresh();
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 			}
 		});
 	}

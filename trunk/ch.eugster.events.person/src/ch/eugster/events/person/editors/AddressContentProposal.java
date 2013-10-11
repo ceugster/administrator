@@ -4,15 +4,24 @@ import org.eclipse.jface.fieldassist.IContentProposal;
 
 import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
+import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 
 public class AddressContentProposal implements IContentProposal, Comparable<AddressContentProposal>
 {
-	private final LinkPersonAddress link;
+	private LinkPersonAddress link;
+
+	private Address address;
 
 	public AddressContentProposal(final LinkPersonAddress link)
 	{
 		this.link = link;
+		this.address = link.getAddress();
+	}
+
+	public AddressContentProposal(final Address address)
+	{
+		this.address = address;
 	}
 
 	@Override
@@ -20,13 +29,27 @@ public class AddressContentProposal implements IContentProposal, Comparable<Addr
 	{
 		if (other instanceof AddressContentProposal)
 		{
-			if (this.getPersonAddressLink().getId() == null)
+			if (this.link == null)
 			{
-				return -1;
+				if (this.address.getId() == null)
+				{
+					return -1;
+				}
+				else if (other.getAddress().getId() == null)
+				{
+					return 1;
+				}
 			}
-			else if (other.getPersonAddressLink().getId() == null)
+			else
 			{
-				return 1;
+				if (this.link.getId() == null)
+				{
+					return -1;
+				}
+				else if (other.getAddress().getId() == null)
+				{
+					return 1;
+				}
 			}
 			return this.getContent().compareTo(other.getContent());
 		}
@@ -36,7 +59,7 @@ public class AddressContentProposal implements IContentProposal, Comparable<Addr
 	@Override
 	public String getContent()
 	{
-		return this.link.getAddress().getAddress();
+		return this.link == null ? this.address.getAddress() : this.link.getAddress().getAddress();
 	}
 
 	@Override
@@ -54,21 +77,37 @@ public class AddressContentProposal implements IContentProposal, Comparable<Addr
 	@Override
 	public String getLabel()
 	{
-		StringBuilder builder = new StringBuilder(AddressFormatter.getInstance().formatId(this.link.getAddress()));
-		builder = builder.append(", " + this.link.getAddress().getAddress());
-		if (!this.link.getAddress().getCity().isEmpty())
+		StringBuilder builder = new StringBuilder(AddressFormatter.getInstance().formatId(this.address));
+		builder = builder.append(", " + this.address.getAddress());
+		if (!this.address.getCity().isEmpty())
 		{
 			if (builder.length() > 0)
+			{
 				builder.append(", ");
-			builder.append(AddressFormatter.getInstance().formatCityLine(this.link.getAddress()));
+			}
+			builder.append(AddressFormatter.getInstance().formatCityLine(this.address));
 		}
-		if (this.link.getPerson() != null)
+		if (this.link == null)
 		{
-			if (!this.link.getPerson().getLastname().isEmpty())
+			if (!this.address.getName().isEmpty())
 			{
 				if (builder.length() > 0)
+				{
 					builder.append(", ");
-				builder.append(PersonFormatter.getInstance().formatLastnameFirstname(this.link.getPerson()));
+				}
+				builder.append(this.address.getName());
+			}
+		}
+		else
+		{
+			if (this.link.getPerson() != null)
+			{
+				if (!this.link.getPerson().getLastname().isEmpty())
+				{
+					if (builder.length() > 0)
+						builder.append(", ");
+					builder.append(PersonFormatter.getInstance().formatLastnameFirstname(this.link.getPerson()));
+				}
 			}
 		}
 		return builder.toString();
@@ -79,4 +118,8 @@ public class AddressContentProposal implements IContentProposal, Comparable<Addr
 		return this.link;
 	}
 
+	public Address getAddress()
+	{
+		return this.address;
+	}
 }
