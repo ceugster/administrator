@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -59,6 +62,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.events.EntityAdapter;
@@ -1461,52 +1465,71 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			@Override
 			public void postDelete(final AbstractEntity entity)
 			{
-				if (entity instanceof Person)
-				{
-					Person person = (Person) entity;
-					if (person.getId().equals(getLink().getPerson().getId()))
-					{
-
-					}
-				}
+				// UIJob job = new UIJob("")
+				// {
+				// @Override
+				// public IStatus runInUIThread(IProgressMonitor monitor)
+				// {
+				// if (entity instanceof Person)
+				// {
+				// Person person = (Person) entity;
+				// if (person.getId().equals(getLink().getPerson().getId()))
+				// {
+				//
+				// }
+				// }
+				// return Status.OK_STATUS;
+				// }
+				// };
+				// job.schedule();
 			}
 
 			@Override
 			public void postUpdate(final AbstractEntity entity)
 			{
-				if (entity instanceof LinkPersonAddress)
+				UIJob job = new UIJob("")
 				{
-					LinkPersonAddress link = getLink();
-					LinkPersonAddress other = (LinkPersonAddress) entity;
-					if (link.getId() != null && link.getPerson().getId() != null)
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						if (other.getPerson().getId().equals(link.getPerson().getId()))
+						if (entity instanceof LinkPersonAddress)
 						{
-							if (deleteHyperlink != null)
+							LinkPersonAddress link = getLink();
+							LinkPersonAddress other = (LinkPersonAddress) entity;
+							if (link.getId() != null && link.getPerson().getId() != null)
 							{
-								boolean enable = other.getPerson().getDefaultLink().getId().equals(link.getId());
-								deleteHyperlink.setEnabled(enable);
+								if (other.getPerson().getId().equals(link.getPerson().getId()))
+								{
+									if (deleteHyperlink != null)
+									{
+										boolean enable = other.getPerson().getDefaultLink().getId()
+												.equals(link.getId());
+										deleteHyperlink.setEnabled(enable);
+									}
+								}
 							}
 						}
-					}
-				}
-				else if (entity instanceof Person)
-				{
-					LinkPersonAddress link = getLink();
-					Person person = (Person) entity;
-					if (person.getId().equals(link.getPerson().getId()))
-					{
-						if (link.getId() != null)
+						else if (entity instanceof Person)
 						{
-							if (deleteHyperlink != null)
+							LinkPersonAddress link = getLink();
+							Person person = (Person) entity;
+							if (person.getId().equals(link.getPerson().getId()))
 							{
-								boolean enable = person.getDefaultLink() != null
-										&& person.getDefaultLink().getId().equals(link.getId());
-								deleteHyperlink.setEnabled(!enable);
+								if (link.getId() != null)
+								{
+									if (deleteHyperlink != null)
+									{
+										boolean enable = person.getDefaultLink() != null
+												&& person.getDefaultLink().getId().equals(link.getId());
+										deleteHyperlink.setEnabled(!enable);
+									}
+								}
 							}
 						}
+						return Status.OK_STATUS;
 					}
-				}
+				};
+				job.schedule();
 			}
 		};
 		EntityMediator.addListener(Person.class, entityAdapter);
@@ -1614,11 +1637,11 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		if (contentProposal instanceof AddressContentProposal)
 		{
 			AddressContentProposal proposal = (AddressContentProposal) contentProposal;
-			Address address = proposal.getPersonAddressLink().getAddress();
+			Address address = proposal.getAddress();
 			if (address.getId() != null)
 			{
 				LinkPersonAddress link = getLink();
-				link.setAddress(proposal.getPersonAddressLink().getAddress());
+				link.setAddress(address);
 				loadAddressValues();
 				loadAddressContactsValues();
 			}

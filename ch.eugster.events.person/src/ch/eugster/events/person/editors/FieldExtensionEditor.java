@@ -1,5 +1,8 @@
 package ch.eugster.events.person.editors;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -29,6 +32,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.progress.UIJob;
 
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.exceptions.PersistenceException.ErrorCode;
@@ -498,13 +502,22 @@ public class FieldExtensionEditor extends AbstractEntityEditor<FieldExtension>
 	@Override
 	public void postDelete(final AbstractEntity entity)
 	{
-		FieldExtensionEditorInput input = (FieldExtensionEditorInput) this.getEditorInput();
-		FieldExtension extension = input.getEntity();
-
-		if (extension.getId() != null && extension.getId().equals(entity.getId()))
+		UIJob job = new UIJob("")
 		{
-			this.getEditorSite().getPage().closeEditor(this, false);
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				FieldExtensionEditorInput input = (FieldExtensionEditorInput) getEditorInput();
+				FieldExtension extension = input.getEntity();
+
+				if (extension.getId() != null && extension.getId().equals(entity.getId()))
+				{
+					getEditorSite().getPage().closeEditor(FieldExtensionEditor.this, false);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override

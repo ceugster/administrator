@@ -451,11 +451,14 @@ public class LinkSearcher extends Composite
 				}
 				else if (entry.getKey().equals(CITY))
 				{
-					if (value.contains("."))
+					if (!value.isEmpty())
 					{
-						value = value.replace(".", ".%");
+						if (value.contains("."))
+						{
+							value = value.replace(".", ".%");
+						}
+						criteria.put(entry.getKey(), value);
 					}
-					criteria.put(entry.getKey(), value);
 				}
 				else
 				{
