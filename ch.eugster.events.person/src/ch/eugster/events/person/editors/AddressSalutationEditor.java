@@ -1,5 +1,8 @@
 package ch.eugster.events.person.editors;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -22,6 +25,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.progress.UIJob;
 
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.exceptions.PersistenceException.ErrorCode;
@@ -223,12 +227,21 @@ public class AddressSalutationEditor extends AbstractEntityEditor<AddressSalutat
 	@Override
 	public void postDelete(final AbstractEntity entity)
 	{
-		AddressSalutationEditorInput input = (AddressSalutationEditorInput) this.getEditorInput();
-		AddressSalutation salutation = input.getEntity();
-		if (salutation.getId() != null && salutation.getId().equals(entity.getId()))
+		UIJob job = new UIJob("")
 		{
-			this.getEditorSite().getPage().closeEditor(this, false);
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				AddressSalutationEditorInput input = (AddressSalutationEditorInput) getEditorInput();
+				AddressSalutation salutation = input.getEntity();
+				if (salutation.getId() != null && salutation.getId().equals(entity.getId()))
+				{
+					getEditorSite().getPage().closeEditor(AddressSalutationEditor.this, false);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	@Override

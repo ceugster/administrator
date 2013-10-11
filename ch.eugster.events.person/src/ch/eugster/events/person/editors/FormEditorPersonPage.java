@@ -1074,7 +1074,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 	{
 		if (clazz.equals(LinkPersonAddress.class))
 		{
-			return this.getEditorInput().getAdapter(LinkPersonAddress.class);
+			return this.getEditor().getEditorInput().getAdapter(LinkPersonAddress.class);
 		}
 		return super.getAdapter(clazz);
 	}

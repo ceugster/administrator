@@ -9,6 +9,9 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -65,6 +68,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -1816,13 +1820,22 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 	@Override
 	public void postDelete(final AbstractEntity entity)
 	{
-		if (entity instanceof Address)
+		UIJob job = new UIJob("")
 		{
-			LinkPersonAddressEditorInput input = (LinkPersonAddressEditorInput) this.getEditorInput();
-			if (input.getEntity().getId().equals(entity.getId()))
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeEditor(this, false);
-		}
-
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				if (entity instanceof Address)
+				{
+					LinkPersonAddressEditorInput input = (LinkPersonAddressEditorInput) getEditorInput();
+					if (input.getEntity().getId().equals(entity.getId()))
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+								.closeEditor(PersonEditor.this, false);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	// private Message getEmptyAddressAndPobMessage()

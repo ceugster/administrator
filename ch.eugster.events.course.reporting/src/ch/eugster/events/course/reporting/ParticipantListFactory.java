@@ -2,6 +2,8 @@ package ch.eugster.events.course.reporting;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +58,21 @@ public class ParticipantListFactory
 		parameters.put("title", course.getTitle() + " (" + course.getState().toString() + ")");
 
 		StringBuilder builder = new StringBuilder();
+		List<CourseGuide> courseGuides = new ArrayList<CourseGuide>();
 		Collection<CourseGuide> guides = course.getCourseGuides();
 		for (CourseGuide guide : guides)
+		{
+			courseGuides.add(guide);
+		}
+		Collections.sort(courseGuides, new Comparator<CourseGuide>()
+		{
+			@Override
+			public int compare(CourseGuide guide1, CourseGuide guide2)
+			{
+				return guide1.getGuideType().getCode().compareTo(guide2.getGuideType().getCode());
+			}
+		});
+		for (CourseGuide guide : courseGuides)
 		{
 			builder = builder.append(guide.getGuideType().getName() + ": "
 					+ PersonFormatter.getInstance().formatFirstnameLastname(guide.getGuide().getLink().getPerson())
@@ -90,6 +105,19 @@ public class ParticipantListFactory
 			if (!phone.isEmpty())
 			{
 				builder = builder.append(", " + phone);
+			}
+			String email = guide.getGuide().getLink().getPerson().getEmail();
+			if (email.isEmpty())
+			{
+				email = guide.getGuide().getLink().getEmail();
+			}
+			if (email.isEmpty())
+			{
+				email = guide.getGuide().getLink().getAddress().getEmail();
+			}
+			if (!email.isEmpty())
+			{
+				builder = builder.append(", " + email);
 			}
 			builder = builder.append("\n");
 		}

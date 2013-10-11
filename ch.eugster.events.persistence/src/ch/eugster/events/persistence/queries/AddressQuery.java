@@ -34,6 +34,14 @@ public class AddressQuery extends AbstractEntityQuery<Address>
 		return this.count(Address.class, expression);
 	}
 
+	public Collection<Address> selectByAddressAsLike(final String address)
+	{
+		Expression expression = new ExpressionBuilder(Address.class).isEmpty("links");
+		expression = expression.and(new ExpressionBuilder(Address.class).get("deleted").equal(false));
+		expression = expression.and(new ExpressionBuilder().get("address").likeIgnoreCase(address + "%"));
+		return this.select(Address.class, expression);
+	}
+
 	private Expression createCriteriaExpression(final Map<String, String> criteria)
 	{
 		Expression organization = null, street = null, city = null, phone = null, email = null;

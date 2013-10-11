@@ -1,5 +1,8 @@
 package ch.eugster.events.person.editors;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -19,6 +22,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.progress.UIJob;
 
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.exceptions.PersistenceException.ErrorCode;
@@ -167,13 +171,22 @@ public class PersonTitleEditor extends AbstractEntityEditor<PersonTitle>
 	}
 
 	@Override
-	public void postDelete(AbstractEntity entity)
+	public void postDelete(final AbstractEntity entity)
 	{
-		PersonTitleEditorInput input = (PersonTitleEditorInput) this.getEditorInput();
-		PersonTitle personTitle = input.getEntity();
-		if (personTitle.getId() != null && personTitle.getId().equals(entity.getId()))
+		UIJob job = new UIJob("")
 		{
-			this.getEditorSite().getPage().closeEditor(this, false);
-		}
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
+			{
+				PersonTitleEditorInput input = (PersonTitleEditorInput) getEditorInput();
+				PersonTitle personTitle = input.getEntity();
+				if (personTitle.getId() != null && personTitle.getId().equals(entity.getId()))
+				{
+					getEditorSite().getPage().closeEditor(PersonTitleEditor.this, false);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 }

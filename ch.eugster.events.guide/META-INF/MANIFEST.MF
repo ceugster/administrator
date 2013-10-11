@@ -36,5 +36,6 @@ Import-Package: ch.eugster.events.persistence.events,
  org.eclipse.ui.forms.events,
  org.eclipse.ui.forms.widgets,
  org.eclipse.ui.plugin,
+ org.eclipse.ui.progress,
  org.osgi.framework;version="1.5.0",
  org.osgi.util.tracker;version="1.4.0"
