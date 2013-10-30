@@ -143,6 +143,8 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
+	private AddressSalutation emptySalutation;
+
 	public AddressEditor()
 	{
 		super();
@@ -1112,11 +1114,10 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private void loadAddressValues(final Address address)
 	{
-		if (address.getSalutation() == null)
-		{
-			this.salutationViewer.setSelection(new StructuredSelection(new AddressSalutation[] { address
-					.getSalutation() }));
-		}
+		this.salutationViewer
+				.setSelection(new StructuredSelection(
+						new AddressSalutation[] { address.getSalutation() == null ? emptySalutation : address
+								.getSalutation() }));
 		this.name.setText(address.getName());
 		this.anotherLine.setText(address.getAnotherLine());
 		this.address.setText(address.getAddress());
@@ -1207,7 +1208,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	private void saveAddressValues(final Address address)
 	{
 		StructuredSelection ssel = (StructuredSelection) this.salutationViewer.getSelection();
-		if (ssel.isEmpty())
+		if (ssel.getFirstElement() == null || ssel.getFirstElement().equals(emptySalutation))
 		{
 			address.setSalutation(null);
 		}
@@ -1316,7 +1317,9 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private AddressSalutation[] selectSalutations()
 	{
-		Collection<AddressSalutation> salutations = null;
+		Collection<AddressSalutation> salutations = new ArrayList<AddressSalutation>();
+		emptySalutation = AddressSalutation.newInstance();
+		salutations.add(emptySalutation);
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();

@@ -834,8 +834,12 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			{
 				if (!AddressGroupMemberView.this.getViewer().getControl().isDisposed())
 				{
-					String partName = (addressGroup.getCode() == null ? (addressGroup.getName() == null ? "???"
-							: addressGroup.getName()) : addressGroup.getCode());
+					String partName = "???";
+					if (addressGroup != null)
+					{
+						partName = (addressGroup.getCode() == null ? (addressGroup.getName() == null ? "???"
+								: addressGroup.getName()) : addressGroup.getCode());
+					}
 					AddressGroupMemberView.this.getViewer().getTable().setEnabled(false);
 					AddressGroupMemberView.this.showBusy(true);
 					AddressGroupMemberView.this.setPartName(partName);
