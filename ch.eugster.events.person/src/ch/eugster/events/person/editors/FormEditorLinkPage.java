@@ -1500,7 +1500,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 							{
 								if (other.getPerson().getId().equals(link.getPerson().getId()))
 								{
-									if (deleteHyperlink != null)
+									if (deleteHyperlink != null && !deleteHyperlink.isDisposed())
 									{
 										boolean enable = other.getPerson().getDefaultLink().getId()
 												.equals(link.getId());
@@ -1517,7 +1517,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 							{
 								if (link.getId() != null)
 								{
-									if (deleteHyperlink != null)
+									if (deleteHyperlink != null && !deleteHyperlink.isDisposed())
 									{
 										boolean enable = person.getDefaultLink() != null
 												&& person.getDefaultLink().getId().equals(link.getId());
@@ -1580,6 +1580,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			link.getAddress().setCountry(AddressFormatter.getInstance().getCountry());
 		}
 		this.countryViewer.setSelection(new StructuredSelection(link.getAddress().getCountry()));
+		this.zip.setData("zipCode", link.getAddress().getZipCode());
 		this.zip.setText(link.getAddress().getZip());
 		this.city.setText(link.getAddress().getCity());
 		String province = link.getAddress().getZipCode() == null ? link.getAddress().getProvince() : link.getAddress()
@@ -1682,15 +1683,17 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	private void saveAddressValues()
 	{
 		LinkPersonAddress link = getLink();
+		AddressSalutation selectedSalutation = null;
 		StructuredSelection ssel = (StructuredSelection) this.salutationViewer.getSelection();
-		if (ssel.isEmpty())
+		if (ssel.getFirstElement() instanceof AddressSalutation)
 		{
-			link.getAddress().setSalutation(null);
+			selectedSalutation = (AddressSalutation) ssel.getFirstElement();
 		}
-		else
+		if (selectedSalutation.getId() == null)
 		{
-			link.getAddress().setSalutation((AddressSalutation) ssel.getFirstElement());
+			selectedSalutation = null;
 		}
+		link.getAddress().setSalutation((AddressSalutation) ssel.getFirstElement());
 		link.getAddress().setName(name.getText());
 		link.getAddress().setAnotherLine(anotherLine.getText());
 		link.getAddress().setAddress(this.address.getText());

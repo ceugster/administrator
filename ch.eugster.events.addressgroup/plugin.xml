@@ -239,6 +239,11 @@
             id="ch.eugster.events.addressgroup.command.refresh"
             name="Refresh">
       </command>
+      <command
+            defaultHandler="ch.eugster.events.addressgroup.handlers.DeleteDoubleMembersHandler"
+            id="ch.eugster.events.addressgroup.command.deleteDoubleMembers"
+            name="Delete Double Members">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
