@@ -219,23 +219,25 @@ litigation.
    <requires>
       <import plugin="ch.eugster.events.persistence" version="1.0.0" match="compatible"/>
       <import plugin="ch.eugster.events.ui" version="1.0.0" match="compatible"/>
+      <import plugin="org.eclipse.core.commands"/>
       <import plugin="org.eclipse.core.expressions" version="3.4.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.workbench"/>
       <import plugin="org.eclipse.ui.forms" version="3.5.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="ch.eugster.events.domain" version="1.0.0" match="compatible"/>
       <import plugin="ch.eugster.events.person" version="1.0.0" match="compatible"/>
       <import plugin="org.eclipse.core.runtime" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.jobs"/>
       <import plugin="org.eclipse.equinox.preferences" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.nebula.widgets.radiogroup" version="0.1.0" match="compatible"/>
       <import plugin="org.eclipse.nebula.widgets.cdatetime" version="0.14.0" match="compatible"/>
       <import plugin="org.eclipse.nebula.widgets.formattedtext" version="1.0.0" match="compatible"/>
       <import plugin="org.eclipse.ui.views" version="3.5.1" match="compatible"/>
-      <import plugin="org.eclipse.core.commands"/>
-      <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.swt"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.workbench"/>
-      <import plugin="org.eclipse.core.jobs"/>
+      <import plugin="ch.eugster.events.documents"/>
+      <import plugin="ch.eugster.events.report"/>
    </requires>
 
    <plugin

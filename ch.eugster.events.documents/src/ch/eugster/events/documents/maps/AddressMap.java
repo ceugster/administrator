@@ -321,7 +321,7 @@ public class AddressMap extends AbstractDataMap
 				}
 				case ZIP:
 				{
-					return address.getZip();
+					return address.getZipCode() == null ? address.getZip() : address.getZipCode().getZip();
 				}
 				case CITY:
 				{

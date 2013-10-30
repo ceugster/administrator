@@ -229,7 +229,7 @@ public class CourseView extends AbstractEntityView implements IDoubleClickListen
 				{
 					Season season = (Season) cell.getElement();
 					cell.setImage(Activator.getDefault().getImageRegistry().get(season.getImageKey()));
-					cell.setText(season.getCode());
+					cell.setText(season.getTitle());
 				}
 				else if (cell.getElement() instanceof Course)
 				{

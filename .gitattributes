@@ -79,6 +79,7 @@ ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/CutHa
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/DeleteAddressGroupHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/DeleteAddressGroupMemberHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/DeleteCategoryHandler.java -text
+ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/DeleteDoubleMembersHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/DeleteHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/EditAddressGroupHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/EditAddressGroupMembers.java -text
@@ -1271,6 +1272,7 @@ ch.eugster.events.utilities.console/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.utilities.console/META-INF/MANIFEST.MF -text
 ch.eugster.events.utilities.console/build.properties -text
 ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/Activator.java -text
+ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/database/manipulator/DoubleAddressGroupMemberEntriesDeleter.java -text
 ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/database/manipulator/LawFolderUpdater.java -text
 ch.eugster.events.visits.feature/.project -text
 ch.eugster.events.visits.feature/build.properties -text

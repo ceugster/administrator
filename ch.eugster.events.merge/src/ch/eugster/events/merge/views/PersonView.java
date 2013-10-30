@@ -41,6 +41,7 @@ import ch.eugster.events.persistence.events.EntityAdapter;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.model.AbstractEntity;
+import ch.eugster.events.persistence.model.AddressSalutation;
 import ch.eugster.events.persistence.model.Guide;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
@@ -1677,8 +1678,21 @@ public class PersonView extends ViewPart
 				}
 				case A_SALUTATION:
 				{
-					return l1.getAddress().getSalutation().getSalutation()
-							.compareTo(l2.getAddress().getSalutation().getSalutation());
+					AddressSalutation s1 = l1.getAddress().getSalutation();
+					AddressSalutation s2 = l2.getAddress().getSalutation();
+					if (s1 == null && s2 == null)
+					{
+						return 0;
+					}
+					if (s1 == null)
+					{
+						return 1;
+					}
+					if (s2 == null)
+					{
+						return -1;
+					}
+					return s1.getSalutation().compareTo(s2.getSalutation());
 				}
 				case A_NAME:
 				{

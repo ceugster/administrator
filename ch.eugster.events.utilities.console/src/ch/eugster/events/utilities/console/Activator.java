@@ -4,6 +4,7 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import ch.eugster.events.utilities.console.database.manipulator.DoubleAddressGroupMemberEntriesDeleter;
 import ch.eugster.events.utilities.console.database.manipulator.LawFolderUpdater;
 
 public class Activator implements BundleActivator
@@ -24,6 +25,7 @@ public class Activator implements BundleActivator
 		Activator.context = bundleContext;
 
 		context.registerService(CommandProvider.class.getName(), new LawFolderUpdater(), null);
+		context.registerService(CommandProvider.class.getName(), new DoubleAddressGroupMemberEntriesDeleter(), null);
 	}
 
 	/*
