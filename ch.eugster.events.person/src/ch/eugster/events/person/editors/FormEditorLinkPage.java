@@ -915,6 +915,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		ImageHyperlink hyperlink = toolkit.createImageHyperlink(composite, SWT.NONE);
+		hyperlink.setToolTipText("zur Seite mit den Personenangaben wechseln.");
 		hyperlink.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_PERSON_BLUE));
 		hyperlink.addHyperlinkListener(new HyperlinkAdapter()
 		{
@@ -936,6 +937,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 				if (addressType.getImage() == null)
 				{
 					Hyperlink link = toolkit.createHyperlink(composite, addressType.getName(), SWT.NONE);
+					link.setToolTipText("zur Seite " + addressType.getName()
+							+ " wechseln (falls noch nicht vorhanden, wird sie eingefügt).");
 					link.addHyperlinkListener(new HyperlinkAdapter()
 					{
 						@Override
@@ -958,6 +961,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 				{
 					hyperlink = toolkit.createImageHyperlink(composite, SWT.NONE);
 					hyperlink.setImage(addressType.getImage());
+					hyperlink.setToolTipText("zur Seite " + addressType.getName()
+							+ " wechseln (falls noch nicht vorhanden, wird sie eingefügt).");
 					hyperlink.addHyperlinkListener(new HyperlinkAdapter()
 					{
 						@Override
@@ -980,6 +985,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		}
 
 		changeAddressTypeHyperlink = toolkit.createImageHyperlink(composite, SWT.NONE);
+		changeAddressTypeHyperlink.setToolTipText("Adresstyp ändern");
 		changeAddressTypeHyperlink.addHyperlinkListener(new HyperlinkAdapter()
 		{
 			@Override
@@ -1403,12 +1409,9 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		Collection<LinkPersonAddress> links = input.getEntity().getLinks();
 		for (LinkPersonAddress link : links)
 		{
-			if (!link.isDeleted())
+			if (link.getAddressType().getId().equals(this.addressType.getId()))
 			{
-				if (link.getAddressType().getId().equals(this.addressType.getId()))
-				{
-					return link;
-				}
+				return link;
 			}
 		}
 		return null;
@@ -1688,12 +1691,12 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		if (ssel.getFirstElement() instanceof AddressSalutation)
 		{
 			selectedSalutation = (AddressSalutation) ssel.getFirstElement();
+			if (selectedSalutation.getId() == null)
+			{
+				selectedSalutation = null;
+			}
 		}
-		if (selectedSalutation.getId() == null)
-		{
-			selectedSalutation = null;
-		}
-		link.getAddress().setSalutation((AddressSalutation) ssel.getFirstElement());
+		link.getAddress().setSalutation(selectedSalutation);
 		link.getAddress().setName(name.getText());
 		link.getAddress().setAnotherLine(anotherLine.getText());
 		link.getAddress().setAddress(this.address.getText());
