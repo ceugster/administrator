@@ -57,21 +57,23 @@ public class ChangeAddressTypeDialog extends TitleAreaDialog
 				PersonFormEditor editor = currentPage.getEditor();
 				AddressType addressType = (AddressType) ssel.getFirstElement();
 				LinkPersonAddress link = currentPage.getLink();
-
-				editor.removePage(currentPage.getId());
-				try
+				if (!currentPage.getLink().getAddressType().getId().equals(addressType.getId()))
 				{
-					link.setDeleted(false);
-					link.setAddressType(addressType);
-					String pageId = "link.page." + addressType.getId().toString();
-					FormEditorLinkPage page = new FormEditorLinkPage(editor, getPersonPage(editor), pageId, link,
-							addressType);
-					editor.addPage(page);
-					editor.setActivePage(pageId);
-					page.setDirty(true);
-				}
-				catch (PartInitException e)
-				{
+					editor.removePage(currentPage.getId());
+					try
+					{
+						link.setDeleted(false);
+						link.setAddressType(addressType);
+						String pageId = "link.page." + addressType.getId().toString();
+						FormEditorLinkPage page = new FormEditorLinkPage(editor, getPersonPage(editor), pageId, link,
+								addressType);
+						editor.addPage(page);
+						editor.setActivePage(pageId);
+						page.setDirty(true);
+					}
+					catch (PartInitException e)
+					{
+					}
 				}
 			}
 		}
@@ -84,9 +86,12 @@ public class ChangeAddressTypeDialog extends TitleAreaDialog
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, "Abbrechen", false);
 
-		StructuredSelection ssel = new StructuredSelection();
-		ssel = new StructuredSelection(new AddressType[] { currentPage.getLink().getAddressType() });
-		this.addressTypeViewer.setSelection(ssel);
+		addressTypeViewer.setInput(selectableAddressTypes);
+		if (selectableAddressTypes.length > 0)
+		{
+			addressTypeViewer.setSelection(new StructuredSelection(selectableAddressTypes[0]));
+			updateButtons();
+		}
 	}
 
 	@Override
@@ -139,9 +144,7 @@ public class ChangeAddressTypeDialog extends TitleAreaDialog
 				if (ssel.getFirstElement() instanceof AddressType)
 				{
 					AddressType addressType = (AddressType) ssel.getFirstElement();
-
-					getButton(IDialogConstants.OK_ID).setEnabled(
-							!addressType.getId().equals(currentPage.getLink().getAddressType().getId()));
+					updateButtons();
 				}
 			}
 		});
@@ -155,9 +158,12 @@ public class ChangeAddressTypeDialog extends TitleAreaDialog
 				return at1.getName().compareTo(at2.getName());
 			}
 		});
-		addressTypeViewer.setInput(selectableAddressTypes);
-
 		return parent;
+	}
+
+	private void updateButtons()
+	{
+		this.getButton(IDialogConstants.OK_ID).setEnabled(!addressTypeViewer.getSelection().isEmpty());
 	}
 
 	private FormEditorPersonPage getPersonPage(final PersonFormEditor editor)
