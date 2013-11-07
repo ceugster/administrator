@@ -596,8 +596,11 @@ public class LinkSearcher extends Composite
 		for (String val : vals)
 		{
 			char[] chars = val.toCharArray();
-			chars[0] = Character.toUpperCase(chars[0]);
-			result = result.append(new String(chars) + " ");
+			if (chars.length > 0)
+			{
+				chars[0] = Character.toUpperCase(chars[0]);
+				result = result.append(new String(chars) + " ");
+			}
 		}
 		return result.toString().trim();
 	}
