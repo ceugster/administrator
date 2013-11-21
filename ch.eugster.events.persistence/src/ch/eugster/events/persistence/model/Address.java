@@ -2,6 +2,7 @@ package ch.eugster.events.persistence.model;
 
 import static javax.persistence.CascadeType.ALL;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Vector;
@@ -189,6 +190,20 @@ public class Address extends AbstractEntity implements Donator
 	public Collection<AddressGroupMember> getAddressGroupMembers()
 	{
 		return this.addressGroupMembers;
+	}
+
+	public Collection<AddressGroupMember> getAddressAddressGroupMembers()
+	{
+		Collection<AddressGroupMember> addressGroupMembers = new ArrayList<AddressGroupMember>();
+		AddressGroupMember[] members = this.addressGroupMembers.toArray(new AddressGroupMember[0]);
+		for (AddressGroupMember member : members)
+		{
+			if (member.getLink() == null)
+			{
+				addressGroupMembers.add(member);
+			}
+		}
+		return addressGroupMembers;
 	}
 
 	// public void setMailingAddress(String mailingAddress)
