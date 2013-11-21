@@ -144,11 +144,11 @@ public class PersonFormatter extends AbstractFormatter
 	public String formatLastnameFirstname(final Person person)
 	{
 		StringBuilder sb = new StringBuilder("");
-		if (!Person.stringValueOf(person.getLastname()).equals(""))
+		if (!person.getLastname().equals(""))
 		{
 			sb.append(person.getLastname().trim());
 		}
-		if (!Person.stringValueOf(person.getFirstname()).equals(""))
+		if (!person.getFirstname().equals(""))
 		{
 			if (sb.length() > 0)
 				sb.append(" ");
