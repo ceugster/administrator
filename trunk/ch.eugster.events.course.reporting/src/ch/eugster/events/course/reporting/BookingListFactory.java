@@ -18,10 +18,10 @@ public class BookingListFactory
 
 	private User user;
 
-	private BookingListFactory(final User user, final Season season)
+	private BookingListFactory(final User user, final Season season, Map<CourseState, Boolean> states)
 	{
 		this.user = user;
-		this.setSeason(season);
+		this.setSeason(season, states);
 	}
 
 	public BookingListReportItem[] getCourses()
@@ -47,15 +47,19 @@ public class BookingListFactory
 		return parameters;
 	}
 
-	public int setSeason(final Season season)
+	public int setSeason(final Season season, Map<CourseState, Boolean> states)
 	{
 		this.season = season;
 		Collection<Course> courses = season.getCourses();
 		for (Course course : courses)
 		{
-			if (!course.isDeleted() && course.getState().equals(CourseState.FORTHCOMING))
+			if (!course.isDeleted())
 			{
-				this.bookingListReportItems.add(new BookingListReportItem(course));
+				Boolean state = states.get(course.getState());
+				if (state != null && state.booleanValue())
+				{
+					this.bookingListReportItems.add(new BookingListReportItem(course));
+				}
 			}
 		}
 		return size();
@@ -66,8 +70,8 @@ public class BookingListFactory
 		return this.bookingListReportItems.size();
 	}
 
-	public static BookingListFactory create(final User user, final Season season)
+	public static BookingListFactory create(final User user, final Season season, Map<CourseState, Boolean> states)
 	{
-		return new BookingListFactory(user, season);
+		return new BookingListFactory(user, season, states);
 	}
 }

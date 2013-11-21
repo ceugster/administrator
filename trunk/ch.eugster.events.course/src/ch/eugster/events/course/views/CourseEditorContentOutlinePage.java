@@ -59,7 +59,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 	public CourseEditorContentOutlinePage(final CourseEditor editor)
 	{
 		this.editor = editor;
-		this.root = new ViewerRoot(((CourseEditorInput) editor.getEditorInput()).getEntity());
+		this.root = new ViewerRoot(editor);
 	}
 
 	private void copy(final BookingType source, final BookingType target)
@@ -272,6 +272,11 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		viewer.setInput(this.root);
 		viewer.addDoubleClickListener(this);
 		this.createContextMenu();
+	}
+
+	public void setInput(ViewerRoot root)
+	{
+		this.getTreeViewer().setInput(root);
 	}
 
 	private IAction createDeleteBookingTypeAction(final BookingType bookingType)
@@ -564,10 +569,10 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 	{
 		private final Collection<BookingType> bookingTypes = new Vector<BookingType>();
 
-		public BookingTypeGroup(final ViewerRoot root, final Course course)
+		public BookingTypeGroup(final ViewerRoot root)
 		{
 			super(root);
-			Collection<BookingType> sources = course.getBookingTypes();
+			Collection<BookingType> sources = root.getCourse().getBookingTypes();
 			for (BookingType source : sources)
 			{
 				if (!source.isDeleted())
@@ -634,10 +639,10 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 	{
 		private final Collection<CourseDetail> courseDetails = new Vector<CourseDetail>();
 
-		public CourseDetailGroup(final ViewerRoot root, final Course course)
+		public CourseDetailGroup(final ViewerRoot root)
 		{
 			super(root);
-			Collection<CourseDetail> sources = course.getCourseDetails();
+			Collection<CourseDetail> sources = root.getCourse().getCourseDetails();
 			for (CourseDetail source : sources)
 			{
 				if (!source.isDeleted())
@@ -862,10 +867,10 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 	{
 		private final Collection<CourseGuide> courseGuides = new Vector<CourseGuide>();
 
-		public CourseGuideGroup(final ViewerRoot root, final Course course)
+		public CourseGuideGroup(final ViewerRoot root)
 		{
 			super(root);
-			Collection<CourseGuide> sources = course.getCourseGuides();
+			Collection<CourseGuide> sources = root.getCourse().getCourseGuides();
 			for (CourseGuide source : sources)
 			{
 				if (!source.isDeleted())
@@ -961,22 +966,22 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 
 	public class ViewerRoot
 	{
-		private final Course course;
+		private CourseEditor editor;
 
-		private final BookingTypeGroup bookingTypeGroup;
+		private BookingTypeGroup bookingTypeGroup;
 
-		private final CourseDetailGroup courseDetailGroup;
+		private CourseDetailGroup courseDetailGroup;
 
-		private final CourseGuideGroup courseGuideGroup;
+		private CourseGuideGroup courseGuideGroup;
 
-		public ViewerRoot(final Course course)
+		public ViewerRoot(final CourseEditor editor)
 		{
-			this.course = course;
-			this.bookingTypeGroup = new BookingTypeGroup(this, course);
+			this.editor = editor;
+			this.bookingTypeGroup = new BookingTypeGroup(this);
 			this.bookingTypeGroup.addPropertyChangeListener(CourseEditorContentOutlinePage.this);
-			this.courseDetailGroup = new CourseDetailGroup(this, course);
+			this.courseDetailGroup = new CourseDetailGroup(this);
 			this.courseDetailGroup.addPropertyChangeListener(CourseEditorContentOutlinePage.this);
-			this.courseGuideGroup = new CourseGuideGroup(this, course);
+			this.courseGuideGroup = new CourseGuideGroup(this);
 			this.courseGuideGroup.addPropertyChangeListener(CourseEditorContentOutlinePage.this);
 		}
 
@@ -987,7 +992,8 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 
 		public Course getCourse()
 		{
-			return this.course;
+			CourseEditorInput input = (CourseEditorInput) editor.getEditorInput();
+			return input.getEntity();
 		}
 
 		public CourseDetailGroup getCourseDetailGroup()
