@@ -1409,9 +1409,12 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		Collection<LinkPersonAddress> links = input.getEntity().getLinks();
 		for (LinkPersonAddress link : links)
 		{
-			if (link.getAddressType().getId().equals(this.addressType.getId()))
+			if (!link.isDeleted())
 			{
-				return link;
+				if (link.getAddressType().getId().equals(this.addressType.getId()))
+				{
+					return link;
+				}
 			}
 		}
 		return null;
@@ -1713,7 +1716,28 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		link.getAddress().setZip(this.zip.getText());
 		link.getAddress().setZipCode((ZipCode) this.zip.getData("zipCode"));
 		link.getAddress().setCity(this.city.getText());
+		// if (moveAddressGroupMembers(link.getAddress()))
+		// {
+		// Collection<AddressGroupMember> members =
+		// link.getAddress().getAddressGroupMembers();
+		// for (AddressGroupMember member : members)
+		// {
+		// if (member.getLink() == null)
+		// {
+		// this.getLink().addAddressGroupMember(member);
+		// }
+		// }
+		// }
 	}
+
+	// private boolean moveAddressGroupMembers(Address address)
+	// {
+	// if (address.getAddressGroupMembers().size() == 0)
+	// {
+	// return false;
+	// }
+	// return true;
+	// }
 
 	private void saveLinkValues()
 	{
@@ -1773,8 +1797,6 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	private AddressSalutation[] selectSalutations()
 	{
 		Collection<AddressSalutation> salutations = new ArrayList<AddressSalutation>();
-		salutations.add(AddressSalutation.newInstance());
-
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
