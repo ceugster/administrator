@@ -8,7 +8,7 @@ import ch.eugster.events.persistence.model.AddressSalutation;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
 
-public class AddressGroupMemberMap extends AbstractDataMap
+public class AddressGroupMemberMap extends AbstractDataMap implements Comparable<AddressGroupMemberMap>
 {
 	public AddressGroupMemberMap(final AddressGroupMember member)
 	{
@@ -221,6 +221,12 @@ public class AddressGroupMemberMap extends AbstractDataMap
 				}
 			}
 		}
+	}
+
+	@Override
+	public int compareTo(AddressGroupMemberMap other)
+	{
+		return 0;
 	}
 
 }
