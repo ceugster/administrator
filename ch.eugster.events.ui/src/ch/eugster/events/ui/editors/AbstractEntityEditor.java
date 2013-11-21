@@ -99,10 +99,6 @@ public abstract class AbstractEntityEditor<T extends AbstractEntity> extends Edi
 		if (this.validate())
 		{
 			this.saveValues();
-			if (this.contentOutlinePage != null)
-			{
-				this.contentOutlinePage.update();
-			}
 			AbstractEntityEditorInput<T> input = (AbstractEntityEditorInput<T>) this.getEditorInput();
 			T entity = input.getEntity();
 
