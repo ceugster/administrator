@@ -40,6 +40,8 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 
 	private double payed;
 
+	private String status;
+
 	public BookingListReportItem()
 	{
 		super();
@@ -127,6 +129,11 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 		return Integer.valueOf(waitingList);
 	}
 
+	public String getStatus()
+	{
+		return status;
+	}
+
 	private void loadData(final Course course)
 	{
 		this.amount = 0D;
@@ -139,8 +146,8 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 		this.max = course.getMaxParticipants();
 		this.code = course.getCode();
 		this.name = course.getTitle();
-		this.date = course.getFirstDate().getTime();
-
+		this.date = course.getFirstDate() == null ? null : course.getFirstDate().getTime();
+		this.status = course.getState().code();
 		Collection<Booking> bookings = course.getBookings();
 		for (Booking booking : bookings)
 		{
@@ -170,13 +177,14 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 			{
 				if (booking.getBookingState(course.getState()).equals(BookingDoneState.PARTICIPATED))
 				{
-					participated += booking.getParticipantCount();
+					booked += booking.getParticipantCount();
 				}
-				else if (booking.getBookingState(course.getState()).equals(BookingDoneState.PARTICIPATION_BROKE_OFF))
+				else if (booking.getBookingState(CourseState.FORTHCOMING).equals(BookingForthcomingState.WAITING_LIST))
 				{
-					brokeOff += booking.getParticipantCount();
+					waitingList += booking.getParticipantCount();
 				}
-				else if (booking.getBookingState(course.getState()).equals(BookingForthcomingState.BOOKING_CANCELED))
+				else if (booking.getBookingState(CourseState.FORTHCOMING).equals(
+						BookingForthcomingState.BOOKING_CANCELED))
 				{
 					notParticipated += booking.getParticipantCount();
 				}

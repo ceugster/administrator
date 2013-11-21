@@ -456,6 +456,27 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 	public void init(final IViewSite site) throws PartInitException
 	{
 		super.init(site);
+		settings = Activator.getDefault().getDialogSettings().getSection("donation.view");
+		if (settings == null)
+		{
+			settings = Activator.getDefault().getDialogSettings().addNewSection("donation.view");
+		}
+		try
+		{
+			settings.getLong("start.selection.date");
+		}
+		catch (Exception e)
+		{
+			settings.put("start.selection.date", GregorianCalendar.getInstance().getTimeInMillis());
+		}
+		try
+		{
+			settings.getLong("end.selection.date");
+		}
+		catch (Exception e)
+		{
+			settings.put("end.selection.date", GregorianCalendar.getInstance().getTimeInMillis());
+		}
 		EntityMediator.addListener(Donation.class, this);
 		nf = DecimalFormat.getNumberInstance();
 		nf.setMinimumFractionDigits(Currency.getInstance(Locale.getDefault()).getDefaultFractionDigits());

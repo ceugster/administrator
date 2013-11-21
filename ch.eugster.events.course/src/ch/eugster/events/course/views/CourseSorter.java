@@ -1,9 +1,12 @@
 package ch.eugster.events.course.views;
 
+import java.util.Collection;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 import ch.eugster.events.persistence.model.Course;
+import ch.eugster.events.persistence.model.CourseDetail;
 import ch.eugster.events.persistence.model.Season;
 
 public class CourseSorter extends ViewerSorter
@@ -23,10 +26,44 @@ public class CourseSorter extends ViewerSorter
 			Course course1 = (Course) e1;
 			Course course2 = (Course) e2;
 
-			if (course2.getCode().equals(course1.getCode()))
-				return course2.getTitle().compareTo(course1.getTitle());
+			Collection<CourseDetail> details1 = course1.getCourseDetails();
+			Collection<CourseDetail> details2 = course2.getCourseDetails();
+			if (details1.isEmpty() && details2.isEmpty())
+			{
+				if (course2.getCode().equals(course1.getCode()))
+				{
+					return course2.getTitle().compareTo(course1.getTitle());
+				}
+				else
+				{
+					return course2.getCode().compareTo(course1.getCode());
+				}
+			}
+			else if (details1.isEmpty())
+			{
+				return -1;
+			}
+			else if (details2.isEmpty())
+			{
+				return 1;
+			}
 			else
-				return course2.getCode().compareTo(course1.getCode());
+			{
+				CourseDetail detail1 = details1.iterator().next();
+				CourseDetail detail2 = details2.iterator().next();
+				if (detail1.getStart() == null)
+				{
+					return -1;
+				}
+				else if (detail2.getStart() == null)
+				{
+					return 1;
+				}
+				else
+				{
+					return detail2.getStart().compareTo(detail1.getStart());
+				}
+			}
 		}
 		return 0;
 	}

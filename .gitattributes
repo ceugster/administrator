@@ -286,6 +286,7 @@ ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/Bookin
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/ParticipantListFactory.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/ParticipantListReportItem.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/BookingConfirmationDialog.java -text
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/BookingListReportDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/CourseInvitationDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/ParticipantListDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/ParticipantListReportDialog.java -text
@@ -593,7 +594,6 @@ ch.eugster.events.domain/src/ch/eugster/events/domain/views/DomainSorter.java -t
 ch.eugster.events.domain/src/ch/eugster/events/domain/views/DomainView.java -text
 ch.eugster.events.donation.feature/.project -text
 ch.eugster.events.donation.feature/build.properties -text
-ch.eugster.events.donation.feature/build.xml -text
 ch.eugster.events.donation.feature/feature.xml -text
 ch.eugster.events.donation/.classpath -text
 ch.eugster.events.donation/.project -text

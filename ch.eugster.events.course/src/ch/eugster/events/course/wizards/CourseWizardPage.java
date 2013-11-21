@@ -196,7 +196,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		this.viewer.setSorter(new CourseSorter());
 
 		SeasonFilter seasonFilter = new SeasonFilter(this.viewer);
-		seasonFilter.doFilter(false);
+		seasonFilter.doFilter(true);
 		DeletedEntityFilter deletedFilter = new DeletedEntityFilter();
 		CourseFilter courseFilter = new CourseFilter(this.filterText, this.filterButton);
 		DoneCoursesFilter doneCoursesFilter = new DoneCoursesFilter(this.viewer);
