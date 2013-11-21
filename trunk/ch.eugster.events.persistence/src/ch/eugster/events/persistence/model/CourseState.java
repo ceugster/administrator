@@ -6,6 +6,8 @@ public enum CourseState
 
 	String[] states = new String[] { "Bevorstehend", "Durchgeführt", "Annuliert" };
 
+	String[] codes = new String[] { "B", "D", "A" };
+
 	public IBookingState[] getBookingStates()
 	{
 		if (this.equals(CourseState.FORTHCOMING))
@@ -40,5 +42,10 @@ public enum CourseState
 	public String toString()
 	{
 		return this.states[this.ordinal()];
+	}
+
+	public String code()
+	{
+		return this.codes[this.ordinal()];
 	}
 }

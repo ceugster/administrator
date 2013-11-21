@@ -282,16 +282,16 @@ public class Course extends AbstractEntity
 	 * Children
 	 */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "course")
-	private final Collection<BookingType> bookingTypes = new Vector<BookingType>();
+	private Collection<BookingType> bookingTypes = new Vector<BookingType>();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "course")
 	private final Collection<Booking> bookings = new Vector<Booking>();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "course")
-	private final Collection<CourseDetail> courseDetails = new Vector<CourseDetail>();
+	private Collection<CourseDetail> courseDetails = new Vector<CourseDetail>();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "course")
-	private final Collection<CourseGuide> courseGuides = new Vector<CourseGuide>();
+	private Collection<CourseGuide> courseGuides = new Vector<CourseGuide>();
 
 	/*
 	 * Constructor
