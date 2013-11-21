@@ -1,5 +1,8 @@
 package ch.eugster.events.course.views;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -20,7 +23,16 @@ public class CourseBookingContentProvider implements ITreeContentProvider
 		else if (parent instanceof Booking)
 		{
 			Booking booking = (Booking) parent;
-			return booking.getParticipants().toArray(new Participant[0]);
+			Collection<Participant> others = new ArrayList<Participant>();
+			Collection<Participant> participants = booking.getParticipants();
+			for (Participant participant : participants)
+			{
+				if (!participant.getId().equals(booking.getParticipant().getId()))
+				{
+					others.add(participant);
+				}
+			}
+			return others.toArray(new Participant[0]);
 		}
 		return new Booking[0];
 	}
@@ -52,7 +64,7 @@ public class CourseBookingContentProvider implements ITreeContentProvider
 		if (element instanceof Booking)
 		{
 			Booking booking = (Booking) element;
-			return booking.getParticipantCount() > 1;
+			return booking.getParticipantCount() > booking.getParticipant().getCount();
 		}
 		return false;
 	}

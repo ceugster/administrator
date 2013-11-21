@@ -1456,9 +1456,21 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			course.setTitle(this.title.getText());
 			ssel = (StructuredSelection) this.userViewer.getSelection();
 			if (!ssel.isEmpty())
+			{
 				course.setResponsibleUser((User) ssel.getFirstElement());
-
+			}
+			if (this.contentOutlinePage instanceof CourseEditorContentOutlinePage)
+			{
+				CourseEditorContentOutlinePage page = (CourseEditorContentOutlinePage) this.contentOutlinePage;
+				page.update();
+			}
 		}
+	}
+
+	@Override
+	protected void updateControls()
+	{
+		this.setPartName(this.getName());
 	}
 
 	@Override
