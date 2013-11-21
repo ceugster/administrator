@@ -250,8 +250,7 @@ public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddres
 
 	public Collection<LinkPersonAddress> selectByAddressAsLike(final String address)
 	{
-		Expression expression = new ExpressionBuilder(LinkPersonAddress.class).get("deleted").equal(false);
-		expression = expression.and(new ExpressionBuilder().get("address").get("deleted").equal(false));
+		Expression expression = new ExpressionBuilder().get("address").get("deleted").equal(false);
 		expression = expression
 				.and(new ExpressionBuilder().get("address").get("address").likeIgnoreCase(address + "%"));
 		return this.select(LinkPersonAddress.class, expression);
