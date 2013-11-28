@@ -363,8 +363,11 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 
 			if (this.parent instanceof LinkPersonAddress)
 			{
+				LinkPersonAddress link = (LinkPersonAddress) this.parent;
 				AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
-				members = query.selectByLink((LinkPersonAddress) this.parent);
+				members = query.selectByLink(link);
+				Collection<AddressGroupMember> addressMembers = link.getAddress().getAddressAddressGroupMembers();
+				members.addAll(addressMembers);
 			}
 			else if (this.parent instanceof Address)
 			{

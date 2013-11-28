@@ -135,13 +135,9 @@
       <command
             categoryId="ch.eugster.events.addressgroup.group"
             description="Neue Adressgruppe hinzufügen"
-            id="ch.eugster.events.addressgroup.add"
+            id="ch.eugster.events.addressgroup.command.add.group"
             defaultHandler="ch.eugster.events.addressgroup.handlers.NewAddressGroupHandler"
             name="Adressgruppe hinzufügen">
-         <state
-               class="ch.eugster.events.addressgroup.views.AddressGroupStateFactory"
-               id="addressgroup.state">
-         </state>
       </command>
       <command
             categoryId="ch.eugster.events.addressgroup.group"
@@ -512,9 +508,9 @@
                hoverIcon="icons/addressgroup_add_16.png"
                icon="icons/addressgroup_add_16.png"
                id="ch.eugster.events.addressgroup.command.add.group"
-               label="Adressgruppe hinzufügen"
+               label="Gruppe hinzufügen"
                style="push"
-               tooltip="Hinzufügen einer neuen Adressgruppe">
+               tooltip="Hinzufügen einer neuen Gruppe">
          </command>
          <command
                commandId="ch.eugster.events.addressgroup.command.edit.group"
@@ -522,9 +518,9 @@
                hoverIcon="icons/addressgroup_edit_16.png"
                icon="icons/addressgroup_edit_16.png"
                id="ch.eugster.events.addressgroup.command.edit.group"
-               label="Adressgruppe bearbeiten"
+               label="Gruppe bearbeiten"
                style="push"
-               tooltip="Bearbeiten der ausgewählten Adressgruppe">
+               tooltip="Bearbeiten der ausgewählten Gruppe">
          </command>
          <command
                commandId="ch.eugster.events.addressgroup.command.delete.group"
@@ -532,9 +528,9 @@
                hoverIcon="icons/addressgroup_delete_16.png"
                icon="icons/addressgroup_delete_16.png"
                id="ch.eugster.events.addressgroup.command.delete.group"
-               label="Adressgruppe entfernen"
+               label="Gruppe entfernen"
                style="push"
-               tooltip="Entfernen der ausgewählten Adressgruppe">
+               tooltip="Entfernen der ausgewählten Gruppe">
          </command>
          <separator
                name="ch.eugster.events.addressgroup.separator1">
@@ -637,14 +633,14 @@
                visible="true">
          </separator>
          <command
-               commandId="ch.eugster.events.addressgroup.add"
+               commandId="ch.eugster.events.addressgroup.command.add.group"
                disabledIcon="icons/addressgroup_add_grey_16.png"
                hoverIcon="icons/addressgroup_add_16.png"
                icon="icons/addressgroup_add_16.png"
                id="ch.eugster.events.addressgroup.command.add.group"
-               label="Neue Adressgruppe"
+               label="Neue Gruppe"
                style="push"
-               tooltip="Hinzufügen einer neuen Adressgruppe">
+               tooltip="Hinzufügen einer neuen Gruppe">
             <visibleWhen
                   checkEnabled="false">
                <and>
@@ -663,9 +659,9 @@
                hoverIcon="icons/addressgroup_edit_16.png"
                icon="icons/addressgroup_edit_16.png"
                id="ch.eugster.events.addressgroup.command.edit.group"
-               label="Adressgruppe bearbeiten"
+               label="Gruppe bearbeiten"
                style="push"
-               tooltip="Bearbeiten der ausgewählten Adressgruppe">
+               tooltip="Bearbeiten der ausgewählten Gruppe">
             <visibleWhen
                   checkEnabled="false">
                <and>
@@ -684,9 +680,9 @@
                hoverIcon="icons/addressgroup_delete_16.png"
                icon="icons/addressgroup_delete_16.png"
                id="ch.eugster.events.addressgroup.command.delete.group"
-               label="Adressgruppe entfernen"
+               label="Gruppe entfernen"
                style="push"
-               tooltip="Entfernen der ausgewählten Adressgruppe">
+               tooltip="Entfernen der ausgewählten Gruppe">
             <visibleWhen
                   checkEnabled="false">
                <and>

@@ -60,12 +60,14 @@ public class EditAddressGroupMembers extends AbstractHandler implements IHandler
 			else if (ssel.getFirstElement() instanceof AddressGroupMember)
 			{
 				AddressGroupMember member = ((AddressGroupMember) ssel.getFirstElement());
-				link = refresh(member.getLink());
-				if (link == null)
+				if (member.getLink() == null)
 				{
 					address = refresh(member.getAddress());
 				}
-
+				else
+				{
+					link = refresh(member.getLink());
+				}
 			}
 			AddressGroupMemberDialog dialog = null;
 			if (link != null)
