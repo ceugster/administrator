@@ -66,7 +66,7 @@ public class LabelEntry implements Comparable<LabelEntry>
 
 	public String getLabel()
 	{
-		return link == null ? AddressFormatter.getInstance().createVisibleAddressLabel() : LinkPersonAddressFormatter
+		return link == null ? AddressFormatter.getInstance().getLabel(address) : LinkPersonAddressFormatter
 				.getInstance().getLabel(link);
 	}
 

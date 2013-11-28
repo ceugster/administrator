@@ -28,6 +28,19 @@ public class RecipientListFactory
 	{
 		boolean added = false;
 		Recipient recipient = null;
+		if (!recipients.containsKey(member.getId().toString()))
+		{
+			recipient = new Recipient(member);
+			recipients.put(member.getId().toString(), recipient);
+			added = true;
+		}
+		return added;
+	}
+
+	public static boolean addRecipientWithEmails(final AddressGroupMember member)
+	{
+		boolean added = false;
+		Recipient recipient = null;
 		if (member.getLink() == null)
 		{
 			if (!recipients.containsKey(member.getAddress().getEmail()))

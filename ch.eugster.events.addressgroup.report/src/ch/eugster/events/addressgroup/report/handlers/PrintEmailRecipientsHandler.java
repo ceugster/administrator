@@ -36,7 +36,7 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 {
 	protected Shell shell;
 
-	private int buildRecipientsList(final IStructuredSelection ssel)
+	protected int buildRecipientsList(final IStructuredSelection ssel, Filter filter)
 	{
 		RecipientListFactory.clear();
 		Iterator<?> iterator = ssel.iterator();
@@ -45,11 +45,11 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 			Object element = iterator.next();
 			if (element instanceof AddressGroupCategory)
 			{
-				this.extract((AddressGroupCategory) element);
+				this.extract((AddressGroupCategory) element, filter);
 			}
 			else if (element instanceof AddressGroup)
 			{
-				this.extract((AddressGroup) element);
+				this.extract((AddressGroup) element, filter);
 			}
 			// else if (element instanceof AddressGroupLink)
 			// {
@@ -58,15 +58,10 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 			// }
 			else if (element instanceof AddressGroupMember)
 			{
-				this.extract((AddressGroupMember) element);
+				this.extract((AddressGroupMember) element, filter);
 			}
 		}
 		return RecipientListFactory.size();
-	}
-
-	protected boolean execute()
-	{
-		return this.printRecipientList();
 	}
 
 	@Override
@@ -81,9 +76,17 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 				shell = (Shell) context.getParent().getVariable("activeShell");
 				if (sel instanceof IStructuredSelection)
 				{
-					if (buildRecipientsList((IStructuredSelection) sel) > 0)
+					IStructuredSelection ssel = (IStructuredSelection) sel;
+					if (ssel.isEmpty())
 					{
-						execute();
+
+					}
+					else
+					{
+						if (buildRecipientsList(ssel, Filter.ALL) > 0)
+						{
+							printRecipientList();
+						}
 					}
 				}
 			}
@@ -119,14 +122,14 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 		return false;
 	}
 
-	private void extract(final AddressGroup addressGroup)
+	private void extract(final AddressGroup addressGroup, Filter filter)
 	{
 		if (!addressGroup.isDeleted())
 		{
 			Collection<AddressGroupMember> addressGroupMembers = addressGroup.getAddressGroupMembers();
 			for (AddressGroupMember addressGroupMember : addressGroupMembers)
 			{
-				this.extract(addressGroupMember);
+				this.extract(addressGroupMember, filter);
 			}
 			// for (AddressGroupLink link : addressGroup.getChildren())
 			// {
@@ -138,77 +141,40 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 		}
 	}
 
-	private void extract(final AddressGroupCategory category)
+	private void extract(final AddressGroupCategory category, Filter filter)
 	{
 		if (!category.isDeleted())
 		{
 			Collection<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
 			{
-				this.extract(addressGroup);
+				this.extract(addressGroup, filter);
 			}
 		}
 	}
 
-	private void extract(final AddressGroupMember member)
+	private void extract(final AddressGroupMember member, Filter filter)
 	{
 		if (!member.isDeleted())
 		{
 			if ((member.getLink() != null && !member.getLink().isDeleted()) || !member.getAddress().isDeleted())
 			{
-				if (RecipientListFactory.addRecipient(member))
+				boolean added = false;
+				if (filter.equals(Filter.ALL))
+				{
+					added = RecipientListFactory.addRecipient(member);
+				}
+				else if (filter.equals(Filter.ONLY_WITH_EMAILS))
+				{
+					added = RecipientListFactory.addRecipientWithEmails(member);
+
+				}
+				if (added)
 				{
 					RecipientListFactory.addAddressGroup(member.getAddressGroup());
 				}
 			}
 		}
-	}
-
-	private boolean hasValidEmailAddress(final AddressGroup addressGroup)
-	{
-		for (AddressGroupMember member : addressGroup.getAddressGroupMembers())
-		{
-			if (hasValidEmailAddress(member))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean hasValidEmailAddress(final AddressGroupCategory category)
-	{
-		for (AddressGroup addressGroup : category.getAddressGroups())
-		{
-			if (hasValidEmailAddress(addressGroup))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean hasValidEmailAddress(final AddressGroupMember member)
-	{
-		if (member.getLink() == null)
-		{
-			if (EmailHelper.getInstance().isValidAddress(member.getAddress().getEmail()))
-			{
-				return true;
-			}
-		}
-		else
-		{
-			if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
-			{
-				return true;
-			}
-			if (EmailHelper.getInstance().isValidAddress(member.getLink().getEmail()))
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private boolean preview()
@@ -267,7 +233,7 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 		return false;
 	}
 
-	private boolean printRecipientList()
+	protected boolean printRecipientList()
 	{
 		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 		if (preferenceStore.getBoolean(PreferenceConstants.P_PRINT_RECIPIENT_LIST_AUTOMATICALLY))
@@ -340,18 +306,15 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 					{
 						if (object instanceof AddressGroupCategory)
 						{
-							AddressGroupCategory category = (AddressGroupCategory) object;
-							enabled = hasValidEmailAddress(category);
+							enabled = true;
 						}
 						else if (object instanceof AddressGroup)
 						{
-							AddressGroup addressGroup = (AddressGroup) object;
-							enabled = hasValidEmailAddress(addressGroup);
+							enabled = true;
 						}
 						else if (object instanceof AddressGroupMember)
 						{
-							AddressGroupMember member = (AddressGroupMember) object;
-							enabled = hasValidEmailAddress(member);
+							enabled = true;
 						}
 						if (enabled)
 						{
@@ -362,5 +325,10 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 			}
 		}
 		setBaseEnabled(enabled);
+	}
+
+	public enum Filter
+	{
+		ALL, ONLY_WITH_EMAILS;
 	}
 }

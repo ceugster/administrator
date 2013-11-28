@@ -157,11 +157,18 @@ public class AddressListDialog extends TitleAreaDialog
 	{
 		if (!member.isDeleted())
 		{
-			AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member);
-			DataMap existing = map.get(memberMap.getId());
-			if (existing == null)
+			if (member.getLink() == null
+					|| (!member.getLink().isDeleted() && !member.getLink().getPerson().isDeleted()))
 			{
-				map.put(memberMap.getId(), memberMap);
+				if (!member.getAddress().isDeleted())
+				{
+					AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member);
+					DataMap existing = map.get(memberMap.getId());
+					if (existing == null)
+					{
+						map.put(memberMap.getId(), memberMap);
+					}
+				}
 			}
 		}
 	}
@@ -323,7 +330,15 @@ public class AddressListDialog extends TitleAreaDialog
 						{
 							DataMapKey key = (DataMapKey) ssel.getFirstElement();
 							String value1 = map1.getProperty(key.getKey());
+							if (value1 == null)
+							{
+								value1 = "";
+							}
 							String value2 = map2.getProperty(key.getKey());
+							if (value2 == null)
+							{
+								value2 = "";
+							}
 							return value1.compareTo(value2);
 						}
 						catch (Exception e)

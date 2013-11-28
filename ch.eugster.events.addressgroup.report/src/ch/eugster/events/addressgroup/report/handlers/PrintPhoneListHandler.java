@@ -165,9 +165,12 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 
 	private void extract(final AddressGroupMember member)
 	{
-		if (PhoneListFactory.addEntry(member))
+		if (!member.isDeleted())
 		{
-			PhoneListFactory.addAddressGroup(member.getAddressGroup());
+			if (PhoneListFactory.addEntry(member))
+			{
+				PhoneListFactory.addAddressGroup(member.getAddressGroup());
+			}
 		}
 	}
 
