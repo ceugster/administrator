@@ -220,6 +220,10 @@ public class DonationMap extends AbstractDataMap
 				}
 				case DATE:
 				{
+					if (donation.getDonationDate() == null)
+					{
+						return "";
+					}
 					return dateFormatter.format(donation.getDonationDate().getTime());
 				}
 				case AMOUNT:

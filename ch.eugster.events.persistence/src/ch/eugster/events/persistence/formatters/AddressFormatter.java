@@ -65,6 +65,11 @@ public class AddressFormatter extends AbstractFormatter
 		return builder.toString();
 	}
 
+	public String getLabel(final Address address)
+	{
+		return this.formatAddressLabel(address);
+	}
+
 	public String formatAddressLabel(final Address address)
 	{
 		String addressLabelPattern = PersonSettings.getInstance().getAddressLabelFormat();

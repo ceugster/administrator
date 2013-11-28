@@ -102,16 +102,12 @@ ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/AddressG
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/AddressGroupMemberSorter.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/AddressGroupMemberView.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/AddressGroupSorter.java -text
-ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/AddressGroupStateFactory.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/AddressGroupView.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/ICommandInfo.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/PersonAddressGroupMemberSorter.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/PersonAddressGroupMemberTreeContentProvider.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/PersonAddressGroupMemberTreeLabelProvider.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/PersonAddressGroupMemberView.java -text
-ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/SingletonStateWrapper.java -text
-ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/UIState.java -text
-ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/UpdateableRightCommandHandler.java -text
 ch.eugster.events.addresstype.feature/.project -text
 ch.eugster.events.addresstype.feature/build.properties -text
 ch.eugster.events.addresstype.feature/feature.xml -text

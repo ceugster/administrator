@@ -2,6 +2,8 @@ package ch.eugster.events.addressgroup.handlers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -42,6 +44,12 @@ public class PasteHandler extends AbstractHandler implements IHandler
 		TableViewer viewer = view.getViewer();
 		AddressGroup target = (AddressGroup) viewer.getInput();
 		String[] names = ClipboardHelper.getClipboard().getAvailableTypeNames();
+		Map<String, String> typeNames = new HashMap<String, String>();
+		for (String name : names)
+		{
+			typeNames.put(name, name);
+		}
+		names = typeNames.values().toArray(new String[0]);
 		for (String name : names)
 		{
 			if (name.equals(AddressGroupTransfer.TYPE_NAME))
@@ -96,6 +104,12 @@ public class PasteHandler extends AbstractHandler implements IHandler
 					{
 						AddressGroupCategory target = (AddressGroupCategory) ssel.getFirstElement();
 						String[] names = ClipboardHelper.getClipboard().getAvailableTypeNames();
+						Map<String, String> typeNames = new HashMap<String, String>();
+						for (String name : names)
+						{
+							typeNames.put(name, name);
+						}
+						names = typeNames.values().toArray(new String[0]);
 						for (String name : names)
 						{
 							if (name.equals(AddressGroupTransfer.TYPE_NAME))
@@ -115,6 +129,12 @@ public class PasteHandler extends AbstractHandler implements IHandler
 					{
 						AddressGroup target = (AddressGroup) ssel.getFirstElement();
 						String[] names = ClipboardHelper.getClipboard().getAvailableTypeNames();
+						Map<String, String> typeNames = new HashMap<String, String>();
+						for (String name : names)
+						{
+							typeNames.put(name, name);
+						}
+						names = typeNames.values().toArray(new String[0]);
 						for (String name : names)
 						{
 							if (name.equals(AddressGroupTransfer.TYPE_NAME))
@@ -285,7 +305,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 		Collection<AddressGroupMember> targetMembers = target.getAddressGroupMembers();
 		for (AddressGroupMember targetMember : targetMembers)
 		{
-			if (targetMember.getLink() != null)
+			if (targetMember.getLink() == null)
 			{
 				if (targetMember.getAddress().getId().equals(address.getId()))
 				{

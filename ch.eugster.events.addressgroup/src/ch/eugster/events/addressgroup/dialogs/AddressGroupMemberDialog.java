@@ -172,7 +172,10 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 			AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
 			if (this.parent instanceof LinkPersonAddress)
 			{
-				members = query.selectByLink((LinkPersonAddress) this.parent);
+				LinkPersonAddress link = (LinkPersonAddress) this.parent;
+				members = query.selectByLink(link);
+				Collection<AddressGroupMember> addressMembers = link.getAddress().getAddressAddressGroupMembers();
+				members.addAll(addressMembers);
 			}
 			else if (this.parent instanceof Address)
 			{

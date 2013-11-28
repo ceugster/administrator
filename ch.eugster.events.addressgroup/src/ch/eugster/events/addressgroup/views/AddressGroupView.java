@@ -27,8 +27,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
@@ -81,10 +79,6 @@ public class AddressGroupView extends AbstractEntityView implements IDoubleClick
 		EntityMediator.addListener(AddressGroup.class, this);
 		// EntityMediator.addListener(AddressGroupLink.class, this);
 		EntityMediator.addListener(AddressGroupMember.class, this);
-
-		IWorkbenchWindow activeWorkbenchWindow = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow();
-		IPartService partService = activeWorkbenchWindow.getPartService();
-		partService.addPartListener(AddressGroupStateFactory.getViewState());
 	}
 
 	public AddressGroupCategory getSelectedCategory()
