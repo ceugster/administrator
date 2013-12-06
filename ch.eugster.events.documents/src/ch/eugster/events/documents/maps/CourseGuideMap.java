@@ -22,25 +22,26 @@ public class CourseGuideMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		DESCRIPTION, GUIDE_TYPE, PHONE, STATE;
+		// DESCRIPTION, GUIDE_TYPE, PHONE, STATE;
+		GUIDE_TYPE, STATE;
 
 		@Override
 		public String getDescription()
 		{
 			switch (this)
 			{
-				case DESCRIPTION:
-				{
-					return "Beschreibung";
-				}
+				// case DESCRIPTION:
+				// {
+				// return "Beschreibung";
+				// }
 				case GUIDE_TYPE:
 				{
 					return "Leitungsart";
 				}
-				case PHONE:
-				{
-					return "Telefon";
-				}
+					// case PHONE:
+					// {
+					// return "Telefon";
+					// }
 				case STATE:
 				{
 					return "Leiterstatus";
@@ -57,18 +58,18 @@ public class CourseGuideMap extends AbstractDataMap
 		{
 			switch (this)
 			{
-				case DESCRIPTION:
-				{
-					return "course_guide_description";
-				}
+				// case DESCRIPTION:
+				// {
+				// return "course_guide_description";
+				// }
 				case GUIDE_TYPE:
 				{
 					return "course_guide_type";
 				}
-				case PHONE:
-				{
-					return "course_guide_phone";
-				}
+					// case PHONE:
+					// {
+					// return "course_guide_phone";
+					// }
 				case STATE:
 				{
 					return "course_guide_state";
@@ -85,18 +86,18 @@ public class CourseGuideMap extends AbstractDataMap
 		{
 			switch (this)
 			{
-				case DESCRIPTION:
-				{
-					return "Beschreibung";
-				}
+				// case DESCRIPTION:
+				// {
+				// return "Beschreibung";
+				// }
 				case GUIDE_TYPE:
 				{
 					return "Leitungsart";
 				}
-				case PHONE:
-				{
-					return "Telefon";
-				}
+					// case PHONE:
+					// {
+					// return "Telefon";
+					// }
 				case STATE:
 				{
 					return "Status";
@@ -112,19 +113,19 @@ public class CourseGuideMap extends AbstractDataMap
 		{
 			switch (this)
 			{
-				case DESCRIPTION:
-				{
-					return courseGuide.getDescription();
-				}
+				// case DESCRIPTION:
+				// {
+				// return courseGuide.getDescription();
+				// }
 				case GUIDE_TYPE:
 				{
 					GuideType type = courseGuide.getGuideType();
 					return type == null ? "" : type.getName();
 				}
-				case PHONE:
-				{
-					return courseGuide.getPhone();
-				}
+					// case PHONE:
+					// {
+					// return courseGuide.getPhone();
+					// }
 				case STATE:
 				{
 					return courseGuide.getGuideType().getName();

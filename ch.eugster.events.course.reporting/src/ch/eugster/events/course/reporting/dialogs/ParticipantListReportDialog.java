@@ -233,7 +233,6 @@ public class ParticipantListReportDialog extends TitleAreaDialog
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor)
 			{
-
 				ParticipantListFactory factory = ParticipantListFactory.create(course, bookingStates);
 				if (factory.size() == 0)
 				{

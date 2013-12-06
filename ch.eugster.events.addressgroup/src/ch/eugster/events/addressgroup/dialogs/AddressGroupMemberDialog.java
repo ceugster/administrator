@@ -300,8 +300,8 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 	@Override
 	protected void okPressed()
 	{
-		super.okPressed();
 		this.updateAddressGroupMembers();
+		super.okPressed();
 	}
 
 	@Override
@@ -394,12 +394,12 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 						{
 							member = AddressGroupMember.newInstance(monitor.addressGroup,
 									(LinkPersonAddress) this.parent);
-							member.getAddressGroup().addAddressGroupMember(member);
+							// member.getAddressGroup().addAddressGroupMember(member);
 						}
 						else if (parent instanceof Address)
 						{
 							member = AddressGroupMember.newInstance(monitor.addressGroup, (Address) this.parent);
-							member.getAddressGroup().addAddressGroupMember(member);
+							// member.getAddressGroup().addAddressGroupMember(member);
 						}
 						if (member != null)
 						{
@@ -407,6 +407,8 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 							AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
 									.getQuery(AddressGroupMember.class);
 							current.put(addressGroupId, query.merge(member));
+							AddressGroup addressGroup = (AddressGroup) service.refresh(member.getAddressGroup());
+							this.addressGroupViewer.refresh(addressGroup);
 						}
 					}
 				}
