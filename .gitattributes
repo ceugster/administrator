@@ -1165,6 +1165,14 @@ ch.eugster.events.report.commons/src/ch/eugster/events/report/commons/Activator.
 ch.eugster.events.report.feature/.project -text
 ch.eugster.events.report.feature/build.properties -text
 ch.eugster.events.report.feature/feature.xml -text
+ch.eugster.events.report.pdf/.classpath -text
+ch.eugster.events.report.pdf/.project -text
+ch.eugster.events.report.pdf/.settings/org.eclipse.jdt.core.prefs -text
+ch.eugster.events.report.pdf/META-INF/MANIFEST.MF -text
+ch.eugster.events.report.pdf/build.properties -text
+ch.eugster.events.report.pdf/lib/iText-2.1.7-LICENSE.txt -text
+ch.eugster.events.report.pdf/lib/iText-2.1.7.js1.jar -text
+ch.eugster.events.report.pdf/src/ch/eugster/colibri/report/pdf/Activator.java -text
 ch.eugster.events.report/.classpath -text
 ch.eugster.events.report/.project -text
 ch.eugster.events.report/.settings/org.eclipse.core.resources.prefs -text
