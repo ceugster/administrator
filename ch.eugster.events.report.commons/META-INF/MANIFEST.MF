@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Report Commons
+Bundle-SymbolicName: ch.eugster.colibri.report.commons;singleton:=true
+Bundle-Version: 1.0.1
+Bundle-Activator: ch.eugster.colibri.report.commons.Activator
+Bundle-Vendor: Christian Eugster
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: lib/commons-beanutils-1.8.0.jar,
+ lib/commons-collections-2.1.1.jar,
+ lib/commons-digester-2.1.jar,
+ lib/commons-javaflow-20060411.jar,
+ lib/commons-logging-1.1.1.jar,
+ .
+Export-Package: org.apache.commons.beanutils,
+ org.apache.commons.collections,
+ org.apache.commons.digester,
+ org.apache.commons.javaflow,
+ org.apache.commons.javaflow.bytecode,
+ org.apache.commons.logging
