@@ -258,6 +258,21 @@ public class PersonFormatter extends AbstractFormatter
 		return builder.toString().trim();
 	}
 
+	public String replaceSalutationVariables(String pattern, Map<String, String> map)
+	{
+		String[] variables = this.getPersonLabelStoredVariables();
+		for (String variable : variables)
+		{
+			String replacement = map.get(variable);
+			if (replacement == null)
+			{
+				replacement = "";
+			}
+			pattern = pattern.replace(variable, replacement);
+		}
+		return pattern.trim();
+	}
+
 	public String replaceAddressLabelVariables(Map<String, String> map)
 	{
 		String format = PersonSettings.getInstance().getAddressLabelFormat();
