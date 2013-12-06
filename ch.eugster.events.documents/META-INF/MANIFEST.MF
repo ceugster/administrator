@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Documents Bundle
+Bundle-SymbolicName: ch.eugster.events.documents;singleton:=true
+Bundle-Version: 1.0.2.qualifier
+Bundle-Vendor: Christian Eugster
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: ch.eugster.events.documents.maps,
+ ch.eugster.events.documents.services
+Import-Package: ch.eugster.events.persistence.formatters,
+ ch.eugster.events.persistence.model,
+ ch.eugster.events.persistence.queries,
+ ch.eugster.events.persistence.service,
+ org.eclipse.core.runtime;version="3.4.0",
+ org.eclipse.core.runtime.preferences;version="3.3.0",
+ org.eclipse.jface.dialogs,
+ org.eclipse.jface.preference,
+ org.eclipse.jface.resource,
+ org.eclipse.jface.util,
+ org.eclipse.swt,
+ org.eclipse.swt.events,
+ org.eclipse.swt.widgets,
+ org.eclipse.ui,
+ org.eclipse.ui.preferences,
+ org.osgi.framework;version="1.5.0",
+ org.osgi.util.tracker;version="1.4.0"
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: ch.eugster.events.documents.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui
