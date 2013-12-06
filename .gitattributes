@@ -1162,6 +1162,9 @@ ch.eugster.events.report.commons/lib/commons-digester-2.1.jar -text
 ch.eugster.events.report.commons/lib/commons-javaflow-20060411.jar -text
 ch.eugster.events.report.commons/lib/commons-logging-1.1.1.jar -text
 ch.eugster.events.report.commons/src/ch/eugster/events/report/commons/Activator.java -text
+ch.eugster.events.report.feature/.project -text
+ch.eugster.events.report.feature/build.properties -text
+ch.eugster.events.report.feature/feature.xml -text
 ch.eugster.events.report/.classpath -text
 ch.eugster.events.report/.project -text
 ch.eugster.events.report/.settings/org.eclipse.core.resources.prefs -text
