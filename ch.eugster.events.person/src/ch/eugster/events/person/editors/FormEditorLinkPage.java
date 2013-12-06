@@ -180,7 +180,9 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	private ComboViewer salutationViewer;
 
-	private Label polite;
+	private Label singlePolite;
+
+	private Label groupPolite;
 
 	private ImageHyperlink deleteHyperlink;
 
@@ -524,11 +526,14 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		label = toolkit.createLabel(client, "Briefanrede", SWT.NONE);
 		label.setLayoutData(new GridData());
 
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
+		label = toolkit.createLabel(client, "Briefanrede", SWT.NONE);
+		label.setLayoutData(new GridData());
 
-		polite = toolkit.createLabel(client, "", SWT.BORDER);
-		polite.setLayoutData(gridData);
+		singlePolite = toolkit.createLabel(client, "", SWT.BORDER);
+		singlePolite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		groupPolite = toolkit.createLabel(client, "", SWT.BORDER);
+		groupPolite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		toolkit.paintBordersFor(client);
 	}
@@ -575,7 +580,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			{
 				StructuredSelection ssel = (StructuredSelection) event.getSelection();
 				AddressSalutation addressSalutation = (AddressSalutation) ssel.getFirstElement();
-				polite.setText(addressSalutation == null ? "" : addressSalutation.getPolite());
+				groupPolite.setText(addressSalutation == null ? "" : addressSalutation.getPolite());
 
 				updateSingleLabel();
 				updateGroupLabel();
@@ -1635,7 +1640,9 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	public void propertyChange(final PropertyChangeEvent event)
 	{
 		if (this.name != null && !this.name.isDisposed())
+		{
 			this.updateSingleLabel();
+		}
 	}
 
 	@Override
@@ -1913,6 +1920,16 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		replacements.put("${zip}", this.zip.getText());
 		replacements.put("${city}", this.city.getText());
 		this.singleLabel.setText(PersonFormatter.getInstance().replacePersonLabelVariables(replacements));
+
+		if (personPage.getPersonSex() != null && personPage.getPersonForm() != null)
+		{
+			String pattern = personPage.getPersonSex().getForm(personPage.getPersonForm());
+			this.singlePolite.setText(PersonFormatter.getInstance().replaceSalutationVariables(pattern, replacements));
+		}
+		else
+		{
+			this.singlePolite.setText("");
+		}
 	}
 
 	public boolean validate()

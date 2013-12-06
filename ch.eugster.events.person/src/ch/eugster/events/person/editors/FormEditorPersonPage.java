@@ -899,7 +899,10 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
-				FormEditorPersonPage.this.setDirty(true);
+				StructuredSelection ssel = (StructuredSelection) event.getSelection();
+				PersonForm personForm = (PersonForm) ssel.getFirstElement();
+				notifyListeners(new PropertyChangeEvent(formRadioGroupViewer, "form", null, personForm));
+				setDirty(true);
 			}
 		});
 
