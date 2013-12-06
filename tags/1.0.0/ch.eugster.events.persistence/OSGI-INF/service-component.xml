@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="ch.eugster.events.persistence.connection.service">
+   <implementation class="ch.eugster.events.persistence.service.components.ConnectionServiceComponent"/>
+   <reference bind="setPersistenceProvider" cardinality="1..1" interface="javax.persistence.spi.PersistenceProvider" name="persistenceProvider" policy="static" unbind="unsetPersistenceProvider"/>
+   <service>
+      <provide interface="ch.eugster.events.persistence.service.ConnectionService"/>
+   </service>
+</scr:component>

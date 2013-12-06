@@ -1,0 +1,33 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Import Plugin
+Bundle-SymbolicName: ch.eugster.events.importer;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: ch.eugster.events.importer.Activator
+Bundle-Vendor: Christian Eugster
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Import-Package: ch.eugster.events.documents.maps,
+ ch.eugster.events.documents.services,
+ ch.eugster.events.ui.actions,
+ ch.eugster.events.ui.dialogs,
+ ch.eugster.events.ui.dnd,
+ ch.eugster.events.ui.editors,
+ ch.eugster.events.ui.helpers,
+ ch.eugster.events.ui.sorters,
+ ch.eugster.events.ui.views,
+ ch.eugster.events.ui.wizards,
+ org.apache.poi.openxml4j.exceptions,
+ org.apache.poi.ss.usermodel,
+ org.eclipse.core.commands,
+ org.eclipse.core.expressions,
+ org.eclipse.jface.dialogs,
+ org.eclipse.jface.viewers,
+ org.eclipse.jface.wizard,
+ org.eclipse.swt,
+ org.eclipse.swt.events,
+ org.eclipse.swt.graphics,
+ org.eclipse.swt.layout,
+ org.eclipse.swt.widgets,
+ org.eclipse.ui.plugin,
+ org.osgi.framework;version="1.5.0"
