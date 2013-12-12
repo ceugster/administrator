@@ -633,11 +633,14 @@ ch.eugster.events.donation/META-INF/MANIFEST.MF -text
 ch.eugster.events.donation/build.properties -text
 ch.eugster.events.donation/icons/add_16.gif -text
 ch.eugster.events.donation/icons/add_grey_16.gif -text
+ch.eugster.events.donation/icons/clear_16.png -text
+ch.eugster.events.donation/icons/clear_grey_16.png -text
 ch.eugster.events.donation/icons/delete_16.png -text
 ch.eugster.events.donation/icons/delete_grey_16.png -text
 ch.eugster.events.donation/icons/edit_16.png -text
 ch.eugster.events.donation/icons/edit_grey_16.png -text
 ch.eugster.events.donation/icons/money.png -text
+ch.eugster.events.donation/icons/print_16.png -text
 ch.eugster.events.donation/icons/reset_16.png -text
 ch.eugster.events.donation/icons/reset_grey_16.png -text
 ch.eugster.events.donation/icons/save_16.png -text
