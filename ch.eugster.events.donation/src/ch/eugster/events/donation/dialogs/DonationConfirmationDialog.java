@@ -14,7 +14,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -41,7 +41,9 @@ import ch.eugster.events.documents.maps.LinkMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.donation.Activator;
 import ch.eugster.events.persistence.model.Address;
+import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.Donation;
+import ch.eugster.events.persistence.model.DonationPurpose;
 import ch.eugster.events.persistence.model.DonationYear;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
@@ -52,17 +54,38 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class DonationConfirmationDialog extends TitleAreaDialog
 {
+	private SelectionMode selectionMode;
+
 	private Text documentPath;
 
 	private Button documentSelector;
+
+	private UserProperty userPropertyTemplatePath;
+
+	/*
+	 * in SelectionMode PERSON, LINK, ADDRESS
+	 */
+	private IStructuredSelection personSelection;
 
 	private Button yearSelector;
 
 	private Spinner year;
 
-	private final StructuredSelection selection;
+	/*
+	 * in SelectionMode DONATIONS
+	 */
+	private final Donation[] selectedDonations;
 
-	private UserProperty userPropertyTemplatePath;
+	/*
+	 * in SelectionMode YEAR
+	 */
+	private DonationYear selectedDonationYear;
+
+	private DonationPurpose selectedDonationPurpose;
+
+	private Domain selectedDomain;
+
+	private String selectedName;
 
 	private final String message = "Wählen Sie das Dokument, das als Vorlage verwendet werden soll.";
 
@@ -78,16 +101,46 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 
 	private boolean isPageComplete = false;
 
-	public DonationConfirmationDialog(final Shell parentShell, final StructuredSelection selection)
+	public DonationConfirmationDialog(final Shell parentShell, final Donation[] selectedDonations)
 	{
 		super(parentShell);
-		this.selection = selection;
+		this.personSelection = null;
+		this.selectedDonations = selectedDonations;
+		this.selectedDonationYear = null;
+		this.selectedDonationPurpose = null;
+		this.selectedDomain = null;
+		this.selectionMode = SelectionMode.DONATIONS;
 	}
 
-	private void buildDocument(final Collection<DataMap> dataMaps)
+	public DonationConfirmationDialog(final Shell parentShell, final DonationYear selectedDonationYear,
+			final DonationPurpose selectedDonationPurpose, final Domain selectedDomain, String selectedName)
 	{
-		Collection<DataMap> maps = createDataMaps();
-		if (maps.size() == 0)
+		super(parentShell);
+		this.personSelection = null;
+		this.selectedDonations = null;
+		this.selectedDonationYear = selectedDonationYear;
+		this.selectedDonationPurpose = selectedDonationPurpose;
+		this.selectedDomain = selectedDomain;
+		this.selectedName = selectedName;
+		this.selectionMode = SelectionMode.YEAR;
+	}
+
+	public DonationConfirmationDialog(final Shell parentShell, final IStructuredSelection ssel)
+	{
+		super(parentShell);
+		this.personSelection = ssel;
+		this.selectedDonations = null;
+		this.selectedDonationYear = null;
+		this.selectedDonationPurpose = null;
+		this.selectedDomain = null;
+		this.selectionMode = SelectionMode.PERSON;
+	}
+
+	private void buildDocument()
+	{
+		final Collection<DataMap> dataMaps = createDataMaps(selectionMode);
+		System.out.println(dataMaps.size());
+		if (dataMaps.size() == 0)
 		{
 			MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 					MSG_TITLE_NO_BOOKINGS, null, "Die Auswahl enthält keine auswertbaren Elemente.",
@@ -173,48 +226,54 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
 	}
 
-	private Collection<DataMap> createDataMaps()
+	private Collection<DataMap> createDataMaps(SelectionMode selectionMode)
 	{
 		Map<String, DataMap> dataMaps = new HashMap<String, DataMap>();
-		Object[] elements = selection.toArray();
-		for (Object element : elements)
+		if (selectionMode.equals(SelectionMode.PERSON))
 		{
-			if (element instanceof DonationYear)
+			Object[] elements = personSelection.toArray();
+			for (Object element : elements)
 			{
-				DonationYear donationYear = (DonationYear) element;
-				createDataMaps(donationYear, dataMaps);
+				if (element instanceof LinkPersonAddress)
+				{
+					LinkPersonAddress link = (LinkPersonAddress) element;
+					Integer year = yearSelector == null || !yearSelector.getSelection() ? null : Integer
+							.valueOf(this.year.getSelection());
+					createDataMaps(link, year, selectedDonationPurpose, selectedDomain, dataMaps);
+				}
+				else if (element instanceof Person)
+				{
+					Person person = (Person) element;
+					Integer year = yearSelector == null || !yearSelector.getSelection() ? null : Integer
+							.valueOf(this.year.getSelection());
+					createDataMaps(person.getDefaultLink(), year, selectedDonationPurpose, selectedDomain, dataMaps);
+				}
+				else if (element instanceof Address)
+				{
+					Address address = (Address) element;
+					Integer year = yearSelector == null || !yearSelector.getSelection() ? null : Integer
+							.valueOf(this.year.getSelection());
+					createDataMaps(address, year, selectedDonationPurpose, selectedDomain, dataMaps);
+				}
 			}
-			else if (element instanceof LinkPersonAddress)
+		}
+		else if (selectionMode.equals(SelectionMode.DONATIONS))
+		{
+			for (Donation donation : selectedDonations)
 			{
-				LinkPersonAddress link = (LinkPersonAddress) element;
-				Integer year = yearSelector == null || !yearSelector.getSelection() ? null : Integer.valueOf(this.year
-						.getSelection());
-				createDataMaps(link, year, dataMaps);
+				createDataMaps(donation, donation.getDonationYear(), selectedDonationPurpose, selectedDomain, dataMaps);
+
 			}
-			else if (element instanceof Person)
-			{
-				Person person = (Person) element;
-				Integer year = yearSelector == null || !yearSelector.getSelection() ? null : Integer.valueOf(this.year
-						.getSelection());
-				createDataMaps(person.getDefaultLink(), year, dataMaps);
-			}
-			else if (element instanceof Address)
-			{
-				Address address = (Address) element;
-				Integer year = yearSelector == null || !yearSelector.getSelection() ? null : Integer.valueOf(this.year
-						.getSelection());
-				createDataMaps(address, year, dataMaps);
-			}
-			else if (element instanceof Donation)
-			{
-				Donation donation = (Donation) element;
-				createDataMaps(donation, Integer.valueOf(donation.getDonationYear()), dataMaps);
-			}
+		}
+		else if (selectionMode.equals(SelectionMode.YEAR))
+		{
+			createDataMaps(selectedDonationYear, selectedDonationPurpose, selectedDomain, dataMaps);
 		}
 		return dataMaps.values();
 	}
 
-	private void createDataMaps(final Address address, final Integer year, final Map<String, DataMap> dataMaps)
+	private void createDataMaps(final Address address, final Integer year, DonationPurpose purpose, Domain domain,
+			final Map<String, DataMap> dataMaps)
 	{
 		String key = "A" + address.getId().toString();
 		DataMap addressMap = dataMaps.get(key);
@@ -222,7 +281,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		{
 			if (year != null)
 			{
-				addressMap = new AddressMap(address, year.intValue());
+				addressMap = new AddressMap(address, year.intValue(), purpose, domain);
 			}
 			else
 			{
@@ -232,40 +291,117 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		}
 	}
 
-	private void createDataMaps(final Donation donation, final Integer year, final Map<String, DataMap> dataMaps)
+	private void createDataMaps(final Donation donation, final Integer year, DonationPurpose purpose, Domain domain,
+			final Map<String, DataMap> dataMaps)
 	{
 		if (!donation.isDeleted())
 		{
 			if (donation.getLink() == null)
 			{
-				createDataMaps(donation.getAddress(), year, dataMaps);
+				createDataMaps(donation.getAddress(), year, purpose, domain, dataMaps);
 			}
 			else
 			{
-				createDataMaps(donation.getLink(), year, dataMaps);
+				createDataMaps(donation.getLink(), year, purpose, domain, dataMaps);
 			}
 		}
 	}
 
-	private void createDataMaps(final DonationYear donationYear, final Map<String, DataMap> dataMaps)
+	private void createDataMaps(final DonationYear donationYear, DonationPurpose purpose, Domain domain,
+			final Map<String, DataMap> dataMaps)
 	{
 		for (Donation donation : donationYear.getDonations())
 		{
-			if (!donation.isDeleted())
+			if (printDonation(donation))
 			{
 				if (donation.getLink() == null)
 				{
-					createDataMaps(donation.getAddress(), Integer.valueOf(donationYear.getYear()), dataMaps);
+					createDataMaps(donation, Integer.valueOf(donationYear.getYear()), purpose, domain, dataMaps);
 				}
 				else
 				{
-					createDataMaps(donation.getLink(), Integer.valueOf(donationYear.getYear()), dataMaps);
+					createDataMaps(donation, Integer.valueOf(donationYear.getYear()), purpose, domain, dataMaps);
 				}
 			}
 		}
 	}
 
-	private void createDataMaps(final LinkPersonAddress link, final Integer year, final Map<String, DataMap> dataMaps)
+	private boolean isNameValid(Donation donation)
+	{
+		if (selectedName == null || selectedName.isEmpty())
+		{
+			return true;
+		}
+		if (donation.getAddress().getName().toLowerCase().contains(selectedName.toLowerCase()))
+		{
+			return true;
+		}
+		if (donation.getLink() != null)
+		{
+			if (donation.getLink().getPerson().getFirstname().toLowerCase().contains(selectedName.toLowerCase()))
+			{
+				return true;
+			}
+			if (donation.getLink().getPerson().getLastname().toLowerCase().contains(selectedName.toLowerCase()))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean printDonation(Donation donation)
+	{
+		if (donation.isDeleted())
+		{
+			return false;
+		}
+		if (selectedDonationPurpose == null && selectedDomain == null)
+		{
+			return isNameValid(donation);
+		}
+
+		if (selectedDonationPurpose == null)
+		{
+			if (selectedDomain.getId() != null)
+			{
+				if (donation.getDomain() == null)
+				{
+					return false;
+				}
+				else
+				{
+					if (selectedDomain.getId().equals(donation.getDomain().getId()))
+					{
+						return isNameValid(donation);
+					}
+					else
+					{
+						return false;
+					}
+				}
+			}
+		}
+		if (selectedDomain == null)
+		{
+			return donation.getPurpose().getId().equals(selectedDonationPurpose.getId());
+		}
+		if (donation.getDomain() == null || donation.getPurpose() == null)
+		{
+			return false;
+		}
+		if (donation.getDomain() != null && selectedDomain.getId().equals(donation.getDomain().getId()))
+		{
+			if (donation.getPurpose().getId().equals(selectedDonationPurpose.getId()))
+			{
+				return isNameValid(donation);
+			}
+		}
+		return false;
+	}
+
+	private void createDataMaps(final LinkPersonAddress link, final Integer year, DonationPurpose purpose,
+			Domain domain, final Map<String, DataMap> dataMaps)
 	{
 		String key = "P" + link.getId().toString();
 		DataMap linkMap = dataMaps.get(key);
@@ -273,7 +409,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		{
 			if (year != null)
 			{
-				linkMap = new LinkMap(link, year.intValue());
+				linkMap = new LinkMap(link, year.intValue(), purpose, domain);
 			}
 			else
 			{
@@ -354,8 +490,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 			}
 		});
 
-		if (selection.getFirstElement() instanceof LinkPersonAddress || selection.getFirstElement() instanceof Person
-				|| selection.getFirstElement() instanceof Address)
+		if (selectionMode.equals(SelectionMode.PERSON))
 		{
 			yearSelector = new Button(composite, SWT.CHECK);
 			yearSelector.setLayoutData(new GridData());
@@ -373,7 +508,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 			year.setIncrement(1);
 			year.setPageIncrement(10);
 
-			Object[] elements = selection.toArray();
+			Object[] elements = personSelection.toArray();
 			for (Object element : elements)
 			{
 				if (element instanceof Address)
@@ -408,9 +543,8 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 	protected void okPressed()
 	{
 		setUserPath();
-		Collection<DataMap> dataMaps = createDataMaps();
+		buildDocument();
 		super.okPressed();
-		buildDocument(dataMaps);
 	}
 
 	@Override
@@ -470,5 +604,10 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		{
 			tracker.close();
 		}
+	}
+
+	private enum SelectionMode
+	{
+		DONATIONS, YEAR, PERSON;
 	}
 }
