@@ -3,7 +3,6 @@ package ch.eugster.events.documents.maps;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Currency;
 import java.util.List;
@@ -12,7 +11,9 @@ import java.util.Locale;
 import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressSalutation;
+import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.Donation;
+import ch.eugster.events.persistence.model.DonationPurpose;
 import ch.eugster.events.persistence.model.Member;
 
 public class AddressMap extends AbstractDataMap
@@ -21,10 +22,10 @@ public class AddressMap extends AbstractDataMap
 
 	public AddressMap(final Address address)
 	{
-		this(address, null);
+		this(address, null, null, null);
 	}
 
-	public AddressMap(final Address address, final Integer year)
+	public AddressMap(final Address address, final Integer year, DonationPurpose purpose, Domain domain)
 	{
 		if (amountFormatter == null)
 		{
@@ -50,7 +51,7 @@ public class AddressMap extends AbstractDataMap
 
 		for (TableKey key : TableKey.values())
 		{
-			this.addTableMaps(key.getKey(), key.getTableMaps(address, year));
+			this.addTableMaps(key.getKey(), key.getTableMaps(address, year, purpose, domain));
 		}
 
 	}
@@ -546,7 +547,7 @@ public class AddressMap extends AbstractDataMap
 			{
 				case DONATION:
 				{
-					return this.getTableMaps(address, null);
+					return this.getTableMaps(address, null, null, null);
 				}
 				default:
 				{
@@ -555,7 +556,8 @@ public class AddressMap extends AbstractDataMap
 			}
 		}
 
-		public List<DataMap> getTableMaps(final Address address, final Integer year)
+		public List<DataMap> getTableMaps(final Address address, final Integer year, DonationPurpose purpose,
+				Domain domain)
 		{
 			switch (this)
 			{
@@ -565,21 +567,7 @@ public class AddressMap extends AbstractDataMap
 					Collection<Donation> donations = address.getDonations();
 					for (Donation donation : donations)
 					{
-						if (!donation.isDeleted())
-						{
-							if (year == null)
-							{
-								tableMaps.add(new DonationMap(donation));
-							}
-							else
-							{
-								int donationYear = donation.getDonationDate().get(Calendar.YEAR);
-								if (donationYear == year.intValue())
-								{
-									tableMaps.add(new DonationMap(donation));
-								}
-							}
-						}
+						addDonation(donation, tableMaps, year, purpose, domain);
 					}
 					return tableMaps;
 				}
@@ -589,5 +577,68 @@ public class AddressMap extends AbstractDataMap
 				}
 			}
 		}
+
+		private void addDonation(Donation donation, List<DataMap> tableMaps, Integer year, DonationPurpose purpose,
+				Domain domain)
+		{
+			if (printDonation(donation, purpose, domain))
+			{
+				if (year == null)
+				{
+					tableMaps.add(new DonationMap(donation));
+				}
+				else
+				{
+					if (donation.getDonationYear() == year.intValue())
+					{
+						tableMaps.add(new DonationMap(donation));
+					}
+				}
+			}
+		}
+
+		private boolean printDonation(Donation donation, DonationPurpose purpose, Domain domain)
+		{
+			if (donation.isDeleted())
+			{
+				return false;
+			}
+			if (purpose == null && domain == null)
+			{
+				return true;
+			}
+
+			if (purpose == null)
+			{
+				if (domain.getId() != null)
+				{
+					if (donation.getDomain() == null)
+					{
+						return false;
+					}
+					else
+					{
+						return domain.getId().equals(donation.getDomain().getId());
+					}
+				}
+			}
+			if (domain == null)
+			{
+				return donation.getPurpose().getId().equals(purpose.getId());
+			}
+			if (donation.getDomain() == null || donation.getPurpose() == null)
+			{
+				return false;
+			}
+			if (donation.getDomain() != null && domain.getId().equals(donation.getDomain().getId()))
+			{
+				if (donation.getPurpose().getId().equals(purpose.getId()))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
 	}
 }
