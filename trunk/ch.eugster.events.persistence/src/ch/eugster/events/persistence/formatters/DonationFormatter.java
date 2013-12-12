@@ -19,7 +19,11 @@ public class DonationFormatter
 	{
 		if (donation.getLink() != null)
 		{
-			return PersonFormatter.getInstance().formatLastnameFirstname(donation.getLink().getPerson());
+			String name = PersonFormatter.getInstance().formatLastnameFirstname(donation.getLink().getPerson());
+			if (!name.isEmpty())
+			{
+				return name;
+			}
 		}
 		if (donation.getAddress() != null)
 		{

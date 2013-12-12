@@ -76,6 +76,12 @@ public class Domain extends AbstractEntity
 		super();
 	}
 
+	private Domain(String name)
+	{
+		super();
+		this.name = name;
+	}
+
 	public String getAddress()
 	{
 		return stringValueOf(address);
@@ -192,6 +198,11 @@ public class Domain extends AbstractEntity
 	public static Domain newInstance()
 	{
 		return (Domain) AbstractEntity.newInstance(new Domain());
+	}
+
+	public static Domain newInstance(String name)
+	{
+		return (Domain) AbstractEntity.newInstance(new Domain(name));
 	}
 
 }

@@ -65,7 +65,8 @@ public class DonationQuery extends AbstractEntityQuery<Donation>
 		ExpressionBuilder builder = query.getExpressionBuilder();
 		Expression expression = builder.get("year").equal(year);
 		query.setSelectionCriteria(expression);
-		return (Collection<Donation>) connectionService.getSession().executeQuery(query);
+		Collection<Donation> donations = (Collection<Donation>) connectionService.getSession().executeQuery(query);
+		return donations;
 	}
 
 	public int countByYear(Integer year)

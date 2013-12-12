@@ -56,6 +56,11 @@ public class DonationPurpose extends AbstractEntity
 	{
 	}
 
+	private DonationPurpose(String name)
+	{
+		this.name = name;
+	}
+
 	public void addDonation(final Donation donation)
 	{
 		donations.add(donation);
@@ -111,6 +116,11 @@ public class DonationPurpose extends AbstractEntity
 	public static DonationPurpose newInstance()
 	{
 		return (DonationPurpose) AbstractEntity.newInstance(new DonationPurpose());
+	}
+
+	public static DonationPurpose newInstance(String name)
+	{
+		return (DonationPurpose) AbstractEntity.newInstance(new DonationPurpose(name));
 	}
 
 }
