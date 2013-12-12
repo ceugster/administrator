@@ -1,5 +1,8 @@
 package ch.eugster.events.donation.handlers;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -27,8 +30,20 @@ public class GenerateDonationConfirmationHandler extends AbstractHandler impleme
 			if (context.getParent().getVariable("selection") instanceof StructuredSelection)
 			{
 				StructuredSelection ssel = (StructuredSelection) context.getParent().getVariable("selection");
+				Collection<Donation> donations = new ArrayList<Donation>();
+				Object[] sels = ssel.toArray();
+				{
+					for (Object sel : sels)
+					{
+						if (sel instanceof Donation)
+						{
+							donations.add((Donation) sel);
+						}
+					}
+				}
 				Shell shell = (Shell) context.getParent().getVariable("activeShell");
-				DonationConfirmationDialog dialog = new DonationConfirmationDialog(shell, ssel);
+				DonationConfirmationDialog dialog = new DonationConfirmationDialog(shell,
+						donations.toArray(new Donation[0]));
 				dialog.open();
 			}
 		}

@@ -2,7 +2,9 @@ package ch.eugster.events.donation.editors;
 
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -45,6 +47,7 @@ import ch.eugster.events.persistence.formatters.DonationFormatter;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.Donation;
 import ch.eugster.events.persistence.model.DonationPurpose;
+import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.dialogs.Message;
 import ch.eugster.events.ui.editors.AbstractEntityEditor;
@@ -293,20 +296,40 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 		}
 
 		Domain domain = null;
-		if (donation.getLink() != null)
+		if (donation.getId() == null)
 		{
-			domain = donation.getLink().getPerson().getDomain();
-		}
-		if (domain == null)
-		{
-			domain = (Domain) domainViewer.getElementAt(0);
-		}
-		if (domain != null)
-		{
-			StructuredSelection ssel = new StructuredSelection(new Domain[] { domain });
-			domainViewer.setSelection(ssel);
-		}
+			if (donation.getLink() != null)
+			{
+				domain = donation.getLink().getPerson().getDomain();
+			}
+			if (domain == null)
+			{
+				domain = User.getCurrent().getDomain();
+			}
+			if (domain == null)
+			{
+				domain = (Domain) domainViewer.getElementAt(0);
+			}
+			if (domain != null)
+			{
+				StructuredSelection ssel = new StructuredSelection(new Domain[] { domain });
+				domainViewer.setSelection(ssel);
+			}
 
+		}
+		else
+		{
+			domain = donation.getDomain();
+			if (domain == null)
+			{
+				domain = (Domain) domainViewer.getElementAt(0);
+			}
+			if (domain != null)
+			{
+				StructuredSelection ssel = new StructuredSelection(new Domain[] { domain });
+				domainViewer.setSelection(ssel);
+			}
+		}
 		this.setDirty(false);
 	}
 
@@ -330,7 +353,7 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 
 		ssel = (StructuredSelection) this.domainViewer.getSelection();
 		Domain domain = (Domain) ssel.getFirstElement();
-		donation.setDomain(domain);
+		donation.setDomain(domain.getId() == null ? null : domain);
 	}
 
 	@Override
@@ -344,16 +367,35 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 	{
 		if (this.date.getSelection() == null)
 		{
+			MessageDialog.openError(this.getSite().getShell(), "Kein Datum", "Sie haben kein Spendendatum erfasst.");
 			return false;
+		}
+
+		DonationEditorInput input = (DonationEditorInput) this.getEditorInput();
+		Donation donation = input.getEntity();
+		if (donation.getId() == null)
+		{
+			Calendar before = GregorianCalendar.getInstance();
+			before.set(Calendar.YEAR, before.get(Calendar.YEAR) - 1);
+			if (this.date.getSelection().before(before.getTime())
+					|| this.date.getSelection().after(GregorianCalendar.getInstance().getTime()))
+			{
+				MessageDialog
+						.openError(this.getSite().getShell(), "Ungültiges Datum", "Das Spendendatum ist ungültig.");
+				return false;
+			}
 		}
 
 		if (((Number) this.amount.getValue()).doubleValue() == 0)
 		{
+			MessageDialog.openError(this.getSite().getShell(), "Fehlender Betrag", "Sie haben keinen Betrag erfasst.");
 			return false;
 		}
 
 		if (this.purposeViewer.getSelection().isEmpty())
 		{
+			MessageDialog.openError(this.getSite().getShell(), "Fehlender Spendenzweck",
+					"Sie haben keinen Spendenzweck ausgewählt.");
 			return false;
 		}
 		return true;
