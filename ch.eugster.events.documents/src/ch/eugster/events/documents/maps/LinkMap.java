@@ -12,7 +12,9 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.documents.Activator;
 import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
+import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.Donation;
+import ch.eugster.events.persistence.model.DonationPurpose;
 import ch.eugster.events.persistence.model.FieldExtension;
 import ch.eugster.events.persistence.model.FieldExtensionTarget;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
@@ -28,10 +30,10 @@ public class LinkMap extends AbstractDataMap
 
 	public LinkMap(final LinkPersonAddress link)
 	{
-		this(link, null);
+		this(link, null, null, null);
 	}
 
-	public LinkMap(final LinkPersonAddress link, final Integer year)
+	public LinkMap(final LinkPersonAddress link, final Integer year, DonationPurpose purpose, Domain domain)
 	{
 		if (amountFormatter == null)
 		{
@@ -60,7 +62,7 @@ public class LinkMap extends AbstractDataMap
 
 		for (TableKey key : TableKey.values())
 		{
-			this.addTableMaps(key.getKey(), key.getTableMaps(link, year));
+			this.addTableMaps(key.getKey(), key.getTableMaps(link, year, purpose, domain));
 		}
 
 		Collection<LinkPersonAddressExtendedField> extendedFields = link.getExtendedFields();
@@ -338,22 +340,23 @@ public class LinkMap extends AbstractDataMap
 			}
 		}
 
-		public List<DataMap> getTableMaps(final LinkPersonAddress link)
-		{
-			switch (this)
-			{
-				case DONATION:
-				{
-					return this.getTableMaps(link, null);
-				}
-				default:
-				{
-					throw new RuntimeException("Invalid key");
-				}
-			}
-		}
+		// public List<DataMap> getTableMaps(final LinkPersonAddress link)
+		// {
+		// switch (this)
+		// {
+		// case DONATION:
+		// {
+		// return this.getTableMaps(link, null, null, null);
+		// }
+		// default:
+		// {
+		// throw new RuntimeException("Invalid key");
+		// }
+		// }
+		// }
 
-		public List<DataMap> getTableMaps(final LinkPersonAddress link, final Integer year)
+		public List<DataMap> getTableMaps(final LinkPersonAddress link, final Integer year, DonationPurpose purpose,
+				Domain domain)
 		{
 			switch (this)
 			{
@@ -363,20 +366,7 @@ public class LinkMap extends AbstractDataMap
 					Collection<Donation> donations = link.getPerson().getDonations();
 					for (Donation donation : donations)
 					{
-						if (!donation.isDeleted())
-						{
-							if (year == null)
-							{
-								tableMaps.add(new DonationMap(donation));
-							}
-							else
-							{
-								if (donation.getDonationYear() == year.intValue())
-								{
-									tableMaps.add(new DonationMap(donation));
-								}
-							}
-						}
+						addDonation(donation, tableMaps, year, purpose, domain);
 					}
 					return tableMaps;
 				}
@@ -386,5 +376,68 @@ public class LinkMap extends AbstractDataMap
 				}
 			}
 		}
+
+		private void addDonation(Donation donation, List<DataMap> tableMaps, Integer year, DonationPurpose purpose,
+				Domain domain)
+		{
+			if (printDonation(donation, purpose, domain))
+			{
+				if (year == null)
+				{
+					tableMaps.add(new DonationMap(donation));
+				}
+				else
+				{
+					if (donation.getDonationYear() == year.intValue())
+					{
+						tableMaps.add(new DonationMap(donation));
+					}
+				}
+			}
+		}
+
+		private boolean printDonation(Donation donation, DonationPurpose purpose, Domain domain)
+		{
+			if (donation.isDeleted())
+			{
+				return false;
+			}
+			if (purpose == null && domain == null)
+			{
+				return true;
+			}
+
+			if (purpose == null)
+			{
+				if (domain.getId() != null)
+				{
+					if (donation.getDomain() == null)
+					{
+						return false;
+					}
+					else
+					{
+						return domain.getId().equals(donation.getDomain().getId());
+					}
+				}
+			}
+			if (domain == null)
+			{
+				return donation.getPurpose().getId().equals(purpose.getId());
+			}
+			if (donation.getDomain() == null || donation.getPurpose() == null)
+			{
+				return false;
+			}
+			if (donation.getDomain() != null && domain.getId().equals(donation.getDomain().getId()))
+			{
+				if (donation.getPurpose().getId().equals(purpose.getId()))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
 	}
 }
