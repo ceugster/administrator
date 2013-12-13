@@ -1,17 +1,18 @@
 package ch.eugster.events.course.reporting.dialogs;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -20,8 +21,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.UIJob;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.reporting.Activator;
@@ -57,70 +56,50 @@ public class ParticipantListDialog extends TitleAreaDialog
 		this.selection = selection;
 	}
 
-	private void buildDocument(final DataMapKey[] keys, final Collection<DataMap> dataMaps)
+	private void buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final Collection<DataMap> dataMaps)
 	{
-		UIJob job = new UIJob("Generiere Dokument...")
+		IStatus status = Status.CANCEL_STATUS;
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				DocumentBuilderService.class.getName(), null);
+		try
 		{
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor)
+			tracker.open();
+			Object[] services = tracker.getServices();
+			if (services != null)
 			{
-				IStatus status = Status.CANCEL_STATUS;
-				ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-						DocumentBuilderService.class.getName(), null);
 				try
 				{
-					tracker.open();
-					Object[] services = tracker.getServices();
+					monitor.beginTask("Dokument wird erstellt...", services.length);
 					for (Object service : services)
 					{
 						if (status.isOK())
 						{
-							return status;
+							monitor.worked(1);
+							return;
 						}
 						if (service instanceof DocumentBuilderService)
 						{
 							DocumentBuilderService builderService = (DocumentBuilderService) service;
-							status = builderService.buildDocument(keys, dataMaps);
+							status = builderService.buildDocument(new SubProgressMonitor(monitor, dataMaps.size()),
+									keys, dataMaps);
 							if (status.isOK())
 							{
 								break;
 							}
 						}
+						monitor.worked(1);
 					}
 				}
 				finally
 				{
-					tracker.close();
+					monitor.done();
 				}
-				return status;
 			}
-		};
-		job.addJobChangeListener(new JobChangeAdapter()
+		}
+		finally
 		{
-			@Override
-			public void done(final IJobChangeEvent event)
-			{
-				IStatus status = event.getResult();
-				if (!status.isOK())
-				{
-					if (status.getSeverity() == IStatus.CANCEL)
-					{
-						MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-								.getShell(), "Ungültige Selektion", null, status.getMessage(),
-								MessageDialog.INFORMATION, new String[] { "OK" }, 0);
-						dialog.open();
-					}
-					else
-					{
-						ErrorDialog dialog = new ErrorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-								.getShell(), "Ungültige Selektion", status.getMessage(), status, 0);
-						dialog.open();
-					}
-				}
-			}
-		});
-		job.setUser(true);
-		job.schedule();
+			tracker.close();
+		}
 	}
 
 	private void computeBooking(final Collection<DataMap> map, final Booking booking)
@@ -248,7 +227,35 @@ public class ParticipantListDialog extends TitleAreaDialog
 
 		super.okPressed();
 
-		buildDocument(keys, dataMaps);
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+		try
+		{
+			dialog.run(true, true, new IRunnableWithProgress()
+			{
+				@Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
+				{
+					try
+					{
+						monitor.beginTask("Dokument wird erstellt...", 1);
+						buildDocument(new SubProgressMonitor(monitor, dataMaps.size()), keys, dataMaps);
+						monitor.done();
+					}
+					finally
+					{
+						monitor.done();
+					}
+				}
+			});
+		}
+		catch (InvocationTargetException e)
+		{
+			MessageDialog.openError(getShell(), "Fehler",
+					"Bei der Verarbeitung ist ein Fehler aufgetreten.\n(" + e.getLocalizedMessage() + ")");
+		}
+		catch (InterruptedException e)
+		{
+		}
 	}
 
 	private void setCurrentUser()

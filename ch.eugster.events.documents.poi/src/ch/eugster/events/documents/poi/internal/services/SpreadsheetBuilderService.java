@@ -18,8 +18,10 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -68,17 +70,29 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 	}
 
 	@Override
-	public IStatus buildDocument(final DataMapKey[] keys, final Collection<DataMap> maps)
-	{
-		return buildDocument(keys, maps.toArray(new DataMap[0]));
-	}
-
-	@Override
-	public IStatus buildDocument(final DataMapKey[] keys, final DataMap[] maps)
+	public IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final Collection<DataMap> maps)
 	{
 		IStatus status = Status.OK_STATUS;
 		try
 		{
+			monitor.beginTask("Dokument wird erstellt...", 1);
+			status = buildDocument(new SubProgressMonitor(monitor, maps.size()), keys, maps.toArray(new DataMap[0]));
+			monitor.worked(1);
+		}
+		finally
+		{
+			monitor.done();
+		}
+		return status;
+	}
+
+	@Override
+	public IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap[] maps)
+	{
+		IStatus status = Status.OK_STATUS;
+		try
+		{
+			monitor.beginTask("Dokument wird erstellt...", maps.length);
 			HSSFWorkbook workbook = this.createWorkbook();
 			HSSFCellStyle style = this.createStyle(workbook, new short[] { CellStyle.BORDER_NONE,
 					CellStyle.BORDER_NONE, CellStyle.BORDER_NONE, CellStyle.BORDER_NONE });
@@ -98,6 +112,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 					this.addTitles(keys, sheet, counter, style, bold);
 				}
 				this.addRow(keys, map, sheet, ++counter, style, normal);
+				monitor.worked(1);
 			}
 			this.packColumns(sheet, 0, keys.length);
 			if (maps.length > 0)
@@ -110,18 +125,40 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 			status = new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(),
 					"Beim Aufbereiten der Dokumente ist ein Fehler aufgetreten.", e);
 		}
+		finally
+		{
+			monitor.done();
+		}
 		return status;
 	}
 
 	@Override
-	public IStatus buildDocument(final File file, final Collection<DataMap> maps)
+	public IStatus buildDocument(IProgressMonitor monitor, final File file, final Collection<DataMap> maps)
 	{
+		try
+		{
+			monitor.beginTask("Dokument wird erstellt...", 1);
+			monitor.worked(1);
+		}
+		finally
+		{
+			monitor.done();
+		}
 		return Status.CANCEL_STATUS;
 	}
 
 	@Override
-	public IStatus buildDocument(final File file, final DataMap map)
+	public IStatus buildDocument(IProgressMonitor monitor, final File file, final DataMap map)
 	{
+		try
+		{
+			monitor.beginTask("Dokument wird erstellt...", 1);
+			monitor.worked(1);
+		}
+		finally
+		{
+			monitor.done();
+		}
 		return Status.CANCEL_STATUS;
 	}
 

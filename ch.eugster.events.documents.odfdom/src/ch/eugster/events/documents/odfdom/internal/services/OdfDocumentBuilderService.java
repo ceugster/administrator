@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -42,47 +44,84 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 {
 
 	@Override
-	public IStatus buildDocument(final DataMapKey[] keys, final Collection<DataMap> maps)
+	public IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final Collection<DataMap> maps)
 	{
+		try
+		{
+			monitor.beginTask("Dokument wird erstellt...", 1);
+			monitor.worked(1);
+		}
+		finally
+		{
+			monitor.done();
+		}
 		return Status.CANCEL_STATUS;
 	}
 
 	@Override
-	public IStatus buildDocument(final File template, final Collection<DataMap> maps)
+	public IStatus buildDocument(IProgressMonitor monitor, final File template, final Collection<DataMap> maps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
-		if (template.getName().endsWith(".odt"))
+		try
 		{
-			status = buildTextDocument(template, maps);
+			monitor.beginTask("Dokument wird erstellt...", maps.size());
+			if (template.getName().endsWith(".odt"))
+			{
+				status = buildTextDocument(new SubProgressMonitor(monitor, maps.size()), template, maps);
+			}
+			monitor.worked(1);
+		}
+		finally
+		{
+			monitor.done();
 		}
 		return status;
 	}
 
 	@Override
-	public IStatus buildDocument(final File template, final DataMap map)
+	public IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap map)
 	{
 		IStatus status = Status.CANCEL_STATUS;
-		if (template.getName().endsWith(".odt"))
+		try
 		{
-			Collection<DataMap> maps = new ArrayList<DataMap>();
-			maps.add(map);
-			status = buildTextDocument(template, maps);
+			monitor.beginTask("Dokument wird erstellt...", 1);
+			if (template.getName().endsWith(".odt"))
+			{
+				Collection<DataMap> maps = new ArrayList<DataMap>();
+				maps.add(map);
+				status = buildTextDocument(new SubProgressMonitor(monitor, maps.size()), template, maps);
+			}
+			monitor.worked(1);
+		}
+		finally
+		{
+			monitor.done();
 		}
 		return status;
 	}
 
 	@Override
-	public IStatus buildDocument(DataMapKey[] keys, DataMap[] maps)
+	public IStatus buildDocument(IProgressMonitor monitor, DataMapKey[] keys, DataMap[] maps)
 	{
+		try
+		{
+			monitor.beginTask("Dokument wird erstellt...", 1);
+			monitor.worked(1);
+		}
+		finally
+		{
+			monitor.done();
+		}
 		return Status.CANCEL_STATUS;
 	}
 
-	private IStatus buildTextDocument(final File template, final Collection<DataMap> maps)
+	private IStatus buildTextDocument(IProgressMonitor monitor, final File template, final Collection<DataMap> maps)
 	{
 		IStatus status = Status.OK_STATUS;
 		DataMap[] values = maps.toArray(new DataMap[0]);
 		try
 		{
+			monitor.beginTask("Dokument wird erstellt...", values.length);
 			String styleName = "break-before";
 			OdfDocument document = OdfTextDocument.loadDocument(template);
 			OdfFileDom fileDom = document.getContentDom();
@@ -124,6 +163,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 						text.appendChild(clonedStylableElement);
 						stylableElement = OdfElement.findNextChildNode(OdfStylableElement.class, stylableElement);
 					}
+					monitor.worked(1);
 				}
 
 			}
@@ -135,10 +175,14 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 			status = new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(),
 					"Beim Aufbereiten der Dokumente ist ein Fehler aufgetreten.", e);
 		}
+		finally
+		{
+			monitor.done();
+		}
 		return status;
 	}
 
-	protected OdfTableRow[] collectTableRows(final OdfTable table)
+	private OdfTableRow[] collectTableRows(final OdfTable table)
 	{
 		Collection<OdfTableRow> rows = new ArrayList<OdfTableRow>();
 		NodeList list = table.getChildNodes();
@@ -160,7 +204,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		return rows.toArray(new OdfTableRow[0]);
 	}
 
-	protected Node fillDummyRow(final OdfFileDom fileDom, final Node node, final DataMap map)
+	private Node fillDummyRow(final OdfFileDom fileDom, final Node node, final DataMap map)
 	{
 		if (node instanceof OdfTextInput)
 		{
@@ -181,7 +225,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		return node;
 	}
 
-	protected void fillTable(final OdfFileDom fileDom, final OdfTable table, final DataMap map)
+	private void fillTable(final OdfFileDom fileDom, final OdfTable table, final DataMap map)
 	{
 		String name = table.getOdfAttributeValue(OdfAttributeNames.TABLENAME.getOdfName());
 		List<DataMap> collection = map.getTableMaps(name);
@@ -230,12 +274,12 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		}
 	}
 
-	protected OdfTableRow fillTableRow(final OdfFileDom fileDom, final OdfTableRow row, final DataMap map)
+	private OdfTableRow fillTableRow(final OdfFileDom fileDom, final OdfTableRow row, final DataMap map)
 	{
 		return (OdfTableRow) this.replaceTableContent(fileDom, row, map);
 	}
 
-	protected void replaceConditionalTextWithCurrentValue(final OdfConditionalText element, final DataMap map)
+	private void replaceConditionalTextWithCurrentValue(final OdfConditionalText element, final DataMap map)
 	{
 		OdfConditionalText conditionalText = element;
 		String condition = conditionalText.getTextConditionAttribute();
@@ -295,7 +339,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		}
 	}
 
-	protected void replaceContent(final OdfFileDom fileDom, final Node node, final DataMap map)
+	private void replaceContent(final OdfFileDom fileDom, final Node node, final DataMap map)
 	{
 		if (node instanceof OdfTextInput)
 		{
@@ -319,7 +363,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		}
 	}
 
-	protected void replaceOdfTextInputWithOdfTextSpan(final OdfFileDom fileDom, final OdfTextInput element,
+	private void replaceOdfTextInputWithOdfTextSpan(final OdfFileDom fileDom, final OdfTextInput element,
 			final DataMap map)
 	{
 		OdfTextInput input = element;
@@ -332,7 +376,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		parent.replaceChild(span, input);
 	}
 
-	protected Node replaceTableContent(final OdfFileDom fileDom, final Node node, final DataMap map)
+	private Node replaceTableContent(final OdfFileDom fileDom, final Node node, final DataMap map)
 	{
 		if (node instanceof OdfTextInput)
 		{

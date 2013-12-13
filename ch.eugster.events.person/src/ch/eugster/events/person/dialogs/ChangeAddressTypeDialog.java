@@ -59,7 +59,6 @@ public class ChangeAddressTypeDialog extends TitleAreaDialog
 				LinkPersonAddress link = currentPage.getLink();
 				if (!currentPage.getLink().getAddressType().getId().equals(addressType.getId()))
 				{
-					editor.removePage(currentPage.getId());
 					try
 					{
 						link.setDeleted(false);
@@ -69,7 +68,9 @@ public class ChangeAddressTypeDialog extends TitleAreaDialog
 								addressType);
 						editor.addPage(page);
 						editor.setActivePage(pageId);
+						page.loadValues(currentPage);
 						page.setDirty(true);
+						editor.removePage(currentPage.getId());
 					}
 					catch (PartInitException e)
 					{
@@ -143,7 +144,8 @@ public class ChangeAddressTypeDialog extends TitleAreaDialog
 				StructuredSelection ssel = (StructuredSelection) event.getSelection();
 				if (ssel.getFirstElement() instanceof AddressType)
 				{
-					AddressType addressType = (AddressType) ssel.getFirstElement();
+					// AddressType addressType = (AddressType)
+					// ssel.getFirstElement();
 					updateButtons();
 				}
 			}

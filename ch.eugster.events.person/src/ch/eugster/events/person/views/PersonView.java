@@ -300,7 +300,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				sorter.setCurrentColumn(0);
 				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
-				PersonView.this.viewer.refresh();
+				PersonView.this.refreshViewer();
 			}
 		});
 
@@ -351,7 +351,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				sorter.setCurrentColumn(1);
 				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
-				PersonView.this.viewer.refresh();
+				PersonView.this.refreshViewer();
 			}
 		});
 
@@ -405,7 +405,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				sorter.setCurrentColumn(2);
 				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
-				PersonView.this.viewer.refresh();
+				PersonView.this.refreshViewer();
 			}
 		});
 
@@ -462,7 +462,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				sorter.setCurrentColumn(3);
 				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
-				PersonView.this.viewer.refresh();
+				PersonView.this.refreshViewer();
 			}
 		});
 
@@ -516,7 +516,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				sorter.setCurrentColumn(3);
 				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
-				PersonView.this.viewer.refresh();
+				PersonView.this.refreshViewer();
 			}
 		});
 
@@ -571,7 +571,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				sorter.setCurrentColumn(4);
 				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
-				PersonView.this.viewer.refresh();
+				PersonView.this.refreshViewer();
 			}
 		});
 
@@ -626,7 +626,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				sorter.setCurrentColumn(5);
 				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
-				PersonView.this.viewer.refresh();
+				PersonView.this.refreshViewer();
 			}
 		});
 
@@ -704,7 +704,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				sorter.setCurrentColumn(6);
 				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
-				PersonView.this.viewer.refresh();
+				PersonView.this.refreshViewer();
 			}
 		});
 
@@ -802,7 +802,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				sorter.setCurrentColumn(7);
 				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
-				PersonView.this.viewer.refresh();
+				PersonView.this.refreshViewer();
 			}
 		});
 
@@ -866,7 +866,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				sorter.setCurrentColumn(8);
 				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
-				PersonView.this.viewer.refresh();
+				PersonView.this.refreshViewer();
 			}
 		});
 
@@ -906,7 +906,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				sorter.setCurrentColumn(9);
 				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
-				PersonView.this.viewer.refresh();
+				PersonView.this.refreshViewer();
 			}
 		});
 
@@ -937,7 +937,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 						f.setShowDeleted(showDeleted);
 					}
 				}
-				viewer.refresh();
+				refreshViewer();
 				PersonView.this.found.setText("Gefunden: " + PersonView.this.viewer.getTree().getItemCount());
 				PersonView.this.selected.setText("Ausgewählt: "
 						+ ((StructuredSelection) PersonView.this.viewer.getSelection()).size());
@@ -1219,7 +1219,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						viewer.refresh();
+						refreshViewer();
 						return Status.OK_STATUS;
 					}
 				};
@@ -1234,9 +1234,12 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						ContentRoot root = (ContentRoot) viewer.getInput();
-						viewer.add(root, entity);
-						packColumns();
+						if (!viewer.getTree().isDisposed())
+						{
+							ContentRoot root = (ContentRoot) viewer.getInput();
+							viewer.add(root, entity);
+							packColumns();
+						}
 						return Status.OK_STATUS;
 					}
 				};
@@ -1251,7 +1254,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						viewer.refresh(entity);
+						refreshViewer(entity);
 						packColumns();
 						return Status.OK_STATUS;
 					}
@@ -1269,7 +1272,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						viewer.refresh();
+						refreshViewer();
 						return Status.OK_STATUS;
 					}
 				};
@@ -1284,9 +1287,12 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						LinkPersonAddress link = (LinkPersonAddress) entity;
-						viewer.add(link.getPerson(), link);
-						packColumns();
+						if (!viewer.getTree().isDisposed())
+						{
+							LinkPersonAddress link = (LinkPersonAddress) entity;
+							viewer.add(link.getPerson(), link);
+							packColumns();
+						}
 						return Status.OK_STATUS;
 					}
 				};
@@ -1301,7 +1307,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						viewer.refresh(entity);
+						refreshViewer(entity);
 						packColumns();
 						return Status.OK_STATUS;
 					}
@@ -1319,7 +1325,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						viewer.refresh();
+						refreshViewer();
 						return Status.OK_STATUS;
 					}
 				};
@@ -1355,7 +1361,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						viewer.refresh(entity);
+						refreshViewer(entity);
 						packColumns();
 						return Status.OK_STATUS;
 					}
@@ -1373,7 +1379,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						viewer.refresh();
+						refreshViewer();
 						return Status.OK_STATUS;
 					}
 				};
@@ -1388,7 +1394,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						viewer.refresh();
+						refreshViewer();
 						return Status.OK_STATUS;
 					}
 				};
@@ -1403,7 +1409,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						viewer.refresh();
+						refreshViewer();
 						return Status.OK_STATUS;
 					}
 				};
@@ -1414,12 +1420,30 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 
 	private void packColumns()
 	{
-		TreeColumn[] treeColumns = this.viewer.getTree().getColumns();
-		for (TreeColumn treeColumn : treeColumns)
+		if (!this.viewer.getTree().isDisposed())
 		{
-			treeColumn.pack();
+			TreeColumn[] treeColumns = this.viewer.getTree().getColumns();
+			for (TreeColumn treeColumn : treeColumns)
+			{
+				treeColumn.pack();
+			}
 		}
+	}
 
+	private void refreshViewer()
+	{
+		if (!this.viewer.getTree().isDisposed())
+		{
+			this.viewer.refresh();
+		}
+	}
+
+	private void refreshViewer(AbstractEntity entity)
+	{
+		if (!this.viewer.getTree().isDisposed())
+		{
+			this.viewer.refresh(entity);
+		}
 	}
 
 	/**

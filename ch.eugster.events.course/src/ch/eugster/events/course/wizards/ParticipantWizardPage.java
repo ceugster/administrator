@@ -782,6 +782,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		 */
 		this.participantViewer = new TableViewer(table);
 		this.participantViewer.setContentProvider(new ParticipantContentProvider());
+		this.participantViewer.setSorter(new PersonSorter());
 		this.participantViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
 
 		final MenuManager menuManager = new MenuManager("#participantWizardPagePopupMenu"); //$NON-NLS-1$
