@@ -654,10 +654,9 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		Booking booking = input.getEntity();
 		if (booking != null)
 		{
-			Calendar calendar = null;
+			Calendar calendar = GregorianCalendar.getInstance();
 			if (date.getSelection() != null)
 			{
-				calendar = GregorianCalendar.getInstance();
 				calendar.setTime(date.getSelection());
 				booking.setDate(calendar);
 			}

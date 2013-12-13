@@ -297,6 +297,21 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		}
 	}
 
+	private void loadExtendedFieldValues(FormEditorLinkPage oldPage)
+	{
+		for (ExtendedField field : extendedFields.values())
+		{
+			ExtendedField oldField = oldPage.extendedFields.get(field.getFieldExtension().getId());
+			if (oldField != null)
+			{
+				Control oldControl = oldPage.extendedFieldControls.get(oldField.getFieldExtension().getId());
+				String value = oldField.getFieldExtension().getType().getInput(oldControl);
+				Control control = extendedFieldControls.get(field.getFieldExtension().getId());
+				field.getFieldExtension().getType().setInput(control, AbstractEntity.stringValueOf(value));
+			}
+		}
+	}
+
 	private void addAddressPage(final AddressType addressType, final String id)
 	{
 		try
@@ -1281,25 +1296,26 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		EntityMediator.removeListener(Address.class, entityAdapter);
 	}
 
-	private ZipCode findZipCode(final Country country, final String zip)
-	{
-		Collection<ZipCode> zipCodes = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
-		{
-			ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
-			zipCodes = query.selectByCountryAndZipCode(country, zip);
-		}
-		tracker.close();
-		if (zipCodes.iterator().hasNext())
-		{
-			return zipCodes.iterator().next();
-		}
-		return null;
-	}
+	// private ZipCode findZipCode(final Country country, final String zip)
+	// {
+	// Collection<ZipCode> zipCodes = null;
+	// ServiceTracker tracker = new
+	// ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+	// ConnectionService.class.getName(), null);
+	// tracker.open();
+	// ConnectionService service = (ConnectionService) tracker.getService();
+	// if (service != null)
+	// {
+	// ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
+	// zipCodes = query.selectByCountryAndZipCode(country, zip);
+	// }
+	// tracker.close();
+	// if (zipCodes.iterator().hasNext())
+	// {
+	// return zipCodes.iterator().next();
+	// }
+	// return null;
+	// }
 
 	private String formatPhoneNumber(String value)
 	{
@@ -1442,7 +1458,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 				if (usedPage instanceof FormEditorLinkPage)
 				{
 					FormEditorLinkPage page = (FormEditorLinkPage) usedPage;
-					if (page.getLink().getAddressType().getId().equals(addressType.getId()))
+					LinkPersonAddress link = page.getLink();
+					if (link != null && link.getAddressType().getId().equals(addressType.getId()))
 					{
 						found = true;
 					}
@@ -1574,6 +1591,14 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		this.website.setText(link.getAddress().getWebsite());
 	}
 
+	private void loadAddressContactsValues(FormEditorLinkPage oldPage)
+	{
+		phone.setText(oldPage.phone.getText());
+		fax.setText(oldPage.fax.getText());
+		email.setText(oldPage.email.getText());
+		this.website.setText(oldPage.website.getText());
+	}
+
 	private void loadAddressValues()
 	{
 		LinkPersonAddress link = getLink();
@@ -1602,12 +1627,34 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		}
 	}
 
+	private void loadAddressValues(FormEditorLinkPage oldPage)
+	{
+		this.salutationViewer.setSelection(oldPage.salutationViewer.getSelection());
+		this.name.setText(oldPage.name.getText());
+		this.anotherLine.setText(oldPage.anotherLine.getText());
+		this.address.setText(oldPage.address.getText());
+		this.pob.setText(oldPage.pob.getText());
+		this.countryViewer.setSelection(oldPage.countryViewer.getSelection());
+		this.zip.setData("zipCode", oldPage.zip.getData("zipCode"));
+		this.zip.setText(oldPage.zip.getText());
+		this.city.setText(oldPage.city.getText());
+		this.provinceViewer.setSelection(oldPage.provinceViewer.getSelection());
+	}
+
 	private void loadLinkValues()
 	{
 		LinkPersonAddress link = getLink();
 		this.linkFunction.setText(link.getFunction());
 		linkPhone.setText(formatPhoneNumber(link.getPhone()));
 		this.linkEmail.setText(link.getEmail());
+
+	}
+
+	private void loadLinkValues(FormEditorLinkPage oldPage)
+	{
+		this.linkFunction.setText(oldPage.linkFunction.getText());
+		linkPhone.setText(oldPage.linkPhone.getText());
+		this.linkEmail.setText(oldPage.linkEmail.getText());
 
 	}
 
@@ -1618,6 +1665,14 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		this.loadExtendedFieldValues();
 		this.loadAddressValues();
 		this.setDirty(false);
+	}
+
+	public void loadValues(FormEditorLinkPage oldPage)
+	{
+		this.loadAddressContactsValues(oldPage);
+		this.loadLinkValues(oldPage);
+		this.loadExtendedFieldValues(oldPage);
+		this.loadAddressValues(oldPage);
 	}
 
 	private void saveExtendedFieldValues()
@@ -1962,20 +2017,21 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		return msg == null;
 	}
 
-	private void zipSelected(final String code)
-	{
-		if (countryViewer.getData("country") instanceof Country && !code.isEmpty())
-		{
-			Country country = (Country) countryViewer.getData("country");
-			ZipCode zipCode = findZipCode(country, code);
-			zip.setData("zipCode", zipCode);
-			if (zipCode != null)
-			{
-				city.setText(zipCode.getCity());
-				provinceViewer.setSelection(new StructuredSelection(zipCode.getState()));
-			}
-		}
-	}
+	// private void zipSelected(final String code)
+	// {
+	// if (countryViewer.getData("country") instanceof Country &&
+	// !code.isEmpty())
+	// {
+	// Country country = (Country) countryViewer.getData("country");
+	// ZipCode zipCode = findZipCode(country, code);
+	// zip.setData("zipCode", zipCode);
+	// if (zipCode != null)
+	// {
+	// city.setText(zipCode.getCity());
+	// provinceViewer.setSelection(new StructuredSelection(zipCode.getState()));
+	// }
+	// }
+	// }
 
 	private void initializeFields(Map<String, String> values)
 	{

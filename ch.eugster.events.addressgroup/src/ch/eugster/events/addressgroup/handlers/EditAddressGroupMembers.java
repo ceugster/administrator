@@ -9,7 +9,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.util.tracker.ServiceTracker;
 
-import ch.eugster.events.addressgroup.Activator;
 import ch.eugster.events.addressgroup.dialogs.AddressGroupMemberDialog;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressGroupMember;
@@ -17,22 +16,11 @@ import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.queries.AddressQuery;
 import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
-import ch.eugster.events.persistence.queries.PersonQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
 public class EditAddressGroupMembers extends AbstractHandler implements IHandler
 {
 	private ServiceTracker tracker;
-
-	private ConnectionService connectionService;
-
-	public EditAddressGroupMembers()
-	{
-		tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		connectionService = (ConnectionService) tracker.getService();
-	}
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
@@ -86,20 +74,20 @@ public class EditAddressGroupMembers extends AbstractHandler implements IHandler
 		return null;
 	}
 
-	private Person refresh(Person person)
-	{
-		ConnectionService service = (ConnectionService) tracker.getService();
-		try
-		{
-			PersonQuery query = (PersonQuery) service.getQuery(Person.class);
-			return (Person) query.refresh(person);
-		}
-		catch (Exception e)
-		{
-			PersonQuery query = (PersonQuery) service.getQuery(Person.class);
-			return query.find(Person.class, person.getId());
-		}
-	}
+	// private Person refresh(Person person)
+	// {
+	// ConnectionService service = (ConnectionService) tracker.getService();
+	// try
+	// {
+	// PersonQuery query = (PersonQuery) service.getQuery(Person.class);
+	// return (Person) query.refresh(person);
+	// }
+	// catch (Exception e)
+	// {
+	// PersonQuery query = (PersonQuery) service.getQuery(Person.class);
+	// return query.find(Person.class, person.getId());
+	// }
+	// }
 
 	private Address refresh(Address address)
 	{
