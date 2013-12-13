@@ -1,17 +1,18 @@
 package ch.eugster.events.donation.dialogs;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -20,8 +21,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.UIJob;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.documents.maps.AddressMap;
@@ -58,68 +57,67 @@ public class DonationListDialog extends TitleAreaDialog
 
 	private void buildDocument(final DataMapKey[] keys, final Collection<DataMap> dataMaps)
 	{
-		UIJob job = new UIJob("Generiere Dokument...")
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+		try
 		{
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor)
+			dialog.run(true, true, new IRunnableWithProgress()
 			{
-				IStatus status = Status.CANCEL_STATUS;
-				ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-						DocumentBuilderService.class.getName(), null);
-				try
+				@Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 				{
-					tracker.open();
-					Object[] services = tracker.getServices();
-					for (Object service : services)
+					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+							DocumentBuilderService.class.getName(), null);
+					try
 					{
-						if (status.isOK())
+						tracker.open();
+						Object[] services = tracker.getServices();
+						if (services != null)
 						{
-							return status;
-						}
-						if (service instanceof DocumentBuilderService)
-						{
-							DocumentBuilderService builderService = (DocumentBuilderService) service;
-							status = builderService.buildDocument(keys, dataMaps);
-							if (status.isOK())
+							IStatus status = Status.CANCEL_STATUS;
+							try
 							{
-								break;
+								monitor.beginTask("Dokument wird erstellt...", services.length);
+								for (Object service : services)
+								{
+									if (status.isOK())
+									{
+										monitor.worked(1);
+										return;
+									}
+									if (service instanceof DocumentBuilderService)
+									{
+										DocumentBuilderService builderService = (DocumentBuilderService) service;
+										status = builderService.buildDocument(
+												new SubProgressMonitor(monitor, dataMaps.size()), keys, dataMaps);
+										if (status.isOK())
+										{
+											break;
+										}
+									}
+									monitor.worked(1);
+								}
+							}
+							finally
+							{
+								monitor.done();
 							}
 						}
 					}
+					finally
+					{
+						tracker.close();
+					}
 				}
-				finally
-				{
-					tracker.close();
-				}
-				return status;
-			}
-		};
-		job.addJobChangeListener(new JobChangeAdapter()
+			});
+		}
+		catch (InvocationTargetException e)
 		{
-			@Override
-			public void done(final IJobChangeEvent event)
-			{
-				IStatus status = event.getResult();
-				if (!status.isOK())
-				{
-					if (status.getSeverity() == IStatus.CANCEL)
-					{
-						MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-								.getShell(), "Ungültige Selektion", null, status.getMessage(),
-								MessageDialog.INFORMATION, new String[] { "OK" }, 0);
-						dialog.open();
-					}
-					else
-					{
-						ErrorDialog dialog = new ErrorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-								.getShell(), "Ungültige Selektion", status.getMessage(), status, 0);
-						dialog.open();
-					}
-				}
-			}
-		});
-		job.setUser(true);
-		job.schedule();
+			MessageDialog.openError(getShell(), "Fehler",
+					"Bei der Verarbeitung ist ein Fehler aufgetreten.\n(" + e.getLocalizedMessage() + ")");
+		}
+		catch (InterruptedException e)
+		{
+		}
 	}
 
 	private void computeDonation(final Collection<DataMap> maps, final Donation donation)

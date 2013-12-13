@@ -186,7 +186,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 		this.sorter = new AddressGroupMemberSorter(col, asc);
 
 		this.viewer = new TableViewer(table);
-		this.viewer.setContentProvider(new AddressGroupMemberContentProvider(this));
+		this.viewer.setContentProvider(new AddressGroupMemberContentProvider());
 		this.viewer.setSorter(this.sorter);
 		this.viewer.setFilters(new ViewerFilter[] { deletedFilter, nameFilter });
 		this.viewer.addDoubleClickListener(this);

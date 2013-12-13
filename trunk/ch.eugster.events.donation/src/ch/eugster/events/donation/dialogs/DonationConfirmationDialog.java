@@ -1,6 +1,7 @@
 package ch.eugster.events.donation.dialogs;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,12 +9,12 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -31,7 +32,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -149,71 +149,68 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		}
 		else
 		{
-			UIJob job = new UIJob("Generiere Dokument...")
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+			try
 			{
-				@Override
-				public IStatus runInUIThread(final IProgressMonitor monitor)
+				dialog.run(true, true, new IRunnableWithProgress()
 				{
-					IStatus status = Status.OK_STATUS;
-					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-							DocumentBuilderService.class.getName(), null);
-					try
+					@Override
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 					{
-						tracker.open();
-						ServiceReference[] references = tracker.getServiceReferences();
-						if (references != null)
+						IStatus status = Status.OK_STATUS;
+						ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle()
+								.getBundleContext(), DocumentBuilderService.class.getName(), null);
+						try
 						{
-							for (ServiceReference reference : references)
+							tracker.open();
+							ServiceReference[] references = tracker.getServiceReferences();
+							if (references != null)
 							{
-								DocumentBuilderService service = (DocumentBuilderService) tracker.getService(reference);
-								DocumentBuilderService builderService = service;
-								status = builderService.buildDocument(new File(userPropertyTemplatePath.getValue()),
-										dataMaps);
-								if (status.isOK())
+								try
 								{
-									break;
+									monitor.beginTask("Dokument wird erstellt...", references.length);
+									for (ServiceReference reference : references)
+									{
+										DocumentBuilderService service = (DocumentBuilderService) tracker
+												.getService(reference);
+										DocumentBuilderService builderService = service;
+										status = builderService.buildDocument(
+												new SubProgressMonitor(monitor, dataMaps.size()), new File(
+														userPropertyTemplatePath.getValue()), dataMaps);
+										if (status.isOK())
+										{
+											break;
+										}
+										monitor.worked(1);
+									}
+									monitor.worked(1);
+								}
+								finally
+								{
+									monitor.done();
 								}
 							}
+							else
+							{
+								status = new Status(IStatus.ERROR,
+										Activator.getDefault().getBundle().getSymbolicName(), MSG_NO_SERVICE_AVAILABLE);
+							}
 						}
-						else
+						finally
 						{
-							status = new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(),
-									MSG_NO_SERVICE_AVAILABLE);
+							tracker.close();
 						}
 					}
-					finally
-					{
-						tracker.close();
-					}
-					return status;
-				}
-			};
-			job.addJobChangeListener(new JobChangeAdapter()
+				});
+			}
+			catch (InvocationTargetException e)
 			{
-				@Override
-				public void done(final IJobChangeEvent event)
-				{
-					IStatus status = event.getResult();
-					if (!status.isOK())
-					{
-						if (status.getSeverity() == IStatus.CANCEL)
-						{
-							MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench()
-									.getActiveWorkbenchWindow().getShell(), MSG_TITLE_NO_BOOKINGS, null, status
-									.getMessage(), MessageDialog.INFORMATION, new String[] { "OK" }, 0);
-							dialog.open();
-						}
-						else
-						{
-							ErrorDialog dialog = new ErrorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-									.getShell(), MSG_TITLE_NO_BOOKINGS, status.getMessage(), status, 0);
-							dialog.open();
-						}
-					}
-				}
-			});
-			job.setUser(true);
-			job.schedule();
+				MessageDialog.openError(getShell(), "Fehler",
+						"Bei der Verarbeitung ist ein Fehler aufgetreten.\n(" + e.getLocalizedMessage() + ")");
+			}
+			catch (InterruptedException e)
+			{
+			}
 		}
 	}
 

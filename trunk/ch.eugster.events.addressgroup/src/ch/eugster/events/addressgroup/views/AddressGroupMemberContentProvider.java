@@ -12,13 +12,6 @@ import ch.eugster.events.persistence.model.AddressGroupMember;
 
 public class AddressGroupMemberContentProvider implements IStructuredContentProvider
 {
-	private AddressGroupMemberView view;
-
-	public AddressGroupMemberContentProvider(final AddressGroupMemberView view)
-	{
-		this.view = view;
-	}
-
 	@Override
 	public void dispose()
 	{

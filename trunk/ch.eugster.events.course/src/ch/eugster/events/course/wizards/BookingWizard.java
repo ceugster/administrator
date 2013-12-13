@@ -1,11 +1,16 @@
 package ch.eugster.events.course.wizards;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.GregorianCalendar;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.osgi.util.tracker.ServiceTracker;
@@ -108,35 +113,59 @@ public class BookingWizard extends Wizard implements IBookingWizard
 	private IStatus printBookingConfirmation(final BookingWizardPage bookingPage)
 	{
 		IStatus status = Status.OK_STATUS;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				DocumentBuilderService.class.getName(), null);
-		tracker.open();
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(this.getShell());
 		try
 		{
-			Object service = tracker.getService();
-			if (service instanceof DocumentBuilderService)
+			dialog.run(true, true, new IRunnableWithProgress()
 			{
-				File template = new File(bookingPage.getBookingConfirmationTemplatePath());
-				DataMap map = new BookingMap(this.booking);
-				DocumentBuilderService builderService = (DocumentBuilderService) service;
-				builderService.buildDocument(template, map);
-			}
-			else
-			{
-				status = new Status(
-						IStatus.ERROR,
-						Activator.getDefault().getBundle().getSymbolicName(),
-						"Der Service für die Aufbereitung der Buchungsbestätigung ist nicht aktiv. Die Buchungsbestätigung kann nicht gedruckt werden.");
-			}
+				@Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
+				{
+					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+							DocumentBuilderService.class.getName(), null);
+					try
+					{
+						monitor.beginTask("Buchungsbestätigung wird gedruckt...", 1);
+						tracker.open();
+
+						Object service = tracker.getService();
+						if (service instanceof DocumentBuilderService)
+						{
+							File template = new File(bookingPage.getBookingConfirmationTemplatePath());
+							DataMap map = new BookingMap(BookingWizard.this.booking);
+							DocumentBuilderService builderService = (DocumentBuilderService) service;
+							builderService.buildDocument(new SubProgressMonitor(monitor, 1), template, map);
+						}
+						else
+						{
+							MessageDialog
+									.openError(
+											getShell(),
+											"Service nicht aktiv",
+											"Der Service für die Aufbereitung der Buchungsbestätigung ist nicht aktiv. Die Buchungsbestätigung kann nicht gedruckt werden.");
+						}
+						monitor.worked(1);
+					}
+					catch (Exception e)
+					{
+						MessageDialog.openError(getShell(), "Fehler",
+								"Beim Aufbereiten der Buchungsbestätigung ist ist ein Fehler aufgetreten.");
+					}
+					finally
+					{
+						tracker.close();
+						monitor.done();
+					}
+				}
+			});
 		}
-		catch (Exception e)
+		catch (InvocationTargetException e)
 		{
-			status = new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(),
-					"Beim Aufbereiten der Buchungsbestätigung ist ist ein Fehler aufgetreten.");
+			MessageDialog.openError(this.getShell(), "Fehler",
+					"Bei der Verarbeitung ist ein Fehler aufgetreten\n(" + e.getLocalizedMessage() + ")");
 		}
-		finally
+		catch (InterruptedException e)
 		{
-			tracker.close();
 		}
 		return status;
 	}
@@ -144,35 +173,59 @@ public class BookingWizard extends Wizard implements IBookingWizard
 	private IStatus printInvitation(final BookingWizardPage bookingPage)
 	{
 		IStatus status = Status.OK_STATUS;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				DocumentBuilderService.class.getName(), null);
-		tracker.open();
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(this.getShell());
 		try
 		{
-			Object service = tracker.getService();
-			if (service instanceof DocumentBuilderService)
+			dialog.run(true, true, new IRunnableWithProgress()
 			{
-				File template = new File(bookingPage.getInvitationTemplatePath());
-				DataMap map = new BookingMap(this.booking);
-				DocumentBuilderService builderService = (DocumentBuilderService) service;
-				builderService.buildDocument(template, map);
-			}
-			else
-			{
-				status = new Status(
-						IStatus.ERROR,
-						Activator.getDefault().getBundle().getSymbolicName(),
-						"Der Service für die Aufbereitung der Buchungsbestätigung ist nicht aktiv. Die Buchungsbestätigung kann nicht gedruckt werden.");
-			}
+				@Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
+				{
+					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+							DocumentBuilderService.class.getName(), null);
+					try
+					{
+						monitor.beginTask("Kurseinladung wird gedruckt...", 1);
+						tracker.open();
+
+						Object service = tracker.getService();
+						if (service instanceof DocumentBuilderService)
+						{
+							File template = new File(bookingPage.getInvitationTemplatePath());
+							DataMap map = new BookingMap(BookingWizard.this.booking);
+							DocumentBuilderService builderService = (DocumentBuilderService) service;
+							builderService.buildDocument(new SubProgressMonitor(monitor, 1), template, map);
+						}
+						else
+						{
+							MessageDialog
+									.openError(
+											getShell(),
+											"Service nicht aktiv",
+											"Der Service für die Aufbereitung der Buchungsbestätigung ist nicht aktiv. Die Kurseinladung kann nicht gedruckt werden.");
+						}
+						monitor.worked(1);
+					}
+					catch (Exception e)
+					{
+						MessageDialog.openError(getShell(), "Fehler",
+								"Beim Aufbereiten der Kurseinladung ist ist ein Fehler aufgetreten.");
+					}
+					finally
+					{
+						tracker.close();
+						monitor.done();
+					}
+				}
+			});
 		}
-		catch (Exception e)
+		catch (InvocationTargetException e)
 		{
-			status = new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(),
-					"Beim Aufbereiten der Buchungsbestätigung ist ist ein Fehler aufgetreten.");
+			MessageDialog.openError(this.getShell(), "Fehler",
+					"Bei der Verarbeitung ist ein Fehler aufgetreten\n(" + e.getLocalizedMessage() + ")");
 		}
-		finally
+		catch (InterruptedException e)
 		{
-			tracker.close();
 		}
 		return status;
 	}
