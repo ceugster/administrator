@@ -27,11 +27,10 @@ import javax.persistence.TableGenerator;
 		@AttributeOverride(name = "version", column = @Column(name = "donation_purpose_version")) })
 public class DonationPurpose extends AbstractEntity
 {
-
 	@Id
 	@Column(name = "donation_purpose_id")
 	@GeneratedValue(generator = "events_donation_purpose_id_seq")
-	@TableGenerator(name = "events_donation_purpose_id_seq", table = "events_sequence", allocationSize = 5)
+	@TableGenerator(name = "events_donation_purpose_id_seq", table = "events_sequence", initialValue = 5000, allocationSize = 5)
 	private Long id;
 
 	@Basic
