@@ -87,6 +87,14 @@ public class DonationPurposeEditor extends AbstractEntityEditor<DonationPurpose>
 
 		this.code = this.formToolkit.createText(composite, "");
 		this.code.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.code.addModifyListener(new ModifyListener()
+		{
+			@Override
+			public void modifyText(ModifyEvent e)
+			{
+				DonationPurposeEditor.this.setDirty(true);
+			}
+		});
 
 		label = this.formToolkit.createLabel(composite, "Bezeichnung", SWT.NONE);
 		label.setLayoutData(new GridData());

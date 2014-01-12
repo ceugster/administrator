@@ -19,6 +19,7 @@ import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.odftoolkit.odfdom.doc.office.OdfOfficeAutomaticStyles;
 import org.odftoolkit.odfdom.doc.office.OdfOfficeBody;
+import org.odftoolkit.odfdom.doc.office.OdfOfficeStyles;
 import org.odftoolkit.odfdom.doc.office.OdfOfficeText;
 import org.odftoolkit.odfdom.doc.style.OdfStyle;
 import org.odftoolkit.odfdom.doc.style.OdfStyleParagraphProperties;
@@ -121,10 +122,11 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		DataMap[] values = maps.toArray(new DataMap[0]);
 		try
 		{
-			monitor.beginTask("Dokument wird erstellt...", values.length);
+			monitor.beginTask("Dokumente werden erstellt...", values.length);
 			String styleName = "break-before";
 			OdfDocument document = OdfTextDocument.loadDocument(template);
 			OdfFileDom fileDom = document.getContentDom();
+			OdfOfficeStyles officeStyles = document.getDocumentStyles();
 			OdfOfficeAutomaticStyles styles = fileDom.getAutomaticStyles();
 			OdfStyle style = styles.getStyle(styleName, OdfStyleFamily.Paragraph);
 			if (style == null)

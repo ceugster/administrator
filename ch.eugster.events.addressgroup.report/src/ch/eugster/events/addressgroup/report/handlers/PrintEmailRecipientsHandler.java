@@ -36,7 +36,7 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 {
 	protected Shell shell;
 
-	protected int buildRecipientsList(final IStructuredSelection ssel, Filter filter)
+	public int buildRecipientsList(final IStructuredSelection ssel, Filter filter)
 	{
 		RecipientListFactory.clear();
 		Iterator<?> iterator = ssel.iterator();
@@ -77,11 +77,7 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 				if (sel instanceof IStructuredSelection)
 				{
 					IStructuredSelection ssel = (IStructuredSelection) sel;
-					if (ssel.isEmpty())
-					{
-
-					}
-					else
+					if (!ssel.isEmpty())
 					{
 						if (buildRecipientsList(ssel, Filter.ALL) > 0)
 						{
@@ -233,7 +229,7 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 		return false;
 	}
 
-	protected boolean printRecipientList()
+	public boolean printRecipientList()
 	{
 		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 		if (preferenceStore.getBoolean(PreferenceConstants.P_PRINT_RECIPIENT_LIST_AUTOMATICALLY))

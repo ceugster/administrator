@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.addressgroup.report.Activator;
+import ch.eugster.events.addressgroup.report.handlers.PrintEmailRecipientsHandler;
 import ch.eugster.events.documents.maps.AddressGroupMap;
 import ch.eugster.events.documents.maps.AddressGroupMemberMap;
 import ch.eugster.events.documents.maps.AddressMap;
@@ -349,6 +350,11 @@ public class AddressListDialog extends TitleAreaDialog
 					{
 						monitor.beginTask("Adressliste wird erstellt...", 2);
 						setCurrentUser();
+						PrintEmailRecipientsHandler handler = new PrintEmailRecipientsHandler();
+						if (handler.buildRecipientsList(selection, PrintEmailRecipientsHandler.Filter.ALL) > 0)
+						{
+							handler.printRecipientList();
+						}
 						final DataMapKey[] keys = getKeys();
 						final DataMap[] dataMaps = createDataMaps(new SubProgressMonitor(monitor, selection.size()),
 								selection).toArray(new DataMap[0]);
