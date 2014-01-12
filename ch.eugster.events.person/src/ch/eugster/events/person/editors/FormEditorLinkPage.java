@@ -232,51 +232,54 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 				if (extensions.size() > 0)
 				{
 					LinkPersonAddress link = getLink();
-					for (LinkPersonAddressExtendedField field : link.getExtendedFields())
+					if (link != null)
 					{
-						this.extendedFields.put(field.getFieldExtension().getId(), field);
-					}
-					for (FieldExtension extension : extensions)
-					{
-						ExtendedField field = this.extendedFields.get(extension.getId());
-						if (field == null)
+						for (LinkPersonAddressExtendedField field : link.getExtendedFields())
 						{
-							if (extension.getTarget().equals(FieldExtensionTarget.PERSON))
+							this.extendedFields.put(field.getFieldExtension().getId(), field);
+						}
+						for (FieldExtension extension : extensions)
+						{
+							ExtendedField field = this.extendedFields.get(extension.getId());
+							if (field == null)
 							{
-								field = LinkPersonAddressExtendedField.newInstance(link, extension);
-								field.setValue(extension.getDefaultValue());
-								extendedFields.put(field.getFieldExtension().getId(), field);
+								if (extension.getTarget().equals(FieldExtensionTarget.PERSON))
+								{
+									field = LinkPersonAddressExtendedField.newInstance(link, extension);
+									field.setValue(extension.getDefaultValue());
+									extendedFields.put(field.getFieldExtension().getId(), field);
+								}
 							}
-						}
-						Label label = toolkit.createLabel(parent, extension.getLabel());
-						label.setLayoutData(new GridData());
+							Label label = toolkit.createLabel(parent, extension.getLabel());
+							label.setLayoutData(new GridData());
 
-						GridData gridData = extension.getWidthHint() == 0 ? new GridData(GridData.FILL_HORIZONTAL)
-								: new GridData();
-						gridData.horizontalSpan = numColumns - 1;
-						if (extension.getWidthHint() != 0)
-						{
-							gridData.widthHint = extension.getWidthHint();
-						}
-						if (extension.getHeightHint() != 0)
-						{
-							gridData.heightHint = extension.getHeightHint();
-						}
-						if (extension.getType().equals(FieldExtensionType.TEXT))
-						{
-							Text text = toolkit.createText(parent, "");
-							text.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-							text.setLayoutData(gridData);
-							extension.getType().addListeners(text, this);
-							extendedFieldControls.put(extension.getId(), text);
-						}
-						else
-						{
-							Control control = extension.getType().createControl(parent, extension.getStyle());
-							control.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-							control.setLayoutData(gridData);
-							extension.getType().addListeners(control, this);
-							extendedFieldControls.put(extension.getId(), control);
+							GridData gridData = extension.getWidthHint() == 0 ? new GridData(GridData.FILL_HORIZONTAL)
+									: new GridData();
+							gridData.horizontalSpan = numColumns - 1;
+							if (extension.getWidthHint() != 0)
+							{
+								gridData.widthHint = extension.getWidthHint();
+							}
+							if (extension.getHeightHint() != 0)
+							{
+								gridData.heightHint = extension.getHeightHint();
+							}
+							if (extension.getType().equals(FieldExtensionType.TEXT))
+							{
+								Text text = toolkit.createText(parent, "");
+								text.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+								text.setLayoutData(gridData);
+								extension.getType().addListeners(text, this);
+								extendedFieldControls.put(extension.getId(), text);
+							}
+							else
+							{
+								Control control = extension.getType().createControl(parent, extension.getStyle());
+								control.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+								control.setLayoutData(gridData);
+								extension.getType().addListeners(control, this);
+								extendedFieldControls.put(extension.getId(), control);
+							}
 						}
 					}
 				}
@@ -783,24 +786,6 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 					fax.setText(formatPhoneNumber(fax.getText()));
 					linkPhone.setText(formatPhoneNumber(linkPhone.getText()));
 
-					// LinkPersonAddress link = getLink();
-					// if (link != null)
-					// {
-					// String p = link.getAddress().getPhone();
-					// p = p.startsWith(phonePrefix.getText()) ?
-					// p.substring(phonePrefix.getText().length()) : p;
-					// FormEditorLinkPage.this.phone.setText(formatPhoneNumber(p));
-					// p = link.getAddress().getFax();
-					// p = p.startsWith(faxPrefix.getText()) ?
-					// p.substring(faxPrefix.getText().length()) : p;
-					// FormEditorLinkPage.this.fax.setText(formatPhoneNumber(p));
-					// p = link.getPhone();
-					// p = p.startsWith(linkPhonePrefix.getText()) ?
-					// p.substring(linkPhonePrefix.getText().length())
-					// : p;
-					// FormEditorLinkPage.this.linkPhone.setText(formatPhoneNumber(p));
-					// }
-
 					String[] states = selectProvinceCodes(country);
 					provinceViewer.setInput(states);
 					if (zip.getData("zipCode") instanceof ZipCode)
@@ -952,14 +937,15 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 		for (final AddressType addressType : addressTypes)
 		{
-			if (!this.getLink().getAddressType().getId().equals(addressType.getId()))
+			LinkPersonAddress link = getLink();
+			if (link != null && link.getAddressType().getId().equals(addressType.getId()))
 			{
 				if (addressType.getImage() == null)
 				{
-					Hyperlink link = toolkit.createHyperlink(composite, addressType.getName(), SWT.NONE);
-					link.setToolTipText("zur Seite " + addressType.getName()
+					Hyperlink hlink = toolkit.createHyperlink(composite, addressType.getName(), SWT.NONE);
+					hlink.setToolTipText("zur Seite " + addressType.getName()
 							+ " wechseln (falls noch nicht vorhanden, wird sie eingefügt).");
-					link.addHyperlinkListener(new HyperlinkAdapter()
+					hlink.addHyperlinkListener(new HyperlinkAdapter()
 					{
 						@Override
 						public void linkActivated(final HyperlinkEvent e)
@@ -1021,7 +1007,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 						if (usedPage instanceof FormEditorLinkPage)
 						{
 							FormEditorLinkPage page = (FormEditorLinkPage) usedPage;
-							if (page.getLink().getAddressType().getId().equals(addressType.getId()))
+							LinkPersonAddress link = page.getLink();
+							if (link != null && link.getAddressType().getId().equals(addressType.getId()))
 							{
 								found = true;
 							}
@@ -1051,8 +1038,12 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			@Override
 			public void linkActivated(final HyperlinkEvent e)
 			{
-				FormEditorLinkPage.this.getLink().setDeleted(true);
-				getEditor().removePage(getEditor().getActivePage());
+				LinkPersonAddress link = FormEditorLinkPage.this.getLink();
+				if (link != null)
+				{
+					link.setDeleted(true);
+					getEditor().removePage(getEditor().getActivePage());
+				}
 			}
 		});
 		/**
@@ -1443,7 +1434,15 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	public String getText()
 	{
-		return PersonFormatter.getInstance().formatFirstnameLastname(getLink().getPerson());
+		LinkPersonAddress link = getLink();
+		if (link == null)
+		{
+			return "";
+		}
+		else
+		{
+			return PersonFormatter.getInstance().formatFirstnameLastname(link.getPerson());
+		}
 	}
 
 	private List<AddressType> getUnusedAddressTypes(final AddressType[] addressTypes)
@@ -1489,29 +1488,6 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 		entityAdapter = new EntityAdapter()
 		{
-
-			@Override
-			public void postDelete(final AbstractEntity entity)
-			{
-				// UIJob job = new UIJob("")
-				// {
-				// @Override
-				// public IStatus runInUIThread(IProgressMonitor monitor)
-				// {
-				// if (entity instanceof Person)
-				// {
-				// Person person = (Person) entity;
-				// if (person.getId().equals(getLink().getPerson().getId()))
-				// {
-				//
-				// }
-				// }
-				// return Status.OK_STATUS;
-				// }
-				// };
-				// job.schedule();
-			}
-
 			@Override
 			public void postUpdate(final AbstractEntity entity)
 			{
@@ -1523,16 +1499,19 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 						if (entity instanceof LinkPersonAddress)
 						{
 							LinkPersonAddress link = getLink();
-							LinkPersonAddress other = (LinkPersonAddress) entity;
-							if (link.getId() != null && link.getPerson().getId() != null)
+							if (link != null)
 							{
-								if (other.getPerson().getId().equals(link.getPerson().getId()))
+								LinkPersonAddress other = (LinkPersonAddress) entity;
+								if (link.getId() != null && link.getPerson().getId() != null)
 								{
-									if (deleteHyperlink != null && !deleteHyperlink.isDisposed())
+									if (other.getPerson().getId().equals(link.getPerson().getId()))
 									{
-										boolean enable = other.getPerson().getDefaultLink().getId()
-												.equals(link.getId());
-										deleteHyperlink.setEnabled(enable);
+										if (deleteHyperlink != null && !deleteHyperlink.isDisposed())
+										{
+											boolean enable = other.getPerson().getDefaultLink().getId()
+													.equals(link.getId());
+											deleteHyperlink.setEnabled(enable);
+										}
 									}
 								}
 							}
@@ -1540,16 +1519,19 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 						else if (entity instanceof Person)
 						{
 							LinkPersonAddress link = getLink();
-							Person person = (Person) entity;
-							if (person.getId().equals(link.getPerson().getId()))
+							if (link != null)
 							{
-								if (link.getId() != null)
+								Person person = (Person) entity;
+								if (person.getId().equals(link.getPerson().getId()))
 								{
-									if (deleteHyperlink != null && !deleteHyperlink.isDisposed())
+									if (link.getId() != null)
 									{
-										boolean enable = person.getDefaultLink() != null
-												&& person.getDefaultLink().getId().equals(link.getId());
-										deleteHyperlink.setEnabled(!enable);
+										if (deleteHyperlink != null && !deleteHyperlink.isDisposed())
+										{
+											boolean enable = person.getDefaultLink() != null
+													&& person.getDefaultLink().getId().equals(link.getId());
+											deleteHyperlink.setEnabled(!enable);
+										}
 									}
 								}
 							}
@@ -1585,45 +1567,51 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	private void loadAddressContactsValues()
 	{
 		LinkPersonAddress link = getLink();
-		phone.setText(formatPhoneNumber(link.getAddress().getPhone()));
-		fax.setText(formatPhoneNumber(link.getAddress().getFax()));
-		email.setText(link.getAddress().getEmail());
-		this.website.setText(link.getAddress().getWebsite());
+		if (link != null)
+		{
+			this.phone.setText(formatPhoneNumber(link.getAddress().getPhone()));
+			this.fax.setText(formatPhoneNumber(link.getAddress().getFax()));
+			this.email.setText(link.getAddress().getEmail());
+			this.website.setText(link.getAddress().getWebsite());
+		}
 	}
 
 	private void loadAddressContactsValues(FormEditorLinkPage oldPage)
 	{
-		phone.setText(oldPage.phone.getText());
-		fax.setText(oldPage.fax.getText());
-		email.setText(oldPage.email.getText());
+		this.phone.setText(oldPage.phone.getText());
+		this.fax.setText(oldPage.fax.getText());
+		this.email.setText(oldPage.email.getText());
 		this.website.setText(oldPage.website.getText());
 	}
 
 	private void loadAddressValues()
 	{
 		LinkPersonAddress link = getLink();
-		if (link.getAddress().getSalutation() != null)
+		if (link != null)
 		{
-			this.salutationViewer.setSelection(new StructuredSelection(new AddressSalutation[] { link.getAddress()
-					.getSalutation() }));
-		}
-		this.name.setText(link.getAddress().getName());
-		this.anotherLine.setText(link.getAddress().getAnotherLine());
-		this.address.setText(link.getAddress().getAddress());
-		this.pob.setText(link.getAddress().getPob());
-		if (link.getAddress().getCountry() == null)
-		{
-			link.getAddress().setCountry(AddressFormatter.getInstance().getCountry());
-		}
-		this.countryViewer.setSelection(new StructuredSelection(link.getAddress().getCountry()));
-		this.zip.setData("zipCode", link.getAddress().getZipCode());
-		this.zip.setText(link.getAddress().getZip());
-		this.city.setText(link.getAddress().getCity());
-		String province = link.getAddress().getZipCode() == null ? link.getAddress().getProvince() : link.getAddress()
-				.getZipCode().getState();
-		if (province != null)
-		{
-			provinceViewer.setSelection(new StructuredSelection(new String[] { province }));
+			if (link.getAddress().getSalutation() != null)
+			{
+				this.salutationViewer.setSelection(new StructuredSelection(new AddressSalutation[] { link.getAddress()
+						.getSalutation() }));
+			}
+			this.name.setText(link.getAddress().getName());
+			this.anotherLine.setText(link.getAddress().getAnotherLine());
+			this.address.setText(link.getAddress().getAddress());
+			this.pob.setText(link.getAddress().getPob());
+			if (link.getAddress().getCountry() == null)
+			{
+				link.getAddress().setCountry(AddressFormatter.getInstance().getCountry());
+			}
+			this.countryViewer.setSelection(new StructuredSelection(link.getAddress().getCountry()));
+			this.zip.setData("zipCode", link.getAddress().getZipCode());
+			this.zip.setText(link.getAddress().getZip());
+			this.city.setText(link.getAddress().getCity());
+			String province = link.getAddress().getZipCode() == null ? link.getAddress().getProvince() : link
+					.getAddress().getZipCode().getState();
+			if (province != null)
+			{
+				this.provinceViewer.setSelection(new StructuredSelection(new String[] { province }));
+			}
 		}
 	}
 
@@ -1644,16 +1632,18 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	private void loadLinkValues()
 	{
 		LinkPersonAddress link = getLink();
-		this.linkFunction.setText(link.getFunction());
-		linkPhone.setText(formatPhoneNumber(link.getPhone()));
-		this.linkEmail.setText(link.getEmail());
-
+		if (link != null)
+		{
+			this.linkFunction.setText(link.getFunction());
+			this.linkPhone.setText(formatPhoneNumber(link.getPhone()));
+			this.linkEmail.setText(link.getEmail());
+		}
 	}
 
 	private void loadLinkValues(FormEditorLinkPage oldPage)
 	{
 		this.linkFunction.setText(oldPage.linkFunction.getText());
-		linkPhone.setText(oldPage.linkPhone.getText());
+		this.linkPhone.setText(oldPage.linkPhone.getText());
 		this.linkEmail.setText(oldPage.linkEmail.getText());
 
 	}
@@ -1685,7 +1675,11 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			{
 				if (field.getFieldExtension().getTarget().equals(FieldExtensionTarget.PA_LINK))
 				{
-					getLink().addExtendedFields((LinkPersonAddressExtendedField) field);
+					LinkPersonAddress link = getLink();
+					if (link != null)
+					{
+						link.addExtendedFields((LinkPersonAddressExtendedField) field);
+					}
 				}
 			}
 		}
@@ -1710,9 +1704,12 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			if (address.getId() != null)
 			{
 				LinkPersonAddress link = getLink();
-				link.setAddress(address);
-				loadAddressValues();
-				loadAddressContactsValues();
+				if (link != null)
+				{
+					link.setAddress(address);
+					loadAddressValues();
+					loadAddressContactsValues();
+				}
 			}
 		}
 		else if (contentProposal instanceof CityContentProposal)
@@ -1742,71 +1739,59 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	private void saveAddressContactsValues()
 	{
 		LinkPersonAddress link = getLink();
-		link.getAddress().setPhone(removeSpaces(this.phone.getText()));
-		link.getAddress().setFax(removeSpaces(this.fax.getText()));
-		link.getAddress().setEmail(this.email.getText());
-		link.getAddress().setWebsite(this.website.getText());
+		if (link != null)
+		{
+			link.getAddress().setPhone(removeSpaces(this.phone.getText()));
+			link.getAddress().setFax(removeSpaces(this.fax.getText()));
+			link.getAddress().setEmail(this.email.getText());
+			link.getAddress().setWebsite(this.website.getText());
+		}
 	}
 
 	private void saveAddressValues()
 	{
 		LinkPersonAddress link = getLink();
-		AddressSalutation selectedSalutation = null;
-		StructuredSelection ssel = (StructuredSelection) this.salutationViewer.getSelection();
-		if (ssel.getFirstElement() instanceof AddressSalutation)
+		if (link != null)
 		{
-			selectedSalutation = (AddressSalutation) ssel.getFirstElement();
-			if (selectedSalutation.getId() == null)
+			AddressSalutation selectedSalutation = null;
+			StructuredSelection ssel = (StructuredSelection) this.salutationViewer.getSelection();
+			if (ssel.getFirstElement() instanceof AddressSalutation)
 			{
-				selectedSalutation = null;
+				selectedSalutation = (AddressSalutation) ssel.getFirstElement();
+				if (selectedSalutation.getId() == null)
+				{
+					selectedSalutation = null;
+				}
 			}
+			link.getAddress().setSalutation(selectedSalutation);
+			link.getAddress().setName(name.getText());
+			link.getAddress().setAnotherLine(anotherLine.getText());
+			link.getAddress().setAddress(this.address.getText());
+			link.getAddress().setPob(this.pob.getText());
+			ssel = (StructuredSelection) countryViewer.getSelection();
+			if (ssel.getFirstElement() instanceof Country)
+			{
+				link.getAddress().setCountry((Country) ssel.getFirstElement());
+			}
+			else
+			{
+				link.getAddress().setCountry(null);
+			}
+			link.getAddress().setZip(this.zip.getText());
+			link.getAddress().setZipCode((ZipCode) this.zip.getData("zipCode"));
+			link.getAddress().setCity(this.city.getText());
 		}
-		link.getAddress().setSalutation(selectedSalutation);
-		link.getAddress().setName(name.getText());
-		link.getAddress().setAnotherLine(anotherLine.getText());
-		link.getAddress().setAddress(this.address.getText());
-		link.getAddress().setPob(this.pob.getText());
-		ssel = (StructuredSelection) countryViewer.getSelection();
-		if (ssel.getFirstElement() instanceof Country)
-		{
-			link.getAddress().setCountry((Country) ssel.getFirstElement());
-		}
-		else
-		{
-			link.getAddress().setCountry(null);
-		}
-		link.getAddress().setZip(this.zip.getText());
-		link.getAddress().setZipCode((ZipCode) this.zip.getData("zipCode"));
-		link.getAddress().setCity(this.city.getText());
-		// if (moveAddressGroupMembers(link.getAddress()))
-		// {
-		// Collection<AddressGroupMember> members =
-		// link.getAddress().getAddressGroupMembers();
-		// for (AddressGroupMember member : members)
-		// {
-		// if (member.getLink() == null)
-		// {
-		// this.getLink().addAddressGroupMember(member);
-		// }
-		// }
-		// }
 	}
-
-	// private boolean moveAddressGroupMembers(Address address)
-	// {
-	// if (address.getAddressGroupMembers().size() == 0)
-	// {
-	// return false;
-	// }
-	// return true;
-	// }
 
 	private void saveLinkValues()
 	{
 		LinkPersonAddress link = getLink();
-		link.setFunction(linkFunction.getText());
-		link.setPhone(removeSpaces(this.linkPhone.getText()));
-		link.setEmail(this.linkEmail.getText());
+		if (link != null)
+		{
+			link.setFunction(linkFunction.getText());
+			link.setPhone(removeSpaces(this.linkPhone.getText()));
+			link.setEmail(this.linkEmail.getText());
+		}
 	}
 
 	public void saveValues()

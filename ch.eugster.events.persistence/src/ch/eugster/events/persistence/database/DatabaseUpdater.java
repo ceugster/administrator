@@ -1044,6 +1044,13 @@ public abstract class DatabaseUpdater
 									"UPDATE events_address_salutation SET address_salutation_name = address_salutation_salutation");
 						}
 					}
+					if (structureVersion == 22)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						ok = executeSqlQuery(
+								con,
+								"update events_sequence set seq_name = 'events_donation_purpose_id_seq' where seq_name = 'events_donation_donation_purpose_id_seq'");
+					}
 
 					stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);
 				}
