@@ -68,7 +68,28 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 			monitor.beginTask("Dokument wird erstellt...", maps.size());
 			if (template.getName().endsWith(".odt"))
 			{
-				status = buildTextDocument(new SubProgressMonitor(monitor, maps.size()), template, maps);
+				DataMap[] dataMaps = maps.toArray(new DataMap[0]);
+				status = buildTextDocument(new SubProgressMonitor(monitor, maps.size()), template, dataMaps);
+			}
+			monitor.worked(1);
+		}
+		finally
+		{
+			monitor.done();
+		}
+		return status;
+	}
+
+	@Override
+	public IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap[] maps)
+	{
+		IStatus status = Status.CANCEL_STATUS;
+		try
+		{
+			monitor.beginTask("Dokument wird erstellt...", maps.length);
+			if (template.getName().endsWith(".odt"))
+			{
+				status = buildTextDocument(new SubProgressMonitor(monitor, maps.length), template, maps);
 			}
 			monitor.worked(1);
 		}
@@ -88,9 +109,8 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 			monitor.beginTask("Dokument wird erstellt...", 1);
 			if (template.getName().endsWith(".odt"))
 			{
-				Collection<DataMap> maps = new ArrayList<DataMap>();
-				maps.add(map);
-				status = buildTextDocument(new SubProgressMonitor(monitor, maps.size()), template, maps);
+				DataMap[] maps = new DataMap[] { map };
+				status = buildTextDocument(new SubProgressMonitor(monitor, maps.length), template, maps);
 			}
 			monitor.worked(1);
 		}
@@ -116,13 +136,12 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		return Status.CANCEL_STATUS;
 	}
 
-	private IStatus buildTextDocument(IProgressMonitor monitor, final File template, final Collection<DataMap> maps)
+	private IStatus buildTextDocument(IProgressMonitor monitor, final File template, final DataMap[] maps)
 	{
 		IStatus status = Status.OK_STATUS;
-		DataMap[] values = maps.toArray(new DataMap[0]);
 		try
 		{
-			monitor.beginTask("Dokumente werden erstellt...", values.length);
+			monitor.beginTask("Dokumente werden erstellt...", maps.length);
 			String styleName = "break-before";
 			OdfDocument document = OdfTextDocument.loadDocument(template);
 			OdfFileDom fileDom = document.getContentDom();
@@ -150,7 +169,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 					stylableElement = OdfElement.findFirstChildNode(OdfStylableElement.class, text);
 				}
 
-				for (int i = 0; i < values.length; i++)
+				for (int i = 0; i < maps.length; i++)
 				{
 					stylableElement = OdfElement.findFirstChildNode(OdfStylableElement.class, textCopy);
 					if (i == 0)
@@ -161,7 +180,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 					while (stylableElement != null)
 					{
 						OdfStylableElement clonedStylableElement = (OdfStylableElement) stylableElement.cloneNode(true);
-						this.replaceContent(fileDom, clonedStylableElement, values[i]);
+						this.replaceContent(fileDom, clonedStylableElement, maps[i]);
 						text.appendChild(clonedStylableElement);
 						stylableElement = OdfElement.findNextChildNode(OdfStylableElement.class, stylableElement);
 					}
