@@ -133,6 +133,21 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 	}
 
 	@Override
+	public IStatus buildDocument(IProgressMonitor monitor, File file, DataMap[] map)
+	{
+		try
+		{
+			monitor.beginTask("Dokument wird erstellt...", 1);
+			monitor.worked(1);
+		}
+		finally
+		{
+			monitor.done();
+		}
+		return Status.CANCEL_STATUS;
+	}
+
+	@Override
 	public IStatus buildDocument(IProgressMonitor monitor, final File file, final Collection<DataMap> maps)
 	{
 		try

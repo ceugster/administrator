@@ -2,7 +2,9 @@ package ch.eugster.events.donation.dialogs;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -138,9 +140,8 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 
 	private void buildDocument()
 	{
-		final Collection<DataMap> dataMaps = createDataMaps(selectionMode);
-		System.out.println(dataMaps.size());
-		if (dataMaps.size() == 0)
+		Collection<DataMap> maps = createDataMaps(selectionMode);
+		if (maps.size() == 0)
 		{
 			MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 					MSG_TITLE_NO_BOOKINGS, null, "Die Auswahl enthält keine auswertbaren Elemente.",
@@ -149,6 +150,29 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		}
 		else
 		{
+			final DataMap[] dataMaps = maps.toArray(new DataMap[0]);
+			Arrays.sort(dataMaps, new Comparator<DataMap>()
+			{
+				@Override
+				public int compare(DataMap map1, DataMap map2)
+				{
+					String name1 = map1.getProperty("person_lastname");
+					String name2 = map2.getProperty("person_lastname");
+					int result = compareStrings(name1, name2);
+					if (result == 0)
+					{
+						name1 = map1.getProperty("person_firstname");
+						name2 = map2.getProperty("person_firstname");
+						return compareStrings(name1, name2);
+					}
+					else
+					{
+						name1 = map1.getProperty("address_name");
+						name2 = map2.getProperty("address_name");
+						return name1.toLowerCase().compareTo(name2.toLowerCase());
+					}
+				}
+			});
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 			try
 			{
@@ -174,9 +198,9 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 										DocumentBuilderService service = (DocumentBuilderService) tracker
 												.getService(reference);
 										DocumentBuilderService builderService = service;
-										status = builderService.buildDocument(
-												new SubProgressMonitor(monitor, dataMaps.size()), new File(
-														userPropertyTemplatePath.getValue()), dataMaps);
+										status = builderService.buildDocument(new SubProgressMonitor(monitor,
+												dataMaps.length), new File(userPropertyTemplatePath.getValue()),
+												dataMaps);
 										if (status.isOK())
 										{
 											break;
@@ -212,6 +236,19 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 			{
 			}
 		}
+	}
+
+	private int compareStrings(String s1, String s2)
+	{
+		if (s1 == null)
+		{
+			s1 = "";
+		}
+		if (s2 == null)
+		{
+			s2 = "";
+		}
+		return s1.toLowerCase().compareTo(s2.toLowerCase());
 	}
 
 	@Override

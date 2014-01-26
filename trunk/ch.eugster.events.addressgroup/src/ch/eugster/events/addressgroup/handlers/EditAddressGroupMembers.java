@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.util.tracker.ServiceTracker;
 
+import ch.eugster.events.addressgroup.Activator;
 import ch.eugster.events.addressgroup.dialogs.AddressGroupMemberDialog;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressGroupMember;
@@ -21,6 +22,13 @@ import ch.eugster.events.persistence.service.ConnectionService;
 public class EditAddressGroupMembers extends AbstractHandler implements IHandler
 {
 	private ServiceTracker tracker;
+
+	public EditAddressGroupMembers()
+	{
+		tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		tracker.open();
+	}
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
@@ -91,6 +99,7 @@ public class EditAddressGroupMembers extends AbstractHandler implements IHandler
 
 	private Address refresh(Address address)
 	{
+		tracker.open();
 		ConnectionService service = (ConnectionService) tracker.getService();
 		try
 		{
@@ -102,6 +111,13 @@ public class EditAddressGroupMembers extends AbstractHandler implements IHandler
 			AddressQuery query = (AddressQuery) service.getQuery(Address.class);
 			return query.find(Address.class, address.getId());
 		}
+	}
+
+	@Override
+	public void dispose()
+	{
+		tracker.close();
+		super.dispose();
 	}
 
 	private LinkPersonAddress refresh(LinkPersonAddress link)
