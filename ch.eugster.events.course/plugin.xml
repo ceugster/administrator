@@ -41,6 +41,12 @@
             name="Buchungen"
             restorable="true">
       </view>
+      <view
+            class="ch.eugster.events.course.views.PaymentTermView"
+            id="ch.eugster.events.course.paymentterms.view"
+            name="Zahlungsbedingungen"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -96,6 +102,19 @@
                visible="true">
          </view>
       </perspectiveExtension>
+      <perspectiveExtension
+            targetID="ch.eugster.events.core.perspective">
+         <view
+               closeable="true"
+               id="ch.eugster.events.course.paymentterms.view"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="ch.eugster.events.addresstype.view"
+               showTitle="true"
+               visible="true">
+         </view>
+      </perspectiveExtension>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -112,6 +131,12 @@
             icon="icons/user_blue_16.png"
             id="ch.eugster.events.course.editors.bookingEditor"
             name="Buchungseditor">
+      </editor>
+      <editor
+            class="ch.eugster.events.course.editors.PaymentTermEditor"
+            default="false"
+            id="ch.eugster.events.course.paymentterm.editor"
+            name="Zahlungsbedingungen">
       </editor>
    </extension>
    <extension
@@ -347,6 +372,27 @@
       <command
             id="ch.eugster.events.course.commands.sendEmail"
             name="Email senden">
+      </command>
+      <command
+            categoryId="category.course.payment.term"
+            defaultHandler="ch.eugster.events.course.handlers.DeletePaymentTermHandler"
+            description="Ausgewählte Zahlungsbedingung entfernen"
+            id="ch.eugster.events.course.command.deletePaymentTerm"
+            name="Entfernen">
+      </command>
+      <command
+            categoryId="category.course.payment.term"
+            defaultHandler="ch.eugster.events.course.handlers.AddPaymentTermHandler"
+            description="Neue Zahlungsbedingung hinzufügen"
+            id="ch.eugster.events.course.command.addPaymentTerm"
+            name="Hinzufügen">
+      </command>
+      <command
+            categoryId="category.course.payment.term"
+            defaultHandler="ch.eugster.events.course.handlers.EditPaymentTermHandler"
+            description="Ausgewählte Zahlungsbedingung bearbeiten"
+            id="ch.eugster.events.course.command.editPaymentTerm"
+            name="Bearbeiten">
       </command>
    </extension>
    <extension
@@ -1519,6 +1565,36 @@
                tooltip="Aktivieren der Sicht mit den Buchungen">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="toolbar:ch.eugster.events.course.paymentterms.view?after=additions">
+         <command
+               commandId="ch.eugster.events.course.command.addPaymentTerm"
+               disabledIcon="icons/add_grey_16.gif"
+               hoverIcon="icons/add_16.gif"
+               icon="icons/add_16.gif"
+               label="Hinzufügen"
+               style="push"
+               tooltip="Zahlungsbedingung hinzufügen">
+         </command>
+         <command
+               commandId="ch.eugster.events.course.command.editPaymentTerm"
+               disabledIcon="icons/edit_grey_16.png"
+               hoverIcon="icons/edit_16.png"
+               icon="icons/edit_16.png"
+               label="Bearbeiten"
+               style="push"
+               tooltip="Bearbeiten der ausgewählten Zahlungsbedingung">
+         </command>
+         <command
+               commandId="ch.eugster.events.course.command.deletePaymentTerm"
+               disabledIcon="icons/delete_grey_16.png"
+               hoverIcon="icons/delete_16.png"
+               icon="icons/delete_16.png"
+               label="Entfernen"
+               style="push"
+               tooltip="Entfernen der ausgewählten Zahlungsbedingung">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
@@ -1575,6 +1651,36 @@
                hoverIcon="icons/save_16.png"
                icon="icons/save_16.png"
                id="ch.eugster.events.course.bookingEditor.save"
+               label="Save"
+               mode="FORCE_TEXT"
+               style="push"
+               toolbarPath="ch.eugster.events.ui.toolbar.editor.actions"
+               tooltip="Speichern der vorgenommenen Änderungen">
+         </action>
+      </editorContribution>
+      <editorContribution
+            id="ch.eugster.events.course.paymentterm.editor"
+            targetID="ch.eugster.events.course.paymentterm.editor">
+         <action
+               class="ch.eugster.events.ui.actions.ResetEditorActionDelegate"
+               definitionId="org.eclipse.ui.file.revert"
+               disabledIcon="icons/reset_grey_16.png"
+               hoverIcon="icons/reset_16.png"
+               icon="icons/reset_16.png"
+               id="ch.eugster.events.course.paymenttermEditor.revert"
+               label="Revert"
+               mode="FORCE_TEXT"
+               style="push"
+               toolbarPath="ch.eugster.events.ui.toolbar.editor.actions"
+               tooltip="Verwerfen der vorgenommemen Änderungen">
+         </action>
+         <action
+               class="ch.eugster.events.ui.actions.SaveEditorActionDelegate"
+               definitionId="org.eclipse.ui.file.save"
+               disabledIcon="icons/save_grey_16.png"
+               hoverIcon="icons/save_16.png"
+               icon="icons/save_16.png"
+               id="ch.eugster.events.course.paymenttermEditor.save"
                label="Save"
                mode="FORCE_TEXT"
                style="push"

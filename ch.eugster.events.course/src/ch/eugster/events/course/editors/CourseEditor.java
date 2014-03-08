@@ -137,7 +137,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 
 	private RadioGroupViewer sexRadioGroupViewer;
 
-	private Text infoMeeting;
+	// private Text infoMeeting;
 
 	private Text information;
 
@@ -829,28 +829,29 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 		composite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		composite.setLayout(layout);
 
-		Label label = this.formToolkit.createLabel(composite, "Informationstreffen", SWT.NONE);
+		// Label label = this.formToolkit.createLabel(composite,
+		// "Informationstreffen", SWT.NONE);
+		// label.setLayoutData(new GridData());
+		//
+		// GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
+		// layoutData.heightHint = 72;
+		// layoutData.widthHint = widthHint;
+		//
+		// this.infoMeeting = this.formToolkit.createText(composite, "");
+		// this.infoMeeting.setLayoutData(layoutData);
+		// this.infoMeeting.addModifyListener(new ModifyListener()
+		// {
+		// @Override
+		// public void modifyText(final ModifyEvent e)
+		// {
+		// CourseEditor.this.setDirty(true);
+		// }
+		// });
+
+		Label label = this.formToolkit.createLabel(composite, "Auskunft", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
-		layoutData.heightHint = 72;
-		layoutData.widthHint = widthHint;
-
-		this.infoMeeting = this.formToolkit.createText(composite, "");
-		this.infoMeeting.setLayoutData(layoutData);
-		this.infoMeeting.addModifyListener(new ModifyListener()
-		{
-			@Override
-			public void modifyText(final ModifyEvent e)
-			{
-				CourseEditor.this.setDirty(true);
-			}
-		});
-
-		label = this.formToolkit.createLabel(composite, "Auskunft", SWT.NONE);
-		label.setLayoutData(new GridData());
-
-		layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		layoutData.widthHint = widthHint;
 
 		this.information = this.formToolkit.createText(composite, "");
@@ -1247,7 +1248,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 				if (course.getDomain() != null)
 					this.domainViewer.setSelection(new StructuredSelection(course.getDomain()));
 			}
-			this.infoMeeting.setText(course.getInfoMeeting());
+			// this.infoMeeting.setText(course.getInfoMeeting());
 			this.information.setText(course.getInformation());
 
 			if (course.getInvitationDate() == null)
@@ -1382,7 +1383,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 				if (!ssel.isEmpty())
 					course.setDomain((Domain) ssel.getFirstElement());
 			}
-			course.setInfoMeeting(this.infoMeeting.getText());
+			// course.setInfoMeeting(this.infoMeeting.getText());
 			course.setInformation(this.information.getText());
 
 			if (this.invitationDate.getSelection() == null)

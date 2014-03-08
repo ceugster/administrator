@@ -222,7 +222,7 @@ public class CourseMap extends AbstractDataMap
 				}
 				case INFORMATION:
 				{
-					return "course_informatioin";
+					return "course_information";
 				}
 				case FIRST_DATE:
 				{
