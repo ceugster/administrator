@@ -32,6 +32,7 @@
         <class>ch.eugster.events.persistence.model.Member</class>
         <class>ch.eugster.events.persistence.model.Membership</class>
 		<class>ch.eugster.events.persistence.model.Participant</class>
+        <class>ch.eugster.events.persistence.model.PaymentTerm</class>
         <class>ch.eugster.events.persistence.model.Person</class>
         <class>ch.eugster.events.persistence.model.PersonExtendedField</class>
         <class>ch.eugster.events.persistence.model.PersonSettings</class>
