@@ -3,6 +3,7 @@ package ch.eugster.events.persistence.queries;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -165,15 +166,15 @@ public abstract class AbstractEntityQuery<T extends AbstractEntity>
 		return result;
 	}
 
-	protected Collection<T> selectAll(final Class<T> clazz)
+	protected List<T> selectAll(final Class<T> clazz)
 	{
 		return selectAll(clazz, true);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected Collection<T> selectAll(final Class<T> clazz, final boolean deletedToo)
+	protected List<T> selectAll(final Class<T> clazz, final boolean deletedToo)
 	{
-		Collection<T> result = new ArrayList<T>();
+		List<T> result = new ArrayList<T>();
 		Expression expression = new ExpressionBuilder(clazz);
 		if (!deletedToo)
 		{

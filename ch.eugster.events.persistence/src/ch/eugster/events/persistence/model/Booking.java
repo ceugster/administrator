@@ -43,6 +43,10 @@ public class Booking extends AbstractEntity
 	@JoinColumn(name = "booking_course_id", referencedColumnName = "course_id")
 	private Course course;
 
+	@ManyToOne
+	@JoinColumn(name = "booking_payment_term_id", referencedColumnName = "payment_term_id")
+	private PaymentTerm paymentTerm;
+
 	/**
 	 * participant ist der Teilnehmer einer Buchung, an den die Korrespondenzen
 	 * und Rechnungen geschickt werden. Er muss immer vorhanden sein.
@@ -542,6 +546,16 @@ public class Booking extends AbstractEntity
 	public void setPayDate(final Calendar payDate)
 	{
 		this.propertyChangeSupport.firePropertyChange("payDate", this.payDate, this.payDate = payDate);
+	}
+
+	public void setPaymentTerm(PaymentTerm paymentTerm)
+	{
+		this.propertyChangeSupport.firePropertyChange("paymentTerm", this.paymentTerm, this.paymentTerm = paymentTerm);
+	}
+
+	public PaymentTerm getPaymentTerm()
+	{
+		return paymentTerm;
 	}
 
 	public static Booking newInstance()
