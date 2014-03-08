@@ -22,12 +22,14 @@ public class AddressGroupMemberQuery extends AbstractEntityQuery<AddressGroupMem
 	public Collection<AddressGroupMember> selectByLink(LinkPersonAddress link)
 	{
 		Expression expression = new ExpressionBuilder(AddressGroupMember.class).get("link").equal(link);
+		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
 		return select(AddressGroupMember.class, expression);
 	}
 
 	public Collection<AddressGroupMember> selectByAddress(Address address)
 	{
 		Expression expression = new ExpressionBuilder(AddressGroupMember.class).get("address").equal(address);
+		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
 		return select(AddressGroupMember.class, expression);
 	}
 

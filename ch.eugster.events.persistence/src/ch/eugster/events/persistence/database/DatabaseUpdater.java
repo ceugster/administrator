@@ -166,6 +166,12 @@ public abstract class DatabaseUpdater
 
 	protected abstract String getClobTypeName();
 
+	protected abstract String getCurrentDate();
+
+	protected abstract String getEngine();
+
+	protected abstract String getCharset();
+
 	private void log(final int level, final String message)
 	{
 		Activator.log(level, message);
@@ -1050,6 +1056,45 @@ public abstract class DatabaseUpdater
 						ok = executeSqlQuery(
 								con,
 								"update events_sequence set seq_name = 'events_donation_purpose_id_seq' where seq_name = 'events_donation_donation_purpose_id_seq'");
+					}
+					if (structureVersion == 23)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						if (!tableExists(con, "events_payment_term"))
+						{
+							StringBuilder builder = new StringBuilder(
+									"CREATE TABLE IF NOT EXISTS events_payment_term (");
+							builder.append("payment_term_id BIGINT NOT NULL,");
+							builder.append("payment_term_text LONGTEXT DEFAULT NULL,");
+							builder.append("payment_term_deleted tinyint(3) unsigned DEFAULT NULL,");
+							builder.append("payment_term_version smallint(5) DEFAULT NULL,");
+							builder.append("payment_term_user_id int(10) DEFAULT NULL,");
+							builder.append("payment_term_updated datetime DEFAULT NULL,");
+							builder.append("payment_term_inserted datetime DEFAULT NULL,");
+							builder.append("PRIMARY KEY (payment_term_id),");
+							builder.append("FOREIGN KEY (payment_term_user_id) REFERENCES events_user (user_id)");
+							builder.append(") " + getEngine() + " " + getCharset() + ";");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+						if (!rowExists(con, "events_sequence", "seq_name", "events_payment_term_id_seq", "'"))
+						{
+							String sql = "INSERT INTO events_sequence (seq_name, seq_count) VALUES ('events_payment_term_id_seq', 1);";
+							log(LogService.LOG_INFO, sql);
+							System.out.println(sql);
+							ok = executeSqlQuery(con,
+									"INSERT INTO events_sequence (seq_name, seq_count) VALUES ('events_payment_term_id_seq', 1);");
+						}
+						if (!columnExists(con, "events_booking", "booking_payment_term_id"))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE events_booking ");
+							builder.append("ADD COLUMN booking_payment_term_id bigint NULL,");
+							builder.append("ADD FOREIGN KEY booking_payment_term_id (booking_payment_term_id) REFERENCES events_payment_term (payment_term_id);");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
 					}
 
 					stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);

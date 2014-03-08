@@ -920,6 +920,7 @@ ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/LinkPerson
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Member.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Membership.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Participant.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/PaymentTerm.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Person.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/PersonContact.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/PersonExtendedField.java -text
@@ -978,6 +979,7 @@ ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/LinkPers
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/MemberQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/MembershipQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/ParticipantQuery.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/PaymentTermQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/PersonQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/PersonSettingsQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/PersonSexQuery.java -text

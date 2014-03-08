@@ -1173,7 +1173,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 			@Override
 			public void widgetSelected(final SelectionEvent e)
 			{
-				EmailHelper.getInstance().sendEmail(PersonEditor.this.personalEmail.getText());
+				EmailHelper.getInstance().sendEmail(PersonEditor.this.businessEmail.getText());
 			}
 		});
 
@@ -1189,7 +1189,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 			{
 				setDirty(true);
 				boolean enabled = EmailHelper.getInstance().isEmailSupported()
-						&& EmailHelper.getInstance().isValidAddress(PersonEditor.this.personalEmail.getText());
+						&& EmailHelper.getInstance().isValidAddress(PersonEditor.this.businessEmail.getText());
 				if (enabled)
 				{
 					PersonEditor.this.sendBusinessEmail.setText(PersonEditor.EMAIL_LINK);

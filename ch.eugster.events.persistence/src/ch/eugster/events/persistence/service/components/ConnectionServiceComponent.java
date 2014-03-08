@@ -52,6 +52,7 @@ import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Member;
 import ch.eugster.events.persistence.model.Membership;
 import ch.eugster.events.persistence.model.Participant;
+import ch.eugster.events.persistence.model.PaymentTerm;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.PersonSettings;
 import ch.eugster.events.persistence.model.PersonSex;
@@ -97,6 +98,7 @@ import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
 import ch.eugster.events.persistence.queries.MemberQuery;
 import ch.eugster.events.persistence.queries.MembershipQuery;
 import ch.eugster.events.persistence.queries.ParticipantQuery;
+import ch.eugster.events.persistence.queries.PaymentTermQuery;
 import ch.eugster.events.persistence.queries.PersonQuery;
 import ch.eugster.events.persistence.queries.PersonSettingsQuery;
 import ch.eugster.events.persistence.queries.PersonSexQuery;
@@ -365,6 +367,11 @@ public class ConnectionServiceComponent implements ConnectionService
 			else if (clazz.equals(Participant.class))
 			{
 				query = new ParticipantQuery(this);
+				queries.put(clazz, query);
+			}
+			else if (clazz.equals(PaymentTerm.class))
+			{
+				query = new PaymentTermQuery(this);
 				queries.put(clazz, query);
 			}
 			else if (clazz.equals(Person.class))
