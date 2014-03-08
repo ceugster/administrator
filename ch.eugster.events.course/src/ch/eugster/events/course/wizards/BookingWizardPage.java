@@ -1,9 +1,11 @@
 package ch.eugster.events.course.wizards;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.Assert;
@@ -34,6 +36,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.Activator;
 import ch.eugster.events.persistence.model.Booking;
@@ -42,12 +45,17 @@ import ch.eugster.events.persistence.model.BookingDoneState;
 import ch.eugster.events.persistence.model.BookingForthcomingState;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseState;
+import ch.eugster.events.persistence.model.PaymentTerm;
+import ch.eugster.events.persistence.queries.PaymentTermQuery;
+import ch.eugster.events.persistence.service.ConnectionService;
 
 public class BookingWizardPage extends WizardPage implements ISelectionChangedListener, IBookingWizardPage
 {
 	private CDateTime bookingDate;
 
 	private ComboViewer bookingState;
+
+	private ComboViewer paymentTermViewer;
 
 	private Button printBookingConfirmation;
 
@@ -160,6 +168,49 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 			}
 
 		});
+
+		label = new Label(composite, SWT.NONE);
+		label.setLayoutData(new GridData());
+		label.setText("Zahlungsbedingungen");
+
+		layoutData = new GridData(GridData.FILL_HORIZONTAL);
+		layoutData.horizontalSpan = 2;
+
+		combo = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN);
+		combo.setLayoutData(layoutData);
+
+		this.paymentTermViewer = new ComboViewer(combo);
+		this.paymentTermViewer.setContentProvider(new ArrayContentProvider());
+		this.paymentTermViewer.setLabelProvider(new LabelProvider()
+		{
+
+			@Override
+			public Image getImage(final Object element)
+			{
+				return super.getImage(element);
+			}
+
+			@Override
+			public String getText(final Object element)
+			{
+				if (element instanceof PaymentTerm)
+				{
+					PaymentTerm term = (PaymentTerm) element;
+					return term.getText();
+				}
+				return super.getText(element);
+			}
+		});
+		this.paymentTermViewer.addSelectionChangedListener(new ISelectionChangedListener()
+		{
+			@Override
+			public void selectionChanged(final SelectionChangedEvent event)
+			{
+				BookingWizardPage.this.updatePageState();
+			}
+
+		});
+		this.paymentTermViewer.setInput(getPaymentTerms());
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
@@ -471,6 +522,17 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		return calendar;
 	}
 
+	public PaymentTerm getPaymentTerm()
+	{
+		IStructuredSelection ssel = (IStructuredSelection) this.paymentTermViewer.getSelection();
+		PaymentTerm paymentTerm = (PaymentTerm) ssel.getFirstElement();
+		if (paymentTerm != null && paymentTerm.getId().equals(Long.valueOf(0L)))
+		{
+			paymentTerm = null;
+		}
+		return paymentTerm;
+	}
+
 	public boolean printBookingConfirmation()
 	{
 		return this.printBookingConfirmation.getSelection();
@@ -537,6 +599,31 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		}
 	}
 
+	private List<PaymentTerm> getPaymentTerms()
+	{
+		List<PaymentTerm> paymentTerms = new ArrayList<PaymentTerm>();
+		PaymentTerm term = PaymentTerm.newInstance();
+		term.setId(Long.valueOf(0L));
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		tracker.open();
+		try
+		{
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				PaymentTermQuery query = (PaymentTermQuery) service.getQuery(PaymentTerm.class);
+				List<PaymentTerm> existingTerms = query.selectAll();
+				paymentTerms.addAll(existingTerms);
+			}
+		}
+		finally
+		{
+			tracker.close();
+		}
+		return paymentTerms;
+	}
+
 	private void setValues()
 	{
 		Date date = null;
@@ -554,6 +641,14 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		{
 			this.setBookingStateInput(this.getBooking().getCourse());
 		}
+
+		PaymentTerm selectedTerm = this.getBooking().getPaymentTerm();
+		if (selectedTerm == null)
+		{
+			selectedTerm = PaymentTerm.newInstance();
+			selectedTerm.setId(Long.valueOf(0L));
+		}
+		this.paymentTermViewer.setSelection(new StructuredSelection(new PaymentTerm[] { selectedTerm }));
 
 		if (this.getBooking().getBookingConfirmationSentDate() == null)
 		{
@@ -630,6 +725,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 				booking.setAnnulatedState((BookingAnnulatedState) ssel.getFirstElement());
 			}
 		}
+		booking.setPaymentTerm(this.getPaymentTerm());
 		booking.setBookingConfirmationSentDate(this.getBookingConfirmationSentDate());
 		booking.setDate(this.getBookingDate());
 		booking.setInvitationSentDate(this.getInvitationSentDate());

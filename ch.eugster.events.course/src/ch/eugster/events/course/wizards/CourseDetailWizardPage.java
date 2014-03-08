@@ -105,17 +105,24 @@ public class CourseDetailWizardPage extends WizardPage implements SelectionListe
 		label.setText("Treffpunkt");
 		label.setLayoutData(new GridData());
 
-		this.meetingPoint = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		this.meetingPoint.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
+		layoutData.heightHint = 80;
+
+		this.meetingPoint = new Text(composite, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		this.meetingPoint.setLayoutData(layoutData);
 
 		label = new Label(composite, SWT.NONE);
 		label.setText("An- und Rückreise");
 		label.setLayoutData(new GridData());
 
-		this.journey = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		this.journey.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		layoutData = new GridData(GridData.FILL_HORIZONTAL);
+		layoutData.heightHint = 80;
 
-		GridData layoutData = new GridData();
+		this.journey = new Text(composite, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		;
+		this.journey.setLayoutData(layoutData);
+
+		layoutData = new GridData();
 		layoutData.horizontalSpan = 2;
 
 		label = new Label(composite, SWT.NONE);

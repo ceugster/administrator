@@ -1,9 +1,11 @@
 package ch.eugster.events.course.editors;
 
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -13,6 +15,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
@@ -41,6 +44,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.progress.UIJob;
+import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.Activator;
 import ch.eugster.events.persistence.events.EntityMediator;
@@ -53,7 +57,10 @@ import ch.eugster.events.persistence.model.BookingDoneState;
 import ch.eugster.events.persistence.model.BookingForthcomingState;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseState;
+import ch.eugster.events.persistence.model.PaymentTerm;
 import ch.eugster.events.persistence.model.Person;
+import ch.eugster.events.persistence.queries.PaymentTermQuery;
+import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.dialogs.Message;
 import ch.eugster.events.ui.editors.AbstractEntityEditor;
 import ch.eugster.events.ui.editors.AbstractEntityEditorInput;
@@ -73,6 +80,8 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 	private CDateTime date;
 
 	private ComboViewer stateViewer;
+
+	private ComboViewer paymentTermViewer;
 
 	private Text note;
 
@@ -307,6 +316,27 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 			}
 		});
 
+		label = this.formToolkit.createLabel(composite, "Zahlungsbedingungen", SWT.NONE);
+		label.setLayoutData(new GridData());
+
+		combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
+		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.formToolkit.adapt(combo);
+
+		this.paymentTermViewer = new ComboViewer(combo);
+		this.paymentTermViewer.setContentProvider(new ArrayContentProvider());
+		this.paymentTermViewer.setLabelProvider(new PaymentTermLabelProvider());
+		this.paymentTermViewer.setInput(getPaymentTerms());
+		this.paymentTermViewer.addSelectionChangedListener(new ISelectionChangedListener()
+		{
+			@Override
+			public void selectionChanged(final SelectionChangedEvent event)
+			{
+				BookingEditor.this.setDirty(true);
+			}
+		});
+
 		label = this.formToolkit.createLabel(composite, "Bemerkungen", SWT.NONE);
 		label.setLayoutData(new GridData());
 
@@ -327,6 +357,31 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		this.formToolkit.paintBordersFor(composite);
 
 		return composite;
+	}
+
+	private List<PaymentTerm> getPaymentTerms()
+	{
+		List<PaymentTerm> paymentTerms = new ArrayList<PaymentTerm>();
+		PaymentTerm term = PaymentTerm.newInstance();
+		term.setId(Long.valueOf(0L));
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		tracker.open();
+		try
+		{
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				PaymentTermQuery query = (PaymentTermQuery) service.getQuery(PaymentTerm.class);
+				List<PaymentTerm> existingTerms = query.selectAll();
+				paymentTerms.addAll(existingTerms);
+			}
+		}
+		finally
+		{
+			tracker.close();
+		}
+		return paymentTerms;
 	}
 
 	private Control fillPaymentSection(final Section parent)
@@ -481,6 +536,14 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 				this.stateViewer.setSelection(new StructuredSelection(booking.getDoneState()));
 			else if (booking.getCourse().getState().equals(CourseState.ANNULATED))
 				this.stateViewer.setSelection(new StructuredSelection(booking.getAnnulatedState()));
+
+			PaymentTerm term = booking.getPaymentTerm();
+			if (term == null)
+			{
+				term = PaymentTerm.newInstance();
+				term.setId(Long.valueOf(0L));
+			}
+			this.paymentTermViewer.setSelection(new StructuredSelection(new PaymentTerm[] { term }));
 
 			this.note.setText(booking.getNote());
 
@@ -665,13 +728,21 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 				booking.setDate(null);
 			}
 
-			StructuredSelection ssel = (StructuredSelection) this.stateViewer.getSelection();
+			IStructuredSelection ssel = (IStructuredSelection) this.stateViewer.getSelection();
 			if (ssel.getFirstElement() instanceof BookingForthcomingState)
 				booking.setForthcomingState((BookingForthcomingState) ssel.getFirstElement());
 			else if (ssel.getFirstElement() instanceof BookingDoneState)
 				booking.setDoneState((BookingDoneState) ssel.getFirstElement());
 			else if (ssel.getFirstElement() instanceof BookingAnnulatedState)
 				booking.setAnnulatedState((BookingAnnulatedState) ssel.getFirstElement());
+
+			ssel = (IStructuredSelection) this.paymentTermViewer.getSelection();
+			PaymentTerm selectedPaymentTerm = (PaymentTerm) ssel.getFirstElement();
+			if (selectedPaymentTerm != null && selectedPaymentTerm.getId().equals(Long.valueOf(0L)))
+			{
+				selectedPaymentTerm = null;
+			}
+			booking.setPaymentTerm(selectedPaymentTerm);
 
 			booking.setNote(this.note.getText());
 

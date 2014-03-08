@@ -59,7 +59,7 @@ public class BookingMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		AMOUNT, ANNULATION_STATE, BOOKING_CONFIRMATION_SENT_DATE, BOOKING_STATE, BOOKING_DATE, DONE_STATE, FORTHCOMING_STATE, INVITATION_SENT_DATE, NOTE, PARTICIPANT_COUNT, PARTICIPATION_CONFIRMATION_SENT_DATE, PAYED_AMOUNT, PAYED_BACK_AMOUNT, PAYED_DATE, PAYED_BACK_DATE, STATE;
+		AMOUNT, ANNULATION_STATE, BOOKING_CONFIRMATION_SENT_DATE, BOOKING_STATE, BOOKING_DATE, DONE_STATE, FORTHCOMING_STATE, INVITATION_SENT_DATE, NOTE, PARTICIPANT_COUNT, PARTICIPATION_CONFIRMATION_SENT_DATE, PAYED_AMOUNT, PAYED_BACK_AMOUNT, PAYED_DATE, PAYED_BACK_DATE, STATE, PAYMENT_TERM;
 
 		@Override
 		public String getDescription()
@@ -129,6 +129,10 @@ public class BookingMap extends AbstractDataMap
 				case STATE:
 				{
 					return "Status";
+				}
+				case PAYMENT_TERM:
+				{
+					return "Zahlungsbedingungen";
 				}
 				default:
 				{
@@ -206,6 +210,10 @@ public class BookingMap extends AbstractDataMap
 				{
 					return "booking_state";
 				}
+				case PAYMENT_TERM:
+				{
+					return "payment_term";
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -281,6 +289,10 @@ public class BookingMap extends AbstractDataMap
 				case STATE:
 				{
 					return "Status";
+				}
+				case PAYMENT_TERM:
+				{
+					return "Zahlungsbedingungen";
 				}
 				default:
 				{
@@ -367,6 +379,10 @@ public class BookingMap extends AbstractDataMap
 				{
 					IBookingState state = booking.getState();
 					return state == null ? "" : state.toString();
+				}
+				case PAYMENT_TERM:
+				{
+					return booking.getPaymentTerm() == null ? "" : booking.getPaymentTerm().getText();
 				}
 				default:
 				{
