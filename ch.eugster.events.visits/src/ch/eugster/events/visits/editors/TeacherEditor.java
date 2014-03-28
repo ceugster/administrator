@@ -32,6 +32,7 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.exceptions.PersistenceException;
+import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.SelectedEmail;
 import ch.eugster.events.persistence.model.SelectedPhone;
@@ -39,7 +40,6 @@ import ch.eugster.events.persistence.model.Teacher;
 import ch.eugster.events.ui.dialogs.Message;
 import ch.eugster.events.ui.editors.AbstractEntityEditor;
 import ch.eugster.events.ui.editors.AbstractEntityEditorInput;
-import ch.eugster.events.ui.formatters.PersonFormatter;
 
 public class TeacherEditor extends AbstractEntityEditor<Teacher>
 {

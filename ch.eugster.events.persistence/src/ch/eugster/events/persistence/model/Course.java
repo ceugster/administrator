@@ -189,6 +189,13 @@ public class Course extends AbstractEntity
 	private CourseSexConstraint sex;
 
 	/*
+	 * Zahlungsbedingungen
+	 */
+	@ManyToOne
+	@JoinColumn(name = "course_payment_term_id", referencedColumnName = "payment_term_id")
+	private PaymentTerm paymentTerm;
+
+	/*
 	 * --------------------------------------------------------------------------
 	 * -------- Information Section
 	 * ----------------------------------------------
@@ -1033,6 +1040,16 @@ public class Course extends AbstractEntity
 	public void setTitle(final String title)
 	{
 		this.propertyChangeSupport.firePropertyChange("title", this.title, this.title = title);
+	}
+
+	public void setPaymentTerm(PaymentTerm paymentTerm)
+	{
+		this.propertyChangeSupport.firePropertyChange("paymentTerm", this.paymentTerm, this.paymentTerm = paymentTerm);
+	}
+
+	public PaymentTerm getPaymentTerm()
+	{
+		return paymentTerm;
 	}
 
 	public static Course newInstance(final Season season)

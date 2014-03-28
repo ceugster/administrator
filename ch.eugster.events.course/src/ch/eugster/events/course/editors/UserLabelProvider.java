@@ -17,20 +17,19 @@ public class UserLabelProvider extends LabelProvider
 	@Override
 	public String getText(Object element)
 	{
-		StringBuilder builder = new StringBuilder("");
 		if (element instanceof User)
 		{
 			User user = (User) element;
+			if (!user.getFullname().isEmpty())
+			{
+				return user.getFullname();
+			}
 			if (!user.getUsername().isEmpty())
 			{
-				builder = builder.append(user.getUsername());
-				if (!user.getFullname().isEmpty())
-					builder = builder.append(" - ");
+				return user.getUsername();
 			}
-			if (!user.getFullname().isEmpty())
-				builder = builder.append(user.getFullname());
 		}
-		return builder.toString();
+		return "";
 	}
 
 }

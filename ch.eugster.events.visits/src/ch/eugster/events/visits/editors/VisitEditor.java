@@ -67,6 +67,8 @@ import org.osgi.util.tracker.ServiceTracker;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.exceptions.PersistenceException;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
+import ch.eugster.events.persistence.formatters.AddressFormatter;
+import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressType;
@@ -96,8 +98,6 @@ import ch.eugster.events.person.editors.PersonEditor;
 import ch.eugster.events.ui.dialogs.Message;
 import ch.eugster.events.ui.editors.AbstractEntityEditor;
 import ch.eugster.events.ui.editors.AbstractEntityEditorInput;
-import ch.eugster.events.ui.formatters.AddressFormatter;
-import ch.eugster.events.ui.formatters.PersonFormatter;
 import ch.eugster.events.visits.Activator;
 
 public class VisitEditor extends AbstractEntityEditor<Teacher>
@@ -1064,8 +1064,8 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 					if (element instanceof Visitor)
 					{
 						Visitor visitor = (Visitor) element;
-						return visitor.getLink() == null ? "" : PersonFormatter.getInstance().formatLastnameFirstname(
-								visitor.getLink().getPerson());
+						return hasLink(visitor) ? PersonFormatter.getInstance().formatLastnameFirstname(
+								visitor.getLink().getPerson()) : "";
 					}
 					return "";
 				}
@@ -1077,10 +1077,10 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				{
 					Visitor v1 = (Visitor) e1;
 					Visitor v2 = (Visitor) e2;
-					String name1 = v1.getLink() == null ? "" : PersonFormatter.getInstance().formatLastnameFirstname(
-							v1.getLink().getPerson());
-					String name2 = v2.getLink() == null ? "" : PersonFormatter.getInstance().formatLastnameFirstname(
-							v2.getLink().getPerson());
+					String name1 = hasLink(v1) ? PersonFormatter.getInstance().formatLastnameFirstname(
+							v1.getLink().getPerson()) : "";
+					String name2 = hasLink(v2) ? PersonFormatter.getInstance().formatLastnameFirstname(
+							v2.getLink().getPerson()) : "";
 					return name1.compareTo(name2);
 				}
 			});
@@ -1099,7 +1099,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 					((VisitorEmailLabelProvider) visitorEmailViewers[type.ordinal()].getLabelProvider())
 							.setVisitor(visitor);
 
-					if (visitor == null || visitor.getLink() == null)
+					if (visitor == null || !hasLink(visitor))
 					{
 						visitorPhoneViewers[type.ordinal()].setInput(new SelectedPhone[0]);
 						visitorEmailViewers[type.ordinal()].setInput(new SelectedEmail[0]);
@@ -1221,6 +1221,12 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				VisitEditor.this.scrolledForm.reflow(true);
 			}
 		});
+	}
+
+	private boolean hasLink(Visitor visitor)
+	{
+		return visitor.getLink() != null && !visitor.getLink().isDeleted()
+				&& !visitor.getLink().getPerson().isDeleted();
 	}
 
 	private Control fillVisitSection(Section parent)
@@ -1648,7 +1654,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				if (visitVisitor.getType().equals(visitorType))
 				{
 					found = true;
-					if (visitor == null || visitor.getLink() == null)
+					if (visitor == null || !hasLink(visitor))
 					{
 						visitVisitor.setDeleted(true);
 					}

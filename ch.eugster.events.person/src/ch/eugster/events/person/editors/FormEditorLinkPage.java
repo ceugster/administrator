@@ -539,7 +539,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 		groupLabel = toolkit.createLabel(client, "", SWT.BORDER);
 		groupLabel.setLayoutData(gridData);
-		groupLabel.setEnabled(getLink() == null ? false : getLink().getAddress().getPersonLinks().size() > 1);
+		groupLabel.setEnabled((getLink() == null || getLink().isDeleted() || getLink().getPerson().isDeleted()) ? false
+				: getLink().getAddress().getPersonLinks().size() > 1);
 
 		label = toolkit.createLabel(client, "Briefanrede", SWT.NONE);
 		label.setLayoutData(new GridData());
@@ -1051,7 +1052,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		 * one other active address page!
 		 */
 		LinkPersonAddress link = getLink();
-		boolean enabled = link == null ? false : link.getPerson().getDefaultLink() != link;
+		boolean enabled = link == null || link.isDeleted() || link.getPerson().isDeleted() ? false : link.getPerson()
+				.getDefaultLink() != link;
 		deleteHyperlink.setEnabled(enabled);
 		String key = enabled ? Activator.KEY_DELETE : Activator.KEY_DELETE_INACTIVE;
 		image = Activator.getDefault().getImageRegistry().get(key);
@@ -1435,7 +1437,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	public String getText()
 	{
 		LinkPersonAddress link = getLink();
-		if (link == null)
+		if (link == null || link.isDeleted() || link.getPerson().isDeleted())
 		{
 			return "";
 		}

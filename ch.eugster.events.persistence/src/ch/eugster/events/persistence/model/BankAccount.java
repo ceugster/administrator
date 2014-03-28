@@ -91,7 +91,7 @@ public class BankAccount extends AbstractEntity
 
 	public Address getAddress()
 	{
-		if (this.link == null)
+		if (this.link == null || (this.link.isDeleted() || this.link.getPerson().isDeleted()))
 		{
 			return this.address;
 		}

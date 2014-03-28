@@ -1,10 +1,12 @@
 package ch.eugster.events.course.editors;
 
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -13,6 +15,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -65,11 +68,13 @@ import ch.eugster.events.persistence.model.CourseSexConstraint;
 import ch.eugster.events.persistence.model.CourseState;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.GlobalSettings;
+import ch.eugster.events.persistence.model.PaymentTerm;
 import ch.eugster.events.persistence.model.Rubric;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.queries.CategoryQuery;
 import ch.eugster.events.persistence.queries.CourseQuery;
 import ch.eugster.events.persistence.queries.DomainQuery;
+import ch.eugster.events.persistence.queries.PaymentTermQuery;
 import ch.eugster.events.persistence.queries.RubricQuery;
 import ch.eugster.events.persistence.queries.UserQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
@@ -104,6 +109,8 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 	private ComboViewer rubricViewer;
 
 	private ComboViewer userViewer;
+
+	private ComboViewer paymentTermViewer;
 
 	private Text code;
 
@@ -461,10 +468,32 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			});
 		}
 
-		Label label = this.formToolkit.createLabel(composite, "Verantwortlich");
+		Label label = this.formToolkit.createLabel(composite, "Zahlungsbedingungen");
 		label.setLayoutData(new GridData());
 
 		CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
+		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.formToolkit.adapt(combo);
+
+		this.paymentTermViewer = new ComboViewer(combo);
+		this.paymentTermViewer.setContentProvider(new ArrayContentProvider());
+		this.paymentTermViewer.setLabelProvider(new PaymentTermLabelProvider());
+		this.paymentTermViewer.setInput(getPaymentTerms());
+		this.paymentTermViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
+		this.paymentTermViewer.addSelectionChangedListener(new ISelectionChangedListener()
+		{
+			@Override
+			public void selectionChanged(final SelectionChangedEvent event)
+			{
+				CourseEditor.this.setDirty(true);
+			}
+		});
+
+		label = this.formToolkit.createLabel(composite, "Verantwortlich");
+		label.setLayoutData(new GridData());
+
+		combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
 		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.formToolkit.adapt(combo);
@@ -496,6 +525,31 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 		this.formToolkit.paintBordersFor(composite);
 
 		return composite;
+	}
+
+	private List<PaymentTerm> getPaymentTerms()
+	{
+		List<PaymentTerm> paymentTerms = new ArrayList<PaymentTerm>();
+		PaymentTerm term = PaymentTerm.newInstance();
+		term.setId(Long.valueOf(0L));
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class.getName(), null);
+		tracker.open();
+		try
+		{
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				PaymentTermQuery query = (PaymentTermQuery) service.getQuery(PaymentTerm.class);
+				List<PaymentTerm> existingTerms = query.selectAll();
+				paymentTerms.addAll(existingTerms);
+			}
+		}
+		finally
+		{
+			tracker.close();
+		}
+		return paymentTerms;
 	}
 
 	private Control fillConstraintsSection(final Section parent)
@@ -730,28 +784,31 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			}
 		});
 
-		label = this.formToolkit.createLabel(composite, "Kurszweck", SWT.NONE);
-		label.setLayoutData(new GridData());
+		// label = this.formToolkit.createLabel(composite, "Kurszweck",
+		// SWT.NONE);
+		// label.setLayoutData(new GridData());
+		//
+		// layoutData = new GridData(GridData.FILL_HORIZONTAL);
+		// layoutData.heightHint = 72;
+		// layoutData.widthHint = widthHint;
+		//
+		// this.purpose = this.formToolkit.createText(composite, "", SWT.MULTI |
+		// SWT.V_SCROLL | SWT.WRAP);
+		// this.purpose.setLayoutData(layoutData);
+		// this.purpose.addModifyListener(new ModifyListener()
+		// {
+		// @Override
+		// public void modifyText(final ModifyEvent e)
+		// {
+		// CourseEditorInput input = (CourseEditorInput)
+		// CourseEditor.this.getEditorInput();
+		// Course course = input.getEntity();
+		// course.setPurpose(CourseEditor.this.purpose.getText());
+		// CourseEditor.this.setDirty(true);
+		// }
+		// });
 
-		layoutData = new GridData(GridData.FILL_HORIZONTAL);
-		layoutData.heightHint = 72;
-		layoutData.widthHint = widthHint;
-
-		this.purpose = this.formToolkit.createText(composite, "", SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
-		this.purpose.setLayoutData(layoutData);
-		this.purpose.addModifyListener(new ModifyListener()
-		{
-			@Override
-			public void modifyText(final ModifyEvent e)
-			{
-				CourseEditorInput input = (CourseEditorInput) CourseEditor.this.getEditorInput();
-				Course course = input.getEntity();
-				course.setPurpose(CourseEditor.this.purpose.getText());
-				CourseEditor.this.setDirty(true);
-			}
-		});
-
-		label = this.formToolkit.createLabel(composite, "Kursinhalt", SWT.NONE);
+		label = this.formToolkit.createLabel(composite, "Programm", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		layoutData = new GridData(GridData.FILL_HORIZONTAL);
@@ -1287,6 +1344,14 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 				this.lastBookingDate.setSelection(course.getLastBookingDate().getTime());
 			}
 
+			PaymentTerm term = course.getPaymentTerm();
+			if (term == null)
+			{
+				term = PaymentTerm.newInstance();
+				term.setId(Long.valueOf(0L));
+			}
+			this.paymentTermViewer.setSelection(new StructuredSelection(new PaymentTerm[] { term }));
+
 			this.lodging.setText(course.getLodging());
 			this.materialOrganizer.setText(course.getMaterialOrganizer());
 			this.materialParticipants.setText(course.getMaterialParticipants());
@@ -1294,7 +1359,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			this.maxParticipants.setSelection(course.getMaxParticipants());
 			this.minAge.setSelection(course.getMinAge());
 			this.minParticipants.setSelection(course.getMinParticipants());
-			this.purpose.setText(course.getPurpose());
+			// this.purpose.setText(course.getPurpose());
 			this.realization.setText(course.getRealization());
 			if (this.rubricViewer != null)
 			{
@@ -1430,6 +1495,18 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			}
 			course.setLastBookingDate(calendar);
 
+			PaymentTerm term = null;
+			IStructuredSelection ssel = (IStructuredSelection) paymentTermViewer.getSelection();
+			if (ssel.getFirstElement() instanceof PaymentTerm)
+			{
+				term = (PaymentTerm) ssel.getFirstElement();
+				if (term.getId().equals(Long.valueOf(0L)))
+				{
+					term = null;
+				}
+			}
+			course.setPaymentTerm(term);
+
 			course.setLodging(this.lodging.getText());
 			course.setMaterialOrganizer(this.materialOrganizer.getText());
 			course.setMaterialParticipants(this.materialParticipants.getText());
@@ -1437,15 +1514,15 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			course.setMaxParticipants(this.maxParticipants.getSelection());
 			course.setMinAge(this.minAge.getSelection());
 			course.setMinParticipants(this.minParticipants.getSelection());
-			course.setPurpose(this.purpose.getText());
+			// course.setPurpose(this.purpose.getText());
 			course.setRealization(this.realization.getText());
 			if (this.rubricViewer != null)
 			{
-				StructuredSelection ssel = (StructuredSelection) this.rubricViewer.getSelection();
+				ssel = (StructuredSelection) this.rubricViewer.getSelection();
 				if (!ssel.isEmpty())
 					course.setRubric((Rubric) ssel.getFirstElement());
 			}
-			StructuredSelection ssel = (StructuredSelection) this.sexRadioGroupViewer.getSelection();
+			ssel = (StructuredSelection) this.sexRadioGroupViewer.getSelection();
 			if (!ssel.isEmpty())
 				course.setSex((CourseSexConstraint) ssel.getFirstElement());
 			ssel = (StructuredSelection) this.stateViewer.getSelection();

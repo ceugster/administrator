@@ -376,7 +376,7 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 		if (donation.getId() == null)
 		{
 			Calendar before = GregorianCalendar.getInstance();
-			before.set(Calendar.YEAR, before.get(Calendar.YEAR) - 1);
+			before.set(Calendar.YEAR, before.get(Calendar.YEAR) - 5);
 			if (this.date.getSelection().before(before.getTime())
 					|| this.date.getSelection().after(GregorianCalendar.getInstance().getTime()))
 			{

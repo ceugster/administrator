@@ -32,6 +32,11 @@
             id="ch.eugster.events.merge.commands.editAddress"
             name="Adresse bearbeiten">
       </command>
+      <command
+            defaultHandler="ch.eugster.events.merge.handlers.SetToAddressHandler"
+            id="ch.eugster.events.merge.commands.setToAddress"
+            name="Person in Adresse umwandeln">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -172,6 +177,14 @@
                hoverIcon="icons/address_16x16.png"
                icon="icons/address_16x16.png"
                label="Adresse bearbeiten"
+               style="push">
+         </command>
+         <command
+               commandId="ch.eugster.events.merge.commands.setToAddress"
+               disabledIcon="icons/address_grey_16x16.png"
+               hoverIcon="icons/address_16x16.png"
+               icon="icons/address_16x16.png"
+               label="Person in Adresse umwandeln"
                style="push">
          </command>
       </menuContribution>

@@ -19,6 +19,7 @@ public class ClearSearchFields extends AbstractHandler implements IHandler
 		{
 			PersonView view = (PersonView) context.getVariable("activePart");
 			view.clearSearchFields();
+			view.setFocus();
 		}
 		return null;
 	}

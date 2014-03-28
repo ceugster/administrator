@@ -88,6 +88,8 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 
 	private Button printConfirmation;
 
+	private Button buildList;
+
 	private ComboViewer purposeViewer;
 
 	private ComboViewer domainViewer;
@@ -134,14 +136,17 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 	public void createPartControl(final Composite parent)
 	{
 		Composite composite = new Composite(parent, SWT.NULL);
-		composite.setLayout(new GridLayout(3, false));
+		composite.setLayout(new GridLayout(4, false));
 
 		Label label = new Label(composite, SWT.None);
 		label.setText("Auswahl Jahr");
 		label.setLayoutData(new GridData());
 
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+
 		Combo combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
-		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		combo.setLayoutData(gridData);
 
 		yearViewer = new ComboViewer(combo);
 		yearViewer.setContentProvider(new YearContentProvider());
@@ -182,12 +187,49 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 			}
 		});
 
+		// buildList = new Button(composite, SWT.PUSH);
+		// buildList.setImage(Activator.getDefault().getImageRegistry().get("LIST"));
+		// buildList.setLayoutData(new GridData());
+		// buildList.addSelectionListener(new SelectionListener()
+		// {
+		// @Override
+		// public void widgetSelected(SelectionEvent e)
+		// {
+		// IStructuredSelection ssel = (IStructuredSelection)
+		// yearViewer.getSelection();
+		// DonationYear year = (DonationYear) ssel.getFirstElement();
+		// ssel = (IStructuredSelection) purposeViewer.getSelection();
+		// DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
+		// if (purpose != null)
+		// {
+		// purpose = purpose.getId() == null ? null : purpose;
+		// }
+		// ssel = (IStructuredSelection) domainViewer.getSelection();
+		// Domain domain = (Domain) ssel.getFirstElement();
+		// if (domain != null)
+		// {
+		// domain = domain.getName().equals("Alle") ? null : domain;
+		// }
+		//
+		// DonationAddressListDialog dialog = new DonationAddressListDialog(
+		// DonationView.this.getSite().getShell(), year, purpose, domain,
+		// personText.getText());
+		// dialog.open();
+		// }
+		//
+		// @Override
+		// public void widgetDefaultSelected(SelectionEvent e)
+		// {
+		// widgetSelected(e);
+		// }
+		// });
+
 		label = new Label(composite, SWT.None);
 		label.setText("Zweckfilter");
 		label.setLayoutData(new GridData());
 
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 3;
 
 		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		combo.setLayoutData(gridData);
@@ -203,7 +245,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
+		gridData.horizontalSpan = 3;
 
 		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		combo.setLayoutData(gridData);
@@ -226,7 +268,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		gridData.horizontalSpan = 2;
 
 		personText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		personText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		personText.setLayoutData(gridData);
 
 		clearText = new Button(composite, SWT.PUSH);
 		clearText.setLayoutData(new GridData());
@@ -247,9 +289,9 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		});
 
 		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.horizontalSpan = 3;
+		gridData.horizontalSpan = 4;
 
-		Table table = new Table(composite, SWT.SINGLE | SWT.FULL_SELECTION | SWT.BORDER);
+		Table table = new Table(composite, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		table.setLayoutData(gridData);
 		table.setHeaderVisible(true);
 
@@ -655,6 +697,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		{
 			IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
 			donationViewer.setInput(ssel.getFirstElement());
+			packColumns();
 			setDonationCount(donationViewer.getTable().getItemCount());
 		}
 	}
@@ -662,6 +705,11 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 	private void setDonationCount(int count)
 	{
 		donationCount.setText("Anzahl Spenden: " + count);
+	}
+
+	public TableViewer getViewer()
+	{
+		return donationViewer;
 	}
 
 	private class YearContentProvider extends ArrayContentProvider

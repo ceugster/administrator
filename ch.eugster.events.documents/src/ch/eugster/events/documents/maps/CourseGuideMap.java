@@ -22,8 +22,7 @@ public class CourseGuideMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		// DESCRIPTION, GUIDE_TYPE, PHONE, STATE;
-		GUIDE_TYPE, STATE;
+		GUIDE_TYPE, PHONE, STATE;
 
 		@Override
 		public String getDescription()
@@ -38,10 +37,10 @@ public class CourseGuideMap extends AbstractDataMap
 				{
 					return "Leitungsart";
 				}
-					// case PHONE:
-					// {
-					// return "Telefon";
-					// }
+				case PHONE:
+				{
+					return "Telefon";
+				}
 				case STATE:
 				{
 					return "Leiterstatus";
@@ -66,10 +65,10 @@ public class CourseGuideMap extends AbstractDataMap
 				{
 					return "course_guide_type";
 				}
-					// case PHONE:
-					// {
-					// return "course_guide_phone";
-					// }
+				case PHONE:
+				{
+					return "course_guide_phone";
+				}
 				case STATE:
 				{
 					return "course_guide_state";
@@ -94,10 +93,10 @@ public class CourseGuideMap extends AbstractDataMap
 				{
 					return "Leitungsart";
 				}
-					// case PHONE:
-					// {
-					// return "Telefon";
-					// }
+				case PHONE:
+				{
+					return "Telefon";
+				}
 				case STATE:
 				{
 					return "Status";
@@ -122,10 +121,10 @@ public class CourseGuideMap extends AbstractDataMap
 					GuideType type = courseGuide.getGuideType();
 					return type == null ? "" : type.getName();
 				}
-					// case PHONE:
-					// {
-					// return courseGuide.getPhone();
-					// }
+				case PHONE:
+				{
+					return courseGuide.getPhone();
+				}
 				case STATE:
 				{
 					return courseGuide.getGuideType().getName();

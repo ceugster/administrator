@@ -84,7 +84,8 @@ public class AddressGroupViewerDropAdapter extends ViewerDropAdapter
 		AddressGroupMember[] members = addressGroup.getAddressGroupMembers().toArray(new AddressGroupMember[0]);
 		for (AddressGroupMember member : members)
 		{
-			if (newMember.getLink() == null)
+			if (newMember.getLink() == null || newMember.getLink().isDeleted()
+					|| newMember.getLink().getPerson().isDeleted())
 			{
 				if (newMember.getAddress() != null)
 				{
@@ -102,7 +103,8 @@ public class AddressGroupViewerDropAdapter extends ViewerDropAdapter
 			}
 			else
 			{
-				if (member.getLink() != null)
+				if (member.getLink() != null && !member.getLink().isDeleted()
+						&& !member.getLink().getPerson().isDeleted())
 				{
 					if (member.getLink().getId().equals(newMember.getLink().getId()))
 					{

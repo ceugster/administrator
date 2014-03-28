@@ -30,7 +30,8 @@ public class OpenWebsiteHandler extends AbstractHandler implements IHandler
 					if (ssel.getFirstElement() instanceof AddressGroupMember)
 					{
 						AddressGroupMember member = (AddressGroupMember) ssel.getFirstElement();
-						if (member.getLink() == null)
+						if (member.getLink() == null || member.getLink().isDeleted()
+								|| member.getLink().getPerson().isDeleted())
 						{
 							if (!member.getAddress().getWebsite().isEmpty())
 							{
@@ -50,7 +51,7 @@ public class OpenWebsiteHandler extends AbstractHandler implements IHandler
 
 	private boolean hasValidInternetAddress(final AddressGroupMember member)
 	{
-		if (member.getLink() == null)
+		if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
 		{
 			if (BrowseHelper.getInstance().isValidAddress(member.getAddress().getWebsite()))
 			{

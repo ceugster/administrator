@@ -394,6 +394,10 @@
             id="ch.eugster.events.course.command.editPaymentTerm"
             name="Bearbeiten">
       </command>
+      <category
+            id="category.course.payment.term"
+            name="Zahlungsbedingungen">
+      </category>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">

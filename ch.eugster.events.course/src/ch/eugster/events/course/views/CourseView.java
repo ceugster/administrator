@@ -174,7 +174,7 @@ public class CourseView extends AbstractEntityView implements IDoubleClickListen
 			}
 		});
 
-		final Tree tree = new Tree(parent, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		final Tree tree = new Tree(parent, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tree.setHeaderVisible(true);
 		tree.addListener(SWT.Expand, new Listener()

@@ -139,7 +139,7 @@ public class AddressQuery extends AbstractEntityQuery<Address>
 	private Expression getCityExpression(final String value)
 	{
 		Expression city = new ExpressionBuilder().get("zip").containsSubstringIgnoringCase(value);
-		city.or(new ExpressionBuilder().get("city").containsSubstringIgnoringCase(value));
+		city = city.or(new ExpressionBuilder().get("city").containsSubstringIgnoringCase(value));
 		return city;
 	}
 
@@ -150,7 +150,8 @@ public class AddressQuery extends AbstractEntityQuery<Address>
 
 	private Expression getNoLinksExpression()
 	{
-		return new ExpressionBuilder(Address.class).isEmpty("links");
+		// return new ExpressionBuilder(Address.class).isEmpty("links");
+		return null;
 	}
 
 	private Expression getOrganizationExpression(final String value)

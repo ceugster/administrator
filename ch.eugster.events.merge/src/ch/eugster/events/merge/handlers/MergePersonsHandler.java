@@ -86,8 +86,9 @@ public class MergePersonsHandler extends AbstractHandler implements IHandler
 						{
 							if (!exists(selectedLink, addressGroupMember))
 							{
-								AddressGroupMember newAddressGroupMember = AddressGroupMember.newInstance(
-										addressGroupMember.getAddressGroup(), selectedLink);
+								link.removeAddressGroupMember(addressGroupMember);
+								addressGroupMember.setParent(selectedLink, selectedLink.getAddress());
+								selectedLink.addAddressGroupMember(addressGroupMember);
 							}
 						}
 						Donation[] donations = link.getDonations().toArray(new Donation[0]);
@@ -95,24 +96,26 @@ public class MergePersonsHandler extends AbstractHandler implements IHandler
 						{
 							link.removeDonation(donation);
 							donation.setLink(selectedLink);
+							selectedLink.addDonation(donation);
 						}
 						Member[] members = link.getMembers().toArray(new Member[0]);
 						for (Member member : members)
 						{
 							link.removeMember(member);
-							member.setLinkPersonAddress(selectedLink);
+							member.setLink(selectedLink);
+							selectedLink.addMember(member);
 						}
 						if (link.getGuide() != null)
 						{
-							Guide newGuide = Guide.newInstance(selectedLink);
-							newGuide.setDescription(link.getGuide().getDescription());
-							newGuide.setPhone(link.getGuide().getPhone());
-							selectedLink.setGuide(newGuide);
+							Guide guide = link.getGuide();
+							guide.setLink(selectedLink);
+							selectedLink.setGuide(guide);
 						}
 						Participant[] participants = link.getParticipants().toArray(new Participant[0]);
 						for (Participant participant : participants)
 						{
 							participant.setLink(selectedLink);
+							selectedLink.addParticipant(participant);
 						}
 
 						ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle()

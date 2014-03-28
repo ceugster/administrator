@@ -102,7 +102,7 @@ public class LinkMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		PHONE, FUNCTION, MAILING_ADDRESS, TOTAL_DONATIONS, MEMBER;
+		PHONE, EMAIL, FUNCTION, MAILING_ADDRESS, TOTAL_DONATIONS, MEMBER;
 
 		@Override
 		public String getDescription()
@@ -112,6 +112,10 @@ public class LinkMap extends AbstractDataMap
 				case PHONE:
 				{
 					return "Telefon";
+				}
+				case EMAIL:
+				{
+					return "Email";
 				}
 				case FUNCTION:
 				{
@@ -145,6 +149,10 @@ public class LinkMap extends AbstractDataMap
 				{
 					return "link_phone";
 				}
+				case EMAIL:
+				{
+					return "link_email";
+				}
 				case FUNCTION:
 				{
 					return "link_function";
@@ -177,6 +185,10 @@ public class LinkMap extends AbstractDataMap
 				{
 					return "Telefon";
 				}
+				case EMAIL:
+				{
+					return "Email";
+				}
 				case FUNCTION:
 				{
 					return "Funktion";
@@ -208,6 +220,10 @@ public class LinkMap extends AbstractDataMap
 				{
 					return LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(
 							link.getAddress().getCountry(), link.getPhone());
+				}
+				case EMAIL:
+				{
+					return link.getEmail();
 				}
 				case FUNCTION:
 				{
@@ -259,6 +275,10 @@ public class LinkMap extends AbstractDataMap
 				{
 					return LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(
 							link.getAddress().getCountry(), link.getPhone());
+				}
+				case EMAIL:
+				{
+					return link.getEmail();
 				}
 				case FUNCTION:
 				{

@@ -19,7 +19,7 @@ public class AddressGroupMemberNameFilter extends ViewerFilter
 				return true;
 
 			AddressGroupMember member = (AddressGroupMember) element;
-			if (member.getLink() == null)
+			if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
 			{
 				String name = member.getAddress().getName();
 				return name.toLowerCase().contains(this.value.toLowerCase());

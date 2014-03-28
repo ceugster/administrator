@@ -29,12 +29,14 @@ import ch.eugster.events.persistence.model.AddressGroupCategory;
 import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
+import ch.eugster.events.persistence.model.Donation;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Season;
 import ch.eugster.events.persistence.queries.AddressGroupCategoryQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.dnd.CourseTransfer;
+import ch.eugster.events.ui.dnd.DonationTransfer;
 import ch.eugster.events.ui.helpers.ClipboardHelper;
 
 public class PasteHandler extends AbstractHandler implements IHandler
@@ -213,6 +215,33 @@ public class PasteHandler extends AbstractHandler implements IHandler
 									}
 								}
 							}
+							else if (name.equals(DonationTransfer.TYPE_NAME))
+							{
+								Object contents = ClipboardHelper.getClipboard().getContents(
+										DonationTransfer.getTransfer());
+								if (contents instanceof Object[])
+								{
+									boolean updateCategory = false;
+									Object[] objects = (Object[]) contents;
+									for (Object object : objects)
+									{
+										if (object instanceof Donation)
+										{
+											Donation donation = (Donation) object;
+											if (insertDonation(target, donation, DonationTransfer.getTransfer()
+													.getOperation()))
+											{
+												updateCategory = true;
+											}
+										}
+									}
+									if (updateCategory)
+									{
+										this.updateCategories(new AddressGroupCategory[] { target
+												.getAddressGroupCategory() });
+									}
+								}
+							}
 						}
 					}
 				}
@@ -289,7 +318,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 
 	private boolean found(final AddressGroup target, final AddressGroupMember member)
 	{
-		if (member.getLink() == null)
+		if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
 		{
 			return found(target, member.getAddress());
 		}
@@ -305,7 +334,8 @@ public class PasteHandler extends AbstractHandler implements IHandler
 		Collection<AddressGroupMember> targetMembers = target.getAddressGroupMembers();
 		for (AddressGroupMember targetMember : targetMembers)
 		{
-			if (targetMember.getLink() == null)
+			if (targetMember.getLink() == null || targetMember.getLink().isDeleted()
+					|| targetMember.getLink().getPerson().isDeleted())
 			{
 				if (targetMember.getAddress().getId().equals(address.getId()))
 				{
@@ -556,6 +586,34 @@ public class PasteHandler extends AbstractHandler implements IHandler
 		return inserted;
 	}
 
+	private boolean insertDonation(final AddressGroup target, final Donation donation, final int type)
+	{
+		boolean inserted = false;
+		if (!donation.isDeleted())
+		{
+			if (donation.getLink() == null || donation.getLink().isDeleted()
+					|| donation.getLink().getPerson().isDeleted())
+			{
+				if (!found(target, donation.getAddress()))
+				{
+					inserted = true;
+					AddressGroupMember member = AddressGroupMember.newInstance(target, donation.getAddress());
+					target.addAddressGroupMember(member);
+				}
+			}
+			else
+			{
+				if (!found(target, donation.getLink()))
+				{
+					inserted = true;
+					AddressGroupMember member = AddressGroupMember.newInstance(target, donation.getLink());
+					target.addAddressGroupMember(member);
+				}
+			}
+		}
+		return inserted;
+	}
+
 	// private boolean insertAddressGroupMembers(final AddressGroupCategory
 	// target, final AddressGroup source,
 	// final int type)
@@ -673,9 +731,22 @@ public class PasteHandler extends AbstractHandler implements IHandler
 		return false;
 	}
 
+	private boolean isDonationTransfer()
+	{
+		String[] names = ClipboardHelper.getClipboard().getAvailableTypeNames();
+		for (String name : names)
+		{
+			if (name.equals(DonationTransfer.TYPE_NAME))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private boolean isValidTransfer()
 	{
-		return isAddressGroupMemberTransfer() || isAddressGroupTransfer() || isCourseTransfer();
+		return isAddressGroupMemberTransfer() || isAddressGroupTransfer() || isCourseTransfer() || isDonationTransfer();
 	}
 
 	@Override

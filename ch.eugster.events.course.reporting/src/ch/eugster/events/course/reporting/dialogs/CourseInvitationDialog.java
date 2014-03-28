@@ -32,9 +32,10 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.reporting.Activator;
-import ch.eugster.events.documents.maps.CourseMap;
+import ch.eugster.events.documents.maps.BookingMap;
 import ch.eugster.events.documents.maps.DataMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
+import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.model.UserProperty;
@@ -159,7 +160,11 @@ public class CourseInvitationDialog extends TitleAreaDialog
 			if (element instanceof Course)
 			{
 				Course course = (Course) element;
-				dataMaps.add(new CourseMap(course, true));
+				Collection<Booking> bookings = course.getBookings();
+				for (Booking booking : bookings)
+				{
+					dataMaps.add(new BookingMap(booking, true));
+				}
 			}
 		}
 		return dataMaps;

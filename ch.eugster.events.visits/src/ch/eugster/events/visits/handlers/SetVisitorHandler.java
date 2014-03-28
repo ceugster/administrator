@@ -69,7 +69,8 @@ public class SetVisitorHandler extends AbstractHandler implements IHandler, IEle
 				{
 					Person person = (Person) ssel.getFirstElement();
 					link = person.getDefaultLink();
-					if (link == null && person.getLinks().size() > 0)
+					if ((link == null || link.isDeleted() || link.getPerson().isDeleted())
+							&& person.getLinks().size() > 0)
 					{
 						link = person.getLinks().iterator().next();
 					}
@@ -78,7 +79,7 @@ public class SetVisitorHandler extends AbstractHandler implements IHandler, IEle
 				{
 					link = (LinkPersonAddress) ssel.getFirstElement();
 				}
-				if (link != null)
+				if (link != null && !link.isDeleted() && !link.getPerson().isDeleted())
 				{
 					if (connectionService != null)
 					{
@@ -117,7 +118,8 @@ public class SetVisitorHandler extends AbstractHandler implements IHandler, IEle
 				{
 					Person person = (Person) ssel.getFirstElement();
 					link = person.getDefaultLink();
-					if (link == null && person.getLinks().size() > 0)
+					if ((link == null || link.isDeleted() || link.getPerson().isDeleted())
+							&& person.getLinks().size() > 0)
 					{
 						link = person.getLinks().iterator().next();
 					}
@@ -126,7 +128,7 @@ public class SetVisitorHandler extends AbstractHandler implements IHandler, IEle
 				{
 					link = (LinkPersonAddress) ssel.getFirstElement();
 				}
-				if (link != null)
+				if (link != null && !link.isDeleted() && !link.getPerson().isDeleted())
 				{
 					if (link.getVisitor() == null)
 					{

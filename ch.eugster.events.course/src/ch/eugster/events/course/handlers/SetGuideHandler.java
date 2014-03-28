@@ -19,7 +19,7 @@ import ch.eugster.events.course.Activator;
 import ch.eugster.events.persistence.model.Guide;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
-import ch.eugster.events.persistence.queries.GuideQuery;
+import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.person.views.PersonView;
 
@@ -57,14 +57,9 @@ public class SetGuideHandler extends AbstractHandler implements IHandler, IState
 					link.setGuide(guide);
 					update = true;
 				}
-				else if (guide.isDeleted())
-				{
-					guide.setDeleted(false);
-					update = true;
-				}
 				else
 				{
-					guide.setDeleted(true);
+					guide.setDeleted(!guide.isDeleted());
 					update = true;
 				}
 
@@ -76,8 +71,9 @@ public class SetGuideHandler extends AbstractHandler implements IHandler, IState
 					ConnectionService service = (ConnectionService) tracker.getService();
 					if (service != null)
 					{
-						GuideQuery query = (GuideQuery) service.getQuery(Guide.class);
-						guide = query.merge(guide);
+						LinkPersonAddressQuery query = (LinkPersonAddressQuery) service
+								.getQuery(LinkPersonAddress.class);
+						link = query.merge(link);
 					}
 					tracker.close();
 				}

@@ -325,7 +325,8 @@ public class DonationDialog extends TitleAreaDialog
 	{
 		NumberFormat nf = new DecimalFormat(PersonSettings.getInstance().getIdFormat());
 		String text = null;
-		if (this.donation.getLink() == null)
+		if (this.donation.getLink() == null || donation.getLink().isDeleted()
+				|| donation.getLink().getPerson().isDeleted())
 		{
 			Address address = this.donation.getAddress();
 			text = nf.format(address.getId() + " - " + address.getName());

@@ -797,7 +797,15 @@ public class LinkSearcher extends Composite
 						if (hasAddressCriteria(criteria) && !hasPersonCriteria(criteria))
 						{
 							AddressQuery addressQuery = (AddressQuery) connectionService.getQuery(Address.class);
-							selected.addAll(addressQuery.selectByCriteria(criteria, maxRows - selected.size()));
+							Collection<Address> addresses = addressQuery.selectByCriteria(criteria,
+									maxRows - selected.size());
+							for (Address address : addresses)
+							{
+								if (address.getValidLinks().isEmpty())
+								{
+									selected.add(address);
+								}
+							}
 						}
 					}
 					entities = selected.toArray(new AbstractEntity[0]);
@@ -805,6 +813,12 @@ public class LinkSearcher extends Composite
 			}
 		}
 		return entities;
+	}
+
+	@Override
+	public boolean setFocus()
+	{
+		return ((Text) this.widgets.get(LASTNAME)).setFocus();
 	}
 
 	public void startListening()

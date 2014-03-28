@@ -38,7 +38,6 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.nebula.widgets.formattedtext.MaskFormatter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DND;
@@ -62,7 +61,6 @@ import org.eclipse.swt.widgets.TableItem;
 import ch.eugster.events.course.Activator;
 import ch.eugster.events.course.Constants;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
-import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
@@ -77,6 +75,7 @@ import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.person.views.ICriteriaChangedListener;
 import ch.eugster.events.person.views.LinkSearcher;
 import ch.eugster.events.person.views.PersonSorter;
+import ch.eugster.events.person.views.PersonSorter.ViewerColumn;
 import ch.eugster.events.ui.dnd.EntityTransfer;
 import ch.eugster.events.ui.dnd.LinkPersonAddressDragSourceListener;
 
@@ -395,7 +394,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			}
 		});
 		TableColumn tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setText("Code");
+		tableColumn.setText(ViewerColumn.CODE.label());
 		tableColumn.setResizable(true);
 		tableColumn.addSelectionListener(new SelectionListener()
 		{
@@ -408,7 +407,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter()).setCurrentColumn(0);
+				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter())
+						.setCurrentColumn(ViewerColumn.CODE);
 				ParticipantWizardPage.this.selectionViewer.refresh();
 			}
 		});
@@ -423,14 +423,13 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					Person person = link.getPerson();
-					cell.setText(PersonFormatter.getInstance().formatLastnameFirstname(person));
+					cell.setText(ViewerColumn.NAME.value(link));
 					cell.setImage(null);
 				}
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setText("Name");
+		tableColumn.setText(ViewerColumn.NAME.label());
 		tableColumn.setResizable(true);
 		tableColumn.addSelectionListener(new SelectionListener()
 		{
@@ -443,7 +442,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter()).setCurrentColumn(1);
+				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter())
+						.setCurrentColumn(ViewerColumn.NAME);
 				ParticipantWizardPage.this.selectionViewer.refresh();
 			}
 		});
@@ -458,13 +458,19 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(AddressFormatter.getInstance().formatAddressLine(link.getAddress()));
+					cell.setText(ViewerColumn.ADDRESS.value(link));
+					cell.setImage(null);
+				}
+				else if (object instanceof Address)
+				{
+					Address address = (Address) object;
+					cell.setText(ViewerColumn.ADDRESS.value(address));
 					cell.setImage(null);
 				}
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setText("Anschrift");
+		tableColumn.setText(ViewerColumn.ADDRESS.label());
 		tableColumn.setResizable(true);
 		tableColumn.addSelectionListener(new SelectionListener()
 		{
@@ -477,7 +483,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter()).setCurrentColumn(3);
+				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter())
+						.setCurrentColumn(ViewerColumn.ADDRESS);
 				ParticipantWizardPage.this.selectionViewer.refresh();
 			}
 		});
@@ -492,13 +499,19 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(AddressFormatter.getInstance().formatCityLine(link.getAddress()));
+					cell.setText(ViewerColumn.CITY.value(link));
+					cell.setImage(null);
+				}
+				else if (object instanceof Address)
+				{
+					Address address = (Address) object;
+					cell.setText(ViewerColumn.CITY.value(address));
 					cell.setImage(null);
 				}
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setText("PLZ Ort");
+		tableColumn.setText(ViewerColumn.CITY.label());
 		tableColumn.setResizable(true);
 		tableColumn.addSelectionListener(new SelectionListener()
 		{
@@ -511,7 +524,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter()).setCurrentColumn(4);
+				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter())
+						.setCurrentColumn(ViewerColumn.CITY);
 				ParticipantWizardPage.this.selectionViewer.refresh();
 			}
 		});
@@ -526,15 +540,13 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					Person person = link.getPerson();
-					cell.setText(PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(person.getCountry(),
-							person.getPhone()));
+					cell.setText(ViewerColumn.MOBILE.value(link));
 					cell.setImage(null);
 				}
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setText("Handy");
+		tableColumn.setText(ViewerColumn.MOBILE.label());
 		tableColumn.setResizable(true);
 		tableColumn.addSelectionListener(new SelectionListener()
 		{
@@ -547,7 +559,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter()).setCurrentColumn(5);
+				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter())
+						.setCurrentColumn(ViewerColumn.MOBILE);
 				ParticipantWizardPage.this.selectionViewer.refresh();
 			}
 		});
@@ -562,23 +575,18 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					Address address = link.getAddress();
-					if (address.getCountry() != null && !address.getCountry().getPhonePattern().isEmpty())
-					{
-						MaskFormatter formatter = new MaskFormatter(address.getCountry().getPhonePattern());
-						formatter.setValue(address.getPhone());
-						cell.setText(formatter.getDisplayString());
-					}
-					else
-					{
-						cell.setText(address.getPhone());
-					}
-					cell.setImage(null);
+					cell.setText(ViewerColumn.PHONE.value(link));
 				}
+				else if (object instanceof Address)
+				{
+					Address address = (Address) object;
+					cell.setText(ViewerColumn.PHONE.value(address));
+				}
+				cell.setImage(null);
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setText("Telefon");
+		tableColumn.setText(ViewerColumn.PHONE.label());
 		tableColumn.setResizable(true);
 		tableColumn.addSelectionListener(new SelectionListener()
 		{
@@ -591,7 +599,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter()).setCurrentColumn(6);
+				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter())
+						.setCurrentColumn(ViewerColumn.PHONE);
 				ParticipantWizardPage.this.selectionViewer.refresh();
 			}
 		});
@@ -606,23 +615,19 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					Address address = link.getAddress();
-					if (address.getCountry() != null && !address.getCountry().getPhonePattern().isEmpty())
-					{
-						MaskFormatter formatter = new MaskFormatter(address.getCountry().getPhonePattern());
-						formatter.setValue(address.getFax());
-						cell.setText(formatter.getDisplayString());
-					}
-					else
-					{
-						cell.setText(address.getFax());
-					}
+					cell.setText(ViewerColumn.FAX.value(link));
+					cell.setImage(null);
+				}
+				else if (object instanceof Address)
+				{
+					Address address = (Address) object;
+					cell.setText(ViewerColumn.FAX.value(address));
 					cell.setImage(null);
 				}
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setText("Fax");
+		tableColumn.setText(ViewerColumn.FAX.label());
 		tableColumn.setResizable(true);
 		tableColumn.addSelectionListener(new SelectionListener()
 		{
@@ -635,7 +640,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter()).setCurrentColumn(7);
+				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter())
+						.setCurrentColumn(ViewerColumn.FAX);
 				ParticipantWizardPage.this.selectionViewer.refresh();
 			}
 		});
@@ -650,14 +656,19 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					Person person = link.getPerson();
-					cell.setText(person.getEmail());
+					cell.setText(ViewerColumn.EMAIL.value(link));
+					cell.setImage(null);
+				}
+				else if (object instanceof Address)
+				{
+					Address address = (Address) object;
+					cell.setText(ViewerColumn.EMAIL.value(address));
 					cell.setImage(null);
 				}
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setText("Email");
+		tableColumn.setText(ViewerColumn.EMAIL.label());
 		tableColumn.setResizable(true);
 		tableColumn.addSelectionListener(new SelectionListener()
 		{
@@ -670,7 +681,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter()).setCurrentColumn(8);
+				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter())
+						.setCurrentColumn(ViewerColumn.EMAIL);
 				ParticipantWizardPage.this.selectionViewer.refresh();
 			}
 		});
@@ -685,14 +697,13 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					Person person = link.getPerson();
-					cell.setText(person.getDomain() == null ? "" : person.getDomain().getCode());
+					cell.setText(ViewerColumn.DOMAIN.value(link));
 					cell.setImage(null);
 				}
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setText("Domäne");
+		tableColumn.setText(ViewerColumn.DOMAIN.label());
 		tableColumn.setResizable(true);
 		tableColumn.addSelectionListener(new SelectionListener()
 		{
@@ -705,7 +716,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter()).setCurrentColumn(9);
+				((PersonSorter) ParticipantWizardPage.this.selectionViewer.getSorter())
+						.setCurrentColumn(ViewerColumn.DOMAIN);
 				ParticipantWizardPage.this.selectionViewer.refresh();
 			}
 		});
@@ -829,9 +841,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof Participant)
 				{
 					Participant participant = (Participant) object;
-					Person person = participant.getLink().getPerson();
-					cell.setText(PersonFormatter.getInstance().formatId(person));
-
+					cell.setText(ViewerColumn.CODE.value(participant.getLink()));
 					BookingWizard wizard = (BookingWizard) getWizard();
 					Booking booking = wizard.getBooking();
 					if (booking.getParticipant() != null)
@@ -847,7 +857,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setText("Code");
+		tableColumn.setText(ViewerColumn.CODE.label());
 		tableColumn.setResizable(true);
 		tableColumn.addSelectionListener(new SelectionListener()
 		{
@@ -860,7 +870,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				((PersonSorter) ParticipantWizardPage.this.participantViewer.getSorter()).setCurrentColumn(0);
+				((PersonSorter) ParticipantWizardPage.this.participantViewer.getSorter())
+						.setCurrentColumn(ViewerColumn.CODE);
 				ParticipantWizardPage.this.participantViewer.refresh();
 			}
 		});
@@ -875,14 +886,13 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof Participant)
 				{
 					Participant participant = (Participant) object;
-					Person person = participant.getLink().getPerson();
-					cell.setText(PersonFormatter.getInstance().formatLastnameFirstname(person));
+					cell.setText(ViewerColumn.NAME.value(participant.getLink()));
 					cell.setImage(null);
 				}
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setText("Name");
+		tableColumn.setText(ViewerColumn.NAME.label());
 		tableColumn.setResizable(true);
 		tableColumn.addSelectionListener(new SelectionListener()
 		{
@@ -895,42 +905,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				((PersonSorter) ParticipantWizardPage.this.participantViewer.getSorter()).setCurrentColumn(1);
-				ParticipantWizardPage.this.participantViewer.refresh();
-			}
-		});
-
-		tableViewerColumn = new TableViewerColumn(this.participantViewer, SWT.LEFT);
-		tableViewerColumn.setLabelProvider(new ColumnLabelProvider()
-		{
-			@Override
-			public void update(final ViewerCell cell)
-			{
-				Object object = cell.getElement();
-				if (object instanceof Participant)
-				{
-					Participant participant = (Participant) object;
-					LinkPersonAddress link = participant.getLink();
-					cell.setText(AddressFormatter.getInstance().formatAddressLine(link.getAddress()));
-					cell.setImage(null);
-				}
-			}
-		});
-		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setText("Anschrift");
-		tableColumn.setResizable(true);
-		tableColumn.addSelectionListener(new SelectionListener()
-		{
-			@Override
-			public void widgetDefaultSelected(final SelectionEvent event)
-			{
-				this.widgetSelected(event);
-			}
-
-			@Override
-			public void widgetSelected(final SelectionEvent event)
-			{
-				((PersonSorter) ParticipantWizardPage.this.participantViewer.getSorter()).setCurrentColumn(3);
+				((PersonSorter) ParticipantWizardPage.this.participantViewer.getSorter())
+						.setCurrentColumn(ViewerColumn.NAME);
 				ParticipantWizardPage.this.participantViewer.refresh();
 			}
 		});
@@ -946,13 +922,13 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				{
 					Participant participant = (Participant) object;
 					LinkPersonAddress link = participant.getLink();
-					cell.setText(AddressFormatter.getInstance().formatCityLine(link.getAddress()));
+					cell.setText(ViewerColumn.ADDRESS.value(link.getAddress()));
 					cell.setImage(null);
 				}
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setText("Ort");
+		tableColumn.setText(ViewerColumn.ADDRESS.label());
 		tableColumn.setResizable(true);
 		tableColumn.addSelectionListener(new SelectionListener()
 		{
@@ -965,7 +941,44 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			public void widgetSelected(final SelectionEvent event)
 			{
-				((PersonSorter) ParticipantWizardPage.this.participantViewer.getSorter()).setCurrentColumn(3);
+				((PersonSorter) ParticipantWizardPage.this.participantViewer.getSorter())
+						.setCurrentColumn(ViewerColumn.ADDRESS);
+				ParticipantWizardPage.this.participantViewer.refresh();
+			}
+		});
+
+		tableViewerColumn = new TableViewerColumn(this.participantViewer, SWT.LEFT);
+		tableViewerColumn.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public void update(final ViewerCell cell)
+			{
+				Object object = cell.getElement();
+				if (object instanceof Participant)
+				{
+					Participant participant = (Participant) object;
+					LinkPersonAddress link = participant.getLink();
+					cell.setText(ViewerColumn.CITY.value(link.getAddress()));
+					cell.setImage(null);
+				}
+			}
+		});
+		tableColumn = tableViewerColumn.getColumn();
+		tableColumn.setText(ViewerColumn.CITY.label());
+		tableColumn.setResizable(true);
+		tableColumn.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent event)
+			{
+				this.widgetSelected(event);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent event)
+			{
+				((PersonSorter) ParticipantWizardPage.this.participantViewer.getSorter())
+						.setCurrentColumn(ViewerColumn.CITY);
 				ParticipantWizardPage.this.participantViewer.refresh();
 			}
 		});
@@ -1050,21 +1063,22 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setText("Buchungsart");
 		tableColumn.setResizable(true);
-		tableColumn.addSelectionListener(new SelectionListener()
-		{
-			@Override
-			public void widgetDefaultSelected(final SelectionEvent event)
-			{
-				this.widgetSelected(event);
-			}
-
-			@Override
-			public void widgetSelected(final SelectionEvent event)
-			{
-				((PersonSorter) ParticipantWizardPage.this.participantViewer.getSorter()).setCurrentColumn(9);
-				ParticipantWizardPage.this.participantViewer.refresh();
-			}
-		});
+		// tableColumn.addSelectionListener(new SelectionListener()
+		// {
+		// @Override
+		// public void widgetDefaultSelected(final SelectionEvent event)
+		// {
+		// this.widgetSelected(event);
+		// }
+		//
+		// @Override
+		// public void widgetSelected(final SelectionEvent event)
+		// {
+		// ((PersonSorter)
+		// ParticipantWizardPage.this.participantViewer.getSorter()).setCurrentColumn(9);
+		// ParticipantWizardPage.this.participantViewer.refresh();
+		// }
+		// });
 
 		tableViewerColumn = new TableViewerColumn(this.participantViewer, SWT.RIGHT);
 		tableViewerColumn.setLabelProvider(new ColumnLabelProvider()

@@ -61,7 +61,7 @@ public class CourseMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE;
+		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM;
 
 		@Override
 		public String getDescription()
@@ -183,6 +183,10 @@ public class CourseMap extends AbstractDataMap
 				case TITLE:
 				{
 					return "Kurstitel";
+				}
+				case PAYMENT_TERM:
+				{
+					return "Zahlungsbedingungen";
 				}
 				default:
 				{
@@ -312,6 +316,10 @@ public class CourseMap extends AbstractDataMap
 				{
 					return "course_title";
 				}
+				case PAYMENT_TERM:
+				{
+					return "payment_term";
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -439,6 +447,10 @@ public class CourseMap extends AbstractDataMap
 				case TITLE:
 				{
 					return "Kurstitel";
+				}
+				case PAYMENT_TERM:
+				{
+					return "Zahlungsbedingungen";
 				}
 				default:
 				{
@@ -590,6 +602,10 @@ public class CourseMap extends AbstractDataMap
 				case TITLE:
 				{
 					return course.getTitle();
+				}
+				case PAYMENT_TERM:
+				{
+					return course.getPaymentTerm() == null ? "" : course.getPaymentTerm().getText();
 				}
 				default:
 				{

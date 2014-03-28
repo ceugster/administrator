@@ -649,6 +649,7 @@ ch.eugster.events.donation/icons/delete_16.png -text
 ch.eugster.events.donation/icons/delete_grey_16.png -text
 ch.eugster.events.donation/icons/edit_16.png -text
 ch.eugster.events.donation/icons/edit_grey_16.png -text
+ch.eugster.events.donation/icons/list_16.png -text
 ch.eugster.events.donation/icons/money.png -text
 ch.eugster.events.donation/icons/print_16.png -text
 ch.eugster.events.donation/icons/reset_16.png -text
@@ -657,6 +658,7 @@ ch.eugster.events.donation/icons/save_16.png -text
 ch.eugster.events.donation/icons/save_grey_16.png -text
 ch.eugster.events.donation/plugin.xml -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/Activator.java -text
+ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationAddressListDialog.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationConfirmationDialog.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationDialog.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationListDialog.java -text
@@ -673,12 +675,14 @@ ch.eugster.events.donation/src/ch/eugster/events/donation/handlers/ActivateLinkD
 ch.eugster.events.donation/src/ch/eugster/events/donation/handlers/AddDonationHandler.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/handlers/AddDonationPurposeHandler.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/handlers/AddDonationToLinkHandler.java -text
+ch.eugster.events.donation/src/ch/eugster/events/donation/handlers/CopyHandler.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/handlers/DeleteDonationHandler.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/handlers/DeleteDonationPurposeHandler.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/handlers/EditDonationHandler.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/handlers/EditDonationPurposeHandler.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/handlers/GenerateDonationConfirmationHandler.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/handlers/GenerateDonationListHandler.java -text
+ch.eugster.events.donation/src/ch/eugster/events/donation/handlers/SelectAllHandler.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/preferences/DonationPreferencePage.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/preferences/DonationPreferenceStore.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/preferences/PreferenceInitializer.java -text
@@ -813,6 +817,7 @@ ch.eugster.events.merge/src/ch/eugster/events/merge/handlers/DecollatePersonsHan
 ch.eugster.events.merge/src/ch/eugster/events/merge/handlers/EditPersonHandler.java -text
 ch.eugster.events.merge/src/ch/eugster/events/merge/handlers/MergeAddressesHandler.java -text
 ch.eugster.events.merge/src/ch/eugster/events/merge/handlers/MergePersonsHandler.java -text
+ch.eugster.events.merge/src/ch/eugster/events/merge/handlers/SetToAddressHandler.java -text
 ch.eugster.events.merge/src/ch/eugster/events/merge/views/PersonView.java -text
 ch.eugster.events.persistence.feature/.project -text
 ch.eugster.events.persistence.feature/build.properties -text
@@ -1360,6 +1365,7 @@ ch.eugster.events.ui/src/ch/eugster/events/ui/actions/SaveFormEditorActionDelega
 ch.eugster.events.ui/src/ch/eugster/events/ui/dialogs/Message.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/dnd/CourseDragSourceListener.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/dnd/CourseTransfer.java -text
+ch.eugster.events.ui/src/ch/eugster/events/ui/dnd/DonationTransfer.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/dnd/EntityTransfer.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/dnd/LinkPersonAddressDragSourceListener.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/dnd/LinkPersonAddressViewerDropAdapter.java -text
