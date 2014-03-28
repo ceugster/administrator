@@ -10,14 +10,15 @@ import ch.eugster.events.persistence.model.Person;
 
 public class AddressGroupMemberMap extends AbstractDataMap implements Comparable<AddressGroupMemberMap>
 {
-	public AddressGroupMemberMap(final AddressGroupMember member)
+	public AddressGroupMemberMap(final AddressGroupMember member, boolean isGroup)
 	{
 		for (Key key : Key.values())
 		{
-			this.setProperty(key.getKey(), key.getValue(member));
+			this.setProperty(key.getKey(), key.getValue(member, isGroup));
 		}
 		this.setProperties(new AddressGroupMap(member.getAddressGroup()).getProperties());
-		if (member.getLink() == null)
+		if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted()
+				|| isGroup)
 		{
 			this.setProperties(new AddressMap(member.getAddress()).getProperties());
 		}
@@ -144,23 +145,26 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 			}
 		}
 
-		public String getValue(final AddressGroupMember member)
+		public String getValue(final AddressGroupMember member, boolean isGroup)
 		{
 			switch (this)
 			{
 				case ID:
 				{
-					return member.getLink() == null ? member.getAddress().getId().toString() : member.getLink()
-							.getPerson().getId().toString();
+					return member.getLink() == null || member.getLink().isDeleted()
+							|| member.getLink().getPerson().isDeleted() || isGroup ? member.getAddress().getId()
+							.toString() : member.getLink().getPerson().getId().toString();
 				}
 				case TYPE:
 				{
-					return member.getLink() == null ? "A" : "P";
+					return member.getLink() == null || member.getLink().isDeleted()
+							|| member.getLink().getPerson().isDeleted() || isGroup ? "A" : "P";
 				}
 				case ANOTHER_LINE:
 				{
 					String anotherLine = "";
-					if (member.getLink() == null)
+					if (member.getLink() == null || member.getLink().isDeleted()
+							|| member.getLink().getPerson().isDeleted() || isGroup)
 					{
 						anotherLine = member.getAddress().getAnotherLine();
 					}
@@ -172,7 +176,8 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 				}
 				case SALUTATION:
 				{
-					if (member.getLink() == null)
+					if (member.getLink() == null || member.getLink().isDeleted()
+							|| member.getLink().getPerson().isDeleted() || isGroup)
 					{
 						return member.getAddress().getSalutation() == null ? "" : member.getAddress().getSalutation()
 								.getSalutation();
@@ -186,7 +191,8 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 				case POLITE:
 				{
 					String polite = null;
-					if (member.getLink() == null)
+					if (member.getLink() == null || member.getLink().isDeleted()
+							|| member.getLink().getPerson().isDeleted() || isGroup)
 					{
 						AddressSalutation salutation = member.getAddress().getSalutation();
 						polite = salutation == null ? "" : salutation.getPolite();
@@ -205,7 +211,8 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 				}
 				case MAILING_ADDRESS:
 				{
-					if (member.getLink() == null)
+					if (member.getLink() == null || member.getLink().isDeleted()
+							|| member.getLink().getPerson().isDeleted() || isGroup)
 					{
 						return AddressFormatter.getInstance().formatAddressLabel(member.getAddress());
 					}

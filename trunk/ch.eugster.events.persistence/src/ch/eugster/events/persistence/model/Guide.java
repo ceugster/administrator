@@ -93,7 +93,28 @@ public class Guide extends AbstractEntity
 
 	public String getPhone()
 	{
-		return AbstractEntity.stringValueOf(this.phone);
+		if (this.phone == null || this.phone.isEmpty())
+		{
+			if (this.getLink().getPhone().isEmpty())
+			{
+				if (this.getLink().getPerson().getPhone().isEmpty())
+				{
+					return this.getLink().getAddress().getPhone();
+				}
+				else
+				{
+					return this.getLink().getPerson().getPhone();
+				}
+			}
+			else
+			{
+				return this.getLink().getPhone();
+			}
+		}
+		else
+		{
+			return this.phone;
+		}
 	}
 
 	public void removeCourseGuide(final CourseGuide courseGuide)

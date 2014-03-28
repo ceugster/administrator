@@ -27,7 +27,7 @@ public class PhoneListFactory
 	{
 		boolean added = false;
 		PhoneListEntry entry = null;
-		if (member.getLink() == null)
+		if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
 		{
 			if (!entries.containsKey("A" + member.getAddress().getId().toString()))
 			{

@@ -1096,6 +1096,19 @@ public abstract class DatabaseUpdater
 							ok = executeSqlQuery(con, builder.toString());
 						}
 					}
+					if (structureVersion == 24)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						if (!columnExists(con, "events_course", "course_payment_term_id"))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE events_course ");
+							builder.append("ADD COLUMN course_payment_term_id bigint NULL,");
+							builder.append("ADD FOREIGN KEY course_payment_term_id (course_payment_term_id) REFERENCES events_payment_term (payment_term_id);");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+					}
 
 					stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);
 				}

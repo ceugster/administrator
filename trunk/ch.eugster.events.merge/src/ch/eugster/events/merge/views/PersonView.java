@@ -23,8 +23,10 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -62,6 +64,8 @@ public class PersonView extends ViewPart
 
 	private Text address;
 
+	private Button search;
+
 	private EntityAdapter entityAdapter;
 
 	private void createContextMenu()
@@ -93,7 +97,7 @@ public class PersonView extends ViewPart
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				setViewerInput();
+				// setViewerInput();
 			}
 		});
 
@@ -108,7 +112,7 @@ public class PersonView extends ViewPart
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				setViewerInput();
+				// setViewerInput();
 			}
 		});
 
@@ -123,12 +127,32 @@ public class PersonView extends ViewPart
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
+				// setViewerInput();
+			}
+		});
+
+		Composite buttonComposite = new Composite(composite, SWT.BORDER);
+		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		buttonComposite.setLayout(new FillLayout(SWT.HORIZONTAL));
+
+		search = new Button(buttonComposite, SWT.PUSH);
+		search.setText("Suchen");
+		search.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
 				setViewerInput();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e)
+			{
+				widgetSelected(e);
 			}
 		});
 
 		GridData gridData = new GridData(GridData.FILL_BOTH);
-		gridData.horizontalSpan = 2;
 
 		Table table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
 				| SWT.FULL_SELECTION);

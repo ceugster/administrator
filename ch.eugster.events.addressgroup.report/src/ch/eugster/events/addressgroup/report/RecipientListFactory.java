@@ -41,7 +41,7 @@ public class RecipientListFactory
 	{
 		boolean added = false;
 		Recipient recipient = null;
-		if (member.getLink() == null)
+		if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
 		{
 			if (!recipients.containsKey(member.getAddress().getEmail()))
 			{

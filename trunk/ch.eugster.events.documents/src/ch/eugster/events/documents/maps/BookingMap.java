@@ -13,6 +13,7 @@ import java.util.Locale;
 
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.CourseDetail;
+import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.IBookingState;
 import ch.eugster.events.persistence.model.Participant;
 
@@ -394,7 +395,7 @@ public class BookingMap extends AbstractDataMap
 
 	public enum TableKey implements DataMapKey
 	{
-		PARTICIPANTS, COURSE_DETAILS;
+		PARTICIPANTS, COURSE_DETAILS, COURSE_GUIDES;
 
 		@Override
 		public String getDescription()
@@ -408,6 +409,10 @@ public class BookingMap extends AbstractDataMap
 				case COURSE_DETAILS:
 				{
 					return "Kursdaten";
+				}
+				case COURSE_GUIDES:
+				{
+					return "Kursleitung";
 				}
 				default:
 				{
@@ -429,6 +434,10 @@ public class BookingMap extends AbstractDataMap
 				{
 					return "booking_course_details";
 				}
+				case COURSE_GUIDES:
+				{
+					return "booking_course_guides";
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -448,6 +457,10 @@ public class BookingMap extends AbstractDataMap
 				case COURSE_DETAILS:
 				{
 					return "Kursdaten";
+				}
+				case COURSE_GUIDES:
+				{
+					return "Kursleitung";
 				}
 				default:
 				{
@@ -477,6 +490,16 @@ public class BookingMap extends AbstractDataMap
 					for (CourseDetail courseDetail : courseDetails)
 					{
 						tableMaps.add(new CourseDetailMap(courseDetail));
+					}
+					return tableMaps;
+				}
+				case COURSE_GUIDES:
+				{
+					List<DataMap> tableMaps = new ArrayList<DataMap>();
+					Collection<CourseGuide> courseGuides = booking.getCourse().getCourseGuides();
+					for (CourseGuide courseGuide : courseGuides)
+					{
+						tableMaps.add(new CourseGuideMap(courseGuide));
 					}
 					return tableMaps;
 				}

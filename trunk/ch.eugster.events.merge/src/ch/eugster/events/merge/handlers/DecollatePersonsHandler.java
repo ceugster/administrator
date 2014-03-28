@@ -58,7 +58,7 @@ public class DecollatePersonsHandler extends AbstractHandler implements IHandler
 					for (Member member : members)
 					{
 						link.removeMember(member);
-						member.setLinkPersonAddress(selectedLink);
+						member.setLink(selectedLink);
 					}
 					Donation[] donations = selectedLink.getDonations().toArray(new Donation[0]);
 					for (Donation donation : donations)

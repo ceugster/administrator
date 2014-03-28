@@ -39,7 +39,7 @@ public class PhoneListEntry implements Comparable<PhoneListEntry>
 	 */
 	public PhoneListEntry(final AddressGroupMember member)
 	{
-		if (member.getLink() == null)
+		if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
 		{
 			loadData(member.getAddress());
 		}

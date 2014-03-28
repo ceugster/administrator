@@ -392,13 +392,13 @@ public class MemberDialog extends TitleAreaDialog implements ICheckStateListener
 						if (entity instanceof LinkPersonAddress)
 						{
 							member = Member.newInstance(monitor.membership, (LinkPersonAddress) this.entity);
-							member.getLinkPersonAddress().addMember(member);
+							member.getLink().addMember(member);
 							member.setCode(monitor.code);
 							member.setDate(GregorianCalendar.getInstance());
 							// member.getMembership().addMember(member);
 							LinkPersonAddressQuery query = (LinkPersonAddressQuery) service
 									.getQuery(LinkPersonAddress.class);
-							query.merge(member.getLinkPersonAddress());
+							query.merge(member.getLink());
 						}
 						else if (entity instanceof Address)
 						{

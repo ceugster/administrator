@@ -75,6 +75,16 @@
             id="ch.eugster.events.donation.purpose.edit"
             name="Spendenzweck bearbeiten">
       </command>
+      <command
+            defaultHandler="ch.eugster.events.donation.handlers.SelectAllHandler"
+            id="ch.eugster.events.donation.select.all"
+            name="Alles auswählen">
+      </command>
+      <command
+            defaultHandler="ch.eugster.events.donation.handlers.CopyHandler"
+            id="ch.eugster.events.donation.copy"
+            name="Kopieren">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -315,6 +325,20 @@
                label="Spendenbestätigung"
                style="push"
                tooltip="Erstellen von Spendenbestätigungen">
+         </command>
+         <separator
+               name="ch.eugster.events.donation.separator1"
+               visible="true">
+         </separator>
+         <command
+               commandId="ch.eugster.events.donation.copy"
+               label="Kopieren"
+               style="push">
+         </command>
+         <command
+               commandId="ch.eugster.events.donation.select.all"
+               label="Alles auswählen"
+               style="push">
          </command>
       </menuContribution>
       <menuContribution

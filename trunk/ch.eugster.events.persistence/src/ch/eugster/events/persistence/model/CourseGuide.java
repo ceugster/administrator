@@ -126,7 +126,7 @@ public class CourseGuide extends AbstractEntity
 
 	public String getPhone()
 	{
-		return AbstractEntity.stringValueOf(this.phone);
+		return this.phone == null ? this.getGuide().getPhone() : this.phone;
 	}
 
 	public void removeCompensation(final Compensation compensation)

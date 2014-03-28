@@ -218,7 +218,7 @@ public class Activator extends AbstractUIPlugin
 		 * properties.put(PersistenceUnitProperties.CREATE_JDBC_DDL_FILE,
 		 * "drop_tables.sql");
 		 */
-		properties.put(PersistenceUnitProperties.LOGGING_LEVEL, Level.FINEST.getName());
+		properties.put(PersistenceUnitProperties.LOGGING_LEVEL, Level.WARNING.getName());
 
 		// properties.put(PersistenceUnitProperties.SESSION_CUSTOMIZER,
 		// "ch.eugster.events.persistence.database.DatabaseDataUpdater");

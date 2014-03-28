@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -80,14 +81,62 @@ public class FormLetterDialog extends TitleAreaDialog
 		this.selection = selection;
 	}
 
-	private void computeAddressGroup(final Map<String, DataMap> map, final AddressGroup addressGroup)
+	private void addAddresses(final AddressGroup addressGroup, Map<Long, AddressCounter> addresses)
 	{
 		if (!addressGroup.isDeleted())
 		{
 			Collection<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
 			for (AddressGroupMember member : members)
 			{
-				computeAddressGroupMember(map, member);
+				addAddress(member, addresses);
+			}
+		}
+	}
+
+	private void addAddresses(final AddressGroupCategory category, Map<Long, AddressCounter> addresses)
+	{
+		if (!category.isDeleted())
+		{
+			Collection<AddressGroup> addressGroups = category.getAddressGroups();
+			for (AddressGroup addressGroup : addressGroups)
+			{
+				addAddresses(addressGroup, addresses);
+			}
+		}
+	}
+
+	private void addAddress(final AddressGroupMember member, Map<Long, AddressCounter> addresses)
+	{
+		if (!member.isDeleted())
+		{
+			if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
+			{
+				if (!member.getAddress().isDeleted())
+				{
+					AddressCounter counter = addresses.get(member.getAddress().getId());
+					if (counter == null)
+					{
+						counter = new AddressCounter(member.getAddress().getId());
+						addresses.put(member.getAddress().getId(), counter);
+					}
+					else
+					{
+						counter.add();
+					}
+				}
+			}
+		}
+	}
+
+	private void computeAddressGroup(final Map<String, DataMap> map, final AddressGroup addressGroup,
+			Map<Long, AddressCounter> addresses)
+	{
+		if (!addressGroup.isDeleted())
+		{
+			Collection<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
+			for (AddressGroupMember member : members)
+			{
+				computeAddressGroupMember(map, member, addresses);
 			}
 			// Collection<AddressGroupLink> children =
 			// addressGroup.getChildren();
@@ -98,26 +147,41 @@ public class FormLetterDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeAddressGroupCategory(final Map<String, DataMap> map, final AddressGroupCategory category)
+	private void computeAddressGroupCategory(final Map<String, DataMap> map, final AddressGroupCategory category,
+			Map<Long, AddressCounter> addresses)
 	{
 		if (!category.isDeleted())
 		{
 			Collection<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
 			{
-				computeAddressGroup(map, addressGroup);
+				computeAddressGroup(map, addressGroup, addresses);
 			}
 		}
 	}
 
-	private void computeAddressGroupMember(final Map<String, DataMap> map, final AddressGroupMember member)
+	private void computeAddressGroupMember(final Map<String, DataMap> map, final AddressGroupMember member,
+			Map<Long, AddressCounter> addresses)
 	{
 		if (!member.isDeleted())
 		{
-			AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member);
-			DataMap existing = map.get(memberMap.getId());
-			if (existing == null)
+			if (this.useCollectionAddress.getSelection())
 			{
+				AddressCounter counter = addresses.get(member.getAddress().getId());
+				if (counter == null || counter.getCounts() < 2)
+				{
+					AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, false);
+					map.put(memberMap.getId(), memberMap);
+				}
+				else
+				{
+					AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, true);
+					map.put(memberMap.getId(), memberMap);
+				}
+			}
+			else
+			{
+				AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, false);
 				map.put(memberMap.getId(), memberMap);
 			}
 		}
@@ -132,31 +196,57 @@ public class FormLetterDialog extends TitleAreaDialog
 		this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
 	}
 
-	private Collection<DataMap> createDataMaps(final StructuredSelection ssel)
+	private Collection<DataMap> createDataMaps(final IStructuredSelection ssel)
 	{
 		Map<String, DataMap> maps = new HashMap<String, DataMap>();
 		Object[] elements = ssel.toArray();
+		Map<Long, AddressCounter> addresses = new HashMap<Long, AddressCounter>();
 		for (Object element : elements)
 		{
 			if (element instanceof AddressGroupCategory)
 			{
 				AddressGroupCategory category = (AddressGroupCategory) element;
-				computeAddressGroupCategory(maps, category);
+				addAddresses(category, addresses);
 			}
 			else if (element instanceof AddressGroup)
 			{
 				AddressGroup addressGroup = (AddressGroup) element;
-				computeAddressGroup(maps, addressGroup);
+				addAddresses(addressGroup, addresses);
 			}
 			// else if (element instanceof AddressGroupLink)
 			// {
-			// AddressGroupLink addressGroupLink = (AddressGroupLink) element;
+			// AddressGroupLink addressGroupLink = (AddressGroupLink)
+			// element;
 			// computeAddressGroup(maps, addressGroupLink.getChild());
 			// }
 			else if (element instanceof AddressGroupMember)
 			{
 				AddressGroupMember member = (AddressGroupMember) element;
-				computeAddressGroupMember(maps, member);
+				addAddress(member, addresses);
+			}
+		}
+		for (Object element : elements)
+		{
+			if (element instanceof AddressGroupCategory)
+			{
+				AddressGroupCategory category = (AddressGroupCategory) element;
+				computeAddressGroupCategory(maps, category, addresses);
+			}
+			else if (element instanceof AddressGroup)
+			{
+				AddressGroup addressGroup = (AddressGroup) element;
+				computeAddressGroup(maps, addressGroup, addresses);
+			}
+			// else if (element instanceof AddressGroupLink)
+			// {
+			// AddressGroupLink addressGroupLink = (AddressGroupLink)
+			// element;
+			// computeAddressGroup(maps, addressGroupLink.getChild());
+			// }
+			else if (element instanceof AddressGroupMember)
+			{
+				AddressGroupMember member = (AddressGroupMember) element;
+				computeAddressGroupMember(maps, member, addresses);
 			}
 		}
 		return maps.values();
@@ -379,4 +469,26 @@ public class FormLetterDialog extends TitleAreaDialog
 		// super.getShell().setMinimumSize(width > 500 ? 500 : width, height);
 	}
 
+	private class AddressCounter
+	{
+		private int counter = 0;
+
+		private Long id;
+
+		public AddressCounter(Long id)
+		{
+			this.id = id;
+			this.counter++;
+		}
+
+		public void add()
+		{
+			this.counter++;
+		}
+
+		public int getCounts()
+		{
+			return counter;
+		}
+	}
 }

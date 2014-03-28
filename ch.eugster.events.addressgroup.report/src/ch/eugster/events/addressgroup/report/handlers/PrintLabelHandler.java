@@ -121,7 +121,7 @@ public class PrintLabelHandler extends AbstractHandler implements IHandler
 	{
 		if (!member.isDeleted())
 		{
-			if (member.getLink() == null)
+			if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
 			{
 				if (!member.getAddress().isDeleted())
 				{
