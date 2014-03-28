@@ -1,7 +1,5 @@
 package ch.eugster.events.person.views;
 
-import java.util.Locale;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -20,7 +18,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.nebula.widgets.formattedtext.MaskFormatter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
@@ -50,11 +47,8 @@ import org.osgi.util.tracker.ServiceTracker;
 import ch.eugster.events.persistence.events.EntityAdapter;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedPersonAndAddressFilter;
-import ch.eugster.events.persistence.formatters.AddressFormatter;
-import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
-import ch.eugster.events.persistence.model.Country;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Member;
 import ch.eugster.events.persistence.model.Person;
@@ -64,6 +58,7 @@ import ch.eugster.events.person.Activator;
 import ch.eugster.events.person.editors.AddressEditor;
 import ch.eugster.events.person.editors.AddressEditorInput;
 import ch.eugster.events.person.editors.EditorSelector;
+import ch.eugster.events.person.views.PersonSorter.ViewerColumn;
 import ch.eugster.events.ui.dnd.EntityTransfer;
 import ch.eugster.events.ui.dnd.LinkPersonAddressDragSourceListener;
 import ch.eugster.events.ui.views.AbstractEntityView;
@@ -150,7 +145,12 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 		this.viewer = new TreeViewer(tree);
 		this.viewer.setContentProvider(new PersonContentProvider());
 		PersonSorter sorter = new PersonSorter();
-		sorter.setCurrentColumn(dialogSettings.getInt("order.by"));
+		int currentColumn = dialogSettings.getInt("order.by");
+		if (currentColumn > ViewerColumn.values().length - 1 || currentColumn < 0)
+		{
+			currentColumn = 0;
+		}
+		sorter.setCurrentColumn(ViewerColumn.values()[currentColumn]);
 		sorter.setAscending(dialogSettings.getBoolean("order.ascending"));
 		this.viewer.setSorter(sorter);
 		DeletedPersonAndAddressFilter filter = new DeletedPersonAndAddressFilter();
@@ -187,103 +187,34 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void update(final ViewerCell cell)
 			{
+				boolean deleted = false;
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
-					if (person.isDeleted())
-					{
-						if (person.isMember())
-						{
-							cell.setText(PersonFormatter.getInstance().formatId(person) + "*");
-							cell.setImage(Activator.getDefault().getImageRegistry()
-									.get(Activator.KEY_PERSON_GREY_WITH_STAR));
-						}
-						else
-						{
-							cell.setText(PersonFormatter.getInstance().formatId(person));
-							cell.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_PERSON_GREY));
-						}
-						cell.setBackground(deletedColor);
-					}
-					else
-					{
-						if (person.isMember())
-						{
-							cell.setText(PersonFormatter.getInstance().formatId(person) + "*");
-							cell.setImage(Activator.getDefault().getImageRegistry()
-									.get(Activator.KEY_PERSON_BLUE_WITH_STAR));
-						}
-						else
-						{
-							cell.setText(PersonFormatter.getInstance().formatId(person));
-							cell.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_PERSON_BLUE));
-						}
-						cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-					}
-				}
-				else if (object instanceof Address)
-				{
-					Address address = (Address) object;
-					if (address.isDeleted())
-					{
-						if (address.isMember())
-						{
-							cell.setText(AddressFormatter.getInstance().formatId(address) + "*");
-						}
-						else
-						{
-							cell.setText(AddressFormatter.getInstance().formatId(address));
-						}
-						cell.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_ADDRESS_GREY));
-						cell.setBackground(deletedColor);
-					}
-					else
-					{
-						if (address.isMember())
-						{
-							cell.setText(AddressFormatter.getInstance().formatId(address) + "*");
-						}
-						else
-						{
-							cell.setText(AddressFormatter.getInstance().formatId(address));
-						}
-						cell.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_ADDRESS_MAIN));
-						cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-					}
+					cell.setText(ViewerColumn.CODE.value(person.getDefaultLink()));
+					cell.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_PERSON_BLUE));
+					deleted = person.isDeleted();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					if (link.getAddress().isDeleted())
-					{
-						if (link.getAddress().isMember())
-						{
-							cell.setText(AddressFormatter.getInstance().formatId(link.getAddress()) + "*");
-						}
-						else
-						{
-							cell.setText(AddressFormatter.getInstance().formatId(link.getAddress()));
-						}
-						cell.setBackground(deletedColor);
-					}
-					else
-					{
-						if (link.getAddress().isMember())
-						{
-							cell.setText(AddressFormatter.getInstance().formatId(link.getAddress()) + "*");
-						}
-						else
-						{
-							cell.setText(AddressFormatter.getInstance().formatId(link.getAddress()));
-						}
-						cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-					}
+					cell.setText(ViewerColumn.CODE.value(link));
+					cell.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_PERSON_BLUE));
+					deleted = link.isDeleted();
 				}
+				else if (object instanceof Address)
+				{
+					Address address = (Address) object;
+					cell.setText(ViewerColumn.CODE.value(address));
+					cell.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_ADDRESS_MAIN));
+					deleted = address.isDeleted();
+				}
+				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			}
 		});
 		TreeColumn treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText("Code");
+		treeColumn.setText(ViewerColumn.CODE.label());
 		treeColumn.setResizable(true);
 		treeColumn.addSelectionListener(new SelectionListener()
 		{
@@ -297,8 +228,8 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			public void widgetSelected(final SelectionEvent event)
 			{
 				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
-				sorter.setCurrentColumn(0);
-				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
+				sorter.setCurrentColumn(ViewerColumn.CODE);
+				PersonView.this.dialogSettings.put("order.by", ViewerColumn.CODE.ordinal());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
 				PersonView.this.refreshViewer();
 			}
@@ -315,26 +246,27 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
-					cell.setText(person.getLastname());
+					cell.setText(ViewerColumn.LASTNAME.value(person.getDefaultLink()));
 					deleted = person.isDeleted();
-				}
-				else if (object instanceof Address)
-				{
-					Address address = (Address) object;
-					deleted = address.isDeleted();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(link.getPerson().getLastname());
+					cell.setText(ViewerColumn.LASTNAME.value(link));
 					deleted = link.isDeleted();
+				}
+				else if (object instanceof Address)
+				{
+					Address address = (Address) object;
+					cell.setText(ViewerColumn.LASTNAME.value(address));
+					deleted = address.isDeleted();
 				}
 				cell.setImage(null);
 				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText("Nachname");
+		treeColumn.setText(ViewerColumn.LASTNAME.label());
 		treeColumn.setResizable(true);
 		treeColumn.addSelectionListener(new SelectionListener()
 		{
@@ -348,8 +280,8 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			public void widgetSelected(final SelectionEvent event)
 			{
 				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
-				sorter.setCurrentColumn(1);
-				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
+				sorter.setCurrentColumn(ViewerColumn.LASTNAME);
+				PersonView.this.dialogSettings.put("order.by", ViewerColumn.LASTNAME.ordinal());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
 				PersonView.this.refreshViewer();
 			}
@@ -366,29 +298,27 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
+					cell.setText(ViewerColumn.FIRSTNAME.value(person.getDefaultLink()));
 					deleted = person.isDeleted();
-					cell.setText(person.getFirstname());
-					cell.setImage(null);
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
+					cell.setText(ViewerColumn.FIRSTNAME.value(link));
 					deleted = link.isDeleted();
-					cell.setText(link.getPerson().getFirstname());
-					cell.setImage(null);
 				}
 				else if (object instanceof Address)
 				{
 					Address address = (Address) object;
 					cell.setText("");
-					cell.setImage(null);
 					deleted = address.isDeleted();
 				}
+				cell.setImage(null);
 				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText("Vorname");
+		treeColumn.setText(ViewerColumn.FIRSTNAME.label());
 		treeColumn.setResizable(true);
 		treeColumn.addSelectionListener(new SelectionListener()
 		{
@@ -402,8 +332,8 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			public void widgetSelected(final SelectionEvent event)
 			{
 				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
-				sorter.setCurrentColumn(2);
-				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
+				sorter.setCurrentColumn(ViewerColumn.FIRSTNAME);
+				PersonView.this.dialogSettings.put("order.by", ViewerColumn.FIRSTNAME.ordinal());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
 				PersonView.this.refreshViewer();
 			}
@@ -422,30 +352,29 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
-					address = person.getDefaultLink().getAddress();
+					cell.setText(ViewerColumn.ADDRESS_ID.value(person.getDefaultLink()));
 					image = person.getDefaultLink().getAddressType().getImage();
 					deleted = person.isDeleted();
-				}
-				else if (object instanceof Address)
-				{
-					address = (Address) object;
-					image = Activator.getDefault().getImageRegistry().get(Activator.KEY_ADDRESS);
-					deleted = address.isDeleted();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					address = link.getAddress();
+					cell.setText(ViewerColumn.ADDRESS_ID.value(link));
 					image = link.getAddressType().getImage();
 					deleted = link.isDeleted();
 				}
-				cell.setText(AddressFormatter.getInstance().formatId(address));
+				else if (object instanceof Address)
+				{
+					address = (Address) object;
+					image = Activator.getDefault().getImageRegistry().get(Activator.KEY_ADDRESS_MAIN);
+					deleted = address.isDeleted();
+				}
 				cell.setImage(image);
 				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText("Adresse");
+		treeColumn.setText(ViewerColumn.ADDRESS_ID.label());
 		treeColumn.setResizable(true);
 		treeColumn.addSelectionListener(new SelectionListener()
 		{
@@ -459,8 +388,8 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			public void widgetSelected(final SelectionEvent event)
 			{
 				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
-				sorter.setCurrentColumn(3);
-				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
+				sorter.setCurrentColumn(ViewerColumn.ADDRESS_ID);
+				PersonView.this.dialogSettings.put("order.by", ViewerColumn.ADDRESS_ID.ordinal());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
 				PersonView.this.refreshViewer();
 			}
@@ -473,33 +402,31 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			public void update(final ViewerCell cell)
 			{
 				boolean deleted = false;
-				String name = "";
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
-					name = person.getDefaultLink().getAddress().getName();
+					cell.setText(ViewerColumn.ORGANISATION.value(person.getDefaultLink()));
 					deleted = person.isDeleted();
 				}
 				else if (object instanceof Address)
 				{
 					Address address = (Address) object;
-					name = address.getName();
+					cell.setText(ViewerColumn.ORGANISATION.value(address));
 					deleted = address.isDeleted();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					name = link.getAddress().getName();
+					cell.setText(ViewerColumn.ORGANISATION.value(link));
 					deleted = link.isDeleted();
 				}
-				cell.setText(name);
 				cell.setImage(null);
 				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText("Organisation");
+		treeColumn.setText(ViewerColumn.ORGANISATION.label());
 		treeColumn.setResizable(true);
 		treeColumn.addSelectionListener(new SelectionListener()
 		{
@@ -513,8 +440,8 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			public void widgetSelected(final SelectionEvent event)
 			{
 				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
-				sorter.setCurrentColumn(3);
-				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
+				sorter.setCurrentColumn(ViewerColumn.ORGANISATION);
+				PersonView.this.dialogSettings.put("order.by", ViewerColumn.ORGANISATION.ordinal());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
 				PersonView.this.refreshViewer();
 			}
@@ -527,34 +454,31 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			public void update(final ViewerCell cell)
 			{
 				boolean deleted = false;
-				String address = "";
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
-					address = person.getDefaultLink() == null ? "" : AddressFormatter.getInstance().formatAddressLine(
-							person.getDefaultLink().getAddress());
+					cell.setText(ViewerColumn.ADDRESS.value(person.getDefaultLink()));
 					deleted = person.isDeleted();
 				}
 				else if (object instanceof Address)
 				{
-					Address a = (Address) object;
-					address = AddressFormatter.getInstance().formatAddressLine(a);
-					deleted = a.isDeleted();
+					Address address = (Address) object;
+					cell.setText(ViewerColumn.ADDRESS.value(address));
+					deleted = address.isDeleted();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					address = AddressFormatter.getInstance().formatAddressLine(link.getAddress());
+					cell.setText(ViewerColumn.ADDRESS.value(link));
 					deleted = link.isDeleted();
 				}
-				cell.setText(address);
 				cell.setImage(null);
 				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText("Strasse");
+		treeColumn.setText(ViewerColumn.ADDRESS.label());
 		treeColumn.setResizable(true);
 		treeColumn.addSelectionListener(new SelectionListener()
 		{
@@ -568,8 +492,8 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			public void widgetSelected(final SelectionEvent event)
 			{
 				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
-				sorter.setCurrentColumn(4);
-				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
+				sorter.setCurrentColumn(ViewerColumn.ADDRESS);
+				PersonView.this.dialogSettings.put("order.by", ViewerColumn.ADDRESS.ordinal());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
 				PersonView.this.refreshViewer();
 			}
@@ -586,30 +510,27 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
-					cell.setText(person.getDefaultLink() == null ? "" : AddressFormatter.getInstance().formatCityLine(
-							person.getDefaultLink().getAddress()));
-					cell.setImage(null);
+					cell.setText(ViewerColumn.CITY.value(person.getDefaultLink()));
 					deleted = person.isDeleted();
 				}
 				else if (object instanceof Address)
 				{
 					Address address = (Address) object;
-					cell.setText(AddressFormatter.getInstance().formatCityLine(address));
-					cell.setImage(null);
+					cell.setText(ViewerColumn.CITY.value(address));
 					deleted = address.isDeleted();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(AddressFormatter.getInstance().formatCityLine(link.getAddress()));
-					cell.setImage(null);
+					cell.setText(ViewerColumn.CITY.value(link));
 					deleted = link.isDeleted();
 				}
+				cell.setImage(null);
 				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText("Ort");
+		treeColumn.setText(ViewerColumn.CITY.label());
 		treeColumn.setResizable(true);
 		treeColumn.addSelectionListener(new SelectionListener()
 		{
@@ -623,8 +544,8 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			public void widgetSelected(final SelectionEvent event)
 			{
 				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
-				sorter.setCurrentColumn(5);
-				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
+				sorter.setCurrentColumn(ViewerColumn.CITY);
+				PersonView.this.dialogSettings.put("order.by", ViewerColumn.CITY.ordinal());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
 				PersonView.this.refreshViewer();
 			}
@@ -641,151 +562,27 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
+					cell.setText(ViewerColumn.MOBILE.value(person.getDefaultLink()));
 					deleted = person.isDeleted();
-					try
-					{
-						if (person.getPhone().isEmpty())
-						{
-							cell.setText("");
-						}
-						else
-						{
-							if (person.getCountry() != null)
-							{
-								Country country = PersonFormatter.getInstance().getCountry();
-								if (country == null)
-								{
-									Locale locale = Locale.getDefault();
-									MaskFormatter formatter = new MaskFormatter(person.getCountry().getPhonePattern());
-									formatter.setValue(person.getPhone());
-									cell.setText(locale.getCountry().equals(person.getCountry().getIso3166alpha2()) ? formatter
-											.getDisplayString() : person.getCountry().getPhonePrefix() + " "
-											+ formatter.getDisplayString());
-								}
-								else
-								{
-									MaskFormatter formatter = new MaskFormatter(person.getCountry().getPhonePattern());
-									formatter.setValue(person.getPhone());
-									cell.setText(country.getId().equals(person.getCountry().getId()) ? formatter
-											.getDisplayString() : person.getCountry().getPhonePrefix() + " "
-											+ formatter.getDisplayString());
-								}
-							}
-							else
-							{
-								cell.setText(person.getPhone());
-							}
-						}
-					}
-					catch (NumberFormatException e)
-					{
-						cell.setText("");
-					}
-					cell.setImage(null);
 				}
-				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-			}
-		});
-		treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText("Handy");
-		treeColumn.setResizable(true);
-		treeColumn.addSelectionListener(new SelectionListener()
-		{
-			@Override
-			public void widgetDefaultSelected(final SelectionEvent event)
-			{
-				this.widgetSelected(event);
-			}
-
-			@Override
-			public void widgetSelected(final SelectionEvent event)
-			{
-				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
-				sorter.setCurrentColumn(6);
-				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
-				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
-				PersonView.this.refreshViewer();
-			}
-		});
-
-		treeViewerColumn = new TreeViewerColumn(this.viewer, SWT.LEFT);
-		treeViewerColumn.setLabelProvider(new ColumnLabelProvider()
-		{
-			@Override
-			public void update(final ViewerCell cell)
-			{
-				boolean deleted = false;
-				Object object = cell.getElement();
-				String phone = "";
-				Country country = null;
-				if (object instanceof Person)
+				else if (object instanceof Address)
 				{
-					Person person = (Person) object;
-					deleted = person.isDeleted();
-					LinkPersonAddress link = person.getDefaultLink();
-					if (link == null)
-					{
-						country = person.getCountry();
-					}
-					else
-					{
-						phone = link.getPhone().isEmpty() ? link.getAddress().getPhone() : link.getPhone();
-						country = link.getAddress().getCountry() == null ? person.getCountry() : link.getAddress()
-								.getCountry();
-					}
+					Address address = (Address) object;
+					cell.setText(ViewerColumn.MOBILE.value(address));
+					deleted = address.isDeleted();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					phone = link.getPhone().isEmpty() ? link.getAddress().getPhone() : link.getPhone();
-					country = link.getAddress().getCountry();
+					cell.setText(ViewerColumn.MOBILE.value(link));
 					deleted = link.isDeleted();
 				}
-				else if (object instanceof Address)
-				{
-					Address address = (Address) object;
-					phone = address.getPhone();
-					country = address.getCountry();
-					deleted = address.isDeleted();
-				}
-				if (phone.isEmpty())
-				{
-					cell.setText("");
-				}
-				else
-				{
-					if (country != null)
-					{
-						Country defaultCountry = AddressFormatter.getInstance().getCountry();
-						if (defaultCountry == null)
-						{
-							Locale locale = Locale.getDefault();
-							MaskFormatter formatter = new MaskFormatter(country.getPhonePattern());
-							formatter.setValue(phone);
-							String p = country.getIso3166alpha2().equals(locale.getCountry()) ? formatter
-									.getDisplayString() : country.getPhonePrefix() + " " + formatter.getDisplayString();
-							cell.setText(p);
-						}
-						else
-						{
-							MaskFormatter formatter = new MaskFormatter(country.getPhonePattern());
-							formatter.setValue(phone);
-							String p = country.getId().equals(defaultCountry.getId()) ? formatter.getDisplayString()
-									: country.getPhonePrefix() + " " + formatter.getDisplayString();
-							cell.setText(p);
-						}
-					}
-					else
-					{
-						cell.setText(phone);
-					}
-					cell.setImage(null);
-				}
+				cell.setImage(null);
 				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText("Telefon");
+		treeColumn.setText(ViewerColumn.MOBILE.label());
 		treeColumn.setResizable(true);
 		treeColumn.addSelectionListener(new SelectionListener()
 		{
@@ -799,8 +596,8 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			public void widgetSelected(final SelectionEvent event)
 			{
 				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
-				sorter.setCurrentColumn(7);
-				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
+				sorter.setCurrentColumn(ViewerColumn.MOBILE);
+				PersonView.this.dialogSettings.put("order.by", ViewerColumn.MOBILE.ordinal());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
 				PersonView.this.refreshViewer();
 			}
@@ -814,42 +611,30 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			{
 				boolean deleted = false;
 				Object object = cell.getElement();
-				String email = "";
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
+					cell.setText(ViewerColumn.PHONE.value(person.getDefaultLink()));
 					deleted = person.isDeleted();
-					email = person.getEmail();
-					if (email.isEmpty())
-					{
-						LinkPersonAddress link = person.getDefaultLink();
-						if (link != null)
-						{
-							email = link.getEmail().isEmpty() ? link.getAddress().getEmail() : link.getEmail();
-						}
-					}
+				}
+				else if (object instanceof Address)
+				{
+					Address address = (Address) object;
+					cell.setText(ViewerColumn.PHONE.value(address));
+					deleted = address.isDeleted();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					if (link != null)
-					{
-						email = link.getEmail().isEmpty() ? link.getAddress().getEmail() : link.getEmail();
-						deleted = link.isDeleted();
-					}
+					cell.setText(ViewerColumn.PHONE.value(link));
+					deleted = link.isDeleted();
 				}
-				else if (object instanceof Address)
-				{
-					Address address = (Address) object;
-					email = address.getEmail();
-					deleted = address.isDeleted();
-				}
-				cell.setText(email.isEmpty() ? "" : email);
+				cell.setImage(null);
 				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText("Email");
+		treeColumn.setText(ViewerColumn.PHONE.label());
 		treeColumn.setResizable(true);
 		treeColumn.addSelectionListener(new SelectionListener()
 		{
@@ -863,8 +648,8 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			public void widgetSelected(final SelectionEvent event)
 			{
 				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
-				sorter.setCurrentColumn(8);
-				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
+				sorter.setCurrentColumn(ViewerColumn.PHONE);
+				PersonView.this.dialogSettings.put("order.by", ViewerColumn.PHONE.ordinal());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
 				PersonView.this.refreshViewer();
 			}
@@ -881,15 +666,27 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
-					cell.setText(person.getDomain() == null ? "" : person.getDomain().getCode());
-					cell.setImage(null);
+					cell.setText(ViewerColumn.EMAIL.value(person.getDefaultLink()));
 					deleted = person.isDeleted();
 				}
+				else if (object instanceof Address)
+				{
+					Address address = (Address) object;
+					cell.setText(ViewerColumn.EMAIL.value(address));
+					deleted = address.isDeleted();
+				}
+				else if (object instanceof LinkPersonAddress)
+				{
+					LinkPersonAddress link = (LinkPersonAddress) object;
+					cell.setText(ViewerColumn.EMAIL.value(link));
+					deleted = link.isDeleted();
+				}
+				cell.setImage(null);
 				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText("Domäne");
+		treeColumn.setText(ViewerColumn.EMAIL.label());
 		treeColumn.setResizable(true);
 		treeColumn.addSelectionListener(new SelectionListener()
 		{
@@ -903,8 +700,60 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			public void widgetSelected(final SelectionEvent event)
 			{
 				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
-				sorter.setCurrentColumn(9);
-				PersonView.this.dialogSettings.put("order.by", sorter.getCurrentColumn());
+				sorter.setCurrentColumn(ViewerColumn.EMAIL);
+				PersonView.this.dialogSettings.put("order.by", ViewerColumn.EMAIL.ordinal());
+				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
+				PersonView.this.refreshViewer();
+			}
+		});
+
+		treeViewerColumn = new TreeViewerColumn(this.viewer, SWT.LEFT);
+		treeViewerColumn.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public void update(final ViewerCell cell)
+			{
+				boolean deleted = false;
+				Object object = cell.getElement();
+				if (object instanceof Person)
+				{
+					Person person = (Person) object;
+					cell.setText(ViewerColumn.DOMAIN.value(person.getDefaultLink()));
+					deleted = person.isDeleted();
+				}
+				else if (object instanceof Address)
+				{
+					Address address = (Address) object;
+					cell.setText(ViewerColumn.DOMAIN.value(address));
+					deleted = address.isDeleted();
+				}
+				else if (object instanceof LinkPersonAddress)
+				{
+					LinkPersonAddress link = (LinkPersonAddress) object;
+					cell.setText(ViewerColumn.DOMAIN.value(link));
+					deleted = link.isDeleted();
+				}
+				cell.setImage(null);
+				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+			}
+		});
+		treeColumn = treeViewerColumn.getColumn();
+		treeColumn.setText(ViewerColumn.DOMAIN.label());
+		treeColumn.setResizable(true);
+		treeColumn.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent event)
+			{
+				this.widgetSelected(event);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent event)
+			{
+				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
+				sorter.setCurrentColumn(ViewerColumn.DOMAIN);
+				PersonView.this.dialogSettings.put("order.by", ViewerColumn.DOMAIN.ordinal());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
 				PersonView.this.refreshViewer();
 			}
@@ -1452,7 +1301,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 	@Override
 	public void setFocus()
 	{
-		this.viewer.getControl().setFocus();
+		this.searcher.setFocus();
 	}
 
 	public class ContentRoot
@@ -1474,4 +1323,5 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			return entities;
 		}
 	}
+
 }

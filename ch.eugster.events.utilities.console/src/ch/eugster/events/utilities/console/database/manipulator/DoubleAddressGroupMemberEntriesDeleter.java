@@ -85,7 +85,8 @@ public class DoubleAddressGroupMemberEntriesDeleter implements CommandProvider
 			Collection<AddressGroupMember> addressGroupMembers = addressGroup.getAddressGroupMembers();
 			for (AddressGroupMember addressGroupMember : addressGroupMembers)
 			{
-				String id = addressGroupMember.getLink() == null ? "A" + addressGroupMember.getAddress().getId() : "P"
+				String id = (addressGroupMember.getLink() == null || addressGroupMember.getLink().isDeleted() || addressGroupMember
+						.getLink().getPerson().isDeleted()) ? "A" + addressGroupMember.getAddress().getId() : "P"
 						+ addressGroupMember.getLink().getId();
 				AddressGroupMember member = members.get(id);
 				if (member == null)

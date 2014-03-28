@@ -1,6 +1,5 @@
 package ch.eugster.events.donation.dialogs;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,26 +18,21 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.documents.maps.AddressMap;
 import ch.eugster.events.documents.maps.DataMap;
+import ch.eugster.events.documents.maps.DonationMap;
 import ch.eugster.events.documents.maps.LinkMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.donation.Activator;
@@ -49,20 +43,10 @@ import ch.eugster.events.persistence.model.DonationPurpose;
 import ch.eugster.events.persistence.model.DonationYear;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
-import ch.eugster.events.persistence.model.User;
-import ch.eugster.events.persistence.model.UserProperty;
-import ch.eugster.events.persistence.queries.UserQuery;
-import ch.eugster.events.persistence.service.ConnectionService;
 
-public class DonationConfirmationDialog extends TitleAreaDialog
+public class DonationAddressListDialog extends TitleAreaDialog
 {
 	private SelectionMode selectionMode;
-
-	private Text documentPath;
-
-	private Button documentSelector;
-
-	private UserProperty userPropertyTemplatePath;
 
 	/*
 	 * in SelectionMode PERSON, LINK, ADDRESS
@@ -89,7 +73,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 
 	private String selectedName;
 
-	private final String message = "Wählen Sie das Dokument, das als Vorlage verwendet werden soll.";
+	private final String message = "Wählen Sie die gewünschten Optionen.";
 
 	private static final String MSG_NO_SERVICE_AVAILABLE = "Es ist kein Service für die Verarbeitung des Dokuments verfügbar.";
 
@@ -99,11 +83,11 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 
 	private static final String CANCEL_BUTTON_TEXT = "Abbrechen";
 
-	private static final String DIALOG_TITLE = "Vorlage Spendenbestätigung";
+	private static final String DIALOG_TITLE = "Spendenliste";
 
 	private boolean isPageComplete = false;
 
-	public DonationConfirmationDialog(final Shell parentShell, final Donation[] selectedDonations)
+	public DonationAddressListDialog(final Shell parentShell, final Donation[] selectedDonations)
 	{
 		super(parentShell);
 		this.personSelection = null;
@@ -114,7 +98,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		this.selectionMode = SelectionMode.DONATIONS;
 	}
 
-	public DonationConfirmationDialog(final Shell parentShell, final DonationYear selectedDonationYear,
+	public DonationAddressListDialog(final Shell parentShell, final DonationYear selectedDonationYear,
 			final DonationPurpose selectedDonationPurpose, final Domain selectedDomain, String selectedName)
 	{
 		super(parentShell);
@@ -127,7 +111,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		this.selectionMode = SelectionMode.YEAR;
 	}
 
-	public DonationConfirmationDialog(final Shell parentShell, final IStructuredSelection ssel)
+	public DonationAddressListDialog(final Shell parentShell, final IStructuredSelection ssel)
 	{
 		super(parentShell);
 		this.personSelection = ssel;
@@ -199,8 +183,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 												.getService(reference);
 										DocumentBuilderService builderService = service;
 										status = builderService.buildDocument(new SubProgressMonitor(monitor,
-												dataMaps.length), new File(userPropertyTemplatePath.getValue()),
-												dataMaps);
+												dataMaps.length), DonationMap.Key.values(), dataMaps);
 										if (status.isOK())
 										{
 											break;
@@ -256,8 +239,6 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 	{
 		this.createButton(parent, IDialogConstants.OK_ID, OK_BUTTON_TEXT, true);
 		this.createButton(parent, IDialogConstants.CANCEL_ID, CANCEL_BUTTON_TEXT, false);
-		File file = new File(documentPath.getText());
-		this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
 	}
 
 	private Collection<DataMap> createDataMaps(SelectionMode selectionMode)
@@ -469,63 +450,6 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		label.setLayoutData(new GridData());
 		label.setText("Vorlage");
 
-		File file = null;
-		if (User.getCurrent() != null)
-		{
-			this.userPropertyTemplatePath = User.getCurrent().getProperty(
-					UserProperty.Property.DONATION_CONFIRMATION_TEMPLATE_PATH.key());
-			if (this.userPropertyTemplatePath == null)
-			{
-				this.userPropertyTemplatePath = UserProperty.newInstance(User.getCurrent());
-				this.userPropertyTemplatePath.setKey(UserProperty.Property.DONATION_CONFIRMATION_TEMPLATE_PATH.key());
-				this.userPropertyTemplatePath.setValue(System.getProperty("user.home"));
-			}
-			file = new File(this.userPropertyTemplatePath.getValue());
-		}
-		documentPath = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		documentPath.setText(file.getAbsolutePath());
-		documentPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		documentPath.addModifyListener(new ModifyListener()
-		{
-			@Override
-			public void modifyText(final ModifyEvent e)
-			{
-				File file = new File(documentPath.getText());
-				if (file.exists())
-				{
-					userPropertyTemplatePath.setValue(file.getAbsolutePath());
-				}
-			}
-		});
-
-		documentSelector = new Button(composite, SWT.PUSH);
-		documentSelector.setText("...");
-		documentSelector.setLayoutData(new GridData());
-		documentSelector.addSelectionListener(new SelectionAdapter()
-		{
-			@Override
-			public void widgetSelected(final SelectionEvent e)
-			{
-				String path = DonationConfirmationDialog.this.documentPath.getText();
-				FileDialog dialog = new FileDialog(DonationConfirmationDialog.this.getShell());
-				dialog.setFilterPath(path);
-				dialog.setFilterExtensions(new String[] { "*.odt" });
-				dialog.setText(DIALOG_TITLE);
-				path = dialog.open();
-				if (path != null)
-				{
-					DonationConfirmationDialog.this.documentPath.setText(path);
-
-				}
-				File file = new File(DonationConfirmationDialog.this.documentPath.getText());
-				if (file.exists())
-				{
-					userPropertyTemplatePath.setValue(file.getAbsolutePath());
-				}
-				DonationConfirmationDialog.this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
-			}
-		});
-
 		if (selectionMode.equals(SelectionMode.PERSON))
 		{
 			yearSelector = new Button(composite, SWT.CHECK);
@@ -578,7 +502,6 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 	@Override
 	protected void okPressed()
 	{
-		setUserPath();
 		buildDocument();
 		super.okPressed();
 	}
@@ -616,29 +539,6 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 			{
 				year.setMaximum(donation.getDonationYear());
 			}
-		}
-	}
-
-	private void setUserPath()
-	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		try
-		{
-			tracker.open();
-			Object service = tracker.getService();
-			if (service instanceof ConnectionService)
-			{
-				this.userPropertyTemplatePath.setUser(User.getCurrent());
-				ConnectionService connectionService = (ConnectionService) service;
-				User.getCurrent().setProperty(this.userPropertyTemplatePath);
-				UserQuery query = (UserQuery) connectionService.getQuery(User.class);
-				User.setCurrent(query.merge(User.getCurrent()));
-			}
-		}
-		finally
-		{
-			tracker.close();
 		}
 	}
 

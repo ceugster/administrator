@@ -249,7 +249,7 @@ public class DonationMap extends AbstractDataMap
 				case ANOTHER_LINE:
 				{
 					String anotherLine = "";
-					if (donation.getLink() == null)
+					if (donation.getLink() == null || donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
 					{
 						anotherLine = donation.getAddress().getAnotherLine();
 					}
@@ -261,7 +261,7 @@ public class DonationMap extends AbstractDataMap
 				}
 				case SALUTATION:
 				{
-					if (donation.getLink() == null)
+					if (donation.getLink() == null || donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
 					{
 						return donation.getAddress().getSalutation() == null ? "" : donation.getAddress().getSalutation()
 								.getSalutation();
@@ -275,7 +275,7 @@ public class DonationMap extends AbstractDataMap
 				case POLITE:
 				{
 					String polite = null;
-					if (donation.getLink() == null)
+					if (donation.getLink() == null || donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
 					{
 						AddressSalutation salutation = donation.getAddress().getSalutation();
 						polite = salutation == null ? "" : salutation.getPolite();
@@ -294,7 +294,7 @@ public class DonationMap extends AbstractDataMap
 				}
 				case MAILING_ADDRESS:
 				{
-					if (donation.getLink() == null)
+					if (donation.getLink() == null || donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
 					{
 						return AddressFormatter.getInstance().formatAddressLabel(donation.getAddress());
 					}

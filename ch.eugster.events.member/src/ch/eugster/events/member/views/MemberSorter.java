@@ -14,25 +14,30 @@ public class MemberSorter extends ViewerSorter
 		Member d1 = (Member) e1;
 		Member d2 = (Member) e2;
 
-		if (d1.getLinkPersonAddress() == null && d2.getLinkPersonAddress() == null)
+		if (!hasLink(d1) && !hasLink(d2))
 		{
 			return d1.getAddress().getName().compareTo(d2.getAddress().getName());
 		}
-		else if (d1.getLinkPersonAddress() == null)
+		else if (!hasLink(d1))
 		{
-			return d1.getAddress().getName().compareTo(d2.getLinkPersonAddress().getPerson().getLastname());
+			return d1.getAddress().getName().compareTo(d2.getLink().getPerson().getLastname());
 		}
-		else if (d2.getLinkPersonAddress() == null)
+		else if (!hasLink(d2))
 		{
-			String name1 = PersonFormatter.getInstance().formatLastnameFirstname(d1.getLinkPersonAddress().getPerson());
+			String name1 = PersonFormatter.getInstance().formatLastnameFirstname(d1.getLink().getPerson());
 			String name2 = d2.getAddress().getName();
 			return name1.compareTo(name2);
 		}
 		else
 		{
-			String name1 = PersonFormatter.getInstance().formatLastnameFirstname(d1.getLinkPersonAddress().getPerson());
-			String name2 = PersonFormatter.getInstance().formatLastnameFirstname(d2.getLinkPersonAddress().getPerson());
+			String name1 = PersonFormatter.getInstance().formatLastnameFirstname(d1.getLink().getPerson());
+			String name2 = PersonFormatter.getInstance().formatLastnameFirstname(d2.getLink().getPerson());
 			return name1.compareTo(name2);
 		}
+	}
+
+	private boolean hasLink(Member member)
+	{
+		return member.getLink() != null && !member.getLink().isDeleted() || !member.getLink().getPerson().isDeleted();
 	}
 }

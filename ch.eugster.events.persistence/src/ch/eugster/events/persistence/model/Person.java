@@ -140,7 +140,7 @@ public class Person extends AbstractEntity
 	public void addLink(final LinkPersonAddress link)
 	{
 		this.propertyChangeSupport.firePropertyChange("links", this.links, this.links.add(link));
-		if (defaultLink == null)
+		if (defaultLink == null || defaultLink.isDeleted())
 		{
 			defaultLink = link;
 		}
@@ -309,6 +309,19 @@ public class Person extends AbstractEntity
 	public Collection<LinkPersonAddress> getLinks()
 	{
 		return this.links;
+	}
+
+	public Collection<LinkPersonAddress> getValidLinks()
+	{
+		Collection<LinkPersonAddress> validLinks = new ArrayList<LinkPersonAddress>();
+		for (LinkPersonAddress link : links)
+		{
+			if (!link.isDeleted())
+			{
+				validLinks.add(link);
+			}
+		}
+		return validLinks;
 	}
 
 	public Member getMember(final Membership membership)

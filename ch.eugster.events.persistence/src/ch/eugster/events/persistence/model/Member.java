@@ -78,7 +78,7 @@ public class Member extends AbstractEntity
 	private Member(final Membership membership, final LinkPersonAddress link)
 	{
 		super();
-		this.setLinkPersonAddress(link);
+		this.setLink(link);
 		this.setMembership(membership);
 	}
 
@@ -103,7 +103,7 @@ public class Member extends AbstractEntity
 		return this.id;
 	}
 
-	public LinkPersonAddress getLinkPersonAddress()
+	public LinkPersonAddress getLink()
 	{
 		return link;
 	}
@@ -134,7 +134,7 @@ public class Member extends AbstractEntity
 		this.propertyChangeSupport.firePropertyChange("id", this.id, this.id = id);
 	}
 
-	public void setLinkPersonAddress(final LinkPersonAddress link)
+	public void setLink(final LinkPersonAddress link)
 	{
 		this.link = link;
 		this.setAddress(link.getAddress());

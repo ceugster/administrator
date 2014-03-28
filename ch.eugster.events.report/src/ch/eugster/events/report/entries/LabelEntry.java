@@ -61,18 +61,20 @@ public class LabelEntry implements Comparable<LabelEntry>
 
 	public String getId()
 	{
-		return link == null ? "A" + this.address.getId().toString() : "L" + link.getId().toString();
+		return link == null || link.isDeleted() || link.getPerson().isDeleted() ? "A" + this.address.getId().toString()
+				: "L" + link.getId().toString();
 	}
 
 	public String getLabel()
 	{
-		return link == null ? AddressFormatter.getInstance().getLabel(address) : LinkPersonAddressFormatter
-				.getInstance().getLabel(link);
+		return link == null || link.isDeleted() || link.getPerson().isDeleted() ? AddressFormatter.getInstance()
+				.getLabel(address) : LinkPersonAddressFormatter.getInstance().getLabel(link);
 	}
 
 	public String getOrder()
 	{
-		return link == null ? address.getName() : PersonFormatter.getInstance().formatLastnameFirstname(person);
+		return link == null || link.isDeleted() || link.getPerson().isDeleted() ? address.getName() : PersonFormatter
+				.getInstance().formatLastnameFirstname(person);
 	}
 
 	private void loadData(final Address address)

@@ -29,7 +29,7 @@ public class AddressContentProposal implements IContentProposal, Comparable<Addr
 	{
 		if (other instanceof AddressContentProposal)
 		{
-			if (this.link == null)
+			if (this.link == null || this.link.isDeleted() || this.link.getPerson().isDeleted())
 			{
 				if (this.address.getId() == null)
 				{
@@ -59,7 +59,8 @@ public class AddressContentProposal implements IContentProposal, Comparable<Addr
 	@Override
 	public String getContent()
 	{
-		return this.link == null ? this.address.getAddress() : this.link.getAddress().getAddress();
+		return this.link == null || this.link.isDeleted() || this.link.getPerson().isDeleted() ? this.address
+				.getAddress() : this.link.getAddress().getAddress();
 	}
 
 	@Override
@@ -87,7 +88,7 @@ public class AddressContentProposal implements IContentProposal, Comparable<Addr
 			}
 			builder.append(AddressFormatter.getInstance().formatCityLine(this.address));
 		}
-		if (this.link == null)
+		if (this.link == null || this.link.isDeleted() || this.link.getPerson().isDeleted())
 		{
 			if (!this.address.getName().isEmpty())
 			{

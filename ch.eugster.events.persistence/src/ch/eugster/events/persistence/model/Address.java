@@ -198,7 +198,7 @@ public class Address extends AbstractEntity implements Donator
 		AddressGroupMember[] members = this.addressGroupMembers.toArray(new AddressGroupMember[0]);
 		for (AddressGroupMember member : members)
 		{
-			if (member.getLink() == null)
+			if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
 			{
 				addressGroupMembers.add(member);
 			}
@@ -284,6 +284,19 @@ public class Address extends AbstractEntity implements Donator
 	public Collection<LinkPersonAddress> getPersonLinks()
 	{
 		return this.links;
+	}
+
+	public Collection<LinkPersonAddress> getValidLinks()
+	{
+		Collection<LinkPersonAddress> validLinks = new ArrayList<LinkPersonAddress>();
+		for (LinkPersonAddress link : this.links)
+		{
+			if (!link.isDeleted() && !link.getPerson().isDeleted())
+			{
+				validLinks.add(link);
+			}
+		}
+		return validLinks;
 	}
 
 	public String getPhone()
