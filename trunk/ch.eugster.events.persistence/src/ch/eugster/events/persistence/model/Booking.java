@@ -557,7 +557,7 @@ public class Booking extends AbstractEntity
 	{
 		if (paymentTerm == null)
 		{
-			paymentTerm = this.getCourse().getPaymentTerm();
+			paymentTerm = this.getCourse() == null ? null : this.getCourse().getPaymentTerm();
 		}
 		return paymentTerm;
 	}
