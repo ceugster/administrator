@@ -6,13 +6,13 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.eugster.events.course.reporting.dialogs.BookingListReportDialog;
-import ch.eugster.events.persistence.model.Season;
 
 public class GenerateBookingListReportHandler extends AbstractHandler implements IHandler
 {
@@ -29,10 +29,13 @@ public class GenerateBookingListReportHandler extends AbstractHandler implements
 			if (selection instanceof IStructuredSelection)
 			{
 				IStructuredSelection ssel = (IStructuredSelection) selection;
-				if (ssel.getFirstElement() instanceof Season)
+				if (ssel.isEmpty())
 				{
-					Season season = (Season) ssel.getFirstElement();
-					BookingListReportDialog dialog = new BookingListReportDialog(shell, season);
+					MessageDialog.openConfirm(shell, "Ungültige Auswahl", "Die vorgenommene Auswahl ist ungültig.");
+				}
+				else
+				{
+					BookingListReportDialog dialog = new BookingListReportDialog(shell, ssel);
 					dialog.open();
 				}
 			}
@@ -47,15 +50,8 @@ public class GenerateBookingListReportHandler extends AbstractHandler implements
 		EvaluationContext context = (EvaluationContext) evaluationContext;
 		if (context.getVariable("selection") instanceof StructuredSelection)
 		{
-			Object selection = context.getVariable("selection");
-			if (selection instanceof StructuredSelection)
-			{
-				StructuredSelection ssel = (StructuredSelection) selection;
-				if (ssel.getFirstElement() instanceof Season)
-				{
-					enabled = true;
-				}
-			}
+			ISelection selection = (ISelection) context.getVariable("selection");
+			enabled = !selection.isEmpty();
 		}
 		setBaseEnabled(enabled);
 	}

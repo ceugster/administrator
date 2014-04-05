@@ -82,7 +82,14 @@ public class AddressQuery extends AbstractEntityQuery<Address>
 
 		if (organization != null)
 		{
-			whole = whole.and(organization);
+			if (whole == null)
+			{
+				whole = organization;
+			}
+			else
+			{
+				whole = whole.and(organization);
+			}
 		}
 		if (street != null)
 		{

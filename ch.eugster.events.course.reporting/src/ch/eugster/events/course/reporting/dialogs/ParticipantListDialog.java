@@ -17,7 +17,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -34,19 +33,18 @@ import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.Participant;
-import ch.eugster.events.persistence.model.PersonSettings;
+import ch.eugster.events.persistence.model.Season;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.queries.UserQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
-import ch.eugster.events.person.editors.EditorSelector;
 
 public class ParticipantListDialog extends TitleAreaDialog
 {
-	private Button collectionSelector;
+	// private Button collectionSelector;
 
 	private final StructuredSelection selection;
 
-	private final String message = "Erstellen einer Adressliste des selektierten Kurses.";
+	private final String message = "Erstellen einer Adressliste der selektierten Kurse.";
 
 	private boolean isPageComplete = false;
 
@@ -114,6 +112,18 @@ public class ParticipantListDialog extends TitleAreaDialog
 		}
 	}
 
+	private void computeSeason(final Collection<DataMap> map, final Season season)
+	{
+		if (!season.isDeleted())
+		{
+			Collection<Course> courses = season.getCourses();
+			for (Course course : courses)
+			{
+				computeCourse(map, course);
+			}
+		}
+	}
+
 	private void computeCourse(final Collection<DataMap> map, final Course course)
 	{
 		if (!course.isDeleted())
@@ -147,7 +157,12 @@ public class ParticipantListDialog extends TitleAreaDialog
 		Object[] elements = ssel.toArray();
 		for (Object element : elements)
 		{
-			if (element instanceof Course)
+			if (element instanceof Season)
+			{
+				Season season = (Season) element;
+				computeSeason(maps, season);
+			}
+			else if (element instanceof Course)
 			{
 				Course course = (Course) element;
 				computeCourse(maps, course);
@@ -166,13 +181,14 @@ public class ParticipantListDialog extends TitleAreaDialog
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout());
 
-		if (EditorSelector.values()[PersonSettings.getInstance().getEditorSelector()]
-				.equals(EditorSelector.MULTI_PAGE_EDITOR))
-		{
-			collectionSelector = new Button(composite, SWT.CHECK);
-			collectionSelector.setText("Gruppenadressen nur einmal auflisten");
-			collectionSelector.setLayoutData(new GridData());
-		}
+		// if
+		// (EditorSelector.values()[PersonSettings.getInstance().getEditorSelector()]
+		// .equals(EditorSelector.MULTI_PAGE_EDITOR))
+		// {
+		// collectionSelector = new Button(composite, SWT.CHECK);
+		// collectionSelector.setText("Gruppenadressen nur einmal auflisten");
+		// collectionSelector.setLayoutData(new GridData());
+		// }
 
 		return parent;
 	}

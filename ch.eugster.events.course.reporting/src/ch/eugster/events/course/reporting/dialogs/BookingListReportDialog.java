@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -33,7 +34,6 @@ import ch.eugster.events.course.reporting.Activator;
 import ch.eugster.events.course.reporting.BookingListFactory;
 import ch.eugster.events.course.reporting.preferences.PreferenceConstants;
 import ch.eugster.events.persistence.model.CourseState;
-import ch.eugster.events.persistence.model.Season;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.queries.UserQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
@@ -47,16 +47,16 @@ public class BookingListReportDialog extends TitleAreaDialog
 
 	private Map<CourseState, Boolean> selectedStates = new HashMap<CourseState, Boolean>();
 
-	private final Season season;
+	private final IStructuredSelection ssel;
 
 	private final String message = "Erstellen einer Kursliste mit Buchungsstand.";
 
 	private boolean isPageComplete = false;
 
-	public BookingListReportDialog(final Shell parentShell, Season season)
+	public BookingListReportDialog(final Shell parentShell, IStructuredSelection ssel)
 	{
 		super(parentShell);
-		this.season = season;
+		this.ssel = ssel;
 		settings = Activator.getDefault().getDialogSettings().getSection("booking.list.report.dialog");
 		if (settings == null)
 		{
@@ -132,7 +132,7 @@ public class BookingListReportDialog extends TitleAreaDialog
 			public IStatus runInUIThread(IProgressMonitor monitor)
 			{
 
-				BookingListFactory factory = BookingListFactory.create(User.getCurrent(), season, selectedStates);
+				BookingListFactory factory = BookingListFactory.create(User.getCurrent(), ssel, selectedStates);
 				if (factory.size() == 0)
 				{
 					MessageDialog.openInformation(null, "Keine Kurse vorhanden", "Ihre Auswahl enthält keine Kurse.");
