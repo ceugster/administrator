@@ -37,6 +37,7 @@
       </command>
       <command
             categoryId="ch.eugster.events.course.reporting.category"
+            defaultHandler="ch.eugster.events.course.reporting.handlers.GenerateInvitationHandler"
             description="Kurseinladung generieren"
             id="ch.eugster.events.course.reporting.command.generateInvitation"
             name="Kurseinladung">
@@ -68,32 +69,6 @@
       <handler
             class="ch.eugster.events.course.reporting.handlers.GenerateBookingConfirmationHandler"
             commandId="ch.eugster.events.course.reporting.command.generateBookingConfirmation">
-         <enabledWhen>
-            <with
-                  variable="selection">
-               <or>
-                  <and>
-                     <count
-                           value="1">
-                     </count>
-                     <iterate>
-                        <instanceof
-                              value="ch.eugster.events.persistence.model.Course">
-                        </instanceof>
-                     </iterate>
-                  </and>
-                  <iterate>
-                     <instanceof
-                           value="ch.eugster.events.persistence.model.Booking">
-                     </instanceof>
-                  </iterate>
-               </or>
-            </with>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="ch.eugster.events.course.reporting.handlers.GenerateInvitationHandler"
-            commandId="ch.eugster.events.course.reporting.command.generateInvitation">
          <enabledWhen>
             <with
                   variable="selection">
