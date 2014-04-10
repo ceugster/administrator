@@ -166,6 +166,11 @@ public class CourseInvitationDialog extends TitleAreaDialog
 					dataMaps.add(new BookingMap(booking, true));
 				}
 			}
+			if (element instanceof Booking)
+			{
+				Booking booking = (Booking) element;
+				dataMaps.add(new BookingMap(booking, true));
+			}
 		}
 		return dataMaps;
 	}
