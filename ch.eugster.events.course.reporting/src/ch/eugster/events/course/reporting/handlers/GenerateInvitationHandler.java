@@ -13,7 +13,9 @@ import org.osgi.util.tracker.ServiceTracker;
 import ch.eugster.events.course.reporting.Activator;
 import ch.eugster.events.course.reporting.dialogs.CourseInvitationDialog;
 import ch.eugster.events.documents.services.DocumentBuilderService;
+import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
+import ch.eugster.events.persistence.model.Participant;
 
 public class GenerateInvitationHandler extends AbstractHandler implements IHandler
 {
@@ -58,6 +60,12 @@ public class GenerateInvitationHandler extends AbstractHandler implements IHandl
 							if (element instanceof Course)
 							{
 
+							}
+							else if (element instanceof Booking)
+							{
+							}
+							else if (element instanceof Participant)
+							{
 							}
 							else
 							{

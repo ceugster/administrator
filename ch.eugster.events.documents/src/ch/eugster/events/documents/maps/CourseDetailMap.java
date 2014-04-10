@@ -12,6 +12,8 @@ public class CourseDetailMap extends AbstractDataMap
 
 	private static DateFormat dateFormatter = SimpleDateFormat.getDateInstance();
 
+	private static DateFormat timeFormatter = SimpleDateFormat.getTimeInstance();
+
 	public CourseDetailMap(final CourseDetail courseDetail)
 	{
 		for (Key key : Key.values())
@@ -24,16 +26,36 @@ public class CourseDetailMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		END, JOURNEY, LOCATION, MEETING_POINT, START, SUBSTITUTION_START, SUBSTITUTION_END;
+		START_DATE_TIME, START_DATE, START_TIME, END_DATE_TIME, END_DATE, END_TIME, JOURNEY, LOCATION, MEETING_POINT, SUBSTITUTION_START_DATE_TIME, SUBSTITUTION_START_DATE, SUBSTITUTION_START_TIME, SUBSTITUTION_END_DATE_TIME, SUBSTITUTION_END_DATE, SUBSTITUTION_END_TIME;
 
 		@Override
 		public String getDescription()
 		{
 			switch (this)
 			{
-				case END:
+				case START_DATE_TIME:
+				{
+					return "Beginn des Kursabschnitts (Datum und Zeit)";
+				}
+				case START_DATE:
+				{
+					return "Beginn des Kursabschnitts (Datum)";
+				}
+				case START_TIME:
+				{
+					return "Beginn des Kursabschnitts (Zeit)";
+				}
+				case END_DATE_TIME:
 				{
 					return "Ende des Kursabschnitts (Datum und Zeit)";
+				}
+				case END_DATE:
+				{
+					return "Ende des Kursabschnitts (Datum)";
+				}
+				case END_TIME:
+				{
+					return "Ende des Kursabschnitts (Zeit)";
 				}
 				case JOURNEY:
 				{
@@ -47,17 +69,29 @@ public class CourseDetailMap extends AbstractDataMap
 				{
 					return "Treffpunkt";
 				}
-				case START:
-				{
-					return "Beginn des Kursabschnitts (Datum und Zeit)";
-				}
-				case SUBSTITUTION_START:
+				case SUBSTITUTION_START_DATE_TIME:
 				{
 					return "Beginn des Kursabschnitts (Ersatzdatum und -Zeit)";
 				}
-				case SUBSTITUTION_END:
+				case SUBSTITUTION_START_DATE:
+				{
+					return "Beginn des Kursabschnitts (Ersatzdatum)";
+				}
+				case SUBSTITUTION_START_TIME:
+				{
+					return "Beginn des Kursabschnitts (Ersatzzeit)";
+				}
+				case SUBSTITUTION_END_DATE_TIME:
 				{
 					return "Ende des Kursabschnitts (Ersatzdatum und -Zeit)";
+				}
+				case SUBSTITUTION_END_DATE:
+				{
+					return "Ende des Kursabschnitts (Ersatzdatum)";
+				}
+				case SUBSTITUTION_END_TIME:
+				{
+					return "Ende des Kursabschnitts (Ersatzzeit)";
 				}
 				default:
 				{
@@ -71,9 +105,29 @@ public class CourseDetailMap extends AbstractDataMap
 		{
 			switch (this)
 			{
-				case END:
+				case START_DATE_TIME:
 				{
-					return "course_detail_end";
+					return "course_detail_start_date_time";
+				}
+				case START_DATE:
+				{
+					return "course_detail_start_date";
+				}
+				case START_TIME:
+				{
+					return "course_detail_start_time";
+				}
+				case END_DATE_TIME:
+				{
+					return "course_detail_end_date_time";
+				}
+				case END_DATE:
+				{
+					return "course_detail_end_date";
+				}
+				case END_TIME:
+				{
+					return "course_detail_end_time";
 				}
 				case JOURNEY:
 				{
@@ -87,17 +141,29 @@ public class CourseDetailMap extends AbstractDataMap
 				{
 					return "course_detail_meeting_point";
 				}
-				case START:
+				case SUBSTITUTION_START_DATE_TIME:
 				{
-					return "course_detail_start";
+					return "course_detail_substitution_start_date_time";
 				}
-				case SUBSTITUTION_START:
+				case SUBSTITUTION_START_DATE:
 				{
-					return "course_detail_substitution_start";
+					return "course_detail_substitution_start_date";
 				}
-				case SUBSTITUTION_END:
+				case SUBSTITUTION_START_TIME:
 				{
-					return "course_detail_substitution_end";
+					return "course_detail_substitution_start_time";
+				}
+				case SUBSTITUTION_END_DATE_TIME:
+				{
+					return "course_detail_substitution_end_date_time";
+				}
+				case SUBSTITUTION_END_DATE:
+				{
+					return "course_detail_substitution_end_date";
+				}
+				case SUBSTITUTION_END_TIME:
+				{
+					return "course_detail_substitution_end_time";
 				}
 				default:
 				{
@@ -111,13 +177,33 @@ public class CourseDetailMap extends AbstractDataMap
 		{
 			switch (this)
 			{
-				case END:
+				case START_DATE_TIME:
 				{
-					return "Ende";
+					return "Start (Datum und Zeit)";
+				}
+				case START_DATE:
+				{
+					return "Start (Datum)";
+				}
+				case START_TIME:
+				{
+					return "Start (Zeit)";
+				}
+				case END_DATE_TIME:
+				{
+					return "Ende (Datum und Zeit)";
+				}
+				case END_DATE:
+				{
+					return "Ende (Datum)";
+				}
+				case END_TIME:
+				{
+					return "Ende (Zeit)";
 				}
 				case JOURNEY:
 				{
-					return "Anfahrt";
+					return "Anfahrtsinformationen";
 				}
 				case LOCATION:
 				{
@@ -127,17 +213,29 @@ public class CourseDetailMap extends AbstractDataMap
 				{
 					return "Treffpunkt";
 				}
-				case START:
+				case SUBSTITUTION_START_DATE_TIME:
 				{
-					return "Beginn";
+					return "Beginn Ersatzdatum (Datum und Zeit)";
 				}
-				case SUBSTITUTION_START:
+				case SUBSTITUTION_START_DATE:
 				{
-					return "Beginn (Ersatzdatum)";
+					return "Beginn Ersatzdatum (Datum)";
 				}
-				case SUBSTITUTION_END:
+				case SUBSTITUTION_START_TIME:
 				{
-					return "Ende (Ersatzdatum)";
+					return "Beginn Ersatzdatum (Zeit)";
+				}
+				case SUBSTITUTION_END_DATE_TIME:
+				{
+					return "Ende Ersatzdatum (Datum und Zeit)";
+				}
+				case SUBSTITUTION_END_DATE:
+				{
+					return "Ende Ersatzdatum (Datum)";
+				}
+				case SUBSTITUTION_END_TIME:
+				{
+					return "Ende Ersatzdatum (Zeit)";
 				}
 				default:
 				{
@@ -146,22 +244,60 @@ public class CourseDetailMap extends AbstractDataMap
 			}
 		}
 
+		private String getDateTime(Calendar calendar)
+		{
+			if (calendar == null)
+			{
+				return "";
+			}
+			return dateTimeFormatter.format(calendar.getTime());
+		}
+
+		private String getDate(Calendar calendar)
+		{
+			if (calendar == null)
+			{
+				return "";
+			}
+			return dateFormatter.format(calendar.getTime());
+		}
+
+		private String getTime(Calendar calendar)
+		{
+			if (calendar == null)
+			{
+				return "";
+			}
+			return timeFormatter.format(calendar.getTime());
+		}
+
 		public String getValue(final CourseDetail courseDetail)
 		{
 			switch (this)
 			{
-				case END:
+				case START_DATE_TIME:
 				{
-					Calendar end = courseDetail.getEnd();
-					if (end == null)
-					{
-						return "";
-					}
-					if (end.get(Calendar.HOUR_OF_DAY) == 0 && end.get(Calendar.MINUTE) == 0)
-					{
-						return dateFormatter.format(end.getTime());
-					}
-					return dateTimeFormatter.format(end.getTime());
+					return getDateTime(courseDetail.getStart());
+				}
+				case START_DATE:
+				{
+					return getDate(courseDetail.getStart());
+				}
+				case START_TIME:
+				{
+					return getTime(courseDetail.getStart());
+				}
+				case END_DATE_TIME:
+				{
+					return getDateTime(courseDetail.getEnd());
+				}
+				case END_DATE:
+				{
+					return getDate(courseDetail.getEnd());
+				}
+				case END_TIME:
+				{
+					return getTime(courseDetail.getEnd());
 				}
 				case JOURNEY:
 				{
@@ -175,28 +311,35 @@ public class CourseDetailMap extends AbstractDataMap
 				{
 					return courseDetail.getMeetingPoint();
 				}
-				case START:
-				{
-					Calendar start = courseDetail.getStart();
-					if (start == null)
-					{
-						return "";
-					}
-					if (start.get(Calendar.HOUR_OF_DAY) == 0 && start.get(Calendar.MINUTE) == 0)
-					{
-						return dateFormatter.format(start.getTime());
-					}
-					return dateTimeFormatter.format(start.getTime());
-				}
-				case SUBSTITUTION_START:
+				case SUBSTITUTION_START_DATE_TIME:
 				{
 					Calendar calendar = courseDetail.getSubstituteStart();
-					return calendar == null ? "" : dateTimeFormatter.format(calendar.getTime());
+					return calendar == null ? "" : getDateTime(courseDetail.getSubstituteStart());
 				}
-				case SUBSTITUTION_END:
+				case SUBSTITUTION_START_DATE:
 				{
-					Calendar calendar = courseDetail.getSubstituteEnd();
-					return calendar == null ? "" : dateTimeFormatter.format(calendar.getTime());
+					Calendar calendar = courseDetail.getSubstituteStart();
+					return calendar == null ? "" : getDate(courseDetail.getSubstituteStart());
+				}
+				case SUBSTITUTION_START_TIME:
+				{
+					Calendar calendar = courseDetail.getSubstituteStart();
+					return calendar == null ? "" : getTime(courseDetail.getSubstituteStart());
+				}
+				case SUBSTITUTION_END_DATE_TIME:
+				{
+					Calendar calendar = courseDetail.getSubstituteStart();
+					return calendar == null ? "" : getDateTime(courseDetail.getSubstituteEnd());
+				}
+				case SUBSTITUTION_END_DATE:
+				{
+					Calendar calendar = courseDetail.getSubstituteStart();
+					return calendar == null ? "" : getDate(courseDetail.getSubstituteEnd());
+				}
+				case SUBSTITUTION_END_TIME:
+				{
+					Calendar calendar = courseDetail.getSubstituteStart();
+					return calendar == null ? "" : getTime(courseDetail.getSubstituteEnd());
 				}
 				default:
 				{
