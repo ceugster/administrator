@@ -8,8 +8,6 @@ import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 
-import ch.eugster.events.persistence.model.AbstractEntity;
-
 public class CourseTransfer extends ByteArrayTransfer
 {
 	// First attempt to create a UUID for the type name to make sure that
@@ -21,7 +19,7 @@ public class CourseTransfer extends ByteArrayTransfer
 
 	private static final CourseTransfer INSTANCE = new CourseTransfer();
 
-	private AbstractEntity[] data;
+	private Object[] data;
 
 	private int operation;
 
@@ -49,7 +47,7 @@ public class CourseTransfer extends ByteArrayTransfer
 	 * 
 	 * @return the local transfer data
 	 */
-	public AbstractEntity[] getData()
+	public Object[] getData()
 	{
 		return this.data;
 	}
@@ -61,7 +59,8 @@ public class CourseTransfer extends ByteArrayTransfer
 
 	public boolean isEmpty()
 	{
-		if (this.data == null) return true;
+		if (this.data == null)
+			return true;
 		return this.data.length == 0;
 	}
 
@@ -86,10 +85,7 @@ public class CourseTransfer extends ByteArrayTransfer
 	@Override
 	protected int[] getTypeIds()
 	{
-		return new int[]
-		{
-			CourseTransfer.TYPEID
-		};
+		return new int[] { CourseTransfer.TYPEID };
 	}
 
 	/**
@@ -100,10 +96,7 @@ public class CourseTransfer extends ByteArrayTransfer
 	@Override
 	protected String[] getTypeNames()
 	{
-		return new String[]
-		{
-			CourseTransfer.TYPE_NAME
-		};
+		return new String[] { CourseTransfer.TYPE_NAME };
 	}
 
 	/**
@@ -147,10 +140,10 @@ public class CourseTransfer extends ByteArrayTransfer
 	 * @param s
 	 *            the transfer data
 	 */
-	public void setData(int operation, AbstractEntity[] entities)
+	public void setData(int operation, Object[] data)
 	{
 		this.operation = operation;
-		this.data = entities;
+		this.data = data;
 	}
 
 	/**
