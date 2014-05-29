@@ -165,7 +165,7 @@ public class FormLetterDialog extends TitleAreaDialog
 	{
 		if (!member.isDeleted())
 		{
-			if (this.useCollectionAddress.getSelection())
+			if (this.useCollectionAddress != null && this.useCollectionAddress.getSelection())
 			{
 				AddressCounter counter = addresses.get(member.getAddress().getId());
 				if (counter == null || counter.getCounts() < 2)

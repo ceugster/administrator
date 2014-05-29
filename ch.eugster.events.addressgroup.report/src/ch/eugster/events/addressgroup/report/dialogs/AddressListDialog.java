@@ -418,7 +418,7 @@ public class AddressListDialog extends TitleAreaDialog
 		{
 			sortKey = (DataMapKey) ssel.getFirstElement();
 		}
-		this.groupEntities = this.collectionSelector.getSelection();
+		this.groupEntities = this.collectionSelector == null ? false : this.collectionSelector.getSelection();
 		super.okPressed();
 
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
