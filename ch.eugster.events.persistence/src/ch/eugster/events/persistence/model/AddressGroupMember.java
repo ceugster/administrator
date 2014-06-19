@@ -129,15 +129,7 @@ public class AddressGroupMember extends AbstractEntity
 	public void setParent(final LinkPersonAddress link, final Address address)
 	{
 		this.link = link;
-		if (link != null)
-		{
-			// link.addAddressGroupMember(this);
-		}
 		this.address = address;
-		if (address != null)
-		{
-			// address.addAddressGroupMember(this);
-		}
 	}
 
 	public static AddressGroupMember newInstance()

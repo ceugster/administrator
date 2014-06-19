@@ -114,74 +114,74 @@ public class PersonSorter extends ViewerSorter
 			}
 		}
 
-		public String value(LinkPersonAddress link)
+		public String value(Person person)
 		{
 			switch (this)
 			{
 				case CODE:
 				{
-					return PersonFormatter.getInstance().formatId(link.getPerson())
-							+ (link.getPerson().isMember() ? "*" : "");
+					return PersonFormatter.getInstance().formatId(person)
+							+ (person.isMember() ? "*" : "");
 				}
 				case NAME:
 				{
-					return PersonFormatter.getInstance().formatLastnameFirstname(link.getPerson());
+					return PersonFormatter.getInstance().formatLastnameFirstname(person);
 				}
 				case LASTNAME:
 				{
-					return link.getPerson().getLastname();
+					return person.getLastname();
 				}
 				case FIRSTNAME:
 				{
-					return link.getPerson().getFirstname();
+					return person.getFirstname();
 				}
 				case ADDRESS_ID:
 				{
-					return link.getAddress().getId().toString();
+					return person.getDefaultLink().getAddress().getId().toString();
 				}
 				case ORGANISATION:
 				{
-					return link.getAddress().getName();
+					return person.getDefaultLink().getAddress().getName();
 				}
 				case ADDRESS:
 				{
-					return AddressFormatter.getInstance().formatAddressLine(link.getAddress());
+					return AddressFormatter.getInstance().formatAddressLine(person.getDefaultLink().getAddress());
 				}
 				case CITY:
 				{
-					return AddressFormatter.getInstance().formatCityLine(link.getAddress());
+					return AddressFormatter.getInstance().formatCityLine(person.getDefaultLink().getAddress());
 				}
 				case MOBILE:
 				{
-					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(link.getPerson().getCountry(),
-							link.getPhone());
+					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(person.getCountry(),
+							person.getDefaultLink().getPhone());
 				}
 				case PHONE:
 				{
-					return PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(link.getPerson().getCountry(),
-							link.getPerson().getPhone());
+					return PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(person.getCountry(),
+							person.getPhone());
 				}
 				case FAX:
 				{
-					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(link.getAddress().getCountry(),
-							link.getAddress().getFax());
+					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(person.getDefaultLink().getAddress().getCountry(),
+							person.getDefaultLink().getAddress().getFax());
 				}
 				case EMAIL:
 				{
-					String email = link.getEmail();
+					String email = person.getDefaultLink().getEmail();
 					if (email.isEmpty())
 					{
-						email = link.getPerson().getEmail();
+						email = person.getEmail();
 					}
 					if (email.isEmpty())
 					{
-						email = link.getAddress().getEmail();
+						email = person.getDefaultLink().getAddress().getEmail();
 					}
 					return email;
 				}
 				case DOMAIN:
 				{
-					return link.getPerson().getDomain() == null ? "" : link.getPerson().getDomain().getName();
+					return person.getDomain() == null ? "" : person.getDomain().getName();
 				}
 				default:
 				{

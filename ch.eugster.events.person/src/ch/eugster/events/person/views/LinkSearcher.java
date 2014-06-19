@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
@@ -741,10 +742,11 @@ public class LinkSearcher extends Composite
 
 	private AbstractEntity[] selectById(final String text)
 	{
-		Collection<AbstractEntity> entities = new ArrayList<AbstractEntity>();
+		List<AbstractEntity> entities = new ArrayList<AbstractEntity>();
 
 		Person person = null;
 		Address address = null;
+		LinkPersonAddress link = null;
 
 		try
 		{
@@ -755,6 +757,8 @@ public class LinkSearcher extends Composite
 				person = personQuery.find(Person.class, id);
 				AddressQuery addressQuery = (AddressQuery) connectionService.getQuery(Address.class);
 				address = addressQuery.find(Address.class, id);
+				LinkPersonAddressQuery linkQuery = (LinkPersonAddressQuery) connectionService.getQuery(LinkPersonAddress.class);
+				link = linkQuery.find(LinkPersonAddress.class, id);
 			}
 		}
 		catch (NumberFormatException e)
@@ -764,11 +768,40 @@ public class LinkSearcher extends Composite
 		{
 			entities.add(person);
 		}
-		if (address != null && address.getPersonLinks().size() == 0)
+		if (address != null)
 		{
-			entities.add(address);
+			if (address.getPersonLinks().size() == 0)
+			{
+				entities.add(address);
+			}
+			else
+			{
+				for (LinkPersonAddress child : address.getPersonLinks())
+				{
+					addIfNotAlreadyAdded(entities, child.getPerson());
+				}
+			}
+		}
+		if (link != null)
+		{
+			addIfNotAlreadyAdded(entities, link.getPerson());
 		}
 		return entities.toArray(new AbstractEntity[0]);
+	}
+	
+	private void addIfNotAlreadyAdded(List<AbstractEntity> entities, Person person)
+	{
+		for (AbstractEntity entity : entities)
+		{
+			if (entity instanceof Person)
+			{
+				if (entity.getId().equals(person.getId()))
+				{
+					return;
+				}
+			}
+		}
+		entities.add(person);
 	}
 
 	private AbstractEntity[] selectItems(final Map<String, String> criteria)
