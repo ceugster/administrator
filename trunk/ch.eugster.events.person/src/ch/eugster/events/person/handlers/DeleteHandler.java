@@ -161,7 +161,8 @@ public class DeleteHandler extends AbstractHandler implements IHandler
 				{
 					for (Participant participant : link.getParticipants())
 					{
-						if (participant.getBooking().getCourse().getState().equals(CourseState.FORTHCOMING))
+						if (!participant.isDeleted()
+								&& participant.getBooking().getCourse().getState().equals(CourseState.FORTHCOMING))
 						{
 							return new Status(IStatus.CANCEL, Activator.PLUGIN_ID, PersonFormatter.getInstance()
 									.formatFirstnameLastname(person)
