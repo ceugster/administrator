@@ -202,14 +202,26 @@ public class ParticipantMap extends AbstractDataMap
 				}
 				case BOOKING_TYPE_CODE:
 				{
-					return participant.getBookingType().getCode();
+					if (participant.getBookingType() == null)
+					{
+						return "";
+					}
+					return participant.getBookingType().getCode() == null ? "" : participant.getBookingType().getCode();
 				}
 				case BOOKING_TYPE_NAME:
 				{
+					if (participant.getBookingType() == null)
+					{
+						return "";
+					}
 					return participant.getBookingType().getName();
 				}
 				case PRICE:
 				{
+					if (participant.getBookingType() == null)
+					{
+						return "";
+					}
 					return numberFormatter.format(participant.getBookingType().getPrice());
 				}
 				case COUNT:
@@ -218,6 +230,10 @@ public class ParticipantMap extends AbstractDataMap
 				}
 				case AMOUNT:
 				{
+					if (participant.getBookingType() == null)
+					{
+						return "";
+					}
 					return numberFormatter.format(participant.getBookingType().getPrice() * participant.getCount());
 				}
 				case ANOTHER_LINE:

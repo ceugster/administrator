@@ -147,11 +147,15 @@ public class BookingTypeMap extends AbstractDataMap
 
 		public String getValue(final BookingType bookingType)
 		{
+			if (bookingType == null)
+			{
+				return "";
+			}
 			switch (this)
 			{
 				case CODE:
 				{
-					return bookingType.getCode();
+					return bookingType.getCode() == null ? "" : bookingType.getCode();
 				}
 				case NAME:
 				{

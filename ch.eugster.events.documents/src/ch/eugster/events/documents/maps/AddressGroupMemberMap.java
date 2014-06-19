@@ -17,8 +17,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 			this.setProperty(key.getKey(), key.getValue(member, isGroup));
 		}
 		this.setProperties(new AddressGroupMap(member.getAddressGroup()).getProperties());
-		if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted()
-				|| isGroup)
+		if (member.getLink() == null || (isGroup && member.getAddress().getValidLinks().size() > 1))
 		{
 			this.setProperties(new AddressMap(member.getAddress()).getProperties());
 		}
