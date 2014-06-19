@@ -175,7 +175,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="org.eclipse.equinox.p2.artifact.repository"/>
       <plugin id="org.eclipse.equinox.p2.core"/>
       <plugin id="org.eclipse.equinox.p2.director"/>
-      <plugin id="org.eclipse.equinox.p2.discovery" fragment=""/>
+      <plugin id="org.eclipse.equinox.p2.discovery"/>
       <plugin id="org.eclipse.equinox.p2.engine"/>
       <plugin id="org.eclipse.equinox.p2.garbagecollector"/>
       <plugin id="org.eclipse.equinox.p2.jarprocessor"/>
@@ -186,7 +186,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="org.eclipse.equinox.p2.touchpoint.eclipse"/>
       <plugin id="org.eclipse.equinox.p2.touchpoint.natives"/>
       <plugin id="org.eclipse.equinox.p2.ui"/>
-      <plugin id="org.eclipse.equinox.p2.ui.discovery" fragment=""/>
+      <plugin id="org.eclipse.equinox.p2.ui.discovery"/>
       <plugin id="org.eclipse.equinox.p2.ui.sdk"/>
       <plugin id="org.eclipse.equinox.p2.ui.sdk.scheduler"/>
       <plugin id="org.eclipse.equinox.p2.updatechecker"/>
