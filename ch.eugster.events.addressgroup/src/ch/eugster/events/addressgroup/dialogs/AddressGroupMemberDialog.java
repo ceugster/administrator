@@ -418,6 +418,14 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 					{
 						member.setDeleted(!monitor.checked);
 						member.setUpdated(GregorianCalendar.getInstance());
+						if (parent instanceof LinkPersonAddress)
+						{
+							member.setParent((LinkPersonAddress) parent, member.getAddress());
+						}
+						else if (parent instanceof Address)
+						{
+							member.setParent(null, (Address) parent);
+						}
 						AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
 								.getQuery(AddressGroupMember.class);
 						current.put(addressGroupId, query.merge(member));
