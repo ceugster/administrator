@@ -1214,6 +1214,15 @@ ch.eugster.events.report.pdf/ch.eugster.events.report.pdf/src/ch/eugster/events/
 ch.eugster.events.report.pdf/lib/iText-2.1.7-LICENSE.txt -text
 ch.eugster.events.report.pdf/lib/iText-2.1.7.js1.jar -text
 ch.eugster.events.report.pdf/src/ch/eugster/colibri/report/pdf/Activator.java -text
+ch.eugster.events.report.rhino/.classpath -text
+ch.eugster.events.report.rhino/.project -text
+ch.eugster.events.report.rhino/.settings/org.eclipse.jdt.core.prefs -text
+ch.eugster.events.report.rhino/.settings/org.eclipse.pde.core.prefs -text
+ch.eugster.events.report.rhino/META-INF/MANIFEST.MF -text
+ch.eugster.events.report.rhino/build.properties -text
+ch.eugster.events.report.rhino/lib/rhino-1.7R3-LICENSE.txt -text
+ch.eugster.events.report.rhino/lib/rhino-1.7R3.jar -text
+ch.eugster.events.report.rhino/src/ch/eugster/events/report/rhino/Activator.java -text
 ch.eugster.events.report/.classpath -text
 ch.eugster.events.report/.project -text
 ch.eugster.events.report/.settings/org.eclipse.core.resources.prefs -text
