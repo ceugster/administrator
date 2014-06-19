@@ -212,6 +212,10 @@ public class AddressListDialog extends TitleAreaDialog
 	private void computeAddressGroupMember(final Map<String, DataMap> map, final AddressGroupMember member,
 			Map<Long, AddressCounter> addresses)
 	{
+		if (member.getLink() != null && (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted()))
+		{
+			return;
+		}
 		if (!member.isDeleted())
 		{
 			if (this.groupEntities)
@@ -388,6 +392,7 @@ public class AddressListDialog extends TitleAreaDialog
 		keys.add(PersonMap.Key.PHONE);
 		keys.add(AddressMap.Key.FAX);
 		keys.add(PersonMap.Key.EMAIL);
+		keys.add(LinkMap.Key.EMAIL);
 		keys.add(AddressMap.Key.EMAIL);
 		keys.add(PersonMap.Key.WEBSITE);
 		keys.add(AddressMap.Key.WEBSITE);
