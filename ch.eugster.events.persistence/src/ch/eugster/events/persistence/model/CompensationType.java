@@ -7,6 +7,8 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -31,6 +33,11 @@ public class CompensationType extends AbstractEntity
 	@TableGenerator(name = "events_compensation_type_id_seq", table = "events_sequence", allocationSize = 5)
 	private Long id;
 
+	@Basic
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "compensation_type_type")
+	private Type type;
+	
 	@Basic
 	@Column(name = "compensation_type_code")
 	private String code;
@@ -97,8 +104,46 @@ public class CompensationType extends AbstractEntity
 		this.propertyChangeSupport.firePropertyChange("name", this.name, this.name = name);
 	}
 
+	public void setType(Type type) 
+	{
+		this.propertyChangeSupport.firePropertyChange("type", this.type, this.type = type);
+	}
+
+	public Type getType() 
+	{
+		return type;
+	}
+
 	public static CompensationType newInstance()
 	{
 		return (CompensationType) AbstractEntity.newInstance(new CompensationType());
+	}
+	
+	public enum Type
+	{
+		SALARY, SALARY_DISCOUNT, CHARGE;
+		
+		public String label()
+		{
+			switch (this)
+			{
+			case SALARY:
+			{
+				return "Lohn";
+			}
+			case SALARY_DISCOUNT:
+			{
+				return "Lohnabzug";
+			}
+			case CHARGE:
+			{
+				return "Spesen";
+			}
+			default:
+			{
+				return "";
+			}
+			}
+		}
 	}
 }

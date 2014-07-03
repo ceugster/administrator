@@ -1,5 +1,6 @@
 package ch.eugster.events.documents.maps;
 
+import java.io.Writer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Currency;
@@ -14,6 +15,10 @@ import ch.eugster.events.persistence.model.Person;
 public class ParticipantMap extends AbstractDataMap
 {
 	private static NumberFormat numberFormatter;
+
+	protected ParticipantMap() {
+		super();
+	}
 
 	public ParticipantMap(final Participant participant)
 	{
@@ -30,6 +35,19 @@ public class ParticipantMap extends AbstractDataMap
 		}
 		this.setProperties(new LinkMap(participant.getLink()).getProperties());
 		this.setProperties(new BookingTypeMap(participant.getBookingType()).getProperties());
+	}
+
+	protected void printReferences(Writer writer)
+	{
+		printHeader(writer, 2, "Referenzen");
+		startTable(writer, 0);
+		startTableRow(writer);
+		printCell(writer, "#link", "Link Person/Adresse");
+		endTableRow(writer);
+		startTableRow(writer);
+		printCell(writer, "#booking_type", "Buchungsart");
+		endTableRow(writer);
+		endTable(writer);
 	}
 
 	public enum Key implements DataMapKey
@@ -262,6 +280,12 @@ public class ParticipantMap extends AbstractDataMap
 				}
 			}
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys()
+	{
+		return Key.values();
 	}
 
 }

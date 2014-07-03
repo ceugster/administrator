@@ -1,18 +1,30 @@
 package ch.eugster.events.guide.editors;
 
+import org.eclipse.swt.graphics.Cursor;
+
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ColumnLayoutData;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -23,6 +35,7 @@ import ch.eugster.events.guide.Activator;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.exceptions.PersistenceException;
 import ch.eugster.events.persistence.model.CompensationType;
+import ch.eugster.events.persistence.model.CompensationType.Type;
 import ch.eugster.events.persistence.queries.CompensationTypeQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.dialogs.Message;
@@ -33,15 +46,20 @@ public class CompensationTypeEditor extends AbstractEntityEditor<CompensationTyp
 {
 	public static final String ID = "ch.eugster.events.guide.editor.compensationtype";
 
+	private ComboViewer type;
+	
 	private Text code;
 
 	private Text name;
 
 	private Text description;
+	
+	private Cursor arrowCursor;
 
 	@Override
 	protected void initialize()
 	{
+		arrowCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_ARROW);
 		EntityMediator.addListener(CompensationType.class, this);
 	}
 
@@ -82,7 +100,37 @@ public class CompensationTypeEditor extends AbstractEntityEditor<CompensationTyp
 		composite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		composite.setLayout(layout);
 
-		Label label = this.formToolkit.createLabel(composite, "Code", SWT.NONE);
+		Label label = this.formToolkit.createLabel(composite, "Entschädigungsart", SWT.NONE);
+		label.setLayoutData(new GridData());
+
+		CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
+		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		combo.setCursor(arrowCursor);
+		this.formToolkit.adapt(combo);
+
+		this.type = new ComboViewer(combo);
+		this.type.setContentProvider(new ArrayContentProvider());
+		this.type.setLabelProvider(new LabelProvider() 
+		{
+			@Override
+			public String getText(Object element) 
+			{
+				Type type = (Type) element;
+				return type.label();
+			}
+		});
+		this.type.addSelectionChangedListener(new ISelectionChangedListener()
+		{
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) 
+			{
+				CompensationTypeEditor.this.setDirty(true);
+			}
+		});
+		this.type.setInput(CompensationType.Type.values());
+
+		label = this.formToolkit.createLabel(composite, "Code", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		this.code = this.formToolkit.createText(composite, "");
@@ -91,11 +139,6 @@ public class CompensationTypeEditor extends AbstractEntityEditor<CompensationTyp
 		{
 			public void modifyText(ModifyEvent e)
 			{
-				if (CompensationTypeEditor.this.name.getText().isEmpty()
-						|| CompensationTypeEditor.this.name.getText().equals(
-								CompensationTypeEditor.this.code.getText().substring(0,
-										CompensationTypeEditor.this.code.getText().length() - 1)))
-					CompensationTypeEditor.this.name.setText(CompensationTypeEditor.this.code.getText());
 				CompensationTypeEditor.this.setDirty(true);
 			}
 		});
@@ -183,6 +226,20 @@ public class CompensationTypeEditor extends AbstractEntityEditor<CompensationTyp
 		return msg;
 	}
 
+	private Message verifyCompensationTypeSelected()
+	{
+		Message msg = null;
+
+		IStructuredSelection ssel = (IStructuredSelection) type.getSelection();
+		if (!(ssel.getFirstElement() instanceof CompensationType.Type))
+		{
+			msg = new Message(this.name, "Fehler");
+			msg.setMessage("Es muss eine Entschädigungsart festgelegt werden.");
+		}
+
+		return msg;
+	}
+
 	@Override
 	protected String getName()
 	{
@@ -208,6 +265,12 @@ public class CompensationTypeEditor extends AbstractEntityEditor<CompensationTyp
 		CompensationType compensationType = (CompensationType) input.getAdapter(CompensationType.class);
 		if (compensationType != null)
 		{
+			CompensationType.Type selectedType = compensationType.getType();
+			if (selectedType == null)
+			{
+				selectedType = CompensationType.Type.SALARY;
+			}
+			this.type.setSelection(new StructuredSelection(new Type[] { selectedType }));
 			this.code.setText(compensationType.getCode());
 			this.name.setText(compensationType.getName());
 			this.description.setText(compensationType.getDescription());
@@ -222,6 +285,8 @@ public class CompensationTypeEditor extends AbstractEntityEditor<CompensationTyp
 		CompensationType compensationType = (CompensationType) input.getAdapter(CompensationType.class);
 		if (compensationType != null)
 		{
+			IStructuredSelection ssel = (IStructuredSelection) type.getSelection();
+			compensationType.setType((CompensationType.Type) ssel.getFirstElement());
 			compensationType.setCode(this.code.getText());
 			compensationType.setName(this.name.getText());
 			compensationType.setDescription(this.description.getText());
@@ -232,6 +297,9 @@ public class CompensationTypeEditor extends AbstractEntityEditor<CompensationTyp
 	protected boolean validate()
 	{
 		Message msg = this.getUniqueCodeMessage();
+
+		if (msg == null)
+			msg = this.verifyCompensationTypeSelected();
 
 		if (msg == null)
 			msg = this.getEmptyNameMessage();
@@ -256,7 +324,8 @@ public class CompensationTypeEditor extends AbstractEntityEditor<CompensationTyp
 
 	@Override
 	public void dispose()
-	{
+	{	arrowCursor.dispose();
 		EntityMediator.removeListener(CompensationType.class, this);
+		super.dispose();
 	}
 }

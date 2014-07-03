@@ -24,7 +24,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -33,17 +32,17 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.reporting.Activator;
-import ch.eugster.events.documents.maps.BookingMap;
+import ch.eugster.events.documents.maps.CourseGuideMap;
 import ch.eugster.events.documents.maps.DataMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
-import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
+import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.model.UserProperty;
 import ch.eugster.events.persistence.queries.UserQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
-public class CourseInvitationDialog extends TitleAreaDialog
+public class CommitmentContractDialog extends TitleAreaDialog
 {
 	private Text documentPath;
 
@@ -57,25 +56,25 @@ public class CourseInvitationDialog extends TitleAreaDialog
 
 	private static final String MSG_NO_SERVICE_AVAILABLE = "Es ist kein Service für die Verarbeitung des Dokuments verfügbar.";
 
-	private static final String MSG_TITLE_NO_COURSES = "Keine Buchungen vorhanden";
+	private static final String MSG_TITLE_NO_COURSES = "Keine Kurse vorhanden";
 
 	private static final String OK_BUTTON_TEXT = "Generieren";
 
 	private static final String CANCEL_BUTTON_TEXT = "Abbrechen";
 
-	private static final String DIALOG_TITLE = "Vorlage Kurseinladung";
+	private static final String DIALOG_TITLE = "Vorlage Einsatzvertrag";
 
 	private boolean isPageComplete = false;
 
-	public CourseInvitationDialog(final Shell parentShell, final StructuredSelection selection)
+	public CommitmentContractDialog(final Shell parentShell, final StructuredSelection selection)
 	{
 		super(parentShell);
 		this.selection = selection;
 	}
 
-	private void buildDocument(final Collection<DataMap> dataMaps)
+	private void buildDocument()
 	{
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 		try
 		{
 			dialog.run(true, true, new IRunnableWithProgress()
@@ -83,44 +82,52 @@ public class CourseInvitationDialog extends TitleAreaDialog
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 				{
-					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle()
-							.getBundleContext(), DocumentBuilderService.class.getName(), null);
-					try
+					Collection<DataMap> maps = createDataMaps();
+					if (maps.size() == 0)
 					{
-						tracker.open();
-						ServiceReference[] references = tracker.getServiceReferences();
-						if (references != null)
+						MessageDialog.openConfirm(getShell(), MSG_TITLE_NO_COURSES, MSG_TITLE_NO_COURSES);
+					}
+					else
+					{
+						ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle()
+								.getBundleContext(), DocumentBuilderService.class.getName(), null);
+						try
 						{
-							try
+							tracker.open();
+							ServiceReference[] references = tracker.getServiceReferences();
+							if (references != null)
 							{
-								monitor.beginTask("Dokumente werden erstellt...", references.length);
-								for (ServiceReference reference : references)
+								try
 								{
-									DocumentBuilderService service = (DocumentBuilderService) tracker
-											.getService(reference);
-									DocumentBuilderService builderService = service;
-									IStatus status = builderService.buildDocument(new SubProgressMonitor(monitor,
-											dataMaps.size()), new File(userPropertyTemplatePath.getValue()), dataMaps);
-									if (status.isOK())
+									monitor.beginTask("Dokumente werden erstellt...", references.length);
+									for (ServiceReference reference : references)
 									{
-										break;
+										DocumentBuilderService service = (DocumentBuilderService) tracker
+												.getService(reference);
+										DocumentBuilderService builderService = service;
+										IStatus status = builderService.buildDocument(new SubProgressMonitor(monitor,
+												maps.size()), new File(userPropertyTemplatePath.getValue()), maps);
+										if (status.isOK())
+										{
+											break;
+										}
+										monitor.worked(1);
 									}
-									monitor.worked(1);
+								}
+								finally
+								{
+									monitor.done();
 								}
 							}
-							finally
+							else
 							{
-								monitor.done();
+								MessageDialog.openWarning(getShell(), "Service nicht aktiv", MSG_NO_SERVICE_AVAILABLE);
 							}
 						}
-						else
+						finally
 						{
-							MessageDialog.openWarning(getShell(), "Service nicht aktiv", MSG_NO_SERVICE_AVAILABLE);
+							tracker.close();
 						}
-					}
-					finally
-					{
-						tracker.close();
 					}
 				}
 			});
@@ -153,16 +160,16 @@ public class CourseInvitationDialog extends TitleAreaDialog
 			if (element instanceof Course)
 			{
 				Course course = (Course) element;
-				Collection<Booking> bookings = course.getBookings();
-				for (Booking booking : bookings)
+				Collection<CourseGuide> courseGuides = course.getCourseGuides();
+				for (CourseGuide courseGuide : courseGuides)
 				{
-					dataMaps.add(new BookingMap(booking, true));
+					dataMaps.add(new CourseGuideMap(courseGuide, true));
 				}
 			}
-			else if (element instanceof Booking)
+			if (element instanceof CourseGuide)
 			{
-				Booking booking = (Booking) element;
-				dataMaps.add(new BookingMap(booking, true));
+				CourseGuide courseGuide = (CourseGuide) element;
+				dataMaps.add(new CourseGuideMap(courseGuide, true));
 			}
 		}
 		return dataMaps;
@@ -219,23 +226,23 @@ public class CourseInvitationDialog extends TitleAreaDialog
 			@Override
 			public void widgetSelected(final SelectionEvent e)
 			{
-				String path = CourseInvitationDialog.this.documentPath.getText();
-				FileDialog dialog = new FileDialog(CourseInvitationDialog.this.getShell());
+				String path = CommitmentContractDialog.this.documentPath.getText();
+				FileDialog dialog = new FileDialog(CommitmentContractDialog.this.getShell());
 				dialog.setFilterPath(path);
 				dialog.setFilterExtensions(new String[] { "*.odt" });
 				dialog.setText(DIALOG_TITLE);
 				path = dialog.open();
 				if (path != null)
 				{
-					CourseInvitationDialog.this.documentPath.setText(path);
+					CommitmentContractDialog.this.documentPath.setText(path);
 
 				}
-				File file = new File(CourseInvitationDialog.this.documentPath.getText());
+				File file = new File(CommitmentContractDialog.this.documentPath.getText());
 				if (file.exists())
 				{
 					userPropertyTemplatePath.setValue(file.getAbsolutePath());
 				}
-				CourseInvitationDialog.this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
+				CommitmentContractDialog.this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
 			}
 		});
 
@@ -251,16 +258,8 @@ public class CourseInvitationDialog extends TitleAreaDialog
 	protected void okPressed()
 	{
 		setUserPath();
-		Collection<DataMap> dataMaps = createDataMaps();
 		super.okPressed();
-		if (dataMaps.isEmpty())
-		{
-			MessageDialog.openConfirm(this.getShell(), MSG_TITLE_NO_COURSES, MSG_TITLE_NO_COURSES);
-		}
-		else
-		{
-			buildDocument(dataMaps);
-		}
+		buildDocument();
 	}
 
 	@Override

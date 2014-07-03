@@ -133,6 +133,8 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 	private Text materialOrganizer;
 
 	private Text targetPublic;
+	
+	private Text prerequisites;
 
 	private Spinner minParticipants;
 
@@ -577,6 +579,24 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 				CourseEditorInput input = (CourseEditorInput) CourseEditor.this.getEditorInput();
 				Course course = input.getEntity();
 				course.setTargetPublic(CourseEditor.this.targetPublic.getText());
+				CourseEditor.this.setDirty(true);
+			}
+		});
+
+		label = this.formToolkit.createLabel(composite, "Voraussetzungen", SWT.NONE);
+		label.setLayoutData(new GridData());
+
+		layoutData = new GridData(GridData.FILL_HORIZONTAL);
+		layoutData.widthHint = widthHint;
+		layoutData.heightHint = 48;
+
+		this.prerequisites = this.formToolkit.createText(composite, "");
+		this.prerequisites.setLayoutData(layoutData);
+		this.prerequisites.addModifyListener(new ModifyListener()
+		{
+			@Override
+			public void modifyText(final ModifyEvent e)
+			{
 				CourseEditor.this.setDirty(true);
 			}
 		});
@@ -1355,6 +1375,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			this.lodging.setText(course.getLodging());
 			this.materialOrganizer.setText(course.getMaterialOrganizer());
 			this.materialParticipants.setText(course.getMaterialParticipants());
+			this.prerequisites.setText(course.getPrerequisites());
 			this.maxAge.setSelection(course.getMaxAge());
 			this.maxParticipants.setSelection(course.getMaxParticipants());
 			this.minAge.setSelection(course.getMinAge());
@@ -1510,6 +1531,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			course.setLodging(this.lodging.getText());
 			course.setMaterialOrganizer(this.materialOrganizer.getText());
 			course.setMaterialParticipants(this.materialParticipants.getText());
+			course.setPrerequisites(this.prerequisites.getText());
 			course.setMaxAge(this.maxAge.getSelection());
 			course.setMaxParticipants(this.maxParticipants.getSelection());
 			course.setMinAge(this.minAge.getSelection());

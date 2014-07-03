@@ -1,5 +1,6 @@
 package ch.eugster.events.documents.maps;
 
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -11,6 +12,7 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 
+import ch.eugster.events.documents.maps.AddressMap.TableKey;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.CourseDetail;
 import ch.eugster.events.persistence.model.CourseGuide;
@@ -24,6 +26,10 @@ public class BookingMap extends AbstractDataMap
 	private static DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
 	private static NumberFormat integerFormatter = DecimalFormat.getIntegerInstance();
+
+	protected BookingMap() {
+		super();
+	}
 
 	public BookingMap(final Booking booking)
 	{
@@ -54,8 +60,40 @@ public class BookingMap extends AbstractDataMap
 				this.addTableMaps(key.getKey(), key.getTableMaps(booking));
 			}
 		}
-		this.addTableMaps(TableKey.PARTICIPANTS.getName(), TableKey.PARTICIPANTS.getTableMaps(booking));
-		this.addTableMaps(TableKey.COURSE_DETAILS.getName(), TableKey.COURSE_DETAILS.getTableMaps(booking));
+//		this.addTableMaps(TableKey.PARTICIPANTS.getName(), TableKey.PARTICIPANTS.getTableMaps(booking));
+//		this.addTableMaps(TableKey.COURSE_DETAILS.getName(), TableKey.COURSE_DETAILS.getTableMaps(booking));
+	}
+
+	protected void printReferences(Writer writer)
+	{
+		printHeader(writer, 2, "Referenzen");
+		startTable(writer, 0);
+		startTableRow(writer);
+		printCell(writer, "#participant", "Teilnehmer");
+		endTableRow(writer);
+		startTableRow(writer);
+		printCell(writer, "#course", "Kurs");
+		endTableRow(writer);
+		endTable(writer);
+	}
+
+	protected void printTables(Writer writer)
+	{
+		printHeader(writer, 2, "Tabellen");
+		startTable(writer, 0);
+		startTableRow(writer);
+		printCell(writer, null, TableKey.PARTICIPANTS.getKey());
+		printCell(writer, "#participant", "Teilnehmer");
+		endTableRow(writer);
+		startTableRow(writer);
+		printCell(writer, null, TableKey.COURSE_DETAILS.getKey());
+		printCell(writer, "#course_detail", "Kursdetails");
+		endTableRow(writer);
+		startTableRow(writer);
+		printCell(writer, null, TableKey.COURSE_GUIDES.getKey());
+		printCell(writer, "#course_guide", "Kursleitungen");
+		endTableRow(writer);
+		endTable(writer);
 	}
 
 	public enum Key implements DataMapKey
@@ -428,15 +466,15 @@ public class BookingMap extends AbstractDataMap
 			{
 				case PARTICIPANTS:
 				{
-					return "booking_participants";
+					return "table_participants";
 				}
 				case COURSE_DETAILS:
 				{
-					return "booking_course_details";
+					return "table_course_details";
 				}
 				case COURSE_GUIDES:
 				{
-					return "booking_course_guides";
+					return "table_course_guides";
 				}
 				default:
 				{
@@ -499,7 +537,7 @@ public class BookingMap extends AbstractDataMap
 					Collection<CourseGuide> courseGuides = booking.getCourse().getCourseGuides();
 					for (CourseGuide courseGuide : courseGuides)
 					{
-						tableMaps.add(new CourseGuideMap(courseGuide));
+						tableMaps.add(new CourseGuideMap(courseGuide, false));
 					}
 					return tableMaps;
 				}
@@ -509,5 +547,11 @@ public class BookingMap extends AbstractDataMap
 				}
 			}
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }

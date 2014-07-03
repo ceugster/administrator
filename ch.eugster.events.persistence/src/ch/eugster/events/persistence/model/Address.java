@@ -494,6 +494,7 @@ public class Address extends AbstractEntity implements Donator
 			this.propertyChangeSupport.firePropertyChange("zipCode", this.zipCode, this.zipCode = zipCode);
 			setZip(zipCode == null ? null : zipCode.getZip());
 			setCity(zipCode == null ? null : zipCode.getCity());
+			setProvince(zipCode == null ? getProvince() : zipCode.getState());
 		}
 	}
 

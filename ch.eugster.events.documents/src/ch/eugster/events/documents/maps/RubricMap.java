@@ -4,6 +4,10 @@ import ch.eugster.events.persistence.model.Rubric;
 
 public class RubricMap extends AbstractDataMap
 {
+	protected RubricMap() {
+		super();
+	}
+
 	public RubricMap(final Rubric rubric)
 	{
 		for (Key key : Key.values())
@@ -110,5 +114,11 @@ public class RubricMap extends AbstractDataMap
 				}
 			}
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }

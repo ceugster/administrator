@@ -58,6 +58,10 @@ public class CourseGuide extends AbstractEntity
 	@Column(name = "course_guide_phone")
 	private String phone;
 
+	@Basic
+	@Column(name = "course_guide_note")
+	private String note;
+
 	/**
 	 * Children
 	 */
@@ -170,6 +174,16 @@ public class CourseGuide extends AbstractEntity
 	public void setPhone(final String phone)
 	{
 		this.propertyChangeSupport.firePropertyChange("phone", this.phone, this.phone = phone);
+	}
+
+	public void setNote(String note) 
+	{
+		this.propertyChangeSupport.firePropertyChange("note", this.note, this.note = note);
+	}
+
+	public String getNote() 
+	{
+		return AbstractEntity.stringValueOf(this.note);
 	}
 
 	public static CourseGuide newInstance(final Course course)

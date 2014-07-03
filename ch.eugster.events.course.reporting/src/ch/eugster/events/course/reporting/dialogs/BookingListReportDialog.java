@@ -277,6 +277,7 @@ public class BookingListReportDialog extends TitleAreaDialog
 		IEclipsePreferences prefs = new InstanceScope().getNode(Activator.PLUGIN_ID);
 		int dest = prefs.getInt(PreferenceConstants.P_DESTINATION, 0);
 		Destination destination = Destination.values()[dest];
+		destination = Destination.PREVIEW;
 		switch (destination)
 		{
 			case PREVIEW:
@@ -294,7 +295,7 @@ public class BookingListReportDialog extends TitleAreaDialog
 						System.getProperty("user.home"));
 				Format format = Format.values()[prefs.getInt(PreferenceConstants.P_DEFAULT_FILE_FORMAT,
 						Format.PDF.ordinal())];
-				FileDialog dialog = new FileDialog(null);
+				FileDialog dialog = new FileDialog(this.createShell());
 				dialog.setFilterExtensions(Format.extensions());
 				dialog.setFilterIndex(format.ordinal());
 				dialog.setFilterPath(dir);

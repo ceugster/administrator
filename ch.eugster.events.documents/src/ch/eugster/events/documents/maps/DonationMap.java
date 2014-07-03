@@ -23,6 +23,10 @@ public class DonationMap extends AbstractDataMap
 
 	private static NumberFormat integerFormatter = DecimalFormat.getIntegerInstance();
 
+	protected DonationMap() {
+		super();
+	}
+
 	public DonationMap(final Donation donation)
 	{
 		if (numberFormatter == null)
@@ -310,5 +314,11 @@ public class DonationMap extends AbstractDataMap
 				}
 			}
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }
