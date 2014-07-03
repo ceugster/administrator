@@ -33,6 +33,10 @@ public class BookingTypeMap extends AbstractDataMap
 		// CourseMap(bookingType.getCourse()).getProperties());
 	}
 
+	protected BookingTypeMap() {
+		super();
+	}
+
 	public enum Key implements DataMapKey
 	{
 		CODE, NAME, ANNULATION_CHARGE, MAX_AGE, MEMBERSHIP, PRICE;
@@ -185,5 +189,11 @@ public class BookingTypeMap extends AbstractDataMap
 				}
 			}
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }

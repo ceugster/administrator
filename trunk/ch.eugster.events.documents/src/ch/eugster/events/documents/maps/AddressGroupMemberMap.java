@@ -1,5 +1,7 @@
 package ch.eugster.events.documents.maps;
 
+import java.io.Writer;
+
 import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
@@ -10,6 +12,10 @@ import ch.eugster.events.persistence.model.Person;
 
 public class AddressGroupMemberMap extends AbstractDataMap implements Comparable<AddressGroupMemberMap>
 {
+	protected AddressGroupMemberMap() {
+		super();
+	}
+
 	public AddressGroupMemberMap(final AddressGroupMember member, boolean isGroup)
 	{
 		for (Key key : Key.values())
@@ -30,6 +36,19 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 	public String getId()
 	{
 		return this.getProperty(Key.TYPE.getKey()) + this.getProperty(Key.ID.getKey());
+	}
+
+	protected void printReferences(Writer writer)
+	{
+		printHeader(writer, 2, "Referenzen");
+		startTable(writer, 0);
+		startTableRow(writer);
+		printCell(writer, "#link", "Link Person/Adresse");
+		endTableRow(writer);
+		startTableRow(writer);
+		printCell(writer, "#address", "Adresse");
+		endTableRow(writer);
+		endTable(writer);
 	}
 
 	public enum Key implements DataMapKey
@@ -233,6 +252,12 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 	public int compareTo(AddressGroupMemberMap other)
 	{
 		return 0;
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 
 }

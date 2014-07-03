@@ -1109,6 +1109,46 @@ public abstract class DatabaseUpdater
 							ok = executeSqlQuery(con, builder.toString());
 						}
 					}
+					if (structureVersion == 25)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						if (!columnExists(con, "events_guide_type", "guide_type_template"))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE events_guide_type ");
+							builder.append("ADD COLUMN guide_type_template VARCHAR(255) NULL");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+						if (!columnExists(con, "events_course", "course_prerequisites"))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE events_course ");
+							builder.append("ADD COLUMN course_prerequisites " + getClobTypeName() + " NULL");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+						if (!columnExists(con, "events_compensation_type", "compensation_type_type"))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE events_compensation_type ");
+							builder.append("ADD COLUMN compensation_type_type INTEGER NULL");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+					}
+					if (structureVersion == 26)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						if (!columnExists(con, "events_course_guide", "course_guide_note"))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE events_course_guide ");
+							builder.append("ADD COLUMN course_guide_note " + this.getClobTypeName() + " NULL");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+					}
 
 					stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);
 				}

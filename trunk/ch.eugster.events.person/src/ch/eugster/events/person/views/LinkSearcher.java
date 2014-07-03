@@ -757,8 +757,8 @@ public class LinkSearcher extends Composite
 				person = personQuery.find(Person.class, id);
 				AddressQuery addressQuery = (AddressQuery) connectionService.getQuery(Address.class);
 				address = addressQuery.find(Address.class, id);
-				LinkPersonAddressQuery linkQuery = (LinkPersonAddressQuery) connectionService.getQuery(LinkPersonAddress.class);
-				link = linkQuery.find(LinkPersonAddress.class, id);
+//				LinkPersonAddressQuery linkQuery = (LinkPersonAddressQuery) connectionService.getQuery(LinkPersonAddress.class);
+//				link = linkQuery.find(LinkPersonAddress.class, id);
 			}
 		}
 		catch (NumberFormatException e)
@@ -776,10 +776,10 @@ public class LinkSearcher extends Composite
 			}
 			else
 			{
-				for (LinkPersonAddress child : address.getPersonLinks())
-				{
-					addIfNotAlreadyAdded(entities, child.getPerson());
-				}
+//				for (LinkPersonAddress child : address.getPersonLinks())
+//				{
+//					addIfNotAlreadyAdded(entities, child.getPerson());
+//				}
 			}
 		}
 		if (link != null)

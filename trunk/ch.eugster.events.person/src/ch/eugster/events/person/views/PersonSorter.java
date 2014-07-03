@@ -190,6 +190,82 @@ public class PersonSorter extends ViewerSorter
 			}
 		}
 
+		public String value(LinkPersonAddress link)
+		{
+			switch (this)
+			{
+				case CODE:
+				{
+					return PersonFormatter.getInstance().formatId(link.getPerson())
+							+ (link.getPerson().isMember() ? "*" : "");
+				}
+				case NAME:
+				{
+					return PersonFormatter.getInstance().formatLastnameFirstname(link.getPerson());
+				}
+				case LASTNAME:
+				{
+					return link.getPerson().getLastname();
+				}
+				case FIRSTNAME:
+				{
+					return link.getPerson().getFirstname();
+				}
+				case ADDRESS_ID:
+				{
+					return link.getAddress().getId().toString();
+				}
+				case ORGANISATION:
+				{
+					return link.getAddress().getName();
+				}
+				case ADDRESS:
+				{
+					return AddressFormatter.getInstance().formatAddressLine(link.getAddress());
+				}
+				case CITY:
+				{
+					return AddressFormatter.getInstance().formatCityLine(link.getAddress());
+				}
+				case MOBILE:
+				{
+					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(link.getPerson().getCountry(),
+							link.getPhone());
+				}
+				case PHONE:
+				{
+					return PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(link.getPerson().getCountry(),
+							link.getPerson().getPhone());
+				}
+				case FAX:
+				{
+					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(link.getAddress().getCountry(),
+							link.getAddress().getFax());
+				}
+				case EMAIL:
+				{
+					String email = link.getEmail();
+					if (email.isEmpty())
+					{
+						email = link.getPerson().getEmail();
+					}
+					if (email.isEmpty())
+					{
+						email = link.getAddress().getEmail();
+					}
+					return email;
+				}
+				case DOMAIN:
+				{
+					return link.getPerson().getDomain() == null ? "" : link.getPerson().getDomain().getName();
+				}
+				default:
+				{
+					return "";
+				}
+			}
+		}
+
 		public String value(Address address)
 		{
 			switch (this)

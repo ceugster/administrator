@@ -379,6 +379,7 @@ public class ParticipantListReportDialog extends TitleAreaDialog
 		IEclipsePreferences prefs = new InstanceScope().getNode(Activator.PLUGIN_ID);
 		int dest = prefs.getInt(PreferenceConstants.P_DESTINATION, 0);
 		Destination destination = Destination.values()[dest];
+		destination = Destination.PREVIEW;
 		switch (destination)
 		{
 			case PREVIEW:

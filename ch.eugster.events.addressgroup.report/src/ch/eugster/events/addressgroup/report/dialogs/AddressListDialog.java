@@ -405,6 +405,7 @@ public class AddressListDialog extends TitleAreaDialog
 		keys.add(AddressGroupMemberMap.Key.POLITE);
 		keys.add(AddressGroupMap.Key.NAME);
 		keys.add(LinkMap.Key.MEMBER);
+		keys.add(PersonMap.Key.NOTE);
 		keys.addAll(PersonMap.getExtendedFieldKeys());
 		keys.addAll(LinkMap.getExtendedFieldKeys());
 		return keys.toArray(new DataMapKey[0]);

@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.Activator;
@@ -48,6 +49,8 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 	// private Text phone;
 
 	private CompensationTableViewerComposite compensationTableComposite;
+	
+	private Text note;
 
 	public CourseGuideWizardPage(final String pageName)
 	{
@@ -193,6 +196,17 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 
 		this.compensationTableComposite = new CompensationTableViewerComposite(composite, SWT.NULL);
 
+		gridData = new GridData();
+		gridData.horizontalAlignment = GridData.END;
+		gridData.grabExcessHorizontalSpace = false;
+
+		label = new Label(composite, SWT.NONE);
+		label.setLayoutData(gridData);
+		label.setText("Bemerkungen");
+
+		this.note = new Text(composite, SWT.MULTI | SWT.WRAP | SWT.VERTICAL);
+		this.note.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 		this.setValues();
 
 		this.setControl(composite);
@@ -295,26 +309,22 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 		}
 	}
 
-	// private void setPhone()
-	// {
-	// CourseGuideWizard wizard = (CourseGuideWizard) this.getWizard();
-	// Guide guide = wizard.getCourseGuide().getGuide();
-	// if (guide == null)
-	// guide = (Guide) this.guideViewer.getElementAt(0);
-	//
-	// if (guide != null)
-	// {
-	// this.phone.setText(guide.getPhone());
-	// }
-	// }
+	 private void setCourseGuideValues()
+	 {
+		 CourseGuideWizard wizard = (CourseGuideWizard) this.getWizard();
+		 CourseGuide courseGuide = wizard.getCourseGuide();
+		 if (courseGuide != null)
+		 {
+			 this.note.setText(courseGuide.getNote());
+		 }
+	 }
 
 	private void setValues()
 	{
 		this.setPerson();
 		this.setGuideType();
 		this.setCompensations();
-		// this.setDesc();
-		// this.setPhone();
+		this.setCourseGuideValues();
 	}
 
 	public CourseGuide updateCourseGuide()
@@ -322,7 +332,7 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 		CourseGuideWizard wizard = (CourseGuideWizard) this.getWizard();
 		wizard.getCourseGuide().setGuide(this.getGuide());
 		wizard.getCourseGuide().setGuideType(this.getGuideType());
-		// wizard.getCourseGuide().setDescription(this.getDesc());
+		wizard.getCourseGuide().setNote(this.note.getText());
 		// wizard.getCourseGuide().setPhone(this.getPhone());
 		wizard.getCourseGuide().setCompensations(this.compensationTableComposite.getCompensations());
 		return wizard.getCourseGuide();

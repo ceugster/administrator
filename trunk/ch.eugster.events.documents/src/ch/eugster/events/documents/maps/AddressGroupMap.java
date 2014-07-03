@@ -1,9 +1,15 @@
 package ch.eugster.events.documents.maps;
 
+import java.io.Writer;
+
 import ch.eugster.events.persistence.model.AddressGroup;
 
 public class AddressGroupMap extends AbstractDataMap
 {
+	protected AddressGroupMap() {
+		super();
+	}
+
 	public AddressGroupMap(final AddressGroup addressGroup)
 	{
 		for (Key key : Key.values())
@@ -11,6 +17,16 @@ public class AddressGroupMap extends AbstractDataMap
 			this.setProperty(key.getKey(), key.getValue(addressGroup));
 		}
 		this.setProperties(new AddressGroupCategoryMap(addressGroup.getAddressGroupCategory()).getProperties());
+	}
+
+	protected void printReferences(Writer writer)
+	{
+		printHeader(writer, 2, "Referenzen");
+		startTable(writer, 0);
+		startTableRow(writer);
+		printCell(writer, "#addressGroupCategory", "Kategorie");
+		endTableRow(writer);
+		endTable(writer);
 	}
 
 	public enum Key implements DataMapKey
@@ -111,5 +127,11 @@ public class AddressGroupMap extends AbstractDataMap
 				}
 			}
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }

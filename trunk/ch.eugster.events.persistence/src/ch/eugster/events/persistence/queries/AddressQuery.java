@@ -50,6 +50,16 @@ public class AddressQuery extends AbstractEntityQuery<Address>
 		return addresses;
 	}
 
+	public Collection<Address> selectWithEmptyProvince()
+	{
+		Expression expression = new ExpressionBuilder(Address.class).get("deleted").equal(false);
+		expression.and(new ExpressionBuilder().get("country").notNull());
+		Expression empty = new ExpressionBuilder().get("province").isNull().or(new ExpressionBuilder().get("province").equal(""));
+		expression = expression.and(empty);
+		Collection<Address> selected = this.select(Address.class, expression);
+		return selected;
+	}
+
 	private Expression createCriteriaExpression(final Map<String, String> criteria)
 	{
 		Expression organization = null, street = null, city = null, phone = null, email = null;

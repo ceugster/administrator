@@ -9,6 +9,10 @@ import ch.eugster.events.persistence.model.Compensation;
 
 public class CompensationMap extends AbstractDataMap
 {
+	protected CompensationMap() {
+		super();
+	}
+
 	private static NumberFormat amountFormatter;
 
 	public CompensationMap(final Compensation compensation)
@@ -26,7 +30,7 @@ public class CompensationMap extends AbstractDataMap
 		{
 			setProperty(key.getKey(), key.getValue(compensation));
 		}
-		this.setProperties(new CourseGuideMap(compensation.getCourseGuide()).getProperties());
+		this.setProperties(new CourseGuideMap(compensation.getCourseGuide(), false).getProperties());
 	}
 
 	public enum Key implements DataMapKey
@@ -113,5 +117,11 @@ public class CompensationMap extends AbstractDataMap
 			}
 		}
 
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }
