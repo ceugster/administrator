@@ -154,6 +154,13 @@ public class Course extends AbstractEntity
 	private String targetPublic;
 
 	/*
+	 * Voraussetzungen
+	 */
+	@Basic
+	@Column(name = "course_prerequisites")
+	private String prerequisites;
+
+	/*
 	 * Mindestanzahl Teilnehmer (Buchungen können mehrere Teilnehmer enthalten)
 	 */
 	@Basic
@@ -1050,6 +1057,16 @@ public class Course extends AbstractEntity
 	public PaymentTerm getPaymentTerm()
 	{
 		return paymentTerm;
+	}
+
+	public void setPrerequisites(String prerequisites) 
+	{
+		this.propertyChangeSupport.firePropertyChange("prerequisites", this.prerequisites, this.prerequisites = prerequisites);
+	}
+
+	public String getPrerequisites() 
+	{
+		return AbstractEntity.stringValueOf(prerequisites);
 	}
 
 	public static Course newInstance(final Season season)

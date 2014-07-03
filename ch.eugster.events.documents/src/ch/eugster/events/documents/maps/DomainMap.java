@@ -4,6 +4,11 @@ import ch.eugster.events.persistence.model.Domain;
 
 public class DomainMap extends AbstractDataMap
 {
+	protected DomainMap()
+	{
+		super();
+	}
+	
 	public DomainMap(final Domain domain)
 	{
 		for (Key key : Key.values())
@@ -11,7 +16,7 @@ public class DomainMap extends AbstractDataMap
 			setProperty(key.getKey(), key.getValue(domain));
 		}
 	}
-
+	
 	public enum Key implements DataMapKey
 	{
 		CODE, NAME, DESCRIPTION;
@@ -110,5 +115,11 @@ public class DomainMap extends AbstractDataMap
 				}
 			}
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }

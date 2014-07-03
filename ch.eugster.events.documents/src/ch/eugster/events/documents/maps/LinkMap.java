@@ -1,5 +1,6 @@
 package ch.eugster.events.documents.maps;
 
+import java.io.Writer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Locale;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.documents.Activator;
+import ch.eugster.events.documents.maps.AddressMap.TableKey;
 import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.Donation;
@@ -27,6 +29,10 @@ import ch.eugster.events.persistence.service.ConnectionService;
 public class LinkMap extends AbstractDataMap
 {
 	private static NumberFormat amountFormatter = null;
+
+	protected LinkMap() {
+		super();
+	}
 
 	public LinkMap(final LinkPersonAddress link)
 	{
@@ -98,6 +104,30 @@ public class LinkMap extends AbstractDataMap
 		}
 		tracker.close();
 		return keys;
+	}
+
+	protected void printReferences(Writer writer)
+	{
+		printHeader(writer, 2, "Referenzen");
+		startTable(writer, 0);
+		startTableRow(writer);
+		printCell(writer, "#person", "Person");
+		endTableRow(writer);
+		startTableRow(writer);
+		printCell(writer, "#address", "Adresse");
+		endTableRow(writer);
+		endTable(writer);
+	}
+
+	protected void printTables(Writer writer)
+	{
+		printHeader(writer, 2, "Tabellen");
+		startTable(writer, 0);
+		startTableRow(writer);
+		printCell(writer, null, TableKey.DONATIONS.getKey());
+		printCell(writer, "#donation", "Spenden");
+		endTableRow(writer);
+		endTable(writer);
 	}
 
 	public enum Key implements DataMapKey
@@ -328,13 +358,13 @@ public class LinkMap extends AbstractDataMap
 
 	public enum TableKey
 	{
-		DONATION;
+		DONATIONS;
 
 		public String getDescription()
 		{
 			switch (this)
 			{
-				case DONATION:
+				case DONATIONS:
 				{
 					return "Spenden";
 				}
@@ -349,9 +379,9 @@ public class LinkMap extends AbstractDataMap
 		{
 			switch (this)
 			{
-				case DONATION:
+				case DONATIONS:
 				{
-					return "donations";
+					return "table_donations";
 				}
 				default:
 				{
@@ -380,7 +410,7 @@ public class LinkMap extends AbstractDataMap
 		{
 			switch (this)
 			{
-				case DONATION:
+				case DONATIONS:
 				{
 					List<DataMap> tableMaps = new ArrayList<DataMap>();
 					Collection<Donation> donations = link.getPerson().getDonations();
@@ -459,5 +489,11 @@ public class LinkMap extends AbstractDataMap
 			return false;
 		}
 
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }

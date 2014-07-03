@@ -63,6 +63,11 @@
             id="ch.eugster.events.course.reporting.printLabels"
             name="Etiketten drucken">
       </command>
+      <command
+            defaultHandler="ch.eugster.events.course.reporting.handlers.CommitmentContractHandler"
+            id="ch.eugster.events.course.reporting.commitmentcontract"
+            name="Einsatzvertrag generieren">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -179,15 +184,6 @@
                tooltip="Generieren der Teilnahmeliste">
          </command>
          <command
-               commandId="ch.eugster.events.course.reporting.command.generateParticipantList"
-               disabledIcon="icons/work_grey_16.png"
-               hoverIcon="icons/work_16.png"
-               icon="icons/work_16.png"
-               label="Adressliste generieren"
-               style="push"
-               tooltip="Generieren einer Adressliste der Teilnehmer">
-         </command>
-         <command
                commandId="ch.eugster.events.course.reporting.command.printBookingListReport"
                disabledIcon="icons/work_grey_16.png"
                hoverIcon="icons/work_16.png"
@@ -195,6 +191,15 @@
                label="Kursliste mit Buchungsstand drucken"
                style="push"
                tooltip="Drucken der Kursliste">
+         </command>
+         <command
+               commandId="ch.eugster.events.course.reporting.command.generateParticipantList"
+               disabledIcon="icons/work_grey_16.png"
+               hoverIcon="icons/work_16.png"
+               icon="icons/work_16.png"
+               label="Adressliste generieren"
+               style="push"
+               tooltip="Generieren einer Adressliste der Teilnehmer">
          </command>
          <command
                commandId="ch.eugster.events.course.reporting.command.generateBookingConfirmation"
@@ -229,6 +234,14 @@
                hoverIcon="icons/work_16.png"
                icon="icons/work_16.png"
                label="Etiketten drucken"
+               style="push">
+         </command>
+         <command
+               commandId="ch.eugster.events.course.reporting.commitmentcontract"
+               disabledIcon="icons/work_grey_16.png"
+               hoverIcon="icons/work_16.png"
+               icon="icons/work_16.png"
+               label="Einsatzvertrag generieren"
                style="push">
          </command>
       </menuContribution>

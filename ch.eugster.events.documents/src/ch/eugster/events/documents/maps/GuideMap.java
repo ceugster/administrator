@@ -1,10 +1,16 @@
 package ch.eugster.events.documents.maps;
 
+import java.io.Writer;
+
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.Guide;
 
 public class GuideMap extends AbstractDataMap
 {
+	protected GuideMap() {
+		super();
+	}
+
 	public GuideMap(final Guide guide)
 	{
 		for (Key key : Key.values())
@@ -12,6 +18,16 @@ public class GuideMap extends AbstractDataMap
 			setProperty(key.getKey(), key.getValue(guide));
 		}
 		setProperties(new LinkMap(guide.getLink()).getProperties());
+	}
+
+	protected void printReferences(Writer writer)
+	{
+		printHeader(writer, 2, "Referenzen");
+		startTable(writer, 0);
+		startTableRow(writer);
+		printCell(writer, "#link", "Link Person/Adresse");
+		endTableRow(writer);
+		endTable(writer);
 	}
 
 	public enum Key implements DataMapKey
@@ -97,5 +113,11 @@ public class GuideMap extends AbstractDataMap
 				}
 			}
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }

@@ -4,6 +4,10 @@ import ch.eugster.events.persistence.model.AddressGroupCategory;
 
 public class AddressGroupCategoryMap extends AbstractDataMap
 {
+	protected AddressGroupCategoryMap() {
+		super();
+	}
+
 	public AddressGroupCategoryMap(final AddressGroupCategory category)
 	{
 		for (Key key : Key.values())
@@ -110,5 +114,11 @@ public class AddressGroupCategoryMap extends AbstractDataMap
 				}
 			}
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }

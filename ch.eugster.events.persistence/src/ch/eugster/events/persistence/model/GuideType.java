@@ -43,6 +43,10 @@ public class GuideType extends AbstractEntity
 	@Column(name = "guide_type_desc")
 	private String description;
 
+	@Basic
+	@Column(name = "guide_type_template")
+	private String template;
+
 	private GuideType()
 	{
 		super();
@@ -91,6 +95,14 @@ public class GuideType extends AbstractEntity
 	{
 		this.propertyChangeSupport.firePropertyChange("name", this.name, this.name = name);
 		this.name = name;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
+	}
+
+	public String getTemplate() {
+		return template;
 	}
 
 	public static GuideType newInstance()

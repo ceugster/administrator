@@ -4,6 +4,10 @@ import ch.eugster.events.persistence.model.Category;
 
 public class CategoryMap extends AbstractDataMap
 {
+	protected CategoryMap() {
+		super();
+	}
+
 	public CategoryMap(final Category category)
 	{
 		for (Key key : Key.values())
@@ -110,5 +114,11 @@ public class CategoryMap extends AbstractDataMap
 				}
 			}
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }

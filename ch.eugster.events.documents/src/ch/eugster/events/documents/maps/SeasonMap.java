@@ -10,6 +10,10 @@ public class SeasonMap extends AbstractDataMap
 {
 	private static DateFormat dateFormatter = SimpleDateFormat.getDateInstance();
 
+	protected SeasonMap() {
+		super();
+	}
+
 	public SeasonMap(final Season season)
 	{
 		for (Key key : Key.values())
@@ -134,5 +138,11 @@ public class SeasonMap extends AbstractDataMap
 				}
 			}
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }

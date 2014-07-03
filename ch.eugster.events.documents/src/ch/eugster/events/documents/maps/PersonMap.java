@@ -20,6 +20,11 @@ public class PersonMap extends AbstractDataMap
 {
 	private static final DateFormat dateFormatter = SimpleDateFormat.getDateInstance();
 
+	protected PersonMap()
+	{
+		super();
+	}
+	
 	public PersonMap(final Person person)
 	{
 		for (Key key : Key.values())
@@ -63,7 +68,7 @@ public class PersonMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		ID, SALUTATION, TITLE, FIRSTNAME, LASTNAME, PROFESSION, PHONE, EMAIL, WEBSITE, SEX, BIRTHDATE, FORM, POLITE;
+		ID, SALUTATION, TITLE, FIRSTNAME, LASTNAME, PROFESSION, PHONE, EMAIL, WEBSITE, SEX, BIRTHDATE, FORM, POLITE, NOTE;
 
 		@Override
 		public String getDescription()
@@ -121,6 +126,10 @@ public class PersonMap extends AbstractDataMap
 				case POLITE:
 				{
 					return "Briefanrede";
+				}
+				case NOTE:
+				{
+					return "Bemerkungen";
 				}
 				default:
 				{
@@ -186,6 +195,10 @@ public class PersonMap extends AbstractDataMap
 				{
 					return "polite";
 				}
+				case NOTE:
+				{
+					return "person_note";
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -249,6 +262,10 @@ public class PersonMap extends AbstractDataMap
 				case POLITE:
 				{
 					return "Briefanrede";
+				}
+				case NOTE:
+				{
+					return "Bemerkungen";
 				}
 				default:
 				{
@@ -329,11 +346,21 @@ public class PersonMap extends AbstractDataMap
 					return person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
 							.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
 				}
+				case NOTE:
+				{
+					return person.getNotes();
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
 				}
 			}
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }

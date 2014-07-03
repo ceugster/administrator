@@ -199,7 +199,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.CODE.value(link.getPerson()));
+					cell.setText(ViewerColumn.CODE.value(link));
 					cell.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_PERSON_BLUE));
 					deleted = link.isDeleted();
 				}
@@ -252,7 +252,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.LASTNAME.value(link.getPerson()));
+					cell.setText(ViewerColumn.LASTNAME.value(link));
 					deleted = link.isDeleted();
 				}
 				else if (object instanceof Address)
@@ -304,7 +304,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.FIRSTNAME.value(link.getPerson()));
+					cell.setText(ViewerColumn.FIRSTNAME.value(link));
 					deleted = link.isDeleted();
 				}
 				else if (object instanceof Address)
@@ -359,7 +359,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.ADDRESS_ID.value(link.getPerson()));
+					cell.setText(ViewerColumn.ADDRESS_ID.value(link));
 					image = link.getAddressType().getImage();
 					deleted = link.isDeleted();
 				}
@@ -418,7 +418,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.ORGANISATION.value(link.getPerson()));
+					cell.setText(ViewerColumn.ORGANISATION.value(link));
 					deleted = link.isDeleted();
 				}
 				cell.setImage(null);
@@ -470,7 +470,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.ADDRESS.value(link.getPerson()));
+					cell.setText(ViewerColumn.ADDRESS.value(link));
 					deleted = link.isDeleted();
 				}
 				cell.setImage(null);
@@ -522,7 +522,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.CITY.value(link.getPerson()));
+					cell.setText(ViewerColumn.CITY.value(link));
 					deleted = link.isDeleted();
 				}
 				cell.setImage(null);
@@ -574,7 +574,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.MOBILE.value(link.getPerson()));
+					cell.setText(ViewerColumn.MOBILE.value(link));
 					deleted = link.isDeleted();
 				}
 				cell.setImage(null);
@@ -626,7 +626,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.PHONE.value(link.getPerson()));
+					cell.setText(ViewerColumn.PHONE.value(link));
 					deleted = link.isDeleted();
 				}
 				cell.setImage(null);
@@ -678,7 +678,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.EMAIL.value(link.getPerson()));
+					cell.setText(ViewerColumn.EMAIL.value(link));
 					deleted = link.isDeleted();
 				}
 				cell.setImage(null);
@@ -730,7 +730,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.DOMAIN.value(link.getPerson()));
+					cell.setText(ViewerColumn.DOMAIN.value(link));
 					deleted = link.isDeleted();
 				}
 				cell.setImage(null);
@@ -1316,6 +1316,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 		public ContentRoot(final AbstractEntity[] entities)
 		{
 			this.entities = entities;
+			System.out.println();
 		}
 
 		public AbstractEntity[] getEntities()

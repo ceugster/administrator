@@ -60,6 +60,8 @@ public class CompensationTableViewerComposite extends Composite
 	private CompensationList compensationList;
 
 	private ViewerComposite viewerComposite;
+	
+	private ButtonComposite buttonComposite;
 
 	public CompensationTableViewerComposite(final Composite parent, final int style)
 	{
@@ -88,8 +90,15 @@ public class CompensationTableViewerComposite extends Composite
 		this.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		this.viewerComposite = this.createViewerComposite(this, SWT.NONE);
-		this.createButtonComposite(this, SWT.NONE);
-
+		this.buttonComposite = this.createButtonComposite(this, SWT.NONE);
+		this.viewerComposite.getViewer().addSelectionChangedListener(new ISelectionChangedListener() 
+		{
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) 
+			{
+				buttonComposite.getRemoveButton().setEnabled(!event.getSelection().isEmpty());
+			}
+		});
 	}
 
 	private ViewerComposite createViewerComposite(final Composite parent, final int style)
@@ -177,6 +186,7 @@ public class CompensationTableViewerComposite extends Composite
 							CWrapper wrapper = (CWrapper) object;
 							Compensation compensation = wrapper.getCompensation();
 							compensation.setDeleted(true);
+//							CompensationTableViewerComposite.this.compensationList.removeWrapper(wrapper);
 						}
 						CompensationTableViewerComposite.this.viewerComposite.getViewer().refresh();
 						CompensationTableViewerComposite.this.viewerComposite.pack();
@@ -184,7 +194,7 @@ public class CompensationTableViewerComposite extends Composite
 					}
 				}
 			});
-			this.removeButton.setEnabled(false);
+//			this.removeButton.setEnabled(false);
 		}
 
 		private void createControls()
@@ -235,6 +245,15 @@ public class CompensationTableViewerComposite extends Composite
 				listener.addWrapper(wrapper);
 		}
 
+		public void removeWrapper(final CWrapper wrapper)
+		{
+			this.wrappers.remove(wrapper);
+			for (Listener listener : this.listeners)
+			{
+				listener.removeWrapper(wrapper);
+			}
+		}
+
 		public Collection<Compensation> getCompensations()
 		{
 			Collection<Compensation> compensations = new ArrayList<Compensation>();
@@ -273,6 +292,7 @@ public class CompensationTableViewerComposite extends Composite
 				this.wrappers.add(new CWrapper(compensation));
 			}
 			CompensationTableViewerComposite.this.viewerComposite.setInput(this);
+			CompensationTableViewerComposite.this.buttonComposite.getRemoveButton().setEnabled(!viewerComposite.getViewer().getSelection().isEmpty());
 		}
 	}
 
@@ -436,7 +456,6 @@ public class CompensationTableViewerComposite extends Composite
 			table.setHeaderVisible(true);
 			table.setLinesVisible(true);
 			table.setLayoutData(new GridData(GridData.FILL_BOTH));
-
 			this.viewer = new TableViewer(table);
 
 			for (int i = 0; i < CompensationTableViewerComposite.COLUMN_NAMES.length; i++)

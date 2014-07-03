@@ -1,5 +1,6 @@
 package ch.eugster.events.documents.maps;
 
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -18,9 +19,13 @@ import ch.eugster.events.persistence.model.User;
 
 public class CourseMap extends AbstractDataMap
 {
-	private static DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+	private static DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
 
 	private static NumberFormat integerFormatter = DecimalFormat.getIntegerInstance();
+
+	protected CourseMap() {
+		super();
+	}
 
 	public CourseMap(final Course course)
 	{
@@ -59,9 +64,51 @@ public class CourseMap extends AbstractDataMap
 
 	}
 
+	protected void printReferences(Writer writer)
+	{
+		printHeader(writer, 2, "Referenzen");
+		startTable(writer, 0);
+		startTableRow(writer);
+		printCell(writer, "#season", "Seasons");
+		endTableRow(writer);
+		startTableRow(writer);
+		printCell(writer, "#category", "Kurskategorien");
+		endTableRow(writer);
+		startTableRow(writer);
+		printCell(writer, "#rubric", "Kursrubriken");
+		endTableRow(writer);
+		startTableRow(writer);
+		printCell(writer, "#domain", "Domänen");
+		endTableRow(writer);
+		endTable(writer);
+	}
+
+	protected void printTables(Writer writer)
+	{
+		printHeader(writer, 2, "Tabellen");
+		startTable(writer, 0);
+		startTableRow(writer);
+		printCell(writer, null, TableKey.BOOKINGS.getKey());
+		printCell(writer, "#booking", TableKey.BOOKINGS.getName());
+		endTableRow(writer);
+		startTableRow(writer);
+		printCell(writer, null, TableKey.BOOKING_TYPES.getKey());
+		printCell(writer, "#booking_type", TableKey.BOOKING_TYPES.getName());
+		endTableRow(writer);
+		startTableRow(writer);
+		printCell(writer, null, TableKey.DETAILS.getKey());
+		printCell(writer, "#course_detail", TableKey.DETAILS.getName());
+		endTableRow(writer);
+		startTableRow(writer);
+		printCell(writer, null, TableKey.GUIDES.getKey());
+		printCell(writer, "#course_guide", TableKey.GUIDES.getName());
+		endTableRow(writer);
+		endTable(writer);
+	}
+
 	public enum Key implements DataMapKey
 	{
-		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM;
+		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM, PREREQUISITES;
 
 		@Override
 		public String getDescription()
@@ -187,6 +234,10 @@ public class CourseMap extends AbstractDataMap
 				case PAYMENT_TERM:
 				{
 					return "Zahlungsbedingungen";
+				}
+				case PREREQUISITES:
+				{
+					return "Voraussetzungen";
 				}
 				default:
 				{
@@ -320,6 +371,10 @@ public class CourseMap extends AbstractDataMap
 				{
 					return "payment_term";
 				}
+				case PREREQUISITES:
+				{
+					return "course_prerequisites";
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -451,6 +506,10 @@ public class CourseMap extends AbstractDataMap
 				case PAYMENT_TERM:
 				{
 					return "Zahlungsbedingungen";
+				}
+				case PREREQUISITES:
+				{
+					return "Voraussetzungen";
 				}
 				default:
 				{
@@ -607,6 +666,10 @@ public class CourseMap extends AbstractDataMap
 				{
 					return course.getPaymentTerm() == null ? "" : course.getPaymentTerm().getText();
 				}
+				case PREREQUISITES:
+				{
+					return course.getPrerequisites();
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -655,19 +718,19 @@ public class CourseMap extends AbstractDataMap
 			{
 				case BOOKINGS:
 				{
-					return "course_bookings";
+					return "table_course_bookings";
 				}
 				case BOOKING_TYPES:
 				{
-					return "course_booking_types";
+					return "table_booking_types";
 				}
 				case DETAILS:
 				{
-					return "course_details";
+					return "table_course_details";
 				}
 				case GUIDES:
 				{
-					return "course_guides";
+					return "table_course_guides";
 				}
 				default:
 				{
@@ -755,7 +818,7 @@ public class CourseMap extends AbstractDataMap
 					{
 						if (!guide.isDeleted())
 						{
-							tableMaps.add(new CourseGuideMap(guide));
+							tableMaps.add(new CourseGuideMap(guide, false));
 						}
 					}
 					return tableMaps;
@@ -766,5 +829,11 @@ public class CourseMap extends AbstractDataMap
 				}
 			}
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }

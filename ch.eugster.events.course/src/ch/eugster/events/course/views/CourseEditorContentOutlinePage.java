@@ -14,6 +14,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -23,6 +24,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -41,6 +43,7 @@ import ch.eugster.events.persistence.formatters.CourseFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.BookingType;
+import ch.eugster.events.persistence.model.Compensation;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseDetail;
 import ch.eugster.events.persistence.model.CourseGuide;
@@ -109,6 +112,59 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		target.setUpdated(source.getUpdated());
 		target.setUser(source.getUser());
 		target.setVersion(source.getVersion());
+		for (Compensation compensation : source.getCompensations())
+		{
+			if (!compensation.isDeleted())
+			{
+				target.addCompensation(copy(compensation, Compensation.newInstance(compensation.getCourseGuide())));
+			}
+		}
+	}
+	
+	private Compensation copy(final Compensation source, Compensation target)
+	{
+		target.setAmount(source.getAmount());
+		target.setCompensationType(source.getCompensationType());
+		target.setDeleted(source.isDeleted());
+		target.setId(source.getId());
+		target.setInserted(source.getInserted());
+		target.setUpdated(source.getUpdated());
+		target.setUser(source.getUser());
+		return target;
+	}
+
+	private void update(final CourseGuide source, final CourseGuide target)
+	{
+		target.setDeleted(source.isDeleted());
+		target.setDescription(source.getDescription());
+		target.setGuide(source.getGuide());
+		target.setGuideType(source.getGuideType());
+		target.setId(source.getId());
+		target.setInserted(source.getInserted());
+		target.setPhone(source.getPhone());
+		target.setUpdated(source.getUpdated());
+		target.setUser(source.getUser());
+		target.setVersion(source.getVersion());
+		for (Compensation compensation : source.getCompensations())
+		{
+			if (compensation.getId() == null)
+			{
+				if (!compensation.isDeleted())
+				{
+					target.addCompensation(compensation);
+				}
+			}
+			else
+			{
+				for (Compensation targetCompensation : target.getCompensations())
+				{
+					if (targetCompensation.getId().equals(compensation.getId()))
+					{
+						copy(compensation, targetCompensation);
+					}
+				}
+			}
+		}
 	}
 
 	private IAction createAddBookingTypeAction()
@@ -455,9 +511,13 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 					CourseGuideWizard wizard = new CourseGuideWizard(courseGuideGroup, courseGuide);
 					Shell shell = CourseEditorContentOutlinePage.this.getSite().getShell();
 					WizardDialog dialog = new WizardDialog(shell, wizard);
-					dialog.open();
+					int result = dialog.open();
 					courseGuide.getPropertyChangeSupport().removePropertyChangeListener(
 							CourseEditorContentOutlinePage.this);
+					if (result == IDialogConstants.OK_ID)
+					{
+						CourseEditorContentOutlinePage.this.editor.setDirty(true);
+					}
 				}
 			}
 		};
@@ -926,7 +986,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 				else
 				{
 					CourseGuide oldCourseGuide = map.get(courseGuide.getId());
-					copy(courseGuide, oldCourseGuide);
+					update(courseGuide, oldCourseGuide);
 				}
 			}
 		}

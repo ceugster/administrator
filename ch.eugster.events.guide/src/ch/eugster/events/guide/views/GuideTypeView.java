@@ -110,6 +110,25 @@ public class GuideTypeView extends AbstractEntityView implements IDoubleClickLis
 		tableColumn.setResizable(true);
 		tableColumn.setText("Funktion");
 
+		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
+		tableViewerColumn.setLabelProvider(new CellLabelProvider()
+		{
+			@Override
+			public void update(ViewerCell cell)
+			{
+				Object object = cell.getElement();
+				if (object instanceof GuideType)
+				{
+					GuideType type = (GuideType) object;
+					String value = type.getTemplate() == null ? "" : type.getTemplate();
+					cell.setText(value);
+				}
+			}
+		});
+		tableColumn = tableViewerColumn.getColumn();
+		tableColumn.setResizable(true);
+		tableColumn.setText("Vertragsvorlage");
+
 		this.createContextMenu();
 
 		this.getSite().setSelectionProvider(this.viewer);

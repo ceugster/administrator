@@ -39,7 +39,9 @@ public class CourseGuideWizard extends Wizard {
 		CourseGuideWizardPage wizardPage = (CourseGuideWizardPage) this.getPage("courseGuideWizardPage");
 		this.courseGuide = wizardPage.updateCourseGuide();
 		if (!this.courseGuideGroup.getCourseGuides().contains(this.courseGuide))
+		{
 			this.courseGuideGroup.addCourseGuide(this.courseGuide);
+		}
 		return true;
 	}
 

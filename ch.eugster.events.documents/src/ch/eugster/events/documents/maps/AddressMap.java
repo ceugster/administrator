@@ -1,5 +1,6 @@
 package ch.eugster.events.documents.maps;
 
+import java.io.Writer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -19,6 +20,10 @@ import ch.eugster.events.persistence.model.Member;
 public class AddressMap extends AbstractDataMap
 {
 	private static NumberFormat amountFormatter = null;
+
+	protected AddressMap() {
+		super();
+	}
 
 	public AddressMap(final Address address)
 	{
@@ -54,6 +59,17 @@ public class AddressMap extends AbstractDataMap
 			this.addTableMaps(key.getKey(), key.getTableMaps(address, year, purpose, domain));
 		}
 
+	}
+
+	protected void printTables(Writer writer)
+	{
+		printHeader(writer, 2, "Tabellen");
+		startTable(writer, 0);
+		startTableRow(writer);
+		printCell(writer, null, TableKey.DONATIONS.getKey());
+		printCell(writer, "#donation", "Spenden");
+		endTableRow(writer);
+		endTable(writer);
 	}
 
 	public enum Key implements DataMapKey
@@ -509,13 +525,13 @@ public class AddressMap extends AbstractDataMap
 
 	public enum TableKey
 	{
-		DONATION;
+		DONATIONS;
 
 		public String getDescription()
 		{
 			switch (this)
 			{
-				case DONATION:
+				case DONATIONS:
 				{
 					return "Spenden";
 				}
@@ -530,9 +546,9 @@ public class AddressMap extends AbstractDataMap
 		{
 			switch (this)
 			{
-				case DONATION:
+				case DONATIONS:
 				{
-					return "donations";
+					return "table_donations";
 				}
 				default:
 				{
@@ -545,7 +561,7 @@ public class AddressMap extends AbstractDataMap
 		{
 			switch (this)
 			{
-				case DONATION:
+				case DONATIONS:
 				{
 					return this.getTableMaps(address, null, null, null);
 				}
@@ -561,7 +577,7 @@ public class AddressMap extends AbstractDataMap
 		{
 			switch (this)
 			{
-				case DONATION:
+				case DONATIONS:
 				{
 					List<DataMap> tableMaps = new ArrayList<DataMap>();
 					Collection<Donation> donations = address.getDonations();
@@ -641,4 +657,12 @@ public class AddressMap extends AbstractDataMap
 		}
 
 	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
+	}
+
+	
 }

@@ -1,12 +1,18 @@
 package ch.eugster.events.guide.editors;
 
+import java.io.File;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
@@ -39,6 +45,10 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 
 	private Text description;
 
+	private Text template;
+	
+	private Button templateSelector;
+	
 	@Override
 	protected void initialize()
 	{
@@ -76,7 +86,7 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 
 	private Control fillSection(Section parent)
 	{
-		GridLayout layout = new GridLayout(2, false);
+		GridLayout layout = new GridLayout(3, false);
 
 		Composite composite = this.formToolkit.createComposite(parent);
 		composite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
@@ -85,8 +95,11 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 		Label label = this.formToolkit.createLabel(composite, "Code", SWT.NONE);
 		label.setLayoutData(new GridData());
 
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		
 		this.code = this.formToolkit.createText(composite, "");
-		this.code.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.code.setLayoutData(gridData);
 		this.code.addModifyListener(new ModifyListener()
 		{
 			public void modifyText(ModifyEvent e)
@@ -103,8 +116,11 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 		label = this.formToolkit.createLabel(composite, "Bezeichnung", SWT.NONE);
 		label.setLayoutData(new GridData());
 
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		
 		this.name = this.formToolkit.createText(composite, "");
-		this.name.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.name.setLayoutData(gridData);
 		this.name.addModifyListener(new ModifyListener()
 		{
 			public void modifyText(ModifyEvent e)
@@ -116,13 +132,52 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 		label = this.formToolkit.createLabel(composite, "Beschreibung", SWT.NONE);
 		label.setLayoutData(new GridData());
 
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		gridData.heightHint = 48;
+		
 		this.description = this.formToolkit.createText(composite, "", SWT.MULTI | SWT.V_SCROLL);
-		this.description.setLayoutData(new GridData(GridData.FILL_BOTH));
+		this.description.setLayoutData(gridData);
 		this.description.addModifyListener(new ModifyListener()
 		{
 			public void modifyText(ModifyEvent e)
 			{
 				GuideTypeEditor.this.setDirty(true);
+			}
+		});
+
+		label = this.formToolkit.createLabel(composite, "Vertragsvorlage", SWT.NONE);
+		label.setLayoutData(new GridData());
+
+		this.template = this.formToolkit.createText(composite, "");
+		this.template.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.template.addModifyListener(new ModifyListener()
+		{
+			public void modifyText(ModifyEvent e)
+			{
+				GuideTypeEditor.this.setDirty(true);
+			}
+		});
+
+		this.templateSelector = this.formToolkit.createButton(composite, "...", SWT.PUSH);
+		this.templateSelector.setLayoutData(new GridData());
+		this.templateSelector.addSelectionListener(new SelectionListener()
+		{
+			public void widgetSelected(SelectionEvent e)
+			{
+				FileDialog dialog = new FileDialog(GuideTypeEditor.this.getSite().getShell());
+				dialog.setFilterExtensions(new String[] { "*.odt"});
+				dialog.setFilterIndex(0);
+				dialog.setText("Vertragsvorlage wählen");
+				String path = dialog.open();
+				if (path != null)
+				{
+					GuideTypeEditor.this.template.setText(path);
+				}
+			}
+			public void widgetDefaultSelected(SelectionEvent e)
+			{
+				widgetSelected(e);
 			}
 		});
 
@@ -183,6 +238,23 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 		return msg;
 	}
 
+	private Message getInvalidTemplatePathMessage()
+	{
+		Message msg = null;
+
+		if (!this.template.getText().isEmpty())
+		{
+			File path = new File(this.template.getText());
+			if (!path.isFile() || !path.getName().endsWith(".odt"))
+			{
+				msg = new Message(this.template, "Fehler");
+				msg.setMessage("Die angegebene Vertragsvorlage ist ungültig.");
+			}
+		}
+
+		return msg;
+	}
+
 	@Override
 	protected String getName()
 	{
@@ -210,6 +282,7 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 			this.code.setText(guideType.getCode());
 			this.name.setText(guideType.getName());
 			this.description.setText(guideType.getDescription());
+			this.template.setText(guideType.getTemplate() == null ? "" : guideType.getTemplate());
 		}
 		this.setDirty(false);
 	}
@@ -224,6 +297,7 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 			guideType.setCode(this.code.getText());
 			guideType.setName(this.name.getText());
 			guideType.setDescription(this.description.getText());
+			guideType.setTemplate(this.template.getText().isEmpty() ? null : this.template.getText());
 		}
 	}
 
@@ -234,6 +308,9 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 
 		if (msg == null)
 			msg = this.getEmptyNameMessage();
+
+		if (msg == null)
+			msg = this.getInvalidTemplatePathMessage();
 
 		if (msg != null)
 			this.showWarningMessage(msg);

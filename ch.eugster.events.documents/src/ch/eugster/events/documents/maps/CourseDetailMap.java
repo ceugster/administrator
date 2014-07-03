@@ -8,11 +8,15 @@ import ch.eugster.events.persistence.model.CourseDetail;
 
 public class CourseDetailMap extends AbstractDataMap
 {
-	private static DateFormat dateTimeFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+	private static final DateFormat dateTimeFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
-	private static DateFormat dateFormatter = SimpleDateFormat.getDateInstance();
+	private static final DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
 
-	private static DateFormat timeFormatter = SimpleDateFormat.getTimeInstance();
+	private static final DateFormat timeFormatter = new SimpleDateFormat("HH:mm");
+
+	protected CourseDetailMap() {
+		super();
+	}
 
 	public CourseDetailMap(final CourseDetail courseDetail)
 	{
@@ -347,5 +351,11 @@ public class CourseDetailMap extends AbstractDataMap
 				}
 			}
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 }
