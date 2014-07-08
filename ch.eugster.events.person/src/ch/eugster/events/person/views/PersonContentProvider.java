@@ -52,7 +52,7 @@ public class PersonContentProvider implements ITreeContentProvider
 		else if (parentElement instanceof Address)
 		{
 			Address address = (Address) parentElement;
-			return address.getPersonLinks().toArray(new LinkPersonAddress[0]);
+			return address.getValidLinks().toArray(new LinkPersonAddress[0]);
 		}
 		else
 			return new AbstractEntity[0];
@@ -108,7 +108,7 @@ public class PersonContentProvider implements ITreeContentProvider
 		}
 		else if (element instanceof Address)
 		{
-			return ((Address) element).getPersonLinks().size() > 0;
+			return ((Address) element).getValidLinks().size() > 0;
 		}
 		return false;
 	}

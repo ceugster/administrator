@@ -1075,8 +1075,6 @@ ch.eugster.events.person/src/ch/eugster/events/person/actions/AddLinkActionDeleg
 ch.eugster.events.person/src/ch/eugster/events/person/actions/DeleteLinkActionDelegate.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/dialogs/ChangeAddressTypeDialog.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/dialogs/ContactDialog.java -text
-ch.eugster.events.person/src/ch/eugster/events/person/editors/AddressContentProposal.java -text
-ch.eugster.events.person/src/ch/eugster/events/person/editors/AddressContentProposalProvider.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/AddressEditor.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/AddressEditorInput.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/AddressSalutationEditor.java -text

@@ -766,11 +766,14 @@ public class LinkSearcher extends Composite
 		}
 		if (person != null)
 		{
-			entities.add(person);
+			if (!person.isDeleted())
+			{
+				entities.add(person);
+			}
 		}
 		if (address != null)
 		{
-			if (address.getPersonLinks().size() == 0)
+			if (address.getValidLinks().size() == 0)
 			{
 				entities.add(address);
 			}

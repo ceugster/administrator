@@ -1,8 +1,10 @@
 package ch.eugster.events.person.editors;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,6 +19,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalListener;
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -87,10 +90,12 @@ import ch.eugster.events.persistence.model.PersonSettings;
 import ch.eugster.events.persistence.model.PersonTitle;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.model.ZipCode;
+import ch.eugster.events.persistence.queries.AddressQuery;
 import ch.eugster.events.persistence.queries.AddressSalutationQuery;
 import ch.eugster.events.persistence.queries.AddressTypeQuery;
 import ch.eugster.events.persistence.queries.CountryQuery;
 import ch.eugster.events.persistence.queries.FieldExtensionQuery;
+import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
 import ch.eugster.events.persistence.queries.ZipCodeQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.person.Activator;
@@ -810,9 +815,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				updateSingleLabel();
-				updateGroupLabel();
-				// city.setEnabled(zip.getData("zipCode") == null);
+//				city.setEnabled(zip.getData("zipCode") == null);
 				setDirty(true);
 			}
 		});
@@ -1336,7 +1339,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	}
 
 	@Override
-	public Object getAdapter(final Class clazz)
+	public Object getAdapter(@SuppressWarnings("rawtypes") final Class clazz)
 	{
 		if (clazz.equals(LinkPersonAddress.class))
 		{
@@ -2050,6 +2053,213 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 				this.city.setText(entry.getValue());
 				this.setDirty(true);
 			}
+		}
+	}
+
+	private class AddressContentProposalProvider implements IContentProposalProvider
+	{
+		private final FormEditorLinkPage editorPage;
+
+		public AddressContentProposalProvider(final FormEditorLinkPage editorPage)
+		{
+			this.editorPage = editorPage;
+		}
+
+		private boolean addressExists(final LinkPersonAddress link)
+		{
+			boolean exists = false;
+			PersonEditorInput input = (PersonEditorInput) this.editorPage.getEditor().getEditorInput();
+			Person person = input.getEntity();
+			if (person.getId() != null && person.getId().equals(link.getPerson().getId()))
+			{
+				Collection<IFormPage> pages = editorPage.getEditor().getPages();
+				for (IFormPage page : pages)
+				{
+					if (page instanceof FormEditorLinkPage)
+					{
+						Address address = ((FormEditorLinkPage) page).getLink().getAddress();
+						if (address != null)
+						{
+							if (address.getId() != null)
+							{
+								if (page != editorPage && link.getAddress().getId().equals(address.getId()))
+								{
+									exists = true;
+								}
+							}
+						}
+					}
+				}
+			}
+			return exists;
+		}
+
+		private boolean addressExists(final Address address)
+		{
+			return false;
+		}
+
+		@Override
+		public IContentProposal[] getProposals(final String contents, final int position)
+		{
+			AddressContentProposal[] proposals = new AddressContentProposal[0];
+			if (position > 3)
+			{
+				Map<String, AddressContentProposal> props = new HashMap<String, AddressContentProposal>();
+				ConnectionService service = Activator.getDefault().getConnectionService();
+				if (service != null)
+				{
+					LinkPersonAddressQuery linkQuery = (LinkPersonAddressQuery) service.getQuery(LinkPersonAddress.class);
+					Collection<LinkPersonAddress> links = linkQuery.selectByAddressAsLike(contents);
+					Iterator<LinkPersonAddress> linkIterator = links.iterator();
+					while (linkIterator.hasNext())
+					{
+						LinkPersonAddress link = linkIterator.next();
+						if (!addressExists(link))
+						{
+							props.put("L" + link.getId().toString(), new AddressContentProposal(link));
+						}
+					}
+					AddressQuery addressQuery = (AddressQuery) service.getQuery(Address.class);
+					Collection<Address> addresses = addressQuery.selectByAddressAsLike(contents);
+					Iterator<Address> addressIterator = addresses.iterator();
+					while (addressIterator.hasNext())
+					{
+						Address address = addressIterator.next();
+						if (!addressExists(address))
+						{
+							props.put("A" + address.getId().toString(), new AddressContentProposal(address));
+						}
+					}
+					Address address = Address.newInstance();
+					address.setAddress(this.editorPage.getAddress());
+					LinkPersonAddress emptyLink = LinkPersonAddress.newInstance(address);
+					props.put("L0", new AddressContentProposal(emptyLink));
+					proposals = props.values().toArray(new AddressContentProposal[0]);
+					Arrays.sort(proposals);
+				}
+			}
+			return proposals;
+		}
+	}
+
+	private class AddressContentProposal implements IContentProposal, Comparable<AddressContentProposal>
+	{
+		private LinkPersonAddress link;
+
+		private Address address;
+
+		public AddressContentProposal(final LinkPersonAddress link)
+		{
+			this.link = link;
+			this.address = link.getAddress();
+		}
+
+		public AddressContentProposal(final Address address)
+		{
+			this.address = address;
+		}
+
+		@Override
+		public int compareTo(final AddressContentProposal other)
+		{
+			if (other instanceof AddressContentProposal)
+			{
+				if (this.link == null || this.link.getId() == null || this.link.isDeleted()
+						|| this.link.getPerson().isDeleted())
+				{
+					if (this.address.getId() == null)
+					{
+						return -1;
+					}
+					else if (other.getAddress().getId() == null)
+					{
+						return 1;
+					}
+				}
+				else
+				{
+					if (this.link.getId() == null)
+					{
+						return -1;
+					}
+					else if (other.getAddress().getId() == null)
+					{
+						return 1;
+					}
+				}
+				return this.getContent().compareTo(other.getContent());
+			}
+			return 0;
+		}
+
+		@Override
+		public String getContent()
+		{
+			return this.link == null || this.link.isDeleted() || this.link.getPerson().isDeleted() ? this.address
+					.getAddress() : this.link.getAddress().getAddress();
+		}
+
+		@Override
+		public int getCursorPosition()
+		{
+			return 0;
+		}
+
+		@Override
+		public String getDescription()
+		{
+			return "Adressen zur Auswahl";
+		}
+
+		@Override
+		public String getLabel()
+		{
+			StringBuilder builder = new StringBuilder(AddressFormatter.getInstance().formatId(this.address));
+			builder = builder.append(", " + this.address.getAddress());
+			if (!this.address.getCity().isEmpty())
+			{
+				if (builder.length() > 0)
+				{
+					builder.append(", ");
+				}
+				builder.append(AddressFormatter.getInstance().formatCityLine(this.address));
+			}
+			if (this.link == null || this.link.getId() == null || this.link.isDeleted()
+					|| this.link.getPerson().isDeleted())
+			{
+				if (!this.address.getName().isEmpty())
+				{
+					if (builder.length() > 0)
+					{
+						builder.append(", ");
+					}
+					builder.append(this.address.getName());
+				}
+			}
+			else
+			{
+				if (this.link.getPerson() != null)
+				{
+					if (!this.link.getPerson().getLastname().isEmpty())
+					{
+						if (builder.length() > 0)
+							builder.append(", ");
+						builder.append(PersonFormatter.getInstance().formatLastnameFirstname(this.link.getPerson()));
+					}
+				}
+			}
+			return builder.toString();
+		}
+
+		public LinkPersonAddress getPersonAddressLink()
+		{
+			return this.link;
+		}
+
+		public Address getAddress()
+		{
+			return this.address;
 		}
 	}
 }
