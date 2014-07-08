@@ -2,7 +2,11 @@ package ch.eugster.events.person.editors;
 
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -13,6 +17,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalListener;
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -63,6 +68,7 @@ import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.GlobalSettings;
 import ch.eugster.events.persistence.model.PersonSettings;
 import ch.eugster.events.persistence.model.ZipCode;
+import ch.eugster.events.persistence.queries.AddressQuery;
 import ch.eugster.events.persistence.queries.AddressSalutationQuery;
 import ch.eugster.events.persistence.queries.CountryQuery;
 import ch.eugster.events.persistence.queries.ZipCodeQuery;
@@ -471,10 +477,14 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				updateAddressLabel();
 				setDirty(true);
 			}
 		});
+
+		ContentProposalAdapter proposalAdapter = new ContentProposalAdapter(this.address, new TextContentAdapter(),
+				new AddressContentProposalProvider(this), null, null);
+		proposalAdapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
+		proposalAdapter.addContentProposalListener(this);
 
 		label = formToolkit.createLabel(composite, "Postfach", SWT.NONE);
 		label.setLayoutData(new GridData());
@@ -528,37 +538,13 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 				{
 					Country country = (Country) ssel.getFirstElement();
 					countryViewer.setData("country", country);
-					// linkPhonePrefix.setText(country.getPhonePrefix());
+					
 					phonePrefix.setText(country.getPhonePrefix());
-					String numValue = getNumValue(phone.getText());
-					if (!numValue.isEmpty())
-					{
-						try
-						{
-							PhoneNumber phoneNumber = phoneUtil.parse(numValue, country.getIso3166alpha2());
-							String number = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
-							phone.setText(number);
-						}
-						catch (NumberParseException e)
-						{
+					phone.setText(formatPhoneNumber(phone.getText()));
 
-						}
-					}
 					faxPrefix.setText(country.getPhonePrefix());
-					numValue = getNumValue(fax.getText());
-					if (!numValue.isEmpty())
-					{
-						try
-						{
-							PhoneNumber phoneNumber = phoneUtil.parse(numValue, country.getIso3166alpha2());
-							String number = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
-							phone.setText(number);
-						}
-						catch (NumberParseException e)
-						{
+					fax.setText(formatPhoneNumber(fax.getText()));
 
-						}
-					}
 					String[] states = selectProvinceCodes(country);
 					provinceViewer.setInput(states);
 					if (zip.getData("zipCode") instanceof ZipCode)
@@ -581,8 +567,8 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				zipSelected(zip.getText());
 				updateAddressLabel();
+				// city.setEnabled(zip.getData("zipCode") == null);
 				setDirty(true);
 			}
 		});
@@ -595,15 +581,17 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 				text.setSelection(0, text.getText().length());
 			}
 
-			@Override
-			public void focusLost(final FocusEvent e)
-			{
-				zipSelected(zip.getText());
-			}
+			 @Override
+			 public void focusLost(final FocusEvent e)
+			 {
+			 zipSelected(zip.getText());
+			 }
 		});
 
-		// label = toolkit.createLabel(client, "Ort", SWT.NONE);
-		// label.setLayoutData(new GridData());
+		proposalAdapter = new ContentProposalAdapter(this.zip, new TextContentAdapter(),
+				new CityContentProposalProvider(countryViewer, zip), null, null);
+		proposalAdapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
+		proposalAdapter.addContentProposalListener(this);
 
 		this.city = formToolkit.createText(composite, "");
 		this.city.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -630,7 +618,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 			char[] autoActivationCharacters = new char[] { '.', '#' };
 			KeyStroke keyStroke = KeyStroke.getInstance("Ctrl+Space");
 
-			ContentProposalAdapter proposalAdapter = new ContentProposalAdapter(this.city, new TextContentAdapter(),
+			proposalAdapter = new ContentProposalAdapter(this.city, new TextContentAdapter(),
 					new CityContentProposalProvider(countryViewer, zip), keyStroke, autoActivationCharacters);
 			proposalAdapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
 			proposalAdapter.addContentProposalListener(this);
@@ -680,6 +668,31 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 			}
 		}
 		return builder.toString();
+	}
+
+	private String formatPhoneNumber(String value)
+	{
+		if (!AddressEditor.this.countryViewer.getSelection().isEmpty())
+		{
+			IStructuredSelection ssel = (IStructuredSelection) AddressEditor.this.countryViewer.getSelection();
+			if (ssel.getFirstElement() instanceof Country)
+			{
+				if (!value.isEmpty())
+				{
+					Country country = (Country) ssel.getFirstElement();
+					try
+					{
+						PhoneNumber phoneNumber = phoneUtil.parse(value, country.getIso3166alpha2());
+						value = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
+					}
+					catch (NumberParseException ex)
+					{
+
+					}
+				}
+			}
+		}
+		return value;
 	}
 
 	private String removeSpaces(final String value)
@@ -1197,10 +1210,24 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	@Override
 	public void proposalAccepted(final IContentProposal contentProposal)
 	{
-		if (contentProposal instanceof CityContentProposal)
+		if (contentProposal instanceof AddressContentProposal)
+		{
+			AddressContentProposal proposal = (AddressContentProposal) contentProposal;
+			Address address = proposal.getAddress();
+			if (address.getId() != null)
+			{
+				loadAddressValues(address);
+				loadContactValues(address);
+			}
+		}
+		else if (contentProposal instanceof CityContentProposal)
 		{
 			CityContentProposal proposal = (CityContentProposal) contentProposal;
+			zip.setData("zipCode", proposal.getZipCode());
+			zip.setText(proposal.getZipCode().getZip());
 			city.setText(proposal.getZipCode().getCity());
+			countryViewer.setSelection(new StructuredSelection(proposal.getZipCode().getCountry()));
+			countryViewer.setData("country", proposal.getZipCode().getCountry());
 		}
 	}
 
@@ -1496,4 +1523,125 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 		}
 	}
 
+	private class AddressContentProposalProvider implements IContentProposalProvider
+	{
+		private final AddressEditor editor;
+
+		public AddressContentProposalProvider(final AddressEditor editor)
+		{
+			this.editor = editor;
+		}
+
+		private boolean addressExists(final Address address)
+		{
+			return false;
+		}
+
+		@Override
+		public IContentProposal[] getProposals(final String contents, final int position)
+		{
+			AddressContentProposal[] proposals = new AddressContentProposal[0];
+			if (position > 3)
+			{
+				Map<String, AddressContentProposal> props = new HashMap<String, AddressContentProposal>();
+				ConnectionService service = Activator.getDefault().getConnectionService();
+				if (service != null)
+				{
+					AddressQuery addressQuery = (AddressQuery) service.getQuery(Address.class);
+					Collection<Address> addresses = addressQuery.selectByAddressAsLike(contents);
+					Iterator<Address> addressIterator = addresses.iterator();
+					while (addressIterator.hasNext())
+					{
+						Address address = addressIterator.next();
+						if (!addressExists(address))
+						{
+							props.put("A" + address.getId().toString(), new AddressContentProposal(address));
+						}
+					}
+					Address address = Address.newInstance();
+					address.setAddress(AddressEditor.this.address.getText());
+					Address emptyAddress= Address.newInstance();
+					props.put("A0", new AddressContentProposal(emptyAddress));
+					proposals = props.values().toArray(new AddressContentProposal[0]);
+					Arrays.sort(proposals);
+				}
+			}
+			return proposals;
+		}
+	}
+
+	private class AddressContentProposal implements IContentProposal, Comparable<AddressContentProposal>
+	{
+		private Address address;
+
+		public AddressContentProposal(final Address address)
+		{
+			this.address = address;
+		}
+
+		@Override
+		public int compareTo(final AddressContentProposal other)
+		{
+			if (other instanceof AddressContentProposal)
+			{
+				if (this.address.getId() == null)
+				{
+					return -1;
+				}
+				else if (other.getAddress().getId() == null)
+				{
+					return 1;
+				}
+				return this.getContent().compareTo(other.getContent());
+			}
+			return 0;
+		}
+
+		@Override
+		public String getContent()
+		{
+			return this.address.getAddress();
+		}
+
+		@Override
+		public int getCursorPosition()
+		{
+			return 0;
+		}
+
+		@Override
+		public String getDescription()
+		{
+			return "Adressen zur Auswahl";
+		}
+
+		@Override
+		public String getLabel()
+		{
+			StringBuilder builder = new StringBuilder(AddressFormatter.getInstance().formatId(this.address));
+			builder = builder.append(", " + this.address.getAddress());
+			if (!this.address.getCity().isEmpty())
+			{
+				if (builder.length() > 0)
+				{
+					builder.append(", ");
+				}
+				builder.append(AddressFormatter.getInstance().formatCityLine(this.address));
+			}
+			if (!this.address.getName().isEmpty())
+			{
+				if (builder.length() > 0)
+				{
+					builder.append(", ");
+				}
+				builder.append(this.address.getName());
+			}
+			return builder.toString();
+		}
+
+		public Address getAddress()
+		{
+			return this.address;
+		}
+	}
 }
