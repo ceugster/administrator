@@ -53,7 +53,7 @@ public class DeleteDonationHandler extends AbstractHandler implements IHandler
 	public Object execute(ExecutionEvent event) throws ExecutionException
 	{
 		EvaluationContext context = (EvaluationContext) event.getApplicationContext();
-		if (context.getParent().getVariable("selection") instanceof StructuredSelection)
+		if (context.getVariable("selection") instanceof StructuredSelection)
 		{
 			StructuredSelection ssel = (StructuredSelection) context.getParent().getVariable("selection");
 			if (!ssel.isEmpty())
@@ -94,8 +94,11 @@ public class DeleteDonationHandler extends AbstractHandler implements IHandler
 		if (object instanceof IStructuredSelection)
 		{
 			IStructuredSelection ssel = (IStructuredSelection) object;
-			object = ssel.getFirstElement();
-			enabled = object instanceof Donation;
+			enabled = ssel.getFirstElement() instanceof Donation;
+		}
+		else
+		{
+			System.out.println();
 		}
 		setBaseEnabled(enabled);
 	}
