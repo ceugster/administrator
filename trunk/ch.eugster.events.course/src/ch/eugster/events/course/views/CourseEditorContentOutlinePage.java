@@ -24,7 +24,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -33,6 +32,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 import ch.eugster.events.course.Activator;
+import ch.eugster.events.course.dialogs.CommitmentContractDialog;
 import ch.eugster.events.course.editors.CourseEditor;
 import ch.eugster.events.course.editors.CourseEditorInput;
 import ch.eugster.events.course.wizards.BookingTypeWizard;
@@ -305,6 +305,8 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 					manager.add(new Separator());
 					manager.add(CourseEditorContentOutlinePage.this.createEditCourseGuideAction());
 					manager.add(CourseEditorContentOutlinePage.this.createDeleteCourseGuideAction());
+					manager.add(new Separator());
+					manager.add(CourseEditorContentOutlinePage.this.createCommitmentContractAction());
 				}
 			}
 		});
@@ -426,6 +428,29 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 
 		action.setText("Entfernen");
 		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("DELETE"));
+		return action;
+	}
+
+	private IAction createCommitmentContractAction()
+	{
+		IAction action = new Action()
+		{
+			@Override
+			public void run()
+			{
+				super.run();
+				StructuredSelection ssel = (StructuredSelection) CourseEditorContentOutlinePage.this.getTreeViewer()
+						.getSelection();
+				if (!ssel.isEmpty() && ssel.getFirstElement() instanceof CourseGuide)
+				{
+					CommitmentContractDialog dialog = new CommitmentContractDialog(CourseEditorContentOutlinePage.this.getSite().getShell(), ssel);
+					dialog.open();
+				}
+			}
+		};
+
+		action.setText("Einsatzvertrag generieren");
+//		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("DELETE"));
 		return action;
 	}
 
