@@ -66,7 +66,7 @@ public abstract class AbstractDataMap implements DataMap
 		return list == null ? new ArrayList<DataMap>() : list;
 	}
 
-	protected void setProperties(final Properties properties)
+	public void setProperties(final Properties properties)
 	{
 		Set<String> keys = properties.stringPropertyNames();
 		for (String key : keys)
