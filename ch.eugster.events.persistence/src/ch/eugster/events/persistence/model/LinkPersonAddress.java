@@ -378,10 +378,10 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		{
 			member.setDeleted(deleted);
 		}
-		if (this.getAddress().getPersonLinks().size() == 1)
-		{
-			this.getAddress().setDeleted(deleted);
-		}
+//		if (this.getAddress().getPersonLinks().size() == 1)
+//		{
+//			this.getAddress().setDeleted(deleted);
+//		}
 		// if (this.guide != null)
 		// guide.setDeleted(deleted);
 		// for (Guide guide : this.guides)
