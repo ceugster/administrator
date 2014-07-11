@@ -27,10 +27,15 @@ public class AddressMap extends AbstractDataMap
 
 	public AddressMap(final Address address)
 	{
-		this(address, null, null, null);
+		this(address, null, null, null, false);
 	}
 
-	public AddressMap(final Address address, final Integer year, DonationPurpose purpose, Domain domain)
+	public AddressMap(final Address address, boolean isGroup)
+	{
+		this(address, null, null, null, isGroup);
+	}
+
+	public AddressMap(final Address address, final Integer year, DonationPurpose purpose, Domain domain, boolean isGroup)
 	{
 		if (amountFormatter == null)
 		{
@@ -46,11 +51,11 @@ public class AddressMap extends AbstractDataMap
 		{
 			if (year == null)
 			{
-				this.setProperty(key.getKey(), key.getValue(address));
+				this.setProperty(key.getKey(), key.getValue(address, isGroup));
 			}
 			else
 			{
-				this.setProperty(key.getKey(), key.getValue(address, year.intValue()));
+				this.setProperty(key.getKey(), key.getValue(address, year.intValue(), isGroup));
 			}
 		}
 
@@ -316,13 +321,27 @@ public class AddressMap extends AbstractDataMap
 			}
 		}
 
-		public String getValue(final Address address)
+		public String getValue(final Address address, boolean isGroup)
 		{
 			switch (this)
 			{
 				case NAME:
 				{
-					return address.getName();
+					if (isGroup)
+					{
+						return address.getName();
+					}
+					else
+					{
+						if (address.getSalutation() == null)
+						{
+							return address.getName();
+						}
+						else
+						{
+							return address.getSalutation().isShowAddressNameForPersons() ? address.getName() : "";
+						}
+					}
 				}
 				case ANOTHER_LINE:
 				{
@@ -418,13 +437,13 @@ public class AddressMap extends AbstractDataMap
 			}
 		}
 
-		public String getValue(final Address address, final int year)
+		public String getValue(final Address address, final int year, boolean isGroup)
 		{
 			switch (this)
 			{
 				case NAME:
 				{
-					return address.getName();
+					return isGroup ? address.getName() : (address.getSalutation().isShowAddressNameForPersons() ? address.getName() : "");
 				}
 				case ANOTHER_LINE:
 				{

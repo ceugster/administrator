@@ -60,6 +60,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.donation.Activator;
+import ch.eugster.events.donation.dialogs.DonationAddressListDialog;
 import ch.eugster.events.donation.dialogs.DonationConfirmationDialog;
 import ch.eugster.events.donation.editors.DonationEditor;
 import ch.eugster.events.donation.editors.DonationEditorInput;
@@ -87,6 +88,8 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 	private ComboViewer yearViewer;
 
 	private Button printConfirmation;
+	
+	private Button generateList;
 
 	private Button buildList;
 
@@ -136,56 +139,26 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 	public void createPartControl(final Composite parent)
 	{
 		Composite composite = new Composite(parent, SWT.NULL);
-		composite.setLayout(new GridLayout(4, false));
+		composite.setLayout(new GridLayout());
 
-		Label label = new Label(composite, SWT.None);
+		Composite selectorComposite = new Composite(composite, SWT.NULL);
+		selectorComposite.setLayout(new GridLayout(3, false));
+		selectorComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Label label = new Label(selectorComposite, SWT.None);
 		label.setText("Auswahl Jahr");
 		label.setLayoutData(new GridData());
 
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
 
-		Combo combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+		Combo combo = new Combo(selectorComposite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		combo.setLayoutData(gridData);
 
 		yearViewer = new ComboViewer(combo);
 		yearViewer.setContentProvider(new YearContentProvider());
 		yearViewer.setLabelProvider(new YearLabelProvider());
 		yearViewer.setSorter(new YearSorter());
-
-		printConfirmation = new Button(composite, SWT.PUSH);
-		printConfirmation.setImage(Activator.getDefault().getImageRegistry().get("PRINT"));
-		printConfirmation.setLayoutData(new GridData());
-		printConfirmation.addSelectionListener(new SelectionListener()
-		{
-			@Override
-			public void widgetSelected(SelectionEvent e)
-			{
-				IStructuredSelection ssel = (IStructuredSelection) yearViewer.getSelection();
-				DonationYear year = (DonationYear) ssel.getFirstElement();
-				ssel = (IStructuredSelection) purposeViewer.getSelection();
-				DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
-				if (purpose != null)
-				{
-					purpose = purpose.getId() == null ? null : purpose;
-				}
-				ssel = (IStructuredSelection) domainViewer.getSelection();
-				Domain domain = (Domain) ssel.getFirstElement();
-				if (domain != null)
-				{
-					domain = domain.getName().equals("Alle") ? null : domain;
-				}
-				DonationConfirmationDialog dialog = new DonationConfirmationDialog(DonationView.this.getSite()
-						.getShell(), year, purpose, domain, personText.getText());
-				dialog.open();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e)
-			{
-				widgetSelected(e);
-			}
-		});
 
 		// buildList = new Button(composite, SWT.PUSH);
 		// buildList.setImage(Activator.getDefault().getImageRegistry().get("LIST"));
@@ -224,14 +197,14 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		// }
 		// });
 
-		label = new Label(composite, SWT.None);
+		label = new Label(selectorComposite, SWT.None);
 		label.setText("Zweckfilter");
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 3;
+		gridData.horizontalSpan = 2;
 
-		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+		combo = new Combo(selectorComposite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		combo.setLayoutData(gridData);
 		combo.setCursor(this.getSite().getShell().getDisplay().getSystemCursor(Cursor.DEFAULT_CURSOR));
 
@@ -240,14 +213,14 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		purposeViewer.setLabelProvider(new PurposeLabelProvider());
 		purposeViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
 
-		label = new Label(composite, SWT.None);
+		label = new Label(selectorComposite, SWT.None);
 		label.setText("Domänenfilter");
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 3;
+		gridData.horizontalSpan = 2;
 
-		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+		combo = new Combo(selectorComposite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		combo.setLayoutData(gridData);
 		combo.setCursor(this.getSite().getShell().getDisplay().getSystemCursor(Cursor.DEFAULT_CURSOR));
 
@@ -260,17 +233,14 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		domainViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
 		domainViewer.setInput(connectionService);
 
-		label = new Label(composite, SWT.None);
+		label = new Label(selectorComposite, SWT.None);
 		label.setText("Personenfilter");
 		label.setLayoutData(new GridData());
 
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
+		personText = new Text(selectorComposite, SWT.SINGLE | SWT.BORDER);
+		personText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		personText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		personText.setLayoutData(gridData);
-
-		clearText = new Button(composite, SWT.PUSH);
+		clearText = new Button(selectorComposite, SWT.PUSH);
 		clearText.setLayoutData(new GridData());
 		clearText.setImage(Activator.getDefault().getImageRegistry().get("CLEAR"));
 		clearText.addSelectionListener(new SelectionListener()
@@ -430,6 +400,80 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		donationCount = new Label(composite, SWT.None);
 		donationCount.setLayoutData(gridData);
 
+		Composite actionComposite = new Composite(composite, SWT.NONE);
+		actionComposite.setLayout(new GridLayout(3, false));
+		actionComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		printConfirmation = new Button(actionComposite, SWT.PUSH);
+		printConfirmation.setToolTipText("Spendenbestätigung drucken");
+		printConfirmation.setImage(Activator.getDefault().getImageRegistry().get("PRINT"));
+		printConfirmation.setLayoutData(new GridData());
+		printConfirmation.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				IStructuredSelection ssel = (IStructuredSelection) yearViewer.getSelection();
+				DonationYear year = (DonationYear) ssel.getFirstElement();
+				ssel = (IStructuredSelection) purposeViewer.getSelection();
+				DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
+				if (purpose != null)
+				{
+					purpose = purpose.getId() == null ? null : purpose;
+				}
+				ssel = (IStructuredSelection) domainViewer.getSelection();
+				Domain domain = (Domain) ssel.getFirstElement();
+				if (domain != null)
+				{
+					domain = domain.getName().equals("Alle") ? null : domain;
+				}
+				DonationConfirmationDialog dialog = new DonationConfirmationDialog(DonationView.this.getSite()
+						.getShell(), year, purpose, domain, personText.getText());
+				dialog.open();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e)
+			{
+				widgetSelected(e);
+			}
+		});
+
+		generateList = new Button(actionComposite, SWT.PUSH);
+		generateList.setImage(Activator.getDefault().getImageRegistry().get("LIST"));
+		generateList.setToolTipText("Liste exportieren");
+		generateList.setLayoutData(new GridData());
+		generateList.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				IStructuredSelection ssel = (IStructuredSelection) yearViewer.getSelection();
+				DonationYear year = (DonationYear) ssel.getFirstElement();
+				ssel = (IStructuredSelection) purposeViewer.getSelection();
+				DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
+				if (purpose != null)
+				{
+					purpose = purpose.getId() == null ? null : purpose;
+				}
+				ssel = (IStructuredSelection) domainViewer.getSelection();
+				Domain domain = (Domain) ssel.getFirstElement();
+				if (domain != null)
+				{
+					domain = domain.getName().equals("Alle") ? null : domain;
+				}
+				DonationAddressListDialog dialog = new DonationAddressListDialog(DonationView.this.getSite()
+						.getShell(), year, purpose, domain, personText.getText());
+				dialog.open();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e)
+			{
+				widgetSelected(e);
+			}
+		});
+		
 		this.createContextMenu();
 
 		yearViewer.addSelectionChangedListener(this);

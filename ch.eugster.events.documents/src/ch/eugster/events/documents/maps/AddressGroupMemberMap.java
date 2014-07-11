@@ -23,9 +23,20 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 			this.setProperty(key.getKey(), key.getValue(member, isGroup));
 		}
 		this.setProperties(new AddressGroupMap(member.getAddressGroup()).getProperties());
-		if (member.getLink() == null || (isGroup && member.getAddress().getValidLinks().size() > 1))
+		if (member.getLink() == null)
 		{
-			this.setProperties(new AddressMap(member.getAddress()).getProperties());
+			if (member.getAddress().getValidLinks().size() == 1)
+			{
+				this.setProperties(new LinkMap(member.getAddress().getValidLinks().iterator().next()).getProperties());
+			}
+			else
+			{
+				this.setProperties(new AddressMap(member.getAddress(), isGroup).getProperties());
+			}
+		}
+		else if (isGroup && member.getAddress().getValidLinks().size() > 1)
+		{
+			this.setProperties(new AddressMap(member.getAddress(), isGroup).getProperties());
 		}
 		else
 		{
@@ -169,75 +180,177 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 			{
 				case ID:
 				{
-					return member.getLink() == null || member.getLink().isDeleted()
-							|| member.getLink().getPerson().isDeleted() || isGroup ? member.getAddress().getId()
-							.toString() : member.getLink().getPerson().getId().toString();
+					if (member.getLink() == null)
+					{
+						if (member.getAddress().getValidLinks().size() == 1)
+						{
+							return member.getAddress().getValidLinks().iterator().next().getPerson().getId().toString();
+						}
+						else
+						{
+							return member.getAddress().getId().toString();
+						}
+					}
+					else
+					{
+						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
+						{
+							return member.getAddress().getId().toString();
+						}
+						else
+						{
+							return member.getLink().getPerson().getId().toString();
+						}
+					}
 				}
 				case TYPE:
 				{
-					return member.getLink() == null || member.getLink().isDeleted()
-							|| member.getLink().getPerson().isDeleted() || isGroup ? "A" : "P";
+					
+					if (member.getLink() == null)
+					{
+						if (member.getAddress().getValidLinks().size() == 1)
+						{
+							return "P";
+						}
+						else
+						{
+							return "A";
+						}
+					}
+					else
+					{
+						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
+						{
+							return "A";
+						}
+						else
+						{
+							return "P";
+						}
+					}
 				}
 				case ANOTHER_LINE:
 				{
 					String anotherLine = "";
-					if (member.getLink() == null || member.getLink().isDeleted()
-							|| member.getLink().getPerson().isDeleted() || isGroup)
+					if (member.getLink() == null)
 					{
-						anotherLine = member.getAddress().getAnotherLine();
+						if (member.getAddress().getValidLinks().size() == 1)
+						{
+							anotherLine = member.getAddress().getValidLinks().iterator().next().getAddress().getAnotherLine();
+						}
+						else
+						{
+							anotherLine = member.getAddress().getAnotherLine();
+						}
 					}
 					else
 					{
-						anotherLine = member.getLink().getAddress().getAnotherLine();
+						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
+						{
+							anotherLine = member.getAddress().getAnotherLine();
+						}
+						else
+						{
+							anotherLine = member.getLink().getAddress().getAnotherLine();
+						}
 					}
 					return anotherLine;
 				}
 				case SALUTATION:
 				{
-					if (member.getLink() == null || member.getLink().isDeleted()
-							|| member.getLink().getPerson().isDeleted() || isGroup)
+					if (member.getLink() == null)
 					{
-						return member.getAddress().getSalutation() == null ? "" : member.getAddress().getSalutation()
-								.getSalutation();
+						if (member.getAddress().getValidLinks().size() == 1)
+						{
+							Person person = member.getAddress().getValidLinks().iterator().next().getPerson();
+							return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
+						}
+						else
+						{
+							return member.getAddress().getSalutation() == null ? "" : member.getAddress().getSalutation()
+									.getSalutation();
+						}
 					}
 					else
 					{
-						Person person = member.getLink().getPerson();
-						return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
+						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || isGroup)
+						{
+							return member.getAddress().getSalutation() == null ? "" : member.getAddress().getSalutation()
+								.getSalutation();
+						}
+						else
+						{
+							Person person = member.getLink().getPerson();
+							return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
+						}
 					}
 				}
 				case POLITE:
 				{
 					String polite = null;
-					if (member.getLink() == null || member.getLink().isDeleted()
-							|| member.getLink().getPerson().isDeleted() || isGroup)
+					if (member.getLink() == null)
 					{
-						AddressSalutation salutation = member.getAddress().getSalutation();
-						polite = salutation == null ? "" : salutation.getPolite();
-						if (polite.isEmpty())
+						if (member.getAddress().getValidLinks().size() == 1)
 						{
-							polite = "Sehr geehrte Damen und Herren";
+							Person person = member.getAddress().getValidLinks().iterator().next().getPerson();
+							polite = person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
+									.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
+						}
+						else
+						{
+							AddressSalutation salutation = member.getAddress().getSalutation();
+							polite = salutation == null ? "" : salutation.getPolite();
+							if (polite.isEmpty())
+							{
+								polite = "Sehr geehrte Damen und Herren";
+							}
 						}
 					}
 					else
 					{
-						Person person = member.getLink().getPerson();
-						polite = person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
-								.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
+						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || isGroup)
+						{
+							AddressSalutation salutation = member.getAddress().getSalutation();
+							polite = salutation == null ? "" : salutation.getPolite();
+							if (polite.isEmpty())
+							{
+								polite = "Sehr geehrte Damen und Herren";
+							}
+						}
+						else
+						{
+							Person person = member.getLink().getPerson();
+							polite = person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
+									.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
+						}
 					}
 					return polite;
 				}
 				case MAILING_ADDRESS:
 				{
-					if (member.getLink() == null || member.getLink().isDeleted()
-							|| member.getLink().getPerson().isDeleted() || isGroup)
+					if (member.getLink() == null)
 					{
-						return AddressFormatter.getInstance().formatAddressLabel(member.getAddress());
+						if (member.getAddress().getValidLinks().size() == 1)
+						{
+							LinkPersonAddress link = member.getAddress().getValidLinks().iterator().next();
+							return LinkPersonAddressFormatter.getInstance().getLabel(link);
+						}
+						else
+						{
+							return AddressFormatter.getInstance().formatAddressLabel(member.getAddress());
+						}
 					}
 					else
 					{
-						LinkPersonAddress link = member.getLink();
-						return LinkPersonAddressFormatter.getInstance().getLabel(link);
+						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || isGroup)
+						{
+							return AddressFormatter.getInstance().formatAddressLabel(member.getAddress());
+						}
+						else
+						{
+							LinkPersonAddress link = member.getLink();
+							return LinkPersonAddressFormatter.getInstance().getLabel(link);
+						}
 					}
 				}
 				default:

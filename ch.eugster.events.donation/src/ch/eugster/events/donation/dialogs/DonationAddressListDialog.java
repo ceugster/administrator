@@ -1,6 +1,7 @@
 package ch.eugster.events.donation.dialogs;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -32,8 +33,10 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.documents.maps.AddressMap;
 import ch.eugster.events.documents.maps.DataMap;
+import ch.eugster.events.documents.maps.DataMapKey;
 import ch.eugster.events.documents.maps.DonationMap;
 import ch.eugster.events.documents.maps.LinkMap;
+import ch.eugster.events.documents.maps.PersonMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.donation.Activator;
 import ch.eugster.events.persistence.model.Address;
@@ -122,6 +125,49 @@ public class DonationAddressListDialog extends TitleAreaDialog
 		this.selectionMode = SelectionMode.PERSON;
 	}
 
+	private DataMapKey[] getKeys()
+	{
+		Collection<DataMapKey> keys = new ArrayList<DataMapKey>();
+		keys.add(DonationMap.Key.TYPE);
+		keys.add(DonationMap.Key.ID);
+		keys.add(PersonMap.Key.SEX);
+		keys.add(PersonMap.Key.FORM);
+		keys.add(DonationMap.Key.SALUTATION);
+		keys.add(PersonMap.Key.TITLE);
+		keys.add(PersonMap.Key.FIRSTNAME);
+		keys.add(PersonMap.Key.LASTNAME);
+		keys.add(AddressMap.Key.NAME);
+		keys.add(DonationMap.Key.ANOTHER_LINE);
+		keys.add(PersonMap.Key.BIRTHDATE);
+		keys.add(PersonMap.Key.PROFESSION);
+		keys.add(LinkMap.Key.FUNCTION);
+		keys.add(LinkMap.Key.PHONE);
+		keys.add(AddressMap.Key.PHONE);
+		keys.add(PersonMap.Key.PHONE);
+		keys.add(AddressMap.Key.FAX);
+		keys.add(PersonMap.Key.EMAIL);
+		keys.add(LinkMap.Key.EMAIL);
+		keys.add(AddressMap.Key.EMAIL);
+		keys.add(PersonMap.Key.WEBSITE);
+		keys.add(AddressMap.Key.WEBSITE);
+		keys.add(AddressMap.Key.ADDRESS);
+		keys.add(AddressMap.Key.POB);
+		keys.add(AddressMap.Key.COUNTRY);
+		keys.add(AddressMap.Key.ZIP);
+		keys.add(AddressMap.Key.CITY);
+		keys.add(AddressMap.Key.COUNTY);
+		keys.add(DonationMap.Key.POLITE);
+		keys.add(LinkMap.Key.MEMBER);
+		keys.add(PersonMap.Key.NOTE);
+		keys.add(DonationMap.Key.POLITE);
+		keys.add(DonationMap.Key.YEAR);
+		keys.add(DonationMap.Key.PURPOSE_CODE);
+		keys.add(DonationMap.Key.PURPOSE_NAME);
+		keys.add(DonationMap.Key.DATE);
+		keys.add(DonationMap.Key.AMOUNT);
+		return keys.toArray(new DataMapKey[0]);
+	}
+
 	private void buildDocument()
 	{
 		Collection<DataMap> maps = createDataMaps(selectionMode);
@@ -147,14 +193,15 @@ public class DonationAddressListDialog extends TitleAreaDialog
 					{
 						name1 = map1.getProperty("person_firstname");
 						name2 = map2.getProperty("person_firstname");
-						return compareStrings(name1, name2);
+						result = compareStrings(name1, name2);
+						if (result == 0)
+						{
+							name1 = map1.getProperty("address_name");
+							name2 = map2.getProperty("address_name");
+							return compareStrings(name1, name2);
+						}
 					}
-					else
-					{
-						name1 = map1.getProperty("address_name");
-						name2 = map2.getProperty("address_name");
-						return name1.toLowerCase().compareTo(name2.toLowerCase());
-					}
+					return result;
 				}
 			});
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
@@ -183,7 +230,7 @@ public class DonationAddressListDialog extends TitleAreaDialog
 												.getService(reference);
 										DocumentBuilderService builderService = service;
 										status = builderService.buildDocument(new SubProgressMonitor(monitor,
-												dataMaps.length), DonationMap.Key.values(), dataMaps);
+												dataMaps.length), getKeys(), dataMaps);
 										if (status.isOK())
 										{
 											break;
@@ -296,7 +343,7 @@ public class DonationAddressListDialog extends TitleAreaDialog
 		{
 			if (year != null)
 			{
-				addressMap = new AddressMap(address, year.intValue(), purpose, domain);
+				addressMap = new AddressMap(address, year.intValue(), purpose, domain, true);
 			}
 			else
 			{
@@ -309,10 +356,24 @@ public class DonationAddressListDialog extends TitleAreaDialog
 	private void createDataMaps(final Donation donation, final Integer year, DonationPurpose purpose, Domain domain,
 			final Map<String, DataMap> dataMaps)
 	{
-		if (!donation.isDeleted())
+		if (donation.isDeleted())
 		{
-			if (donation.getLink() == null || donation.getLink().isDeleted()
-					|| donation.getLink().getPerson().isDeleted())
+			return;
+		}
+		if (donation.getLink() == null)
+		{
+			if (donation.getAddress().getValidLinks().size() == 1)
+			{
+				createDataMaps(donation.getAddress().getValidLinks().iterator().next(), year, purpose, domain, dataMaps);
+			}
+			else
+			{
+				createDataMaps(donation.getAddress(), year, purpose, domain, dataMaps);
+			}
+		}
+		else
+		{
+			if (donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
 			{
 				createDataMaps(donation.getAddress(), year, purpose, domain, dataMaps);
 			}
@@ -330,15 +391,31 @@ public class DonationAddressListDialog extends TitleAreaDialog
 		{
 			if (printDonation(donation))
 			{
-				if (donation.getLink() == null || donation.getLink().isDeleted()
-						|| donation.getLink().getPerson().isDeleted())
+				DonationMap map = new DonationMap(donation);
+				if (donation.getLink() == null)
 				{
-					createDataMaps(donation, Integer.valueOf(donationYear.getYear()), purpose, domain, dataMaps);
+					if (donation.getAddress().getValidLinks().size() == 1)
+					{
+						map.setProperties(new LinkMap(donation.getAddress().getValidLinks().iterator().next()).getProperties());
+					}
+					else
+					{
+						map.setProperties(new AddressMap(donation.getAddress()).getProperties());
+					}
 				}
 				else
 				{
-					createDataMaps(donation, Integer.valueOf(donationYear.getYear()), purpose, domain, dataMaps);
+					if (donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
+					{
+						map.setProperties(new AddressMap(donation.getAddress()).getProperties());
+					}
+					else
+					{
+						map.setProperties(new LinkMap(donation.getLink()).getProperties());
+
+					}
 				}
+				dataMaps.put(donation.getId().toString(), map);
 			}
 		}
 	}
@@ -426,7 +503,7 @@ public class DonationAddressListDialog extends TitleAreaDialog
 		{
 			if (year != null)
 			{
-				linkMap = new LinkMap(link, year.intValue(), purpose, domain);
+				linkMap = new LinkMap(link, year.intValue(), purpose, domain, false);
 			}
 			else
 			{
