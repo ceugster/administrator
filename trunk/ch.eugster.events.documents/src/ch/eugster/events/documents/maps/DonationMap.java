@@ -44,16 +44,20 @@ public class DonationMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		ID, DATE, AMOUNT, PURPOSE_CODE, PURPOSE_NAME, PURPOSE_DESCRIPTION, YEAR, ANOTHER_LINE, SALUTATION, POLITE, MAILING_ADDRESS;;
+		TYPE, ID, DATE, AMOUNT, PURPOSE_CODE, PURPOSE_NAME, PURPOSE_DESCRIPTION, YEAR, ANOTHER_LINE, SALUTATION, POLITE, MAILING_ADDRESS;;
 
 		@Override
 		public String getDescription()
 		{
 			switch (this)
 			{
+				case TYPE:
+				{
+					return "Typ";
+				}
 				case ID:
 				{
-					return "Identifikationsnummer der Spende";
+					return "Identifikation";
 				}
 				case DATE:
 				{
@@ -109,7 +113,11 @@ public class DonationMap extends AbstractDataMap
 			{
 				case ID:
 				{
-					return "donation_id";
+					return "donator_id";
+				}
+				case TYPE:
+				{
+					return "donator_type";
 				}
 				case DATE:
 				{
@@ -167,6 +175,10 @@ public class DonationMap extends AbstractDataMap
 				{
 					return "Id";
 				}
+				case TYPE:
+				{
+					return "Typ";
+				}
 				case DATE:
 				{
 					return "Datum";
@@ -220,7 +232,53 @@ public class DonationMap extends AbstractDataMap
 			{
 				case ID:
 				{
-					return donation.getId().toString();
+					if (donation.getLink() == null)
+					{
+						if (donation.getAddress().getValidLinks().size() == 1)
+						{
+							return donation.getAddress().getValidLinks().iterator().next().getId().toString();
+						}
+						else
+						{
+							return donation.getAddress().getId().toString();
+						}
+					}
+					else
+					{
+						if (donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
+						{
+							return donation.getAddress().getId().toString();
+						}
+						else
+						{
+							return donation.getLink().getAddress().getId().toString();
+						}
+					}
+				}
+				case TYPE:
+				{
+					if (donation.getLink() == null)
+					{
+						if (donation.getAddress().getValidLinks().size() == 1)
+						{
+							return "P";
+						}
+						else
+						{
+							return "A";
+						}
+					}
+					else
+					{
+						if (donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
+						{
+							return "A";
+						}
+						else
+						{
+							return "P";
+						}
+					}
 				}
 				case DATE:
 				{
@@ -253,59 +311,125 @@ public class DonationMap extends AbstractDataMap
 				case ANOTHER_LINE:
 				{
 					String anotherLine = "";
-					if (donation.getLink() == null || donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
+					if (donation.getLink() == null)
 					{
-						anotherLine = donation.getAddress().getAnotherLine();
+						if (donation.getAddress().getValidLinks().size() == 1)
+						{
+							anotherLine = donation.getAddress().getValidLinks().iterator().next().getAddress().getAnotherLine();
+						}
+						else
+						{
+							anotherLine = donation.getAddress().getAnotherLine();
+						}
 					}
 					else
 					{
-						anotherLine = donation.getLink().getAddress().getAnotherLine();
+						if (donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
+						{
+							anotherLine = donation.getAddress().getAnotherLine();
+						}
+						else
+						{
+							anotherLine = donation.getLink().getAddress().getAnotherLine();
+						}
 					}
 					return anotherLine;
 				}
 				case SALUTATION:
 				{
-					if (donation.getLink() == null || donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
+					if (donation.getLink() == null)
 					{
-						return donation.getAddress().getSalutation() == null ? "" : donation.getAddress().getSalutation()
-								.getSalutation();
+						if (donation.getAddress().getValidLinks().size() == 1)
+						{
+							Person person = donation.getAddress().getValidLinks().iterator().next().getPerson();
+							return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
+						}
+						else
+						{
+							return donation.getAddress().getSalutation() == null ? "" : donation.getAddress().getSalutation()
+									.getSalutation();
+						}
 					}
 					else
 					{
-						Person person = donation.getLink().getPerson();
-						return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
+						if (donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
+						{
+							return donation.getAddress().getSalutation() == null ? "" : donation.getAddress().getSalutation()
+								.getSalutation();
+						}
+						else
+						{
+							Person person = donation.getLink().getPerson();
+							return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
+						}
 					}
 				}
 				case POLITE:
 				{
 					String polite = null;
-					if (donation.getLink() == null || donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
+					if (donation.getLink() == null)
 					{
-						AddressSalutation salutation = donation.getAddress().getSalutation();
-						polite = salutation == null ? "" : salutation.getPolite();
-						if (polite.isEmpty())
+						if (donation.getAddress().getValidLinks().size() == 1)
 						{
-							polite = "Sehr geehrte Damen und Herren";
+							Person person = donation.getAddress().getValidLinks().iterator().next().getPerson();
+							polite = person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
+									.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
+						}
+						else
+						{
+							AddressSalutation salutation = donation.getAddress().getSalutation();
+							polite = salutation == null ? "" : salutation.getPolite();
+							if (polite.isEmpty())
+							{
+								polite = "Sehr geehrte Damen und Herren";
+							}
 						}
 					}
 					else
 					{
-						Person person = donation.getLink().getPerson();
-						polite = person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance().replaceSalutationVariables(person,
-								person.getSex().getForm(person.getForm()));
+						if (donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
+						{
+							AddressSalutation salutation = donation.getAddress().getSalutation();
+							polite = salutation == null ? "" : salutation.getPolite();
+							if (polite.isEmpty())
+							{
+								polite = "Sehr geehrte Damen und Herren";
+							}
+						}
+						else
+						{
+							Person person = donation.getLink().getPerson();
+							polite = person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
+									.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
+						}
 					}
 					return polite;
 				}
 				case MAILING_ADDRESS:
 				{
-					if (donation.getLink() == null || donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
+					if (donation.getLink() == null)
 					{
-						return AddressFormatter.getInstance().formatAddressLabel(donation.getAddress());
+						if (donation.getAddress().getValidLinks().size() == 1)
+						{
+							LinkPersonAddress link = donation.getAddress().getValidLinks().iterator().next();
+							return LinkPersonAddressFormatter.getInstance().getLabel(link);
+						}
+						else
+						{
+							return AddressFormatter.getInstance().formatAddressLabel(donation.getAddress());
+						}
 					}
 					else
 					{
-						LinkPersonAddress link = donation.getLink();
-						return LinkPersonAddressFormatter.getInstance().getLabel(link);
+						if (donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
+						{
+							return AddressFormatter.getInstance().formatAddressLabel(donation.getAddress());
+						}
+						else
+						{
+							LinkPersonAddress link = donation.getLink();
+							return LinkPersonAddressFormatter.getInstance().getLabel(link);
+						}
 					}
 				}
 				default:

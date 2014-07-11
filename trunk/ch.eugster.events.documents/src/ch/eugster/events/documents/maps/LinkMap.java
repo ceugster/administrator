@@ -12,7 +12,6 @@ import java.util.Locale;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.documents.Activator;
-import ch.eugster.events.documents.maps.AddressMap.TableKey;
 import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.Donation;
@@ -36,10 +35,15 @@ public class LinkMap extends AbstractDataMap
 
 	public LinkMap(final LinkPersonAddress link)
 	{
-		this(link, null, null, null);
+		this(link, null, null, null, false);
 	}
 
-	public LinkMap(final LinkPersonAddress link, final Integer year, DonationPurpose purpose, Domain domain)
+	public LinkMap(final LinkPersonAddress link, boolean isGroup)
+	{
+		this(link, null, null, null, isGroup);
+	}
+
+	public LinkMap(final LinkPersonAddress link, final Integer year, DonationPurpose purpose, Domain domain, boolean isGroup)
 	{
 		if (amountFormatter == null)
 		{
@@ -51,7 +55,7 @@ public class LinkMap extends AbstractDataMap
 			amountFormatter.setGroupingUsed(true);
 		}
 
-		this.setProperties(new AddressMap(link.getAddress()).getProperties());
+		this.setProperties(new AddressMap(link.getAddress(), isGroup).getProperties());
 		this.setProperties(new PersonMap(link.getPerson()).getProperties());
 
 		for (Key key : Key.values())

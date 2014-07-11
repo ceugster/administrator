@@ -315,7 +315,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		{
 			if (year != null)
 			{
-				addressMap = new AddressMap(address, year.intValue(), purpose, domain);
+				addressMap = new AddressMap(address, year.intValue(), purpose, domain, true);
 			}
 			else
 			{
@@ -445,7 +445,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		{
 			if (year != null)
 			{
-				linkMap = new LinkMap(link, year.intValue(), purpose, domain);
+				linkMap = new LinkMap(link, year.intValue(), purpose, domain, false);
 			}
 			else
 			{

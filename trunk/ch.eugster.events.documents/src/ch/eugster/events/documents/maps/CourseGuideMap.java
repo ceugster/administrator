@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import ch.eugster.events.documents.maps.AddressMap.TableKey;
+import ch.eugster.events.persistence.model.BookingType;
 import ch.eugster.events.persistence.model.Compensation;
 import ch.eugster.events.persistence.model.CompensationType;
 import ch.eugster.events.persistence.model.CourseDetail;
@@ -77,7 +77,7 @@ public class CourseGuideMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		GUIDE_TYPE, PHONE, STATE;
+		GUIDE_TYPE, PHONE, STATE, NOTE;
 
 		@Override
 		public String getDescription()
@@ -99,6 +99,10 @@ public class CourseGuideMap extends AbstractDataMap
 				case STATE:
 				{
 					return "Leiterstatus";
+				}
+				case NOTE:
+				{
+					return "Bemerkungen";
 				}
 				default:
 				{
@@ -128,6 +132,10 @@ public class CourseGuideMap extends AbstractDataMap
 				{
 					return "course_guide_state";
 				}
+				case NOTE:
+				{
+					return "course_guide_note";
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -155,6 +163,10 @@ public class CourseGuideMap extends AbstractDataMap
 				case STATE:
 				{
 					return "Status";
+				}
+				case NOTE:
+				{
+					return "Bemerkungen";
 				}
 				default:
 				{
@@ -184,6 +196,10 @@ public class CourseGuideMap extends AbstractDataMap
 				{
 					return courseGuide.getGuideType().getName();
 				}
+				case NOTE:
+				{
+					return courseGuide.getNote();
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -194,7 +210,7 @@ public class CourseGuideMap extends AbstractDataMap
 
 	public enum TableKey implements DataMapKey
 	{
-		COMPENSATIONS, COMPENSATIONS_SALARY, COMPENSATIONS_CHARGES, OTHER_COURSE_GUIDES, COURSE_DETAILS;
+		COMPENSATIONS, COMPENSATIONS_SALARY, COMPENSATIONS_CHARGES, OTHER_COURSE_GUIDES, COURSE_DETAILS, COURSE_BOOKING_TYPES;
 
 		@Override
 		public String getDescription()
@@ -220,6 +236,10 @@ public class CourseGuideMap extends AbstractDataMap
 			case COURSE_DETAILS:
 			{
 				return "Tabelle Kursdetails";
+			}
+			case COURSE_BOOKING_TYPES:
+			{
+				return "Tabelle Buchungsarten";
 			}
 			default:
 			{
@@ -253,6 +273,10 @@ public class CourseGuideMap extends AbstractDataMap
 			{
 				return "table_course_details";
 			}
+			case COURSE_BOOKING_TYPES:
+			{
+				return "table_booking_types";
+			}
 			default:
 			{
 				return "";
@@ -285,6 +309,10 @@ public class CourseGuideMap extends AbstractDataMap
 			{
 				return "Tabelle Kursdetails";
 			}
+			case COURSE_BOOKING_TYPES:
+			{
+				return "Tabelle Buchungsarten";
+			}
 			default:
 			{
 				return "";
@@ -302,7 +330,10 @@ public class CourseGuideMap extends AbstractDataMap
 				Collection<Compensation> compensations = courseGuide.getCompensations();
 				for (Compensation compensation : compensations)
 				{
-					tableMaps.add(new CompensationMap(compensation));
+					if (!compensation.isDeleted())
+					{
+						tableMaps.add(new CompensationMap(compensation));
+					}
 				}
 				break;
 			}
@@ -311,10 +342,13 @@ public class CourseGuideMap extends AbstractDataMap
 				Collection<Compensation> compensations = courseGuide.getCompensations();
 				for (Compensation compensation : compensations)
 				{
-					if (compensation.getCompensationType().getType().equals(CompensationType.Type.SALARY) ||
-							compensation.getCompensationType().getType().equals(CompensationType.Type.SALARY_DISCOUNT))
+					if (!compensation.isDeleted())
 					{
-						tableMaps.add(new CompensationMap(compensation));
+						if (compensation.getCompensationType().getType().equals(CompensationType.Type.SALARY) ||
+								compensation.getCompensationType().getType().equals(CompensationType.Type.SALARY_DISCOUNT))
+						{
+							tableMaps.add(new CompensationMap(compensation));
+						}
 					}
 				}
 				break;
@@ -324,9 +358,12 @@ public class CourseGuideMap extends AbstractDataMap
 				Collection<Compensation> compensations = courseGuide.getCompensations();
 				for (Compensation compensation : compensations)
 				{
-					if (compensation.getCompensationType().getType().equals(CompensationType.Type.CHARGE))
+					if (!compensation.isDeleted())
 					{
-						tableMaps.add(new CompensationMap(compensation));
+						if (compensation.getCompensationType().getType().equals(CompensationType.Type.CHARGE))
+						{
+							tableMaps.add(new CompensationMap(compensation));
+						}
 					}
 				}
 				break;
@@ -348,9 +385,23 @@ public class CourseGuideMap extends AbstractDataMap
 				Collection<CourseDetail> courseDetails = courseGuide.getCourse().getCourseDetails();
 				for (CourseDetail courseDetail : courseDetails)
 				{
-					tableMaps.add(new CourseDetailMap(courseDetail));
+					if (!courseDetail.isDeleted())
+					{
+						tableMaps.add(new CourseDetailMap(courseDetail));
+					}
 				}
 				break;
+			}
+			case COURSE_BOOKING_TYPES:
+			{
+				Collection<BookingType> bookingTypes = courseGuide.getCourse().getBookingTypes();
+				for (BookingType bookingType : bookingTypes)
+				{
+					if (!bookingType.isDeleted())
+					{
+						tableMaps.add(new BookingTypeMap(bookingType));
+					}
+				}
 			}
 			}
 			return tableMaps;

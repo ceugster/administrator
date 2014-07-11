@@ -212,32 +212,33 @@ public class AddressListDialog extends TitleAreaDialog
 	private void computeAddressGroupMember(final Map<String, DataMap> map, final AddressGroupMember member,
 			Map<Long, AddressCounter> addresses)
 	{
+		if (member.isDeleted())
+		{
+			return;
+		}
 		if (member.getLink() != null && (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted()))
 		{
 			return;
 		}
-		if (!member.isDeleted())
+		if (this.groupEntities)
 		{
-			if (this.groupEntities)
+			AddressCounter counter = addresses.get(member.getAddress().getId());
+			if (counter == null || counter.getCounts() < 2)
 			{
-				AddressCounter counter = addresses.get(member.getAddress().getId());
-				if (counter == null || counter.getCounts() < 2)
-				{
-					AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, false);
-					map.put(memberMap.getId(), memberMap);
-				}
-				else
-				{
-
-					AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, true);
-					map.put(memberMap.getId(), memberMap);
-				}
+				AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, this.groupEntities);
+				map.put(memberMap.getId(), memberMap);
 			}
 			else
 			{
-				AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, false);
+
+				AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, this.groupEntities);
 				map.put(memberMap.getId(), memberMap);
 			}
+		}
+		else
+		{
+			AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, false);
+			map.put(memberMap.getId(), memberMap);
 		}
 	}
 
