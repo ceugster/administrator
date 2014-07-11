@@ -390,6 +390,7 @@ ch.eugster.events.course/src/ch/eugster/events/course/Activator.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/Constants.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/Perspective.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/actions/CourseCopyAction.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/dialogs/CommitmentContractDialog.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/dialogs/SelectBookingTypeDialog.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/editors/BookingEditor.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/editors/BookingEditorInput.java -text
