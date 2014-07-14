@@ -619,35 +619,35 @@ public class LinkSearcher extends Composite
 		return persons.values();
 	}
 
-	private boolean hasAddressCriteria(final Map<String, String> criteria)
-	{
-		Iterator<String> keys = criteria.keySet().iterator();
-		while (keys.hasNext())
-		{
-			String key = keys.next();
-			if (key.equals(ORGANISATION))
-			{
-				return true;
-			}
-			if (key.equals(ADDRESS))
-			{
-				return true;
-			}
-			if (key.equals(CITY))
-			{
-				return true;
-			}
-			if (key.equals(PHONE))
-			{
-				return true;
-			}
-			if (key.equals(EMAIL))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+//	private boolean hasAddressCriteria(final Map<String, String> criteria)
+//	{
+//		Iterator<String> keys = criteria.keySet().iterator();
+//		while (keys.hasNext())
+//		{
+//			String key = keys.next();
+//			if (key.equals(ORGANISATION))
+//			{
+//				return true;
+//			}
+//			if (key.equals(ADDRESS))
+//			{
+//				return true;
+//			}
+//			if (key.equals(CITY))
+//			{
+//				return true;
+//			}
+//			if (key.equals(PHONE))
+//			{
+//				return true;
+//			}
+//			if (key.equals(EMAIL))
+//			{
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
 	private boolean hasPersonCriteria(final Map<String, String> criteria)
 	{
@@ -660,18 +660,6 @@ public class LinkSearcher extends Composite
 				return true;
 			}
 			if (key.equals(FIRSTNAME))
-			{
-				return true;
-			}
-			if (key.equals(PHONE))
-			{
-				return true;
-			}
-			if (key.equals(EMAIL))
-			{
-				return true;
-			}
-			if (key.equals(EMAIL))
 			{
 				return true;
 			}
@@ -779,16 +767,16 @@ public class LinkSearcher extends Composite
 			}
 			else
 			{
-//				for (LinkPersonAddress child : address.getPersonLinks())
-//				{
-//					addIfNotAlreadyAdded(entities, child.getPerson());
-//				}
+				for (LinkPersonAddress child : address.getPersonLinks())
+				{
+					addIfNotAlreadyAdded(entities, child.getPerson());
+				}
 			}
 		}
-		if (link != null)
-		{
-			addIfNotAlreadyAdded(entities, link.getPerson());
-		}
+//		if (link != null)
+//		{
+//			addIfNotAlreadyAdded(entities, link.getPerson());
+//		}
 		return entities.toArray(new AbstractEntity[0]);
 	}
 	
@@ -830,7 +818,7 @@ public class LinkSearcher extends Composite
 
 					if (this.searchAddresses)
 					{
-						if (hasAddressCriteria(criteria) && !hasPersonCriteria(criteria))
+						if (!hasPersonCriteria(criteria))
 						{
 							AddressQuery addressQuery = (AddressQuery) connectionService.getQuery(Address.class);
 							Collection<Address> addresses = addressQuery.selectByCriteria(criteria,
