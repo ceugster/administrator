@@ -75,6 +75,7 @@ import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
+import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.AddressSalutation;
 import ch.eugster.events.persistence.model.AddressType;
 import ch.eugster.events.persistence.model.Country;
@@ -1690,6 +1691,27 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		}
 	}
 
+	private void saveAddressGroupValues()
+	{
+		LinkPersonAddress link = getLink();
+		Collection<AddressGroupMember> addressGroupMembers = link.getAddress().getAddressGroupMembers();
+		for (AddressGroupMember addressGroupMember : addressGroupMembers)
+		{
+			if (!link.isInAddressGroup(addressGroupMember.getAddressGroup()))
+			{
+				if (addressGroupMember.getLink() == null || addressGroupMember.getLink().isDeleted())
+				{
+					addressGroupMember.setParent(link, link.getAddress());
+					link.addAddressGroupMember(addressGroupMember);
+				}
+				else if (!addressGroupMember.getLink().getId().equals(link.getId()))
+				{
+					link.addAddressGroupMember(AddressGroupMember.newInstance(addressGroupMember.getAddressGroup(), link));
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void propertyChange(final PropertyChangeEvent event)
 	{
@@ -1805,6 +1827,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		saveAddressContactsValues();
 		saveLinkValues();
 		saveExtendedFieldValues();
+		saveAddressGroupValues();
 		this.setDirty(false);
 	}
 

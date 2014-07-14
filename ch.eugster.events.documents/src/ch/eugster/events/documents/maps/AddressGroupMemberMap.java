@@ -193,7 +193,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 					}
 					else
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
+						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
 						{
 							return member.getAddress().getId().toString();
 						}
@@ -219,7 +219,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 					}
 					else
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
+						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
 						{
 							return "A";
 						}
@@ -245,7 +245,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 					}
 					else
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
+						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
 						{
 							anotherLine = member.getAddress().getAnotherLine();
 						}
@@ -273,7 +273,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 					}
 					else
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || isGroup)
+						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
 						{
 							return member.getAddress().getSalutation() == null ? "" : member.getAddress().getSalutation()
 								.getSalutation();
@@ -308,7 +308,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 					}
 					else
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || isGroup)
+						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
 						{
 							AddressSalutation salutation = member.getAddress().getSalutation();
 							polite = salutation == null ? "" : salutation.getPolite();
@@ -342,7 +342,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 					}
 					else
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || isGroup)
+						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
 						{
 							return AddressFormatter.getInstance().formatAddressLabel(member.getAddress());
 						}
