@@ -201,6 +201,19 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 	{
 		return addressType;
 	}
+	
+	public boolean isInAddressGroup(AddressGroup addressGroup)
+	{
+		Collection<AddressGroupMember> addressGroupMembers = this.getAddressGroupMembers();
+		for (AddressGroupMember addressGroupMember : addressGroupMembers)
+		{
+			if (!addressGroupMember.isDeleted() && addressGroupMember.getAddressGroup().getId().equals(addressGroup.getId()))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public Collection<LinkPersonAddressExtendedField> getContacts()
 	{

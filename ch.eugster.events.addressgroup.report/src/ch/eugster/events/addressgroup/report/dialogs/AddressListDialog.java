@@ -187,12 +187,6 @@ public class AddressListDialog extends TitleAreaDialog
 			{
 				computeAddressGroupMember(map, member, addresses);
 			}
-			// Collection<AddressGroupLink> children =
-			// addressGroup.getChildren();
-			// for (AddressGroupLink child : children)
-			// {
-			// computeAddressGroup(map, child.getChild());
-			// }
 		}
 	}
 
@@ -212,7 +206,7 @@ public class AddressListDialog extends TitleAreaDialog
 	private void computeAddressGroupMember(final Map<String, DataMap> map, final AddressGroupMember member,
 			Map<Long, AddressCounter> addresses)
 	{
-		if (member.isDeleted())
+		if (member.isDeleted() || member.getAddress().isDeleted())
 		{
 			return;
 		}
@@ -220,18 +214,17 @@ public class AddressListDialog extends TitleAreaDialog
 		{
 			return;
 		}
+		if (member.getLink() == null && member.getAddress().getValidLinks().size() != 1)
+		{
+			return;
+		}
 		if (this.groupEntities)
 		{
 			AddressCounter counter = addresses.get(member.getAddress().getId());
-			if (counter == null || counter.getCounts() < 2)
+			if (counter == null || counter.getCounts() > 0)
 			{
-				AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, this.groupEntities);
-				map.put(memberMap.getId(), memberMap);
-			}
-			else
-			{
-
-				AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, this.groupEntities);
+				AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, counter == null || counter.getCounts() > 0);
+				counter.reset();
 				map.put(memberMap.getId(), memberMap);
 			}
 		}
@@ -554,6 +547,11 @@ public class AddressListDialog extends TitleAreaDialog
 		{
 			this.id = id;
 			this.counter++;
+		}
+		
+		public void reset()
+		{
+			this.counter = 0;
 		}
 
 		public void add()
