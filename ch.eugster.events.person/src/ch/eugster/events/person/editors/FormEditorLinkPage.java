@@ -1728,16 +1728,18 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		{
 			AddressContentProposal proposal = (AddressContentProposal) contentProposal;
 			Address address = proposal.getAddress();
-			if (address.getId() != null)
-			{
+//			if (address.getId() != null)
+//			{
 				LinkPersonAddress link = getLink();
 				if (link != null)
 				{
+					link.getAddress().removeAddressLink(link);
 					link.setAddress(address);
+					link.getAddress().addLink(link);
 					loadAddressValues();
 					loadAddressContactsValues();
 				}
-			}
+//			}
 		}
 		else if (contentProposal instanceof CityContentProposal)
 		{
@@ -2156,8 +2158,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 					}
 					Address address = Address.newInstance();
 					address.setAddress(this.editorPage.getAddress());
-					LinkPersonAddress emptyLink = LinkPersonAddress.newInstance(address);
-					props.put("L0", new AddressContentProposal(emptyLink));
+//					LinkPersonAddress emptyLink = LinkPersonAddress.newInstance(getLink().getPerson(), address);
+					props.put("A0", new AddressContentProposal(address));
 					proposals = props.values().toArray(new AddressContentProposal[0]);
 					Arrays.sort(proposals);
 				}
@@ -2219,7 +2221,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		@Override
 		public String getContent()
 		{
-			return this.link == null || this.link.isDeleted() || this.link.getPerson().isDeleted() ? this.address
+			return this.link == null || this.link.isDeleted() || link.getPerson().isDeleted()? this.address
 					.getAddress() : this.link.getAddress().getAddress();
 		}
 
