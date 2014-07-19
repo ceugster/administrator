@@ -8,9 +8,17 @@
    <description>
       Administrator Modul Personen und Adressen.
 
+Änderungen
+
+19.07.2014
+Die Suche nach Adressen aufgrund von Strassennamen wurde korrigiert: Bislang konnte keine leere Adresse ausgewählt werden.
+
 08.10.2013: 
-Bei leerer Suchmaske werden keine Personen und Adressen mehr aufgelistet.
-In die Liste der Adressen, die erscheinen, wenn im Personeneditor ein Strassennamen eingegeben wird, werden nun auch die Adressen ohne zugeordnete Personen aufgenommen.
+Bei leerer Suchmaske werden keine Personen und Adressen mehr
+aufgelistet.
+In die Liste der Adressen, die erscheinen, wenn im Personeneditor
+ein Strassennamen eingegeben wird, werden nun auch die Adressen
+ohne zugeordnete Personen aufgenommen.
    </description>
 
    <copyright>
