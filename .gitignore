@@ -4,3 +4,9 @@ ch.eugster.events.report.rhino/bin
 ch.eugster.events.report/bin
 ch.eugster.events.report/lib
 ch.eugster.events.report/unused
+ch.eugster.events.update.site/.project
+ch.eugster.events.update.site/artifacts.jar
+ch.eugster.events.update.site/binary
+ch.eugster.events.update.site/content.jar
+ch.eugster.events.update.site/features
+ch.eugster.events.update.site/plugins

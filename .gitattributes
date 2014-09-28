@@ -1442,6 +1442,7 @@ ch.eugster.events.ui/src/ch/eugster/events/ui/sorters/StringSorter.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/views/AbstractEntityView.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/views/IEntityEditorContentOutlinePage.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/wizards/WizardDialog.java -text
+ch.eugster.events.update.site/site.xml -text
 ch.eugster.events.user/.classpath -text
 ch.eugster.events.user/.project -text
 ch.eugster.events.user/.settings/org.eclipse.pde.core.prefs -text
