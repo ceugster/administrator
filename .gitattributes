@@ -1595,6 +1595,9 @@ ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitThemeView.java 
 ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitTodoFilter.java -text
 ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitTreeContentProvider.java -text
 ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitsToDoView.java -text
+ch.eugster.events.zipcode.feature/.project -text
+ch.eugster.events.zipcode.feature/build.properties -text
+ch.eugster.events.zipcode.feature/feature.xml -text
 ch.eugster.events.zipcode/.classpath -text
 ch.eugster.events.zipcode/.project -text
 ch.eugster.events.zipcode/.settings/org.eclipse.jdt.core.prefs -text
