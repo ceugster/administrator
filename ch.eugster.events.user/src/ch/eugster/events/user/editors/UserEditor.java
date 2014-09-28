@@ -1,6 +1,6 @@
 package ch.eugster.events.user.editors;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -189,7 +189,7 @@ public class UserEditor extends AbstractEntityEditor<User>
 		if (service != null)
 		{
 			DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
-			Collection<Domain> domains = query.selectAll();
+			List<Domain> domains = query.selectAll();
 			domains.add(Domain.newInstance());
 			this.domainViewer.setInput(domains.toArray(new Domain[0]));
 		}

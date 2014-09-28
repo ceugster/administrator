@@ -1,6 +1,7 @@
 package ch.eugster.events.persistence.queries;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.eclipse.persistence.expressions.Expression;
@@ -48,9 +49,9 @@ public class DomainQuery extends AbstractEntityQuery<Domain>
 		}
 	}
 
-	public Collection<Domain> selectAll()
+	public List<Domain> selectAll()
 	{
-		Collection<Domain> domains = super.selectAll(Domain.class);
+		List<Domain> domains = super.selectAll(Domain.class);
 		if (domains.isEmpty())
 		{
 			Domain domain = Domain.newInstance();

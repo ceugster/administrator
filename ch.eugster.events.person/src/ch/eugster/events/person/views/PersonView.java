@@ -563,58 +563,6 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
-					cell.setText(ViewerColumn.MOBILE.value(person));
-					deleted = person.isDeleted();
-				}
-				else if (object instanceof Address)
-				{
-					Address address = (Address) object;
-					cell.setText(ViewerColumn.MOBILE.value(address));
-					deleted = address.isDeleted();
-				}
-				else if (object instanceof LinkPersonAddress)
-				{
-					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.MOBILE.value(link));
-					deleted = link.isDeleted();
-				}
-				cell.setImage(null);
-				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-			}
-		});
-		treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText(ViewerColumn.MOBILE.label());
-		treeColumn.setResizable(true);
-		treeColumn.addSelectionListener(new SelectionListener()
-		{
-			@Override
-			public void widgetDefaultSelected(final SelectionEvent event)
-			{
-				this.widgetSelected(event);
-			}
-
-			@Override
-			public void widgetSelected(final SelectionEvent event)
-			{
-				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
-				sorter.setCurrentColumn(ViewerColumn.MOBILE);
-				PersonView.this.dialogSettings.put("order.by", ViewerColumn.MOBILE.ordinal());
-				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
-				PersonView.this.refreshViewer();
-			}
-		});
-
-		treeViewerColumn = new TreeViewerColumn(this.viewer, SWT.LEFT);
-		treeViewerColumn.setLabelProvider(new ColumnLabelProvider()
-		{
-			@Override
-			public void update(final ViewerCell cell)
-			{
-				boolean deleted = false;
-				Object object = cell.getElement();
-				if (object instanceof Person)
-				{
-					Person person = (Person) object;
 					cell.setText(ViewerColumn.PHONE.value(person));
 					deleted = person.isDeleted();
 				}
@@ -651,6 +599,58 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
 				sorter.setCurrentColumn(ViewerColumn.PHONE);
 				PersonView.this.dialogSettings.put("order.by", ViewerColumn.PHONE.ordinal());
+				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
+				PersonView.this.refreshViewer();
+			}
+		});
+
+		treeViewerColumn = new TreeViewerColumn(this.viewer, SWT.LEFT);
+		treeViewerColumn.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public void update(final ViewerCell cell)
+			{
+				boolean deleted = false;
+				Object object = cell.getElement();
+				if (object instanceof Person)
+				{
+					Person person = (Person) object;
+					cell.setText(ViewerColumn.MOBILE.value(person));
+					deleted = person.isDeleted();
+				}
+				else if (object instanceof Address)
+				{
+					Address address = (Address) object;
+					cell.setText(ViewerColumn.MOBILE.value(address));
+					deleted = address.isDeleted();
+				}
+				else if (object instanceof LinkPersonAddress)
+				{
+					LinkPersonAddress link = (LinkPersonAddress) object;
+					cell.setText(ViewerColumn.MOBILE.value(link));
+					deleted = link.isDeleted();
+				}
+				cell.setImage(null);
+				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+			}
+		});
+		treeColumn = treeViewerColumn.getColumn();
+		treeColumn.setText(ViewerColumn.MOBILE.label());
+		treeColumn.setResizable(true);
+		treeColumn.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent event)
+			{
+				this.widgetSelected(event);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent event)
+			{
+				PersonSorter sorter = (PersonSorter) PersonView.this.viewer.getSorter();
+				sorter.setCurrentColumn(ViewerColumn.MOBILE);
+				PersonView.this.dialogSettings.put("order.by", ViewerColumn.MOBILE.ordinal());
 				PersonView.this.dialogSettings.put("order.asc", sorter.isAscending());
 				PersonView.this.refreshViewer();
 			}

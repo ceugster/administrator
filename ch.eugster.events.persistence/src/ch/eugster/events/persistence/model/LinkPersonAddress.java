@@ -262,6 +262,54 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		}
 		return null;
 	}
+	
+	public boolean hasValidMembers()
+	{
+		for (Member member : this.members)
+		{
+			if (!member.isDeleted())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasValidDonations()
+	{
+		for (Donation donation : this.donations)
+		{
+			if (!donation.isDeleted())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasValidAddressGroupMembers()
+	{
+		for (AddressGroupMember member : this.addressGroupMembers)
+		{
+			if (!member.isDeleted())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasValidParticipants()
+	{
+		for (Participant participant : this.participants)
+		{
+			if (!participant.isDeleted())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public Collection<Member> getMembers()
 	{

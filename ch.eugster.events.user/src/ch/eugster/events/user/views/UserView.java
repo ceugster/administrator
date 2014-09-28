@@ -79,10 +79,17 @@ public class UserView extends AbstractEntityView implements IDoubleClickListener
 				{
 					User user = (User) object;
 					cell.setText(user.getFullname());
-					if (user.getState().equals(User.UserStatus.ADMINISTRATOR))
-						cell.setImage(Activator.getDefault().getImageRegistry().get("ADMINISTRATOR"));
-					else if (user.getState().equals(User.UserStatus.USER))
-						cell.setImage(Activator.getDefault().getImageRegistry().get("USER"));
+					if (user.getState() == null)
+					{
+						cell.setImage(null);
+					}
+					else
+					{
+						if (user.getState().equals(User.UserStatus.ADMINISTRATOR))
+							cell.setImage(Activator.getDefault().getImageRegistry().get("ADMINISTRATOR"));
+						else if (user.getState().equals(User.UserStatus.USER))
+							cell.setImage(Activator.getDefault().getImageRegistry().get("USER"));
+					}
 				}
 			}
 		});
