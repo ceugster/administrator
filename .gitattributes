@@ -295,6 +295,9 @@ ch.eugster.events.core/src/ch/eugster/events/core/handlers/Quit.java -text
 ch.eugster.events.core/src/org/eclipse/ui/intro/config/CustomizableIntroPart.java -text
 ch.eugster.events.core/src/org/eclipse/ui/intro/config/IntroContentDetector.java -text
 ch.eugster.events.core/top.jpg -text
+ch.eugster.events.country.feature/.project -text
+ch.eugster.events.country.feature/build.properties -text
+ch.eugster.events.country.feature/feature.xml -text
 ch.eugster.events.country/.classpath -text
 ch.eugster.events.country/.project -text
 ch.eugster.events.country/.settings/org.eclipse.pde.core.prefs -text
