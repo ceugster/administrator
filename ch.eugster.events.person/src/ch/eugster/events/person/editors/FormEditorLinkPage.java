@@ -186,6 +186,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	private ComboViewer salutationViewer;
 
+	private Text notes;
+	
 	private Label singlePolite;
 
 	private Label groupPolite;
@@ -514,6 +516,31 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			{
 				Text text = (Text) e.getSource();
 				text.setSelection(0, text.getText().length());
+			}
+		});
+
+		toolkit.paintBordersFor(client);
+	}
+
+	private void createNotesSectionPart(final IManagedForm managedForm, final String title,
+			final String description, final int numColumns)
+	{
+		Section section = createSection(managedForm, title, description, Section.TWISTIE | Section.TITLE_BAR
+				| Section.DESCRIPTION | Section.EXPANDED, ADDRESS_CONTACTS_SECTION_EXPANDED);
+		FormToolkit toolkit = managedForm.getToolkit();
+		Composite client = createClientComposite(toolkit, section, numColumns);
+
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 64;
+
+		notes = toolkit.createText(client, "");
+		notes.setLayoutData(gridData);
+		notes.addModifyListener(new ModifyListener()
+		{
+			@Override
+			public void modifyText(final ModifyEvent e)
+			{
+				setDirty(true);
 			}
 		});
 
@@ -1121,6 +1148,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		createLinkSectionPart(managedForm, "Zusatzinformationen",
 				"Hier können zusätzliche Informationen zu " + this.getText()
 						+ " erfasst werden, die sich auf diese Adresse beziehen.", 3);
+		createNotesSectionPart(managedForm, "Bemerkungen", "Weitere Bemerkungen", 1);
 		createAddressLabelExampleSectionPart(managedForm, "Vorschau Adressetikette",
 				"Vorschau der Adressetiketten für Einzel- und, falls gegeben, Sammeladresse.", 2);
 
@@ -1618,6 +1646,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			{
 				this.provinceViewer.setSelection(new StructuredSelection(new String[] { province }));
 			}
+			this.notes.setText(link.getAddress().getNotes());
 		}
 	}
 
@@ -1710,6 +1739,15 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 				}
 			}
 		}
+		addressGroupMembers = link.getAddress().getAddressAddressGroupMembers();
+		for (AddressGroupMember addressGroupMember : addressGroupMembers)
+		{
+			if (addressGroupMember.getLink() == null)
+			{
+				addressGroupMember.setParent(link, link.getAddress());
+				link.addAddressGroupMember(addressGroupMember);
+			}
+		}
 	}
 	
 	@Override
@@ -1728,18 +1766,17 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		{
 			AddressContentProposal proposal = (AddressContentProposal) contentProposal;
 			Address address = proposal.getAddress();
-//			if (address.getId() != null)
-//			{
-				LinkPersonAddress link = getLink();
-				if (link != null)
-				{
-					link.getAddress().removeAddressLink(link);
-					link.setAddress(address);
-					link.getAddress().addLink(link);
-					loadAddressValues();
-					loadAddressContactsValues();
-				}
-//			}
+
+			LinkPersonAddress link = getLink();
+			if (link != null)
+			{
+				link.getAddress().removeLink(link);
+				link.setAddress(address);
+				link.getAddress().addLink(link);
+				loadAddressValues();
+				loadAddressContactsValues();
+			}
+
 		}
 		else if (contentProposal instanceof CityContentProposal)
 		{
@@ -1809,6 +1846,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			link.getAddress().setZip(this.zip.getText());
 			link.getAddress().setZipCode((ZipCode) this.zip.getData("zipCode"));
 			link.getAddress().setCity(this.city.getText());
+			link.getAddress().setNotes(this.notes.getText());
 		}
 	}
 

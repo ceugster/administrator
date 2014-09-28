@@ -546,10 +546,17 @@ public class Course extends AbstractEntity
 		Calendar startDate = null;
 		for (CourseDetail courseDetail : this.courseDetails)
 		{
-			if (!courseDetail.isDeleted())
+			if (!courseDetail.isDeleted() && courseDetail.getStart() != null)
 			{
-				if (startDate == null || courseDetail.getStart().getTimeInMillis() < startDate.getTimeInMillis())
+				if (startDate == null)
+				{
 					startDate = courseDetail.getStart();
+				}
+				else
+				{
+					if (courseDetail.getStart().getTimeInMillis() < startDate.getTimeInMillis())
+						startDate = courseDetail.getStart();
+				}
 			}
 		}
 		return startDate;
@@ -596,10 +603,17 @@ public class Course extends AbstractEntity
 		Calendar endDate = null;
 		for (CourseDetail courseDetail : this.courseDetails)
 		{
-			if (!courseDetail.isDeleted())
+			if (!courseDetail.isDeleted() && courseDetail.getEnd() != null)
 			{
-				if (endDate == null || courseDetail.getEnd().getTimeInMillis() > endDate.getTimeInMillis())
+				if (endDate == null)
+				{
 					endDate = courseDetail.getEnd();
+				}
+				else
+				{
+					if (endDate.getTimeInMillis() < courseDetail.getEnd().getTimeInMillis())
+						endDate = courseDetail.getEnd();
+				}
 			}
 		}
 		return endDate;

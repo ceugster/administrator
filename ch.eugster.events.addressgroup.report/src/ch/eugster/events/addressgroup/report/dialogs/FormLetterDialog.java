@@ -79,7 +79,7 @@ public class FormLetterDialog extends TitleAreaDialog
 		this.selection = selection;
 	}
 
-	private IStatus buildDocument(final File template, final Collection<DataMap> dataMaps)
+	private IStatus buildDocument(IProgressMonitor monitor, final File template, final Collection<DataMap> dataMaps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
@@ -97,7 +97,7 @@ public class FormLetterDialog extends TitleAreaDialog
 				if (service instanceof DocumentBuilderService)
 				{
 					DocumentBuilderService builderService = (DocumentBuilderService) service;
-					status = builderService.buildDocument(template, dataMaps);
+					status = builderService.buildDocument(monitor, template, dataMaps);
 				}
 			}
 		}
@@ -142,7 +142,7 @@ public class FormLetterDialog extends TitleAreaDialog
 	{
 		if (!member.isDeleted())
 		{
-			AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member);
+			AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, this.documentSelector.getSelection());
 			DataMap existing = map.get(memberMap.getId());
 			if (existing == null)
 			{
@@ -298,7 +298,7 @@ public class FormLetterDialog extends TitleAreaDialog
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor)
 			{
-				return FormLetterDialog.this.buildDocument(template, dataMaps);
+				return FormLetterDialog.this.buildDocument(monitor, template, dataMaps);
 			}
 		};
 		job.addJobChangeListener(new JobChangeAdapter()

@@ -139,6 +139,8 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private ComboViewer provinceViewer;
 
+	private Text notes;
+	
 	private EntityAdapter entityAdapter;
 
 	private IDialogSettings dialogSettings;
@@ -147,6 +149,8 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private Section contactSection;
 
+	private Section notesSection;
+	
 	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
 	public AddressEditor()
@@ -303,6 +307,32 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 		this.contactSection.setExpanded(this.dialogSettings.getBoolean(AddressEditor.CONTACT_SECTION_EXPANDED));
 	}
 
+	private void createNotesSection(final ScrolledForm parent)
+	{
+		ColumnLayoutData layoutData = new ColumnLayoutData();
+		layoutData.widthHint = 200;
+
+		TableWrapLayout sectionLayout = new TableWrapLayout();
+		sectionLayout.numColumns = 1;
+
+		this.notesSection = this.formToolkit.createSection(this.scrolledForm.getBody(), ExpandableComposite.EXPANDED
+				| ExpandableComposite.COMPACT | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
+		this.notesSection.setLayoutData(layoutData);
+		this.notesSection.setLayout(sectionLayout);
+		this.notesSection.setText("Bemerkungen");
+		this.notesSection.setClient(this.fillNotesSection(this.notesSection));
+		this.notesSection.addExpansionListener(new ExpansionAdapter()
+		{
+			@Override
+			public void expansionStateChanged(final ExpansionEvent e)
+			{
+				AddressEditor.this.dialogSettings.put(AddressEditor.CONTACT_SECTION_EXPANDED, e.getState());
+				AddressEditor.this.scrolledForm.reflow(true);
+			}
+		});
+		this.notesSection.setExpanded(this.dialogSettings.getBoolean(AddressEditor.CONTACT_SECTION_EXPANDED));
+	}
+
 	private void createLabelSection(final ScrolledForm parent)
 	{
 		ColumnLayoutData layoutData = new ColumnLayoutData();
@@ -334,6 +364,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	{
 		createAddressSection(parent);
 		createContactSection(parent);
+		createNotesSection(parent);
 		createLabelSection(parent);
 	}
 
@@ -657,19 +688,6 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 		return composite;
 	}
 
-	private String getNumValue(final String value)
-	{
-		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < value.length(); i++)
-		{
-			if ("0123456789".contains(value.substring(i, i + 1)))
-			{
-				builder.append(value.substring(i, i + 1));
-			}
-		}
-		return builder.toString();
-	}
-
 	private String formatPhoneNumber(String value)
 	{
 		if (!AddressEditor.this.countryViewer.getSelection().isEmpty())
@@ -983,6 +1001,31 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 		return composite;
 	}
 
+	private Composite fillNotesSection(final Section parent)
+	{
+		Composite composite = this.formToolkit.createComposite(parent);
+		composite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		composite.setLayout(new GridLayout());
+
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 64;
+
+		notes = formToolkit.createText(composite, "");
+		notes.setLayoutData(gridData);
+		notes.addModifyListener(new ModifyListener()
+		{
+			@Override
+			public void modifyText(final ModifyEvent e)
+			{
+				setDirty(true);
+			}
+		});
+
+		formToolkit.paintBordersFor(composite);
+
+		return composite;
+	}
+
 	private Composite fillLabelSection(final Section parent)
 	{
 		Composite composite = this.formToolkit.createComposite(parent);
@@ -1145,6 +1188,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 		{
 			this.provinceViewer.setSelection(new StructuredSelection(new String[] { address.getProvince() }));
 		}
+		this.notes.setText(address.getNotes());
 	}
 
 	private void loadContactValues(final Address address)
@@ -1266,6 +1310,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 			ssel = (StructuredSelection) this.provinceViewer.getSelection();
 			address.setProvince((String) ssel.getFirstElement());
 		}
+		address.setNotes(this.notes.getText());
 	}
 
 	private void saveContactValues(final Address address)
@@ -1525,11 +1570,8 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private class AddressContentProposalProvider implements IContentProposalProvider
 	{
-		private final AddressEditor editor;
-
 		public AddressContentProposalProvider(final AddressEditor editor)
 		{
-			this.editor = editor;
 		}
 
 		private boolean addressExists(final Address address)

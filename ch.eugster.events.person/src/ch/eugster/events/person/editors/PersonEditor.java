@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -2027,7 +2028,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 	private Domain[] selectDomains()
 	{
-		Collection<Domain> domains = null;
+		List<Domain> domains = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();

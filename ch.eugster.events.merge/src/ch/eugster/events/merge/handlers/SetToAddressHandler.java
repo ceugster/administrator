@@ -40,18 +40,18 @@ public class SetToAddressHandler extends AbstractHandler implements IHandler
 		return null;
 	}
 
-	private boolean exists(final LinkPersonAddress selectedLink, final AddressGroupMember member)
-	{
-		LinkPersonAddress[] links = selectedLink.getPerson().getLinks().toArray(new LinkPersonAddress[0]);
-		for (LinkPersonAddress link : links)
-		{
-			if (link.getAddressGroupMembers().contains(member))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+//	private boolean exists(final LinkPersonAddress selectedLink, final AddressGroupMember member)
+//	{
+//		LinkPersonAddress[] links = selectedLink.getPerson().getLinks().toArray(new LinkPersonAddress[0]);
+//		for (LinkPersonAddress link : links)
+//		{
+//			if (link.getAddressGroupMembers().contains(member))
+//			{
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
 	@Override
 	public boolean isEnabled()
@@ -118,7 +118,7 @@ public class SetToAddressHandler extends AbstractHandler implements IHandler
 						}
 						selectedLink.setDeleted(true);
 						selectedLink.getAddress().setDeleted(false);
-						selectedLink.getAddress().removeAddressLink(selectedLink);
+						selectedLink.getAddress().removeLink(selectedLink);
 						selectedLink = query.merge(selectedLink);
 						AddressQuery addressQuery = (AddressQuery) service.getQuery(Address.class);
 						addressQuery.merge(selectedLink.getAddress());

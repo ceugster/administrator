@@ -1,6 +1,7 @@
 package ch.eugster.events.persistence.queries;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
@@ -129,7 +130,7 @@ public class CountryQuery extends AbstractEntityQuery<Country>
 		}
 	}
 
-	public Collection<Country> selectAll()
+	public List<Country> selectAll()
 	{
 		return super.selectAll(Country.class);
 	}

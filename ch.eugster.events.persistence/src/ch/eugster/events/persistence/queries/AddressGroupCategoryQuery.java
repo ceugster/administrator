@@ -1,6 +1,7 @@
 package ch.eugster.events.persistence.queries;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -24,7 +25,7 @@ public class AddressGroupCategoryQuery extends AbstractEntityQuery<AddressGroupC
 		return count(AddressGroupCategory.class, expression);
 	}
 
-	public Collection<AddressGroupCategory> selectByDomain(Domain domain)
+	public List<AddressGroupCategory> selectByDomain(Domain domain)
 	{
 		Expression expression = new ExpressionBuilder(AddressGroupCategory.class).get("domain").equal(domain);
 		return select(AddressGroupCategory.class, expression);

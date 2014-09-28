@@ -3,6 +3,7 @@ package ch.eugster.events.addressgroup.views;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -386,7 +387,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 				}
 			}
 
-			Collection<Domain> domains = new ArrayList<Domain>();
+			List<Domain> domains = new ArrayList<Domain>();
 			if (this.parent == null)
 			{
 				domains.add(Domain.newInstance());
@@ -548,27 +549,28 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 				Monitor monitor = this.monitors.get(addressGroupId);
 				if (member == null)
 				{
-					if (addressGroupId == 866)
-					{
-						System.out.println();
-					}
-					if (monitor == null)
-					{
-						System.out.println();
-					}
 					if (monitor.checked)
 					{
 						if (parent instanceof LinkPersonAddress)
 						{
-							member = AddressGroupMember.newInstance(monitor.addressGroup,
-									(LinkPersonAddress) this.parent);
+							member = getMember(monitor.addressGroup, (LinkPersonAddress) parent);
+							if (member == null)
+							{
+								member = AddressGroupMember.newInstance(monitor.addressGroup,
+										(LinkPersonAddress) this.parent);
+							}
 						}
 						else if (parent instanceof Address)
 						{
-							member = AddressGroupMember.newInstance(monitor.addressGroup, (Address) this.parent);
+							member = getMember(monitor.addressGroup, (Address) parent);
+							if (member == null)
+							{
+								member = AddressGroupMember.newInstance(monitor.addressGroup, (Address) this.parent);
+							}
 						}
 						if (member != null)
 						{
+							member.setDeleted(false);
 							AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
 									.getQuery(AddressGroupMember.class);
 							current.put(addressGroupId, query.merge(member));
@@ -588,6 +590,32 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 			}
 		}
 		this.setDirty(false);
+	}
+	
+	private AddressGroupMember getMember(AddressGroup addressGroup, LinkPersonAddress link)
+	{
+		List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
+		for (AddressGroupMember member : members)
+		{
+			if (member.getLink() != null && member.getLink().getId().equals(link.getId()))
+			{
+				return member;
+			}
+		}
+		return null;
+	}
+
+	private AddressGroupMember getMember(AddressGroup addressGroup, Address address)
+	{
+		List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
+		for (AddressGroupMember member : members)
+		{
+			if (member.getAddress().getId().equals(address.getId()))
+			{
+				return member;
+			}
+		}
+		return null;
 	}
 
 	private void internalRefresh()

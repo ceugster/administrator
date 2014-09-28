@@ -391,7 +391,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			if (service != null)
 			{
 				DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
-				Collection<Domain> domains = query.selectAll();
+				List<Domain> domains = query.selectAll();
 				this.domainViewer.setInput(domains.toArray(new Domain[0]));
 			}
 			this.domainViewer.addSelectionChangedListener(new ISelectionChangedListener()

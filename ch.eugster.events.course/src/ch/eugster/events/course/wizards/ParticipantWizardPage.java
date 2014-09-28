@@ -423,7 +423,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.NAME.value(link.getPerson()));
+					cell.setText(ViewerColumn.NAME.value(link));
 					cell.setImage(null);
 				}
 			}
@@ -458,7 +458,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.ADDRESS.value(link.getPerson()));
+					cell.setText(ViewerColumn.ADDRESS.value(link));
 					cell.setImage(null);
 				}
 				else if (object instanceof Address)
@@ -499,7 +499,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.CITY.value(link.getPerson()));
+					cell.setText(ViewerColumn.CITY.value(link));
 					cell.setImage(null);
 				}
 				else if (object instanceof Address)
@@ -540,7 +540,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.MOBILE.value(link.getPerson()));
+					cell.setText(ViewerColumn.MOBILE.value(link));
 					cell.setImage(null);
 				}
 			}
@@ -575,7 +575,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.PHONE.value(link.getPerson()));
+					cell.setText(ViewerColumn.PHONE.value(link));
 				}
 				else if (object instanceof Address)
 				{
@@ -615,7 +615,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.FAX.value(link.getPerson()));
+					cell.setText(ViewerColumn.FAX.value(link));
 					cell.setImage(null);
 				}
 				else if (object instanceof Address)
@@ -656,7 +656,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.EMAIL.value(link.getPerson()));
+					cell.setText(ViewerColumn.EMAIL.value(link));
 					cell.setImage(null);
 				}
 				else if (object instanceof Address)
@@ -697,7 +697,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
-					cell.setText(ViewerColumn.DOMAIN.value(link.getPerson()));
+					cell.setText(ViewerColumn.DOMAIN.value(link));
 					cell.setImage(null);
 				}
 			}

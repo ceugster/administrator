@@ -151,12 +151,12 @@ public class PersonSorter extends ViewerSorter
 				{
 					return AddressFormatter.getInstance().formatCityLine(person.getDefaultLink().getAddress());
 				}
-				case MOBILE:
+				case PHONE:
 				{
 					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(person.getCountry(),
 							person.getDefaultLink().getPhone());
 				}
-				case PHONE:
+				case MOBILE:
 				{
 					return PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(person.getCountry(),
 							person.getPhone());
@@ -227,15 +227,15 @@ public class PersonSorter extends ViewerSorter
 				{
 					return AddressFormatter.getInstance().formatCityLine(link.getAddress());
 				}
-				case MOBILE:
-				{
-					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(link.getPerson().getCountry(),
-							link.getPhone());
-				}
 				case PHONE:
 				{
 					return PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(link.getPerson().getCountry(),
 							link.getPerson().getPhone());
+				}
+				case MOBILE:
+				{
+					return PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(link.getPerson().getCountry(),
+							link.getPhone());
 				}
 				case FAX:
 				{
@@ -302,14 +302,14 @@ public class PersonSorter extends ViewerSorter
 				{
 					return AddressFormatter.getInstance().formatCityLine(address);
 				}
-				case MOBILE:
-				{
-					return "";
-				}
 				case PHONE:
 				{
 					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(address.getCountry(),
 							address.getPhone());
+				}
+				case MOBILE:
+				{
+					return "";
 				}
 				case FAX:
 				{
@@ -447,10 +447,6 @@ public class PersonSorter extends ViewerSorter
 						return this.compare(AddressFormatter.getInstance().formatCityLine(a2), AddressFormatter
 								.getInstance().formatCityLine(a1));
 				}
-				case MOBILE:
-				{
-					return 0;
-				}
 				case PHONE:
 				{
 					String phone1 = a1.getPhone();
@@ -460,6 +456,10 @@ public class PersonSorter extends ViewerSorter
 						return this.compare(phone1, phone2);
 					else
 						return this.compare(phone2, phone1);
+				}
+				case MOBILE:
+				{
+					return 0;
 				}
 				case FAX:
 				{
@@ -558,21 +558,21 @@ public class PersonSorter extends ViewerSorter
 					else
 						return this.compare(address2, address1);
 				}
-				case MOBILE:
-				{
-					LinkPersonAddress link = person.getDefaultLink();
-					String phone = AddressFormatter.getInstance().formatPhone(link.getPerson().getCountry(),
-							link.getPhone());
-					if (ascending)
-						return this.compare(phone, "");
-					else
-						return this.compare("", phone);
-				}
 				case PHONE:
 				{
 					LinkPersonAddress link = person.getDefaultLink();
 					String phone = AddressFormatter.getInstance().formatPhone(link.getPerson().getCountry(),
 							link.getPerson().getPhone());
+					if (ascending)
+						return this.compare(phone, "");
+					else
+						return this.compare("", phone);
+				}
+				case MOBILE:
+				{
+					LinkPersonAddress link = person.getDefaultLink();
+					String phone = AddressFormatter.getInstance().formatPhone(link.getPerson().getCountry(),
+							link.getPhone());
 					if (ascending)
 						return this.compare(phone, "");
 					else

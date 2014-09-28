@@ -2,7 +2,7 @@ package ch.eugster.events.persistence.model;
 
 import static javax.persistence.CascadeType.ALL;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -75,7 +75,7 @@ public class AddressGroupCategory extends AbstractEntity
 	 * Children
 	 */
 	@OneToMany(mappedBy = "addressGroupCategory", cascade = ALL)
-	private final Collection<AddressGroup> addressGroups = new Vector<AddressGroup>();
+	private final List<AddressGroup> addressGroups = new Vector<AddressGroup>();
 
 	private AddressGroupCategory()
 	{
@@ -120,7 +120,7 @@ public class AddressGroupCategory extends AbstractEntity
 		return copy;
 	}
 
-	public Collection<AddressGroup> getAddressGroups()
+	public List<AddressGroup> getAddressGroups()
 	{
 		return this.addressGroups;
 	}

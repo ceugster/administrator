@@ -5,6 +5,7 @@ import static javax.persistence.CascadeType.ALL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -92,6 +93,10 @@ public class Address extends AbstractEntity implements Donator
 	@Basic
 	@Column(name = "address_province")
 	private String province;
+
+	@Basic
+	@Column(name = "address_notes")
+	private String notes;
 
 	@OneToOne
 	@JoinColumn(name = "address_address_salutation_id", referencedColumnName = "address_salutation_id")
@@ -286,9 +291,9 @@ public class Address extends AbstractEntity implements Donator
 		return this.links;
 	}
 
-	public Collection<LinkPersonAddress> getValidLinks()
+	public List<LinkPersonAddress> getValidLinks()
 	{
-		Collection<LinkPersonAddress> validLinks = new ArrayList<LinkPersonAddress>();
+		List<LinkPersonAddress> validLinks = new ArrayList<LinkPersonAddress>();
 		for (LinkPersonAddress link : this.links)
 		{
 			if (!link.isDeleted() && !link.getPerson().isDeleted())
@@ -372,7 +377,7 @@ public class Address extends AbstractEntity implements Donator
 				this.addressGroupMembers.remove(addressGroupMember));
 	}
 
-	public void removeAddressLink(final LinkPersonAddress link)
+	public void removeLink(final LinkPersonAddress link)
 	{
 		this.propertyChangeSupport.firePropertyChange("links", this.links, this.links.remove(link));
 	}
@@ -496,6 +501,16 @@ public class Address extends AbstractEntity implements Donator
 			setCity(zipCode == null ? null : zipCode.getCity());
 			setProvince(zipCode == null ? getProvince() : zipCode.getState());
 		}
+	}
+
+	public void setNotes(String notes) 
+	{
+		this.propertyChangeSupport.firePropertyChange("notes", this.notes, this.notes = notes.trim());
+	}
+
+	public String getNotes() 
+	{
+		return stringValueOf(notes);
 	}
 
 	public static Address newInstance()

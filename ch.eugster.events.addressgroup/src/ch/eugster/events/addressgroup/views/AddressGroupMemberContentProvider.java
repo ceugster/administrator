@@ -23,7 +23,8 @@ public class AddressGroupMemberContentProvider implements IStructuredContentProv
 		if (object instanceof AddressGroup)
 		{
 			AddressGroup group = (AddressGroup) object;
-			return group.getAddressGroupMembers().toArray(new AddressGroupMember[0]);
+			AddressGroupMember[] members = group.getAddressGroupMembers().toArray(new AddressGroupMember[0]);
+			return members;
 		}
 		return new AddressGroupMember[0];
 	}

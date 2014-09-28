@@ -8,6 +8,11 @@
             id="ch.eugster.events.persistence.startConnectionWizard"
             name="Verbindungsassistenten starten">
       </command>
+      <command
+            defaultHandler="ch.eugster.events.persistence.handlers.UpdateAddressGroupMembersHandler"
+            id="ch.eugster.events.persistence.updateAddressGroupMembers"
+            name="Update Addressgroupmembers">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -17,6 +22,11 @@
          <command
                commandId="ch.eugster.events.persistence.startConnectionWizard"
                label="Datenbankverbindung..."
+               style="push">
+         </command>
+         <command
+               commandId="ch.eugster.events.persistence.updateAddressGroupMembers"
+               label="Adressgruppenmitglieder aktualisieren"
                style="push">
          </command>
       </menuContribution>

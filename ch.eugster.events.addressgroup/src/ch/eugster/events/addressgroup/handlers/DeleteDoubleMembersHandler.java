@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -38,7 +39,7 @@ public class DeleteDoubleMembersHandler extends AbstractHandler implements IHand
 			if (service != null)
 			{
 				DomainQuery domainQuery = (DomainQuery) service.getQuery(Domain.class);
-				Collection<Domain> domains = domainQuery.selectAll();
+				List<Domain> domains = domainQuery.selectAll();
 				for (Domain domain : domains)
 				{
 					compute(service, domain);

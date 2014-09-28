@@ -1,6 +1,7 @@
 package ch.eugster.events.persistence.queries;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -236,6 +237,12 @@ public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddres
 	private Expression getOrganizationExpression(final String value)
 	{
 		return new ExpressionBuilder().get("address").get("name").containsSubstringIgnoringCase(value);
+	}
+
+	public List<LinkPersonAddress> selectActiveLinks()
+	{
+		Expression expression = new ExpressionBuilder().get("deleted").equal(false);
+		return this.select(LinkPersonAddress.class, expression);
 	}
 
 	private Expression getPhoneExpression(final String value)

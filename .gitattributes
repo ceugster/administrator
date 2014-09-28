@@ -872,6 +872,7 @@ ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/Image
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/LinkPersonAddressFormatter.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/PersonFormatter.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/handlers/StartConnectionWizardHandler.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/handlers/UpdateAddressGroupMembersHandler.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/AbstractEntity.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Address.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/AddressContact.java -text
@@ -1204,14 +1205,6 @@ ch.eugster.events.report.pdf/.project -text
 ch.eugster.events.report.pdf/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.report.pdf/META-INF/MANIFEST.MF -text
 ch.eugster.events.report.pdf/build.properties -text
-ch.eugster.events.report.pdf/ch.eugster.events.report.pdf/.classpath -text
-ch.eugster.events.report.pdf/ch.eugster.events.report.pdf/.project -text
-ch.eugster.events.report.pdf/ch.eugster.events.report.pdf/.settings/org.eclipse.jdt.core.prefs -text
-ch.eugster.events.report.pdf/ch.eugster.events.report.pdf/META-INF/MANIFEST.MF -text
-ch.eugster.events.report.pdf/ch.eugster.events.report.pdf/build.properties -text
-ch.eugster.events.report.pdf/ch.eugster.events.report.pdf/lib/iText-2.1.7-LICENSE.txt -text
-ch.eugster.events.report.pdf/ch.eugster.events.report.pdf/lib/iText-2.1.7.js1.jar -text
-ch.eugster.events.report.pdf/ch.eugster.events.report.pdf/src/ch/eugster/events/report/pdf/Activator.java -text
 ch.eugster.events.report.pdf/lib/iText-2.1.7-LICENSE.txt -text
 ch.eugster.events.report.pdf/lib/iText-2.1.7.js1.jar -text
 ch.eugster.events.report.pdf/src/ch/eugster/colibri/report/pdf/Activator.java -text
@@ -1459,6 +1452,7 @@ ch.eugster.events.utilities.console/build.properties -text
 ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/Activator.java -text
 ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/database/manipulator/DoubleAddressGroupMemberEntriesDeleter.java -text
 ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/database/manipulator/LawFolderUpdater.java -text
+ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/database/manipulator/PersonWithoutChildrenRemover.java -text
 ch.eugster.events.visits.feature/.project -text
 ch.eugster.events.visits.feature/build.properties -text
 ch.eugster.events.visits.feature/feature.xml -text

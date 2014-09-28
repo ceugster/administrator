@@ -3,6 +3,7 @@ package ch.eugster.events.addressgroup.dialogs;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -252,7 +253,7 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		if (service != null)
 		{
 			DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
-			Collection<Domain> domains = query.selectAll();
+			List<Domain> domains = query.selectAll();
 			domainViewer.setInput(domains.toArray(new Domain[0]));
 		}
 		this.domainViewer.addSelectionChangedListener(this);
@@ -392,18 +393,26 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 					{
 						if (parent instanceof LinkPersonAddress)
 						{
-							member = AddressGroupMember.newInstance(monitor.addressGroup,
-									(LinkPersonAddress) this.parent);
-							// member.getAddressGroup().addAddressGroupMember(member);
+							member = getMember(monitor.addressGroup, (LinkPersonAddress) parent);
+							if (member == null)
+							{
+								member = AddressGroupMember.newInstance(monitor.addressGroup,
+										(LinkPersonAddress) this.parent);
+								member.setInserted(GregorianCalendar.getInstance());
+							}
 						}
 						else if (parent instanceof Address)
 						{
-							member = AddressGroupMember.newInstance(monitor.addressGroup, (Address) this.parent);
-							// member.getAddressGroup().addAddressGroupMember(member);
+							member = getMember(monitor.addressGroup, (Address) parent);
+							if (member == null)
+							{
+								member = AddressGroupMember.newInstance(monitor.addressGroup, (Address) this.parent);
+								member.setInserted(GregorianCalendar.getInstance());
+							}
 						}
 						if (member != null)
 						{
-							member.setInserted(GregorianCalendar.getInstance());
+							member.setDeleted(false);
 							AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
 									.getQuery(AddressGroupMember.class);
 							current.put(addressGroupId, query.merge(member));
@@ -434,6 +443,32 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 			}
 			tracker.close();
 		}
+	}
+
+	private AddressGroupMember getMember(AddressGroup addressGroup, LinkPersonAddress link)
+	{
+		List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
+		for (AddressGroupMember member : members)
+		{
+			if (member.getLink() != null && member.getLink().getId().equals(link.getId()))
+			{
+				return member;
+			}
+		}
+		return null;
+	}
+
+	private AddressGroupMember getMember(AddressGroup addressGroup, Address address)
+	{
+		List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
+		for (AddressGroupMember member : members)
+		{
+			if (member.getAddress().getId().equals(address.getId()))
+			{
+				return member;
+			}
+		}
+		return null;
 	}
 
 	private void updateMonitor(final AddressGroup addressGroup, final boolean checked)

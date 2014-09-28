@@ -1,7 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -148,13 +147,13 @@ public abstract class AbstractEntityQuery<T extends AbstractEntity>
 		return entity;
 	}
 
-	protected Collection<T> select(final Class<T> clazz, final Expression expression)
+	protected List<T> select(final Class<T> clazz, final Expression expression)
 	{
 		return select(clazz, expression, 0);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected Collection<T> select(final Class<T> clazz, final Expression expression, final int maxResults)
+	protected List<T> select(final Class<T> clazz, final Expression expression, final int maxResults)
 	{
 		ReadAllQuery databaseQuery = new ReadAllQuery(clazz, expression);
 		final Query query = JpaHelper.createQuery(databaseQuery, getEntityManager());
@@ -162,11 +161,11 @@ public abstract class AbstractEntityQuery<T extends AbstractEntity>
 		{
 			query.setMaxResults(maxResults);
 		}
-		Collection<T> result = query.getResultList();
+		List<T> result = query.getResultList();
 		return result;
 	}
 
-	protected List<T> selectAll(final Class<T> clazz)
+	public List<T> selectAll(final Class<T> clazz)
 	{
 		return selectAll(clazz, true);
 	}
