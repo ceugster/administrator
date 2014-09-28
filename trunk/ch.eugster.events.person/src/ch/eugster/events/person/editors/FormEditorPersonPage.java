@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -1312,7 +1313,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 			{
 				ConnectionService service = (ConnectionService) this.domainViewer.getInput();
 				DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
-				Collection<Domain> domains = query.selectAll();
+				List<Domain> domains = query.selectAll();
 				if (domains.size() > 0)
 				{
 					this.domainViewer.setSelection(new StructuredSelection(domains.iterator().next()));
@@ -1482,7 +1483,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 
 	private Domain[] selectDomains()
 	{
-		Collection<Domain> domains = null;
+		List<Domain> domains = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();

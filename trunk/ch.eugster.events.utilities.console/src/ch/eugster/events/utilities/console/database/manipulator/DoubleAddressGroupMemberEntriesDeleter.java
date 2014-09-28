@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -42,7 +43,7 @@ public class DoubleAddressGroupMemberEntriesDeleter implements CommandProvider
 			counter = 0;
 			doubleCounter = 0;
 			DomainQuery domainQuery = (DomainQuery) service.getQuery(Domain.class);
-			Collection<Domain> domains = domainQuery.selectAll();
+			List<Domain> domains = domainQuery.selectAll();
 			for (Domain domain : domains)
 			{
 				compute(service, domain);

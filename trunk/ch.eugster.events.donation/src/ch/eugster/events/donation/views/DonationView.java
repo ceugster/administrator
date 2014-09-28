@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Currency;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -840,7 +841,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		{
 			if (inputElement instanceof ConnectionService)
 			{
-				Collection<Domain> domains = new ArrayList<Domain>();
+				List<Domain> domains = new ArrayList<Domain>();
 				domains.addAll(allAndEmptyDomains);
 				ConnectionService connectionService = (ConnectionService) inputElement;
 				DomainQuery query = (DomainQuery) connectionService.getQuery(Domain.class);

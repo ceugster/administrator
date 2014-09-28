@@ -5,7 +5,8 @@ import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.CascadeType.REFRESH;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -73,7 +74,7 @@ public class AddressGroup extends AbstractEntity
 	 * AddressGroupMembers
 	 */
 	@OneToMany(mappedBy = "addressGroup", cascade = ALL)
-	private final Collection<AddressGroupMember> addressGroupMembers = new Vector<AddressGroupMember>();
+	private final List<AddressGroupMember> addressGroupMembers = new Vector<AddressGroupMember>();
 
 	// /*
 	// * Parents
@@ -142,9 +143,22 @@ public class AddressGroup extends AbstractEntity
 	// return children;
 	// }
 
-	public Collection<AddressGroupMember> getAddressGroupMembers()
+	public List<AddressGroupMember> getAddressGroupMembers()
 	{
 		return this.addressGroupMembers;
+	}
+
+	public List<AddressGroupMember> getValidAddressGroupMembers()
+	{
+		List<AddressGroupMember> validMembers = new ArrayList<AddressGroupMember>();
+		for (AddressGroupMember member : this.addressGroupMembers)
+		{
+			if (!member.isDeleted() && !member.getAddress().isDeleted() && (member.getLink() == null || !member.getLink().isDeleted()))
+			{
+				validMembers.add(member);
+			}
+		}
+		return validMembers;
 	}
 
 	public String getCode()
@@ -208,6 +222,22 @@ public class AddressGroup extends AbstractEntity
 	public void setCode(final String code)
 	{
 		this.propertyChangeSupport.firePropertyChange("code", this.code, this.code = code);
+	}
+	
+	public boolean contains(LinkPersonAddress link, Address address)
+	{
+		List<AddressGroupMember> members = this.getValidAddressGroupMembers();
+		for (AddressGroupMember member : members)
+		{
+			if (member.getAddress().getId().equals(address.getId()))
+			{
+				if (member.getLink() != null && member.getLink().getId().equals(link.getId()))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override

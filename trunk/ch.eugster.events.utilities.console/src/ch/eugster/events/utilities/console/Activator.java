@@ -6,6 +6,7 @@ import org.osgi.framework.BundleContext;
 
 import ch.eugster.events.utilities.console.database.manipulator.DoubleAddressGroupMemberEntriesDeleter;
 import ch.eugster.events.utilities.console.database.manipulator.LawFolderUpdater;
+import ch.eugster.events.utilities.console.database.manipulator.PersonWithoutChildrenRemover;
 
 public class Activator implements BundleActivator
 {
@@ -26,6 +27,7 @@ public class Activator implements BundleActivator
 
 		context.registerService(CommandProvider.class.getName(), new LawFolderUpdater(), null);
 		context.registerService(CommandProvider.class.getName(), new DoubleAddressGroupMemberEntriesDeleter(), null);
+		context.registerService(CommandProvider.class.getName(), new PersonWithoutChildrenRemover(), null);
 	}
 
 	/*

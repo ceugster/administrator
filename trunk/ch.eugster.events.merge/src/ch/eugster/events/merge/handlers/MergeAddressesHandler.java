@@ -70,7 +70,7 @@ public class MergeAddressesHandler extends AbstractHandler implements IHandler
 					if (!link.getAddress().getId().equals(selectedAddress.getId()))
 					{
 						oldAddress = link.getAddress();
-						oldAddress.removeAddressLink(link);
+						oldAddress.removeLink(link);
 						if (oldAddress.getPersonLinks().size() == 0)
 						{
 							oldAddress.setDeleted(true);

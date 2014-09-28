@@ -94,10 +94,10 @@ public class AddressListDialog extends TitleAreaDialog
 		}
 	}
 
-	private IStatus buildDocument(final DataMapKey[] keys, final DataMap[] dataMaps)
+	private IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap[] dataMaps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+		final ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				DocumentBuilderService.class.getName(), null);
 		try
 		{
@@ -105,14 +105,11 @@ public class AddressListDialog extends TitleAreaDialog
 			Object[] services = tracker.getServices();
 			for (Object service : services)
 			{
-				if (status.isOK())
-				{
-					return status;
-				}
 				if (service instanceof DocumentBuilderService)
 				{
+
 					DocumentBuilderService builderService = (DocumentBuilderService) service;
-					status = builderService.buildDocument(keys, dataMaps);
+					status = builderService.buildDocument(monitor, keys, dataMaps);
 				}
 			}
 		}
@@ -157,12 +154,11 @@ public class AddressListDialog extends TitleAreaDialog
 	{
 		if (!member.isDeleted())
 		{
-			if (member.getLink() == null
-					|| (!member.getLink().isDeleted() && !member.getLink().getPerson().isDeleted()))
+			if (member.getLink() == null || (!member.getLink().isDeleted() && !member.getLink().getPerson().isDeleted()))
 			{
 				if (!member.getAddress().isDeleted())
 				{
-					AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member);
+					AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, this.collectionSelector.getSelection());
 					DataMap existing = map.get(memberMap.getId());
 					if (existing == null)
 					{
@@ -357,7 +353,7 @@ public class AddressListDialog extends TitleAreaDialog
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor)
 			{
-				return AddressListDialog.this.buildDocument(keys, dataMaps);
+				return AddressListDialog.this.buildDocument(monitor, keys, dataMaps);
 			}
 		};
 		job.addJobChangeListener(new JobChangeAdapter()
