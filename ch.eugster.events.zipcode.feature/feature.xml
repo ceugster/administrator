@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.eugster.events.zipcode.feature"
+      label="ZipCode Feature"
+      version="1.0.0.qualifier"
+      provider-name="Christian Eugster">
+
+   <description>
+      ZipCode Feature: GUI zum Bearbeiten der Postleitzahlen
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="ch.eugster.events.persistence" version="1.0.10" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.ui" version="1.0.3" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi.services" version="3.2.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.forms" version="3.5.2" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.country" version="1.0.0" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="ch.eugster.events.zipcode"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
