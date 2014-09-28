@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="ch.eugster.events.core.perspective">
+         <view
+               closeable="true"
+               id="ch.eugster.events.zipcode.view"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="ch.eugster.events.country.view"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="ch.eugster.events.zipcode.editors.ZipCodeEditor"
+            default="false"
+            id="ch.eugster.events.zipcode.editor"
+            name="ZipCode Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="ch.eugster.events.zipcode.views.ZipCodeView"
+            id="ch.eugster.events.zipcode.view"
+            name="ZipCode View"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            id="ch.eugster.events.zipcode.editor"
+            targetID="ch.eugster.events.zipcode.editor">
+         <action
+               class="ch.eugster.events.ui.actions.ResetEditorActionDelegate"
+               definitionId="org.eclipse.ui.file.revert"
+               disabledIcon="icons/reset_grey_16.png"
+               hoverIcon="icons/reset_16.png"
+               icon="icons/reset_16.png"
+               id="ch.eugster.events.zipcode.editor.revert"
+               label="Revert"
+               mode="FORCE_TEXT"
+               style="push"
+               toolbarPath="ch.eugster.events.ui.toolbar.editor.actions"
+               tooltip="Verwerfen der vorgenommene Änderungen">
+         </action>
+         <action
+               class="ch.eugster.events.ui.actions.SaveEditorActionDelegate"
+               definitionId="org.eclipse.ui.file.save"
+               disabledIcon="icons/save_grey_16.png"
+               hoverIcon="icons/save_16.png"
+               icon="icons/save_16.png"
+               id="ch.eugster.events.zipcode.editor.save"
+               label="Save"
+               mode="FORCE_TEXT"
+               style="push"
+               toolbarPath="ch.eugster.events.ui.toolbar.editor.actions"
+               tooltip="Speichern der vorgenommenen Änderungen">
+         </action>
+      </editorContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="ch.eugster.events.zipcode.category.edit"
+            name="Bearbeiten">
+      </category>
+      <command
+            categoryId="ch.eugster.events.zipcode.category.edit"
+            description="Hinzufügen einer neuen Plz"
+            id="ch.eugster.events.zipcode.add"
+            name="Hinzufügen">
+      </command>
+      <command
+            categoryId="ch.eugster.events.zipcode.category.edit"
+            description="Bearbeiten der ausgewählten Plz"
+            id="ch.eugster.events.zipcode.edit"
+            name="Bearbeiten">
+      </command>
+      <category
+            id="ch.eugster.events.zipcode.category.view"
+            name="Sichten">
+      </category>
+      <command
+            categoryId="ch.eugster.events.zipcode.category.view"
+            description="Postleitzahlensicht aktivieren"
+            id="ch.eugster.events.zipcode.activateView"
+            name="Postleitzahlensicht aktivieren">
+      </command>
+      <command
+            defaultHandler="ch.eugster.events.zipcode.handlers.UpdateZipCodeHandler"
+            id="ch.eugster.events.zipcode.updateZips"
+            name="Update Postleitzahlen">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:file?after=additions">
+         <command
+               commandId="ch.eugster.events.zipcode.updateZips"
+               label="Update ZipCodes"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:ch.eugster.events.ui.menu.views?after=additions">
+         <command
+               commandId="ch.eugster.events.zipcode.activateView"
+               label="Postleitzahlen"
+               style="push"
+               tooltip="Aktivieren der Postleitzahlensicht">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
