@@ -57,6 +57,27 @@
    <feature url="features/ch.eugster.events.country.feature_1.0.0.201409281737.jar" id="ch.eugster.events.country.feature" version="1.0.0.201409281737">
       <category name="core"/>
    </feature>
+   <feature url="features/ch.eugster.events.zipcode.feature_1.0.0.201409281902.jar" id="ch.eugster.events.zipcode.feature" version="1.0.0.201409281902">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.zipcode.feature_1.0.0.201409281917.jar" id="ch.eugster.events.zipcode.feature" version="1.0.0.201409281917">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.zipcode.feature_1.0.0.201409281941.jar" id="ch.eugster.events.zipcode.feature" version="1.0.0.201409281941">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.zipcode.feature_1.0.0.201409282001.jar" id="ch.eugster.events.zipcode.feature" version="1.0.0.201409282001">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.report.feature_1.0.0.201409291610.jar" id="ch.eugster.events.report.feature" version="1.0.0.201409291610">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.report.feature_1.0.0.201409291619.jar" id="ch.eugster.events.report.feature" version="1.0.0.201409291619">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201410020956.jar" id="ch.eugster.events.course.feature" version="1.0.0.201410020956">
+      <category name="course"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>
