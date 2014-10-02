@@ -108,6 +108,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		target.setGuideType(source.getGuideType());
 		target.setId(source.getId());
 		target.setInserted(source.getInserted());
+		target.setNote(source.getNote());
 		target.setPhone(source.getPhone());
 		target.setUpdated(source.getUpdated());
 		target.setUser(source.getUser());
@@ -141,6 +142,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		target.setGuideType(source.getGuideType());
 		target.setId(source.getId());
 		target.setInserted(source.getInserted());
+		target.setNote(source.getNote());
 		target.setPhone(source.getPhone());
 		target.setUpdated(source.getUpdated());
 		target.setUser(source.getUser());
