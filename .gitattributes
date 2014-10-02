@@ -1600,7 +1600,6 @@ ch.eugster.events.zipcode.feature/build.properties -text
 ch.eugster.events.zipcode.feature/feature.xml -text
 ch.eugster.events.zipcode/.classpath -text
 ch.eugster.events.zipcode/.project -text
-ch.eugster.events.zipcode/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.zipcode/META-INF/MANIFEST.MF -text
 ch.eugster.events.zipcode/build.properties -text
 ch.eugster.events.zipcode/icons/add_16.gif -text

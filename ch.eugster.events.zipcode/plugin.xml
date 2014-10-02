@@ -117,12 +117,81 @@
       <menuContribution
             locationURI="menu:ch.eugster.events.ui.menu.views?after=additions">
          <command
-               commandId="ch.eugster.events.zipcode.activateView"
+               commandId="org.eclipse.ui.views.showView"
                label="Postleitzahlen"
                style="push"
                tooltip="Aktivieren der Postleitzahlensicht">
+            <parameter
+                  name="org.eclipse.ui.views.showView.viewId"
+                  value="ch.eugster.events.zipcode.view">
+            </parameter>
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="toolbar:ch.eugster.events.zipcode.view?after=additions">
+         <command
+               commandId="ch.eugster.events.zipcode.add"
+               disabledIcon="icons/add_grey_16.gif"
+               hoverIcon="icons/add_16.gif"
+               icon="icons/add_16.gif"
+               id="ch.eugster.events.zipcode.add"
+               label="Hinzufügen"
+               mnemonic="N"
+               style="push"
+               tooltip="Hinzufügen einer neuen Postleitzahl">
+         </command>
+         <command
+               commandId="ch.eugster.events.zipcode.edit"
+               disabledIcon="icons/edit_grey_16.png"
+               hoverIcon="icons/edit_16.png"
+               icon="icons/edit_16.png"
+               id="ch.eugster.events.zipcode.edit"
+               label="Bearbeiten"
+               style="push"
+               tooltip="Bearbeiten der ausgewählten Postleitzahl">
+         </command>
+         <command
+               commandId="ch.eugster.events.zipcode.updateZips"
+               icon="icons/refresh_16.png"
+               label="Postleitzahlen aktualisieren..."
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="ch.eugster.events.zipcode.add"
+            contextId="ch.eugster.events.zipcode.context"
+            schemeId="ch.eugster.events.core.scheme"
+            sequence="M1+N">
+      </key>
+      <key
+            commandId="ch.eugster.events.zipcode.edit"
+            contextId="ch.eugster.events.zipcode.context"
+            schemeId="ch.eugster.events.core.scheme"
+            sequence="M1+E">
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.save"
+            contextId="ch.eugster.events.zipcode.context"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Ctrl+S">
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.revert"
+            contextId="ch.eugster.events.zipcode.context"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Ctrl+R">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            id="ch.eugster.events.zipcode.context"
+            name="Kontext Postleitzahlen"
+            parentId="org.eclipse.ui.contexts.window">
+      </context>
    </extension>
 
 </plugin>
