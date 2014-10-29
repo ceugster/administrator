@@ -77,7 +77,7 @@ public class CourseGuideMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		GUIDE_TYPE, PHONE, STATE, NOTE;
+		GUIDE_TYPE, PHONE, STATE, NOTE, EMAIL;
 
 		@Override
 		public String getDescription()
@@ -103,6 +103,10 @@ public class CourseGuideMap extends AbstractDataMap
 				case NOTE:
 				{
 					return "Bemerkungen";
+				}
+				case EMAIL:
+				{
+					return "Email";
 				}
 				default:
 				{
@@ -136,6 +140,10 @@ public class CourseGuideMap extends AbstractDataMap
 				{
 					return "course_guide_note";
 				}
+				case EMAIL:
+				{
+					return "course_guide_email";
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -168,6 +176,10 @@ public class CourseGuideMap extends AbstractDataMap
 				{
 					return "Bemerkungen";
 				}
+				case EMAIL:
+				{
+					return "Email";
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -199,6 +211,10 @@ public class CourseGuideMap extends AbstractDataMap
 				case NOTE:
 				{
 					return courseGuide.getNote();
+				}
+				case EMAIL:
+				{
+					return courseGuide.getEmail();
 				}
 				default:
 				{

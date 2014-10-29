@@ -108,7 +108,7 @@ public class CourseMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM, PREREQUISITES;
+		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, COST_NOTE, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM, PREREQUISITES, DATE_RANGE, DATE_RANGE_WITH_WEEKDAY_CODE;
 
 		@Override
 		public String getDescription()
@@ -205,7 +205,11 @@ public class CourseMap extends AbstractDataMap
 				}
 				case REALIZATION:
 				{
-					return "Realisierung";
+					return "Durchführung";
+				}
+				case COST_NOTE:
+				{
+					return "Bemerkungen Kurskosten";
 				}
 				case RESPONSIBLE_USER:
 				{
@@ -238,6 +242,14 @@ public class CourseMap extends AbstractDataMap
 				case PREREQUISITES:
 				{
 					return "Voraussetzungen";
+				}
+				case DATE_RANGE:
+				{
+					return "Durchführungsdatum";
+				}
+				case DATE_RANGE_WITH_WEEKDAY_CODE:
+				{
+					return "Durchführungsdatum mit Wochentagkürzel";
 				}
 				default:
 				{
@@ -343,6 +355,10 @@ public class CourseMap extends AbstractDataMap
 				{
 					return "course_realization";
 				}
+				case COST_NOTE:
+				{
+					return "course_cost_note";
+				}
 				case RESPONSIBLE_USER:
 				{
 					return "course_responsible_user";
@@ -374,6 +390,14 @@ public class CourseMap extends AbstractDataMap
 				case PREREQUISITES:
 				{
 					return "course_prerequisites";
+				}
+				case DATE_RANGE:
+				{
+					return "course_date_range";
+				}
+				case DATE_RANGE_WITH_WEEKDAY_CODE:
+				{
+					return "course_date_range_with_weekday_code";
 				}
 				default:
 				{
@@ -479,6 +503,10 @@ public class CourseMap extends AbstractDataMap
 				{
 					return "Realisierung";
 				}
+				case COST_NOTE:
+				{
+					return "Bemerkungen Kurskosten";
+				}
 				case RESPONSIBLE_USER:
 				{
 					return "Verantwortlicher";
@@ -510,6 +538,14 @@ public class CourseMap extends AbstractDataMap
 				case PREREQUISITES:
 				{
 					return "Voraussetzungen";
+				}
+				case DATE_RANGE:
+				{
+					return "Durchführungsdatum";
+				}
+				case DATE_RANGE_WITH_WEEKDAY_CODE:
+				{
+					return "Durchführungsdatum mit Wochentagkürzel";
 				}
 				default:
 				{
@@ -637,6 +673,10 @@ public class CourseMap extends AbstractDataMap
 				{
 					return course.getRealization();
 				}
+				case COST_NOTE:
+				{
+					return course.getCostNote();
+				}
 				case RESPONSIBLE_USER:
 				{
 					User user = course.getResponsibleUser();
@@ -670,6 +710,14 @@ public class CourseMap extends AbstractDataMap
 				{
 					return course.getPrerequisites();
 				}
+				case DATE_RANGE:
+				{
+					return getDateRange(course, WeekdayType.NONE);
+				}
+				case DATE_RANGE_WITH_WEEKDAY_CODE:
+				{
+					return getDateRange(course, WeekdayType.SHORT);
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -679,6 +727,66 @@ public class CourseMap extends AbstractDataMap
 
 	}
 
+	private static String getDateRange(Course course, WeekdayType weekdayType)
+	{
+		Calendar startDate = null;
+		Calendar endDate = null;
+		SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("d. MMMM yyyy");
+		Collection<CourseDetail> details = course.getCourseDetails();
+		for (CourseDetail detail : details)
+		{
+			if (startDate == null || (detail.getStart() != null && detail.getStart().before(startDate)))
+			{
+				startDate = detail.getStart();
+			}
+			if (endDate == null || (detail.getEnd() != null && detail.getEnd().after(endDate)))
+			{
+				endDate = detail.getEnd();
+			}
+		}
+		if (startDate != null && endDate != null)
+		{
+			if (startDate.get(Calendar.YEAR) == endDate.get(Calendar.YEAR))
+			{
+				if (startDate.get(Calendar.MONTH) == endDate.get(Calendar.MONTH))
+				{
+					if (startDate.get(Calendar.DAY_OF_MONTH) == endDate.get(Calendar.DAY_OF_MONTH))
+					{
+						String wd = Weekday.getWeekday(startDate.get(Calendar.DAY_OF_WEEK) - 1).getWeekday(weekdayType);
+						String date = dateFormat.format(startDate.getTime());
+						String startTime = timeFormat.format(startDate.getTime());
+						String endTime = timeFormat.format(endDate.getTime());
+						String result = (wd.isEmpty() ? "" : wd + ", ") + date + " " + startTime + " - " + endTime;
+						return result;
+					}
+				}
+			}
+			String swd = Weekday.getWeekday(startDate.get(Calendar.DAY_OF_WEEK) - 1).getWeekday(weekdayType);
+			String start = dateFormat.format(startDate.getTime());
+			String startTime = timeFormat.format(startDate.getTime());
+			String ewd = Weekday.getWeekday(endDate.get(Calendar.DAY_OF_WEEK) - 1).getWeekday(weekdayType);
+			String end = dateFormat.format(endDate.getTime());
+			String endTime = timeFormat.format(endDate.getTime());
+			return (swd.isEmpty() ? "" : swd + ", ") + start + " " + startTime + " - " + (ewd.isEmpty() ? "" : ewd + ", ") + end + " " + endTime;
+		}
+		if (startDate != null)
+		{
+			String wd = Weekday.getWeekday(startDate.get(Calendar.DAY_OF_WEEK) - 1).getWeekday(weekdayType);
+			String start = dateFormat.format(startDate.getTime());
+			String startTime = timeFormat.format(startDate.getTime());
+			return (wd.isEmpty() ? "" : wd + ", ") + start + " " + startTime;
+		}
+		if (endDate != null)
+		{
+			String wd = Weekday.getWeekday(endDate.get(Calendar.DAY_OF_WEEK) - 1).getWeekday(weekdayType);
+			String end = dateFormat.format(endDate.getTime());
+			String endTime = timeFormat.format(endDate.getTime());
+			return (wd.isEmpty() ? "" : wd + ", ") + end + " " + endTime;
+		}
+		return "";
+	}
+	
 	public enum TableKey implements DataMapKey
 	{
 		BOOKINGS, BOOKING_TYPES, DETAILS, GUIDES;
