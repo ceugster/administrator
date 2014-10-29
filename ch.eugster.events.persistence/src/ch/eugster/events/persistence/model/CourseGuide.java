@@ -185,6 +185,24 @@ public class CourseGuide extends AbstractEntity
 	{
 		return AbstractEntity.stringValueOf(this.note);
 	}
+	
+	public String getEmail()
+	{
+		LinkPersonAddress link = this.guide.getLink();
+		if (!link.getPerson().getEmail().isEmpty())
+		{
+			return link.getPerson().getEmail();
+		}
+		if (!link.getAddress().getEmail().isEmpty())
+		{
+			return link.getAddress().getEmail();
+		}
+		if (!link.getEmail().isEmpty())
+		{
+			return link.getEmail();
+		}
+		return "";
+	}
 
 	public static CourseGuide newInstance(final Course course)
 	{

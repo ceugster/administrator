@@ -124,7 +124,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 
 	private Text lodging;
 
-	private Text purpose;
+//	private Text purpose;
 
 	private Text contents;
 
@@ -151,6 +151,8 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 	private Text information;
 
 	private Text realization;
+	
+	private Text costNote;
 
 	private CDateTime lastBookingDate;
 
@@ -959,6 +961,23 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			}
 		});
 
+		label = this.formToolkit.createLabel(composite, "Bem. Kurskosten", SWT.NONE);
+		label.setLayoutData(new GridData());
+
+		layoutData = new GridData(GridData.FILL_HORIZONTAL);
+		layoutData.widthHint = widthHint;
+
+		this.costNote = this.formToolkit.createText(composite, "");
+		this.costNote.setLayoutData(layoutData);
+		this.costNote.addModifyListener(new ModifyListener()
+		{
+			@Override
+			public void modifyText(final ModifyEvent e)
+			{
+				CourseEditor.this.setDirty(true);
+			}
+		});
+
 		this.formToolkit.paintBordersFor(composite);
 
 		return composite;
@@ -1382,6 +1401,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			this.minParticipants.setSelection(course.getMinParticipants());
 			// this.purpose.setText(course.getPurpose());
 			this.realization.setText(course.getRealization());
+			this.costNote.setText(course.getCostNote());
 			if (this.rubricViewer != null)
 			{
 				if (course.getRubric() != null)
@@ -1538,6 +1558,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			course.setMinParticipants(this.minParticipants.getSelection());
 			// course.setPurpose(this.purpose.getText());
 			course.setRealization(this.realization.getText());
+			course.setCostNote(this.costNote.getText());
 			if (this.rubricViewer != null)
 			{
 				ssel = (StructuredSelection) this.rubricViewer.getSelection();

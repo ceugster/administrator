@@ -350,11 +350,13 @@ ch.eugster.events.course.reporting/reports/participant_list.jrxml -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/Activator.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/BookingListFactory.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/BookingListReportItem.java -text
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/CourseDescriptionFactory.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/ParticipantListFactory.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/ParticipantListReportItem.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/BookingConfirmationDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/BookingListReportDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/CommitmentContractDialog.java -text
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/CourseDescriptionDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/CourseInvitationDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/ParticipantListDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/ParticipantListReportDialog.java -text
@@ -364,6 +366,7 @@ ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialog
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/CommitmentContractHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateBookingConfirmationHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateBookingListReportHandler.java -text
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateCourseDescriptionHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateInvitationHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateParticipantListHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateParticipantListReportHandler.java -text

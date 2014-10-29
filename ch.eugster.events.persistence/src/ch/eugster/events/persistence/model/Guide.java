@@ -95,20 +95,20 @@ public class Guide extends AbstractEntity
 	{
 		if (this.phone == null || this.phone.isEmpty())
 		{
-			if (this.getLink().getPhone().isEmpty())
+			if (this.getLink().getPerson().getPhone().isEmpty())
 			{
-				if (this.getLink().getPerson().getPhone().isEmpty())
+				if (this.getLink().getAddress().getPhone().isEmpty())
 				{
-					return this.getLink().getAddress().getPhone();
+					return this.getLink().getPhone();
 				}
 				else
 				{
-					return this.getLink().getPerson().getPhone();
+					return this.getLink().getAddress().getPhone();
 				}
 			}
 			else
 			{
-				return this.getLink().getPhone();
+				return this.getLink().getPerson().getPhone();
 			}
 		}
 		else
