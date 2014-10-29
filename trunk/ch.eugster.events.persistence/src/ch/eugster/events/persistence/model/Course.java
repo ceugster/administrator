@@ -223,6 +223,12 @@ public class Course extends AbstractEntity
 	private String information;
 
 	/*
+	 * Bemerkungen Kurskosten 
+	 */
+	@Basic
+	@Column(name = "course_cost_note")
+	private String costNote;
+	/*
 	 * --------------------------------------------------------------------------
 	 * -------- Durchführungsbedingungen
 	 * ----------------------------------------
@@ -1081,6 +1087,16 @@ public class Course extends AbstractEntity
 	public String getPrerequisites() 
 	{
 		return AbstractEntity.stringValueOf(prerequisites);
+	}
+
+	public void setCostNote(String costNote) 
+	{
+		this.propertyChangeSupport.firePropertyChange("costNote", this.costNote, this.costNote = costNote);
+	}
+
+	public String getCostNote() 
+	{
+		return stringValueOf(costNote);
 	}
 
 	public static Course newInstance(final Season season)
