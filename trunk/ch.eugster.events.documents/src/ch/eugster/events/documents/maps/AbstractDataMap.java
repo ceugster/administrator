@@ -219,4 +219,278 @@ public abstract class AbstractDataMap implements DataMap
 
 		}
 	}
+	
+	public enum WeekdayType
+	{
+		NONE, SHORT, LONG;
+	}
+	
+	public enum Weekday
+	{
+		SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY;
+		
+		public static Weekday getWeekday(int dayOfWeek)
+		{
+			return Weekday.values()[dayOfWeek];
+		}
+		
+		public String getWeekday(WeekdayType weekdayType)
+		{
+			if (weekdayType == null) return "";
+			switch(weekdayType)
+			{
+			case NONE:
+			{
+				return "";
+			}
+			case SHORT:
+			{
+				return this.getCode();
+			}
+			case LONG:
+			{
+				return this.getName();
+			}
+			default:
+			{
+				return "";
+			}
+			}
+		}
+		
+		public String getCode()
+		{
+			switch (this)
+			{
+			case MONDAY:
+			{
+				return "Mo";
+			}
+			case TUESDAY:
+			{
+				return "Di";
+			}
+			case WEDNESDAY:
+			{
+				return "Mi";
+			}
+			case THURSDAY:
+			{
+				return "Do";
+			}
+			case FRIDAY:
+			{
+				return "Fr";
+			}
+			case SATURDAY:
+			{
+				return "Sa";
+			}
+			case SUNDAY:
+			{
+				return "So";
+			}
+			default:
+			{
+				return "";
+			}
+			}
+		}
+
+		public String getName()
+		{
+			switch (this)
+			{
+			case MONDAY:
+			{
+				return "Montag";
+			}
+			case TUESDAY:
+			{
+				return "Dienstag";
+			}
+			case WEDNESDAY:
+			{
+				return "Mittwoch";
+			}
+			case THURSDAY:
+			{
+				return "Donnerstag";
+			}
+			case FRIDAY:
+			{
+				return "Freitag";
+			}
+			case SATURDAY:
+			{
+				return "Samstag";
+			}
+			case SUNDAY:
+			{
+				return "Sonntag";
+			}
+			default:
+			{
+				return "";
+			}
+			}
+		}
+	}
+	
+	public enum MonthType
+	{
+		NONE, SHORT, LONG;
+	}
+	
+	public enum Month
+	{
+		JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER;
+		
+		public static Month getMonth(int monthNumber)
+		{
+			return Month.values()[monthNumber];
+		}
+		
+		public String getMonth(MonthType monthType)
+		{
+			if (monthType == null) return "";
+			switch(monthType)
+			{
+			case NONE:
+			{
+				return "";
+			}
+			case SHORT:
+			{
+				return this.getCode();
+			}
+			case LONG:
+			{
+				return this.getName();
+			}
+			default:
+			{
+				return "";
+			}
+			}
+		}
+		
+		public String getCode()
+		{
+			switch (this)
+			{
+			case JANUARY:
+			{
+				return "Jan";
+			}
+			case FEBRUARY:
+			{
+				return "Feb";
+			}
+			case MARCH:
+			{
+				return "Mär";
+			}
+			case APRIL:
+			{
+				return "Apr";
+			}
+			case MAY:
+			{
+				return "Mai";
+			}
+			case JUNE:
+			{
+				return "Jun";
+			}
+			case JULY:
+			{
+				return "Jul";
+			}
+			case AUGUST:
+			{
+				return "Aug";
+			}
+			case SEPTEMBER:
+			{
+				return "Sep";
+			}
+			case OCTOBER:
+			{
+				return "Okt";
+			}
+			case NOVEMBER:
+			{
+				return "Nov";
+			}
+			case DECEMBER:
+			{
+				return "Dez";
+			}
+			default:
+			{
+				return "";
+			}
+			}
+		}
+
+		public String getName()
+		{
+			switch (this)
+			{
+			case JANUARY:
+			{
+				return "Januar";
+			}
+			case FEBRUARY:
+			{
+				return "Februar";
+			}
+			case MARCH:
+			{
+				return "März";
+			}
+			case APRIL:
+			{
+				return "April";
+			}
+			case MAY:
+			{
+				return "Mai";
+			}
+			case JUNE:
+			{
+				return "Juni";
+			}
+			case JULY:
+			{
+				return "Juli";
+			}
+			case AUGUST:
+			{
+				return "August";
+			}
+			case SEPTEMBER:
+			{
+				return "September";
+			}
+			case OCTOBER:
+			{
+				return "Oktober";
+			}
+			case NOVEMBER:
+			{
+				return "November";
+			}
+			case DECEMBER:
+			{
+				return "Dezember";
+			}
+			default:
+			{
+				return "";
+			}
+			}
+		}
+	}
 }
