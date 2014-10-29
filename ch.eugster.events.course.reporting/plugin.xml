@@ -68,6 +68,11 @@
             id="ch.eugster.events.course.reporting.commitmentcontract"
             name="Einsatzvertrag generieren">
       </command>
+      <command
+            defaultHandler="ch.eugster.events.course.reporting.handlers.GenerateCourseDescriptionHandler"
+            id="ch.eugster.events.course.reporting.generateCourseDescriptions"
+            name="Kursbeschreibungen generieren">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -242,6 +247,14 @@
                hoverIcon="icons/work_16.png"
                icon="icons/work_16.png"
                label="Einsatzvertrag generieren"
+               style="push">
+         </command>
+         <command
+               commandId="ch.eugster.events.course.reporting.generateCourseDescriptions"
+               disabledIcon="icons/work_grey_16.png"
+               hoverIcon="icons/work_16.png"
+               icon="icons/work_16.png"
+               label="Kursbeschreibungen generieren"
                style="push">
          </command>
       </menuContribution>
