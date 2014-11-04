@@ -39,6 +39,11 @@ public class AddDonationToLinkHandler extends AbstractHandler implements IHandle
 			{
 				entity = (LinkPersonAddress) parent;
 			}
+			else if (parent instanceof Person)
+			{
+				Person person = (Person) parent;
+				entity = person.getDefaultLink();
+			}
 			else if (parent instanceof Address)
 			{
 				entity = (Address) parent;

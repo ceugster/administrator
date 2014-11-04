@@ -114,7 +114,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		GridData layoutData = new GridData();
 		layoutData.horizontalSpan = 2;
 
-		this.bookingDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.SPINNER);
+		this.bookingDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.bookingDate.setLayoutData(layoutData);
 		this.bookingDate.addSelectionListener(new SelectionListener()
 		{
@@ -216,7 +216,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		label.setLayoutData(new GridData());
 		label.setText("Versand Buchungsbestätigung");
 
-		this.bookingConfirmationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.SPINNER);
+		this.bookingConfirmationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.bookingConfirmationSentDate.setLayoutData(new GridData());
 		this.bookingConfirmationSentDate.setNullText("");
 
@@ -242,7 +242,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		label.setLayoutData(new GridData());
 		label.setText("Versand Kursunterlagen");
 
-		this.invitationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.SPINNER);
+		this.invitationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.invitationSentDate.setLayoutData(new GridData());
 		this.invitationSentDate.setNullText("");
 
@@ -271,7 +271,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		layoutData = new GridData();
 		layoutData.horizontalSpan = 2;
 
-		this.participationConfirmationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.SPINNER);
+		this.participationConfirmationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.participationConfirmationSentDate.setLayoutData(layoutData);
 		this.participationConfirmationSentDate.setNullText("");
 
@@ -282,7 +282,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		layoutData = new GridData();
 		layoutData.horizontalSpan = 2;
 
-		this.payDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.SPINNER);
+		this.payDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.payDate.setLayoutData(layoutData);
 		this.payDate.setNullText("");
 
@@ -316,7 +316,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		layoutData = new GridData();
 		layoutData.horizontalSpan = 2;
 
-		this.payBackDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.SPINNER);
+		this.payBackDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.payBackDate.setLayoutData(layoutData);
 		this.payBackDate.setNullText("");
 
