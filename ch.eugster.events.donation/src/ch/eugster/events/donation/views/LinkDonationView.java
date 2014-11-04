@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
@@ -176,6 +177,8 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 
 		this.getSite().setSelectionProvider(this.viewer);
 
+		this.getSite().getPage().addSelectionListener(PersonView.ID, this);
+
 		PersonView view = (PersonView) this.getSite().getPage().findView(PersonView.ID);
 		if (view != null)
 		{
@@ -183,7 +186,6 @@ public class LinkDonationView extends AbstractEntityView implements ISelectionLi
 			this.viewer.setInput(ssel.getFirstElement());
 		}
 
-		this.getSite().getPage().addSelectionListener(PersonView.ID, this);
 	}
 
 	@Override

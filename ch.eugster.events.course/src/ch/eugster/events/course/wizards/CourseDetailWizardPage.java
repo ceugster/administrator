@@ -82,7 +82,7 @@ public class CourseDetailWizardPage extends WizardPage implements SelectionListe
 		label.setLayoutData(new GridData());
 		label.setText("Beginn");
 
-		this.start = new CDateTime(composite, CDT.BORDER | CDT.SPINNER | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
+		this.start = new CDateTime(composite, CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
 		this.start.setLayoutData(new GridData());
 		this.start.addSelectionListener(this);
 
@@ -90,7 +90,7 @@ public class CourseDetailWizardPage extends WizardPage implements SelectionListe
 		label.setLayoutData(new GridData());
 		label.setText("Ende");
 
-		this.end = new CDateTime(composite, CDT.BORDER | CDT.SPINNER | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
+		this.end = new CDateTime(composite, CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
 		this.end.setLayoutData(new GridData());
 		this.end.addSelectionListener(this);
 
@@ -151,7 +151,7 @@ public class CourseDetailWizardPage extends WizardPage implements SelectionListe
 		this.ersatzStartLabel.setLayoutData(new GridData());
 		this.ersatzStartLabel.setText("Beginn");
 
-		this.substituteStart = new CDateTime(composite, CDT.BORDER | CDT.SPINNER | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
+		this.substituteStart = new CDateTime(composite, CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
 		this.substituteStart.setLayoutData(new GridData());
 		this.substituteStart.addSelectionListener(this);
 
@@ -159,7 +159,7 @@ public class CourseDetailWizardPage extends WizardPage implements SelectionListe
 		this.ersatzEndLabel.setLayoutData(new GridData());
 		this.ersatzEndLabel.setText("Ende");
 
-		this.substituteEnd = new CDateTime(composite, CDT.BORDER | CDT.SPINNER | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
+		this.substituteEnd = new CDateTime(composite, CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
 		this.substituteEnd.setLayoutData(new GridData());
 		this.substituteEnd.addSelectionListener(this);
 

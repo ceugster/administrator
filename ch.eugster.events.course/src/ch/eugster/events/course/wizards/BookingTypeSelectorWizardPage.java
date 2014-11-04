@@ -78,7 +78,7 @@ public class BookingTypeSelectorWizardPage extends WizardPage implements ISelect
 		label.setLayoutData(new GridData());
 		label.setText("Buchungsdatum");
 
-		this.bookingDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.SPINNER);
+		this.bookingDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.bookingDate.setLayoutData(new GridData());
 		this.bookingDate.addSelectionListener(new SelectionListener()
 		{
@@ -134,7 +134,7 @@ public class BookingTypeSelectorWizardPage extends WizardPage implements ISelect
 		label.setLayoutData(new GridData());
 		label.setText("Buchungsbestätigung verschickt");
 
-		this.bookingConfirmationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.SPINNER);
+		this.bookingConfirmationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.bookingConfirmationSentDate.setLayoutData(new GridData());
 		this.bookingConfirmationSentDate.setNullText("<Noch nicht verschickt>");
 
@@ -142,7 +142,7 @@ public class BookingTypeSelectorWizardPage extends WizardPage implements ISelect
 		label.setLayoutData(new GridData());
 		label.setText("Kurseinladung und -unterlagen verschickt");
 
-		this.invitationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.SPINNER);
+		this.invitationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.invitationSentDate.setLayoutData(new GridData());
 		this.invitationSentDate.setNullText("<Noch nicht verschickt>");
 
@@ -150,7 +150,7 @@ public class BookingTypeSelectorWizardPage extends WizardPage implements ISelect
 		label.setLayoutData(new GridData());
 		label.setText("Teilnahmebestätigung verschickt");
 
-		this.participationConfirmationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.SPINNER);
+		this.participationConfirmationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.participationConfirmationSentDate.setLayoutData(new GridData());
 		this.participationConfirmationSentDate.setNullText("<Noch nicht verschickt>");
 
@@ -158,7 +158,7 @@ public class BookingTypeSelectorWizardPage extends WizardPage implements ISelect
 		label.setLayoutData(new GridData());
 		label.setText("Zahlungsdatum");
 
-		this.payDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.SPINNER);
+		this.payDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.payDate.setLayoutData(new GridData());
 		this.payDate.setNullText("<Keine Zahlung>");
 
@@ -179,7 +179,7 @@ public class BookingTypeSelectorWizardPage extends WizardPage implements ISelect
 		label.setLayoutData(new GridData());
 		label.setText("Rückzahlungsdatum");
 
-		this.payBackDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.SPINNER);
+		this.payBackDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.payBackDate.setLayoutData(new GridData());
 		this.payBackDate.setNullText("<Keine Zahlung>");
 

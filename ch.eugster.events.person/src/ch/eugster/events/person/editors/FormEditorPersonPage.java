@@ -727,7 +727,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 		gridData.widthHint = gc.textExtent("0000.0000").x;
 		gc.dispose();
 
-		this.birthyear = new CDateTime(client, CDT.SPINNER);
+		this.birthyear = new CDateTime(client, CDT.DROP_DOWN);
 		this.birthyear.setPattern("yyyy");
 		this.birthyear.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		this.birthyear.setLayoutData(gridData);

@@ -212,7 +212,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		Label label = this.formToolkit.createLabel(composite, "Buchungsbestätigung verschickt", SWT.NONE);
 		label.setLayoutData(new GridData());
 
-		this.bookingConfirmationSentDate = new CDateTime(composite, CDT.SPINNER | CDT.DATE_MEDIUM);
+		this.bookingConfirmationSentDate = new CDateTime(composite, CDT.DROP_DOWN | CDT.DATE_MEDIUM);
 		this.bookingConfirmationSentDate.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		this.bookingConfirmationSentDate.setLayoutData(new GridData());
 		this.bookingConfirmationSentDate.setSelection(new Date());
@@ -229,7 +229,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		label = this.formToolkit.createLabel(composite, "Kursunterlagen verschickt", SWT.NONE);
 		label.setLayoutData(new GridData());
 
-		this.invitationSentDate = new CDateTime(composite, CDT.SPINNER | CDT.DATE_MEDIUM);
+		this.invitationSentDate = new CDateTime(composite, CDT.DROP_DOWN | CDT.DATE_MEDIUM);
 		this.invitationSentDate.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		this.invitationSentDate.setLayoutData(new GridData());
 		this.invitationSentDate.setSelection(new Date());
@@ -246,7 +246,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		label = this.formToolkit.createLabel(composite, "Teilnahmebestätigung verschickt", SWT.NONE);
 		label.setLayoutData(new GridData());
 
-		this.participationConfirmationSentDate = new CDateTime(composite, CDT.SPINNER | CDT.DATE_MEDIUM);
+		this.participationConfirmationSentDate = new CDateTime(composite, CDT.DROP_DOWN | CDT.DATE_MEDIUM);
 		this.participationConfirmationSentDate.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		this.participationConfirmationSentDate.setLayoutData(new GridData());
 		this.participationConfirmationSentDate.setSelection(new Date());
@@ -274,7 +274,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		Label label = this.formToolkit.createLabel(composite, "Buchungsdatum", SWT.NONE);
 		label.setLayoutData(new GridData());
 
-		this.date = new CDateTime(composite, CDT.SPINNER | CDT.DATE_MEDIUM);
+		this.date = new CDateTime(composite, CDT.DROP_DOWN | CDT.DATE_MEDIUM);
 		this.date.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		this.date.setLayoutData(new GridData());
 		this.date.setSelection(new Date());
@@ -406,7 +406,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		label = this.formToolkit.createLabel(composite, "Zahlungsdatum", SWT.NONE);
 		label.setLayoutData(new GridData());
 
-		this.payDate = new CDateTime(composite, CDT.SPINNER | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
+		this.payDate = new CDateTime(composite, CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
 		this.payDate.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		this.payDate.setLayoutData(new GridData());
 		this.payDate.setNullText("");
@@ -434,7 +434,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		label = this.formToolkit.createLabel(composite, "Datum Rückzahlung", SWT.NONE);
 		label.setLayoutData(new GridData());
 
-		this.payBackDate = new CDateTime(composite, CDT.SPINNER | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
+		this.payBackDate = new CDateTime(composite, CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
 		this.payBackDate.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		this.payBackDate.setLayoutData(new GridData());
 		this.payBackDate.setNullText("");

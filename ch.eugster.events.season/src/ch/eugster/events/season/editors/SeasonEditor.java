@@ -148,7 +148,7 @@ public class SeasonEditor extends AbstractEntityEditor<Season>
 		label = this.formToolkit.createLabel(composite, "Saisonbeginn", SWT.NONE);
 		label.setLayoutData(new GridData());
 
-		this.start = new CDateTime(composite, CDT.DATE_MEDIUM | CDT.SPINNER);
+		this.start = new CDateTime(composite, CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.start.setLayoutData(new GridData());
 		this.start.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		this.start.addSelectionListener(new SelectionListener()
@@ -178,7 +178,7 @@ public class SeasonEditor extends AbstractEntityEditor<Season>
 		label = this.formToolkit.createLabel(composite, "Saisonende", SWT.NONE);
 		label.setLayoutData(new GridData());
 
-		this.end = new CDateTime(composite, CDT.DATE_MEDIUM | CDT.SPINNER);
+		this.end = new CDateTime(composite, CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.end.setLayoutData(new GridData());
 		this.end.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		this.end.addSelectionListener(new SelectionListener()

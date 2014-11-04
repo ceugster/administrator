@@ -731,7 +731,7 @@ public class CourseMap extends AbstractDataMap
 	{
 		Calendar startDate = null;
 		Calendar endDate = null;
-		SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("d. MMMM yyyy");
 		Collection<CourseDetail> details = course.getCourseDetails();
 		for (CourseDetail detail : details)

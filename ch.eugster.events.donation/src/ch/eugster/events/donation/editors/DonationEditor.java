@@ -106,7 +106,8 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 		Label label = this.formToolkit.createLabel(composite, "Datum", SWT.NONE);
 		label.setLayoutData(new GridData());
 
-		this.date = new CDateTime(composite, CDT.SPINNER | CDT.DATE_MEDIUM);
+		this.date = new CDateTime(composite, CDT.DROP_DOWN | CDT.DATE_MEDIUM);
+		this.date.setPattern("dd.MM.yyyy");
 		this.date.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		this.date.setLayoutData(new GridData());
 		this.date.setNullText("");
