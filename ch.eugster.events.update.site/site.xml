@@ -108,6 +108,12 @@
    <feature url="features/ch.eugster.events.person.feature_1.0.0.201411041711.jar" id="ch.eugster.events.person.feature" version="1.0.0.201411041711">
       <category name="person"/>
    </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201411051242.jar" id="ch.eugster.events.course.feature" version="1.0.0.201411051242">
+      <category name="course"/>
+   </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201411051242.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201411051242">
+      <category name="persistence"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>
