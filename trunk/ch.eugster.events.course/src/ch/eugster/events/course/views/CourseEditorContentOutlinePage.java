@@ -4,9 +4,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -43,7 +40,6 @@ import ch.eugster.events.persistence.formatters.CourseFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.BookingType;
-import ch.eugster.events.persistence.model.Compensation;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseDetail;
 import ch.eugster.events.persistence.model.CourseGuide;
@@ -65,109 +61,109 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		this.root = new ViewerRoot(editor);
 	}
 
-	private void copy(final BookingType source, final BookingType target)
-	{
-		target.setAnnulationCharges(source.getAnnulationCharges());
-		target.setInserted(source.getInserted());
-		target.setCode(source.getCode());
-		target.setCourse(source.getCourse());
-		target.setDeleted(source.isDeleted());
-		target.setId(source.getId());
-		target.setMaxAge(source.getMaxAge());
-		target.setMembership(source.getMembership());
-		target.setName(source.getName());
-		target.setPrice(source.getPrice());
-		target.setUpdated(source.getUpdated());
-		target.setUser(source.getUser());
-		target.setVersion(source.getVersion());
-	}
+//	private void copy(final BookingType source, final BookingType target)
+//	{
+//		target.setAnnulationCharges(source.getAnnulationCharges());
+//		target.setInserted(source.getInserted());
+//		target.setCode(source.getCode());
+//		target.setCourse(source.getCourse());
+//		target.setDeleted(source.isDeleted());
+//		target.setId(source.getId());
+//		target.setMaxAge(source.getMaxAge());
+//		target.setMembership(source.getMembership());
+//		target.setName(source.getName());
+//		target.setPrice(source.getPrice());
+//		target.setUpdated(source.getUpdated());
+//		target.setUser(source.getUser());
+//		target.setVersion(source.getVersion());
+//	}
+//
+//	private void copy(final CourseDetail source, final CourseDetail target)
+//	{
+//		target.setDeleted(source.isDeleted());
+//		target.setEnd(source.getEnd());
+//		target.setId(source.getId());
+//		target.setInserted(source.getInserted());
+//		target.setJourney(source.getJourney());
+//		target.setLocation(source.getLocation());
+//		target.setMeetingPoint(source.getMeetingPoint());
+//		target.setStart(source.getStart());
+//		target.setSubstituteEnd(source.getSubstituteEnd());
+//		target.setSubstituteStart(source.getSubstituteStart());
+//		target.setUpdated(source.getUpdated());
+//		target.setUser(source.getUser());
+//		target.setVersion(source.getVersion());
+//		target.setWithSubstituteDate(source.isWithSubstituteDate());
+//	}
+//
+//	private void copy(final CourseGuide source, final CourseGuide target)
+//	{
+//		target.setDeleted(source.isDeleted());
+//		target.setDescription(source.getDescription());
+//		target.setGuide(source.getGuide());
+//		target.setGuideType(source.getGuideType());
+//		target.setId(source.getId());
+//		target.setInserted(source.getInserted());
+//		target.setNote(source.getNote());
+//		target.setPhone(source.getPhone());
+//		target.setUpdated(source.getUpdated());
+//		target.setUser(source.getUser());
+//		target.setVersion(source.getVersion());
+//		for (Compensation compensation : source.getCompensations())
+//		{
+//			if (!compensation.isDeleted())
+//			{
+//				target.addCompensation(copy(compensation, Compensation.newInstance(compensation.getCourseGuide())));
+//			}
+//		}
+//	}
+//	
+//	private Compensation copy(final Compensation source, Compensation target)
+//	{
+//		target.setAmount(source.getAmount());
+//		target.setCompensationType(source.getCompensationType());
+//		target.setDeleted(source.isDeleted());
+//		target.setId(source.getId());
+//		target.setInserted(source.getInserted());
+//		target.setUpdated(source.getUpdated());
+//		target.setUser(source.getUser());
+//		return target;
+//	}
 
-	private void copy(final CourseDetail source, final CourseDetail target)
-	{
-		target.setDeleted(source.isDeleted());
-		target.setEnd(source.getEnd());
-		target.setId(source.getId());
-		target.setInserted(source.getInserted());
-		target.setJourney(source.getJourney());
-		target.setLocation(source.getLocation());
-		target.setMeetingPoint(source.getMeetingPoint());
-		target.setStart(source.getStart());
-		target.setSubstituteEnd(source.getSubstituteEnd());
-		target.setSubstituteStart(source.getSubstituteStart());
-		target.setUpdated(source.getUpdated());
-		target.setUser(source.getUser());
-		target.setVersion(source.getVersion());
-		target.setWithSubstituteDate(source.isWithSubstituteDate());
-	}
-
-	private void copy(final CourseGuide source, final CourseGuide target)
-	{
-		target.setDeleted(source.isDeleted());
-		target.setDescription(source.getDescription());
-		target.setGuide(source.getGuide());
-		target.setGuideType(source.getGuideType());
-		target.setId(source.getId());
-		target.setInserted(source.getInserted());
-		target.setNote(source.getNote());
-		target.setPhone(source.getPhone());
-		target.setUpdated(source.getUpdated());
-		target.setUser(source.getUser());
-		target.setVersion(source.getVersion());
-		for (Compensation compensation : source.getCompensations())
-		{
-			if (!compensation.isDeleted())
-			{
-				target.addCompensation(copy(compensation, Compensation.newInstance(compensation.getCourseGuide())));
-			}
-		}
-	}
-	
-	private Compensation copy(final Compensation source, Compensation target)
-	{
-		target.setAmount(source.getAmount());
-		target.setCompensationType(source.getCompensationType());
-		target.setDeleted(source.isDeleted());
-		target.setId(source.getId());
-		target.setInserted(source.getInserted());
-		target.setUpdated(source.getUpdated());
-		target.setUser(source.getUser());
-		return target;
-	}
-
-	private void update(final CourseGuide source, final CourseGuide target)
-	{
-		target.setDeleted(source.isDeleted());
-		target.setDescription(source.getDescription());
-		target.setGuide(source.getGuide());
-		target.setGuideType(source.getGuideType());
-		target.setId(source.getId());
-		target.setInserted(source.getInserted());
-		target.setNote(source.getNote());
-		target.setPhone(source.getPhone());
-		target.setUpdated(source.getUpdated());
-		target.setUser(source.getUser());
-		target.setVersion(source.getVersion());
-		for (Compensation compensation : source.getCompensations())
-		{
-			if (compensation.getId() == null)
-			{
-				if (!compensation.isDeleted())
-				{
-					target.addCompensation(compensation);
-				}
-			}
-			else
-			{
-				for (Compensation targetCompensation : target.getCompensations())
-				{
-					if (targetCompensation.getId().equals(compensation.getId()))
-					{
-						copy(compensation, targetCompensation);
-					}
-				}
-			}
-		}
-	}
+//	private void update(final CourseGuide source, final CourseGuide target)
+//	{
+//		target.setDeleted(source.isDeleted());
+//		target.setDescription(source.getDescription());
+//		target.setGuide(source.getGuide());
+//		target.setGuideType(source.getGuideType());
+//		target.setId(source.getId());
+//		target.setInserted(source.getInserted());
+//		target.setNote(source.getNote());
+//		target.setPhone(source.getPhone());
+//		target.setUpdated(source.getUpdated());
+//		target.setUser(source.getUser());
+//		target.setVersion(source.getVersion());
+//		for (Compensation compensation : source.getCompensations())
+//		{
+//			if (compensation.getId() == null)
+//			{
+//				if (!compensation.isDeleted())
+//				{
+//					target.addCompensation(compensation);
+//				}
+//			}
+//			else
+//			{
+//				for (Compensation targetCompensation : target.getCompensations())
+//				{
+//					if (targetCompensation.getId().equals(compensation.getId()))
+//					{
+//						copy(compensation, targetCompensation);
+//					}
+//				}
+//			}
+//		}
+//	}
 
 	private IAction createAddBookingTypeAction()
 	{
@@ -647,45 +643,46 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 	@Override
 	public void update()
 	{
-		this.root.getBookingTypeGroup().updateBookingTypes();
-		this.root.getCourseDetailGroup().updateCourseDetails();
-		this.root.getCourseGuideGroup().updateCourseGuides();
+//		this.root.getBookingTypeGroup().updateBookingTypes();
+//		this.root.getCourseDetailGroup().updateCourseDetails();
+//		this.root.getCourseGuideGroup().updateCourseGuides();
 	}
 
 	public class BookingTypeGroup extends Group
 	{
-		private final Collection<BookingType> bookingTypes = new Vector<BookingType>();
+//		private final Collection<BookingType> bookingTypes = new Vector<BookingType>();
 
 		public BookingTypeGroup(final ViewerRoot root)
 		{
 			super(root);
-			Collection<BookingType> sources = root.getCourse().getBookingTypes();
-			for (BookingType source : sources)
-			{
-				if (!source.isDeleted())
-				{
-					BookingType target = BookingType.newInstance();
-					CourseEditorContentOutlinePage.this.copy(source, target);
-					this.bookingTypes.add(target);
-				}
-			}
+//			bookin= root.getCourse().getBookingTypes();
+//			for (BookingType source : sources)
+//			{
+//				if (!source.isDeleted())
+//				{
+//					BookingType target = BookingType.newInstance();
+////					CourseEditorContentOutlinePage.this.copy(source, target);
+////					this.bookingTypes.add(target);
+//				}
+//			}
 		}
 
 		public void addBookingType(final BookingType bookingType)
 		{
-			this.bookingTypes.add(bookingType);
+			this.root.getCourse().addBookingType(bookingType);
+//			this.bookingTypes.add(bookingType);
 			this.firePropertyChange(new PropertyChangeEvent(this, "bookingTypeAdded", this, this));
 		}
 
 		public Collection<BookingType> getBookingTypes()
 		{
-			return this.bookingTypes;
+			return this.root.getCourse().getBookingTypes();
 		}
 
 		public void removeBookingType(final BookingType bookingType)
 		{
 			if (bookingType.getId() == null)
-				this.bookingTypes.remove(bookingType);
+				this.root.getCourse().getBookingTypes().remove(bookingType);
 			else
 			{
 				bookingType.setDeleted(true);
@@ -696,66 +693,66 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		@Override
 		public String toString()
 		{
-			return "Buchungsarten (" + bookingTypes.size() + ")";
+			return "Buchungsarten (" + this.root.getCourse().getBookingTypes().size() + ")";
 		}
 
-		public void updateBookingTypes()
-		{
-			Map<Long, BookingType> map = new HashMap<Long, BookingType>();
-			for (BookingType bookingType : this.root.getCourse().getBookingTypes())
-			{
-				map.put(bookingType.getId(), bookingType);
-			}
-			for (BookingType bookingType : this.bookingTypes)
-			{
-				if (bookingType.getId() == null)
-				{
-					this.root.getCourse().addBookingType(bookingType);
-				}
-				else
-				{
-					BookingType oldBookingType = map.get(bookingType.getId());
-					copy(bookingType, oldBookingType);
-				}
-			}
-		}
+//		public void updateBookingTypes()
+//		{
+//			Map<Long, BookingType> map = new HashMap<Long, BookingType>();
+//			for (BookingType bookingType : this.root.getCourse().getBookingTypes())
+//			{
+//				map.put(bookingType.getId(), bookingType);
+//			}
+//			for (BookingType bookingType : this.bookingTypes)
+//			{
+//				if (bookingType.getId() == null)
+//				{
+//					this.root.getCourse().addBookingType(bookingType);
+//				}
+//				else
+//				{
+//					BookingType oldBookingType = map.get(bookingType.getId());
+//					copy(bookingType, oldBookingType);
+//				}
+//			}
+//		}
 
 	}
 
 	public class CourseDetailGroup extends Group
 	{
-		private final Collection<CourseDetail> courseDetails = new Vector<CourseDetail>();
+//		private final Collection<CourseDetail> courseDetails = new Vector<CourseDetail>();
 
 		public CourseDetailGroup(final ViewerRoot root)
 		{
 			super(root);
-			Collection<CourseDetail> sources = root.getCourse().getCourseDetails();
-			for (CourseDetail source : sources)
-			{
-				if (!source.isDeleted())
-				{
-					CourseDetail target = CourseDetail.newInstance(source.getCourse());
-					CourseEditorContentOutlinePage.this.copy(source, target);
-					this.courseDetails.add(target);
-				}
-			}
+//			Collection<CourseDetail> sources = root.getCourse().getCourseDetails();
+//			for (CourseDetail source : sources)
+//			{
+//				if (!source.isDeleted())
+//				{
+//					CourseDetail target = CourseDetail.newInstance(source.getCourse());
+//					CourseEditorContentOutlinePage.this.copy(source, target);
+//					this.courseDetails.add(target);
+//				}
+//			}
 		}
 
 		public void addCourseDetail(final CourseDetail courseDetail)
 		{
-			this.courseDetails.add(courseDetail);
+			this.root.getCourse().addCourseDetail(courseDetail);
 			this.firePropertyChange(new PropertyChangeEvent(this, "courseDetailAdded", this, this));
 		}
 
 		public Collection<CourseDetail> getCourseDetails()
 		{
-			return this.courseDetails;
+			return this.root.getCourse().getCourseDetails();
 		}
 
 		public void removeCourseDetail(final CourseDetail courseDetail)
 		{
 			if (courseDetail.getId() == null)
-				this.courseDetails.remove(courseDetail);
+				this.root.getCourse().getCourseDetails().remove(courseDetail);
 			else
 			{
 				courseDetail.setDeleted(true);
@@ -766,29 +763,29 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		@Override
 		public String toString()
 		{
-			return "Kursdaten (" + this.courseDetails.size() + ")";
+			return "Kursdaten (" + this.root.getCourse().getCourseDetails().size() + ")";
 		}
 
-		public void updateCourseDetails()
-		{
-			Map<Long, CourseDetail> map = new HashMap<Long, CourseDetail>();
-			for (CourseDetail courseDetail : this.root.getCourse().getCourseDetails())
-			{
-				map.put(courseDetail.getId(), courseDetail);
-			}
-			for (CourseDetail courseDetail : this.courseDetails)
-			{
-				if (courseDetail.getId() == null)
-				{
-					this.root.getCourse().addCourseDetail(courseDetail);
-				}
-				else
-				{
-					CourseDetail oldCourseDetail = map.get(courseDetail.getId());
-					copy(courseDetail, oldCourseDetail);
-				}
-			}
-		}
+//		public void updateCourseDetails()
+//		{
+//			Map<Long, CourseDetail> map = new HashMap<Long, CourseDetail>();
+//			for (CourseDetail courseDetail : this.root.getCourse().getCourseDetails())
+//			{
+//				map.put(courseDetail.getId(), courseDetail);
+//			}
+//			for (CourseDetail courseDetail : this.courseDetails)
+//			{
+//				if (courseDetail.getId() == null)
+//				{
+//					this.root.getCourse().addCourseDetail(courseDetail);
+//				}
+//				else
+//				{
+//					CourseDetail oldCourseDetail = map.get(courseDetail.getId());
+//					copy(courseDetail, oldCourseDetail);
+//				}
+//			}
+//		}
 
 	}
 
@@ -952,38 +949,38 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 
 	public class CourseGuideGroup extends Group
 	{
-		private final Collection<CourseGuide> courseGuides = new Vector<CourseGuide>();
+//		private final Collection<CourseGuide> courseGuides = new Vector<CourseGuide>();
 
 		public CourseGuideGroup(final ViewerRoot root)
 		{
 			super(root);
-			Collection<CourseGuide> sources = root.getCourse().getCourseGuides();
-			for (CourseGuide source : sources)
-			{
-				if (!source.isDeleted())
-				{
-					CourseGuide target = CourseGuide.newInstance(source.getCourse());
-					CourseEditorContentOutlinePage.this.copy(source, target);
-					this.courseGuides.add(target);
-				}
-			}
+//			Collection<CourseGuide> sources = root.getCourse().getCourseGuides();
+//			for (CourseGuide source : sources)
+//			{
+//				if (!source.isDeleted())
+//				{
+//					CourseGuide target = CourseGuide.newInstance(source.getCourse());
+//					CourseEditorContentOutlinePage.this.copy(source, target);
+//					this.courseGuides.add(target);
+//				}
+//			}
 		}
 
 		public void addCourseGuide(final CourseGuide courseGuide)
 		{
-			this.courseGuides.add(courseGuide);
+			this.root.getCourse().addCourseGuide(courseGuide);
 			this.firePropertyChange(new PropertyChangeEvent(this, "courseGuideAdded", this, this));
 		}
 
 		public Collection<CourseGuide> getCourseGuides()
 		{
-			return this.courseGuides;
+			return this.root.getCourse().getCourseGuides();
 		}
 
 		public void removeCourseGuide(final CourseGuide courseGuide)
 		{
 			if (courseGuide.getId() == null)
-				this.courseGuides.remove(courseGuide);
+				this.root.getCourse().getCourseGuides().remove(courseGuide);
 			else
 			{
 				courseGuide.setDeleted(true);
@@ -994,29 +991,29 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		@Override
 		public String toString()
 		{
-			return "Kursleitung (" + courseGuides.size() + ")";
+			return "Kursleitung (" + this.root.getCourse().getCourseGuides().size() + ")";
 		}
 
-		public void updateCourseGuides()
-		{
-			Map<Long, CourseGuide> map = new HashMap<Long, CourseGuide>();
-			for (CourseGuide courseGuide : this.root.getCourse().getCourseGuides())
-			{
-				map.put(courseGuide.getId(), courseGuide);
-			}
-			for (CourseGuide courseGuide : this.courseGuides)
-			{
-				if (courseGuide.getId() == null)
-				{
-					this.root.getCourse().addCourseGuide(courseGuide);
-				}
-				else
-				{
-					CourseGuide oldCourseGuide = map.get(courseGuide.getId());
-					update(courseGuide, oldCourseGuide);
-				}
-			}
-		}
+//		public void updateCourseGuides()
+//		{
+//			Map<Long, CourseGuide> map = new HashMap<Long, CourseGuide>();
+//			for (CourseGuide courseGuide : this.root.getCourse().getCourseGuides())
+//			{
+//				map.put(courseGuide.getId(), courseGuide);
+//			}
+//			for (CourseGuide courseGuide : this.courseGuides)
+//			{
+//				if (courseGuide.getId() == null)
+//				{
+//					this.root.getCourse().addCourseGuide(courseGuide);
+//				}
+//				else
+//				{
+//					CourseGuide oldCourseGuide = map.get(courseGuide.getId());
+//					update(courseGuide, oldCourseGuide);
+//				}
+//			}
+//		}
 	}
 
 	protected abstract class Group

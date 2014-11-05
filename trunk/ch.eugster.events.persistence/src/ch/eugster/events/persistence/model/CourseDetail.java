@@ -208,7 +208,6 @@ public class CourseDetail extends AbstractEntity implements Comparable<CourseDet
 	public void setLocation(final String location)
 	{
 		this.propertyChangeSupport.firePropertyChange("location", this.location, this.location = location);
-		this.location = location;
 	}
 
 	public void setMeetingPoint(final String meetingPoint)
