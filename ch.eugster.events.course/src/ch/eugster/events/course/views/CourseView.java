@@ -436,12 +436,17 @@ public class CourseView extends AbstractEntityView implements IDoubleClickListen
 		}
 	}
 
-	private void editCourse(final Course course)
+	private void editCourse(Course course)
 	{
 		try
 		{
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-					.openEditor(new CourseEditorInput(course), CourseEditor.ID, true);
+			ConnectionService service = (ConnectionService) connectionServiceTracker.getService();
+			if (service != null)
+			{
+				course = (Course) service.refresh(course);
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.openEditor(new CourseEditorInput(course), CourseEditor.ID, true);
+			}
 		}
 		catch (PartInitException e)
 		{
