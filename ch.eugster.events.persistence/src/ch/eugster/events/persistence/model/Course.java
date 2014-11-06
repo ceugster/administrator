@@ -2,7 +2,7 @@ package ch.eugster.events.persistence.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -302,16 +302,16 @@ public class Course extends AbstractEntity
 	 * Children
 	 */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "course")
-	private Collection<BookingType> bookingTypes = new Vector<BookingType>();
+	private List<BookingType> bookingTypes = new Vector<BookingType>();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "course")
-	private final Collection<Booking> bookings = new Vector<Booking>();
+	private final List<Booking> bookings = new Vector<Booking>();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "course")
-	private Collection<CourseDetail> courseDetails = new Vector<CourseDetail>();
+	private List<CourseDetail> courseDetails = new Vector<CourseDetail>();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "course")
-	private Collection<CourseGuide> courseGuides = new Vector<CourseGuide>();
+	private List<CourseGuide> courseGuides = new Vector<CourseGuide>();
 
 	/*
 	 * Constructor
@@ -412,9 +412,9 @@ public class Course extends AbstractEntity
 		return null;
 	}
 
-	public Collection<Booking> getBookings()
+	public List<Booking> getBookings()
 	{
-		Collection<Booking> bookings = new Vector<Booking>();
+		List<Booking> bookings = new Vector<Booking>();
 		for (Booking booking : this.bookings)
 		{
 			if (!booking.isDeleted())
@@ -425,9 +425,9 @@ public class Course extends AbstractEntity
 		return bookings;
 	}
 
-	public Collection<Booking> getBookings(IBookingState bookingState)
+	public List<Booking> getBookings(IBookingState bookingState)
 	{
-		Collection<Booking> bookings = new Vector<Booking>();
+		List<Booking> bookings = new Vector<Booking>();
 		for (Booking booking : this.bookings)
 		{
 			if (!booking.isDeleted())
@@ -491,7 +491,7 @@ public class Course extends AbstractEntity
 		return states;
 	}
 
-	public Collection<BookingType> getBookingTypes()
+	public List<BookingType> getBookingTypes()
 	{
 		return this.bookingTypes;
 	}
@@ -511,9 +511,9 @@ public class Course extends AbstractEntity
 		return AbstractEntity.stringValueOf(this.contents);
 	}
 
-	public Collection<CourseDetail> getCourseDetails()
+	public List<CourseDetail> getCourseDetails()
 	{
-		Collection<CourseDetail> details = new ArrayList<CourseDetail>();
+		List<CourseDetail> details = new ArrayList<CourseDetail>();
 		for (CourseDetail detail : this.courseDetails)
 		{
 			if (!detail.isDeleted())
@@ -524,9 +524,9 @@ public class Course extends AbstractEntity
 		return details;
 	}
 
-	public Collection<CourseGuide> getCourseGuides()
+	public List<CourseGuide> getCourseGuides()
 	{
-		Collection<CourseGuide> guides = new ArrayList<CourseGuide>();
+		List<CourseGuide> guides = new ArrayList<CourseGuide>();
 		for (CourseGuide guide : this.courseGuides)
 		{
 			if (!guide.isDeleted() && !guide.getGuide().isDeleted())
@@ -821,7 +821,7 @@ public class Course extends AbstractEntity
 		if (this.annulationDate == null)
 		{
 			Calendar courseDate = null;
-			Collection<CourseDetail> details = this.getCourseDetails();
+			List<CourseDetail> details = this.getCourseDetails();
 			for (CourseDetail detail : details)
 			{
 				if (this.isSubstituted())
