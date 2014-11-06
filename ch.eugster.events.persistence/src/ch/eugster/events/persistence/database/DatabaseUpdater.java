@@ -1173,7 +1173,18 @@ public abstract class DatabaseUpdater
 							ok = executeSqlQuery(con, builder.toString());
 						}
 					}
-
+					if (structureVersion == 29)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						if (!columnExists(con, "events_guide_type", "guide_type_use_in_prints"))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE events_guide_type ");
+							builder.append("ADD COLUMN guide_type_use_in_prints SMALLINT NOT NULL DEFAULT 0");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+					}
 
 					stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);
 				}

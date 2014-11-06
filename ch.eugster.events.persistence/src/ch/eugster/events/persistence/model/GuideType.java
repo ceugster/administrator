@@ -47,6 +47,10 @@ public class GuideType extends AbstractEntity
 	@Column(name = "guide_type_template")
 	private String template;
 
+	@Basic
+	@Column(name = "guide_type_use_in_prints")
+	private boolean useInPrints;
+
 	private GuideType()
 	{
 		super();
@@ -94,15 +98,25 @@ public class GuideType extends AbstractEntity
 	public void setName(final String name)
 	{
 		this.propertyChangeSupport.firePropertyChange("name", this.name, this.name = name);
-		this.name = name;
 	}
 
-	public void setTemplate(String template) {
-		this.template = template;
+	public void setTemplate(String template) 
+	{
+		this.propertyChangeSupport.firePropertyChange("template", this.template, this.template = template);
 	}
 
 	public String getTemplate() {
 		return template;
+	}
+
+	public void setUseInPrints(boolean useInPrints) 
+	{
+		this.propertyChangeSupport.firePropertyChange("useInPrints", this.useInPrints, this.useInPrints = useInPrints);
+	}
+
+	public boolean isUseInPrints() 
+	{
+		return useInPrints;
 	}
 
 	public static GuideType newInstance()
