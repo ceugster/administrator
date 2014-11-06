@@ -49,6 +49,8 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 	
 	private Button templateSelector;
 	
+	private Button useInPrints;
+	
 	@Override
 	protected void initialize()
 	{
@@ -181,6 +183,26 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 			}
 		});
 
+		label = this.formToolkit.createLabel(composite, "In Ausdrucken verwenden", SWT.NONE);
+		label.setLayoutData(new GridData());
+
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		
+		this.useInPrints = this.formToolkit.createButton(composite, "", SWT.CHECK);
+		this.useInPrints.setLayoutData(gridData);
+		this.useInPrints.addSelectionListener(new SelectionListener()
+		{
+			public void widgetSelected(SelectionEvent e)
+			{
+				GuideTypeEditor.this.setDirty(true);
+			}
+			public void widgetDefaultSelected(SelectionEvent e)
+			{
+				widgetSelected(e);
+			}
+		});
+
 		this.formToolkit.paintBordersFor(composite);
 
 		return composite;
@@ -283,6 +305,7 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 			this.name.setText(guideType.getName());
 			this.description.setText(guideType.getDescription());
 			this.template.setText(guideType.getTemplate() == null ? "" : guideType.getTemplate());
+			this.useInPrints.setSelection(guideType.isUseInPrints());
 		}
 		this.setDirty(false);
 	}
@@ -298,6 +321,7 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 			guideType.setName(this.name.getText());
 			guideType.setDescription(this.description.getText());
 			guideType.setTemplate(this.template.getText().isEmpty() ? null : this.template.getText());
+			guideType.setUseInPrints(this.useInPrints.getSelection());
 		}
 	}
 
