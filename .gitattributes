@@ -597,6 +597,13 @@ ch.eugster.events.documents.poi/src/ch/eugster/events/documents/poi/internal/pre
 ch.eugster.events.documents.poi/src/ch/eugster/events/documents/poi/internal/preferences/PreferenceInitializer.java -text
 ch.eugster.events.documents.poi/src/ch/eugster/events/documents/poi/internal/services/SpreadSheetExtractorService.java -text
 ch.eugster.events.documents.poi/src/ch/eugster/events/documents/poi/internal/services/SpreadsheetBuilderService.java -text
+ch.eugster.events.documents.test/.classpath -text
+ch.eugster.events.documents.test/.project -text
+ch.eugster.events.documents.test/.settings/org.eclipse.jdt.core.prefs -text
+ch.eugster.events.documents.test/.settings/org.eclipse.pde.core.prefs -text
+ch.eugster.events.documents.test/META-INF/MANIFEST.MF -text
+ch.eugster.events.documents.test/build.properties -text
+ch.eugster.events.documents.test/src/ch/eugster/events/documents/test/DocumentTest.java -text
 ch.eugster.events.documents/.classpath -text
 ch.eugster.events.documents/.project -text
 ch.eugster.events.documents/.settings/org.eclipse.jdt.core.prefs -text
