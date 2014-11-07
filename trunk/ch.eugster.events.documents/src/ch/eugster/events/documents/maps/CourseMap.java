@@ -110,7 +110,7 @@ public class CourseMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, COST_NOTE, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM, PREREQUISITES, DATE_RANGE, DATE_RANGE_WITH_WEEKDAY_CODE, ALL_LOCATIONS, GUIDE_WITH_PROFESSION, ALL_BOOKING_TYPES;
+		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, COST_NOTE, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM, PREREQUISITES, DATE_RANGE, DATE_RANGE_WITH_WEEKDAY_CODE, SUBSTITUTION_DATE_RANGE, SUBSTITUTION_DATE_RANGE_WITH_WEEKDAY_CODE, ALL_LOCATIONS, GUIDE_WITH_PROFESSION, ALL_BOOKING_TYPES;
 
 		@Override
 		public String getDescription()
@@ -252,6 +252,14 @@ public class CourseMap extends AbstractDataMap
 			case STATE:
 			{
 				return "Kursstatus";
+			}
+			case SUBSTITUTION_DATE_RANGE:
+			{
+				return "Ersatzdatum";
+			}
+			case SUBSTITUTION_DATE_RANGE_WITH_WEEKDAY_CODE:
+			{
+				return "Ersatzdatum mit Wochentag";
 			}
 			case TARGET_PUBLIC:
 			{
@@ -421,6 +429,14 @@ public class CourseMap extends AbstractDataMap
 			{
 				return "course_date_range_with_weekday_code";
 			}
+			case SUBSTITUTION_DATE_RANGE:
+			{
+				return "course_substitution_date_range";
+			}
+			case SUBSTITUTION_DATE_RANGE_WITH_WEEKDAY_CODE:
+			{
+				return "course_substitution_date_range_with_weekday_code";
+			}
 			case ALL_LOCATIONS:
 			{
 				return "course_all_locations";
@@ -580,6 +596,14 @@ public class CourseMap extends AbstractDataMap
 			case DATE_RANGE_WITH_WEEKDAY_CODE:
 			{
 				return "Durchführungsdatum mit Wochentagkürzel";
+			}
+			case SUBSTITUTION_DATE_RANGE:
+			{
+				return "Ersatzdatum";
+			}
+			case SUBSTITUTION_DATE_RANGE_WITH_WEEKDAY_CODE:
+			{
+				return "Ersatzdatum mit Wochentag";
 			}
 			case ALL_LOCATIONS:
 			{
@@ -791,11 +815,23 @@ public class CourseMap extends AbstractDataMap
 			}
 			case DATE_RANGE:
 			{
-				return getDateRange(course, WeekdayType.NONE);
+				Calendar[] dates = getDates(course);
+				return getDateRange(dates, WeekdayType.NONE);
 			}
 			case DATE_RANGE_WITH_WEEKDAY_CODE:
 			{
-				return getDateRange(course, WeekdayType.SHORT);
+				Calendar[] dates = getDates(course);
+				return getDateRange(dates, WeekdayType.SHORT);
+			}
+			case SUBSTITUTION_DATE_RANGE:
+			{
+				Calendar[] dates = getSubstitutionDates(course);
+				return getDateRange(dates, WeekdayType.NONE);
+			}
+			case SUBSTITUTION_DATE_RANGE_WITH_WEEKDAY_CODE:
+			{
+				Calendar[] dates = getSubstitutionDates(course);
+				return getDateRange(dates, WeekdayType.SHORT);
 			}
 			case ALL_LOCATIONS:
 			{
@@ -826,65 +862,107 @@ public class CourseMap extends AbstractDataMap
 		}
 
 	}
-
-	private static String getDateRange(Course course, WeekdayType weekdayType)
+	
+	public static Calendar[] getDates(Course course)
 	{
-		Calendar startDate = null;
-		Calendar endDate = null;
-		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-		SimpleDateFormat dateFormat = new SimpleDateFormat("d. MMMM yyyy");
+		Calendar[] dates = new Calendar[2];
 		Collection<CourseDetail> details = course.getCourseDetails();
 		for (CourseDetail detail : details)
 		{
-			if (startDate == null || (detail.getStart() != null && detail.getStart().before(startDate)))
+			if (!detail.isDeleted())
 			{
-				startDate = detail.getStart();
-			}
-			if (endDate == null || (detail.getEnd() != null && detail.getEnd().after(endDate)))
-			{
-				endDate = detail.getEnd();
-			}
-		}
-		if (startDate != null && endDate != null)
-		{
-			if (startDate.get(Calendar.YEAR) == endDate.get(Calendar.YEAR))
-			{
-				if (startDate.get(Calendar.MONTH) == endDate.get(Calendar.MONTH))
+				if (dates[0] == null || (detail.getStart() != null && detail.getStart().before(dates[0])))
 				{
-					if (startDate.get(Calendar.DAY_OF_MONTH) == endDate.get(Calendar.DAY_OF_MONTH))
-					{
-						String wd = Weekday.getWeekday(startDate.get(Calendar.DAY_OF_WEEK) - 1).getWeekday(weekdayType);
-						String date = dateFormat.format(startDate.getTime());
-						String startTime = timeFormat.format(startDate.getTime());
-						String endTime = timeFormat.format(endDate.getTime());
-						String result = (wd.isEmpty() ? "" : wd + ", ") + date + " " + startTime + " - " + endTime;
-						return result;
-					}
+					dates[0] = detail.getStart();
+				}
+				if (dates[1] == null || (detail.getEnd() != null && detail.getEnd().after(dates[1])))
+				{
+					dates[1] = detail.getEnd();
 				}
 			}
-			String swd = Weekday.getWeekday(startDate.get(Calendar.DAY_OF_WEEK) - 1).getWeekday(weekdayType);
-			String start = dateFormat.format(startDate.getTime());
-			String startTime = timeFormat.format(startDate.getTime());
-			String ewd = Weekday.getWeekday(endDate.get(Calendar.DAY_OF_WEEK) - 1).getWeekday(weekdayType);
-			String end = dateFormat.format(endDate.getTime());
-			String endTime = timeFormat.format(endDate.getTime());
-			return (swd.isEmpty() ? "" : swd + ", ") + start + " " + startTime + " - " + (ewd.isEmpty() ? "" : ewd + ", ") + end + " " + endTime;
 		}
-		if (startDate != null)
+		return dates;
+	}
+
+	public static Calendar[] getSubstitutionDates(Course course)
+	{
+		Calendar[] dates = new Calendar[2];
+		Collection<CourseDetail> details = course.getCourseDetails();
+		for (CourseDetail detail : details)
 		{
-			String wd = Weekday.getWeekday(startDate.get(Calendar.DAY_OF_WEEK) - 1).getWeekday(weekdayType);
-			String start = dateFormat.format(startDate.getTime());
-			String startTime = timeFormat.format(startDate.getTime());
-			return (wd.isEmpty() ? "" : wd + ", ") + start + " " + startTime;
+			if (!detail.isDeleted())
+			{
+				if (dates[0] == null || (detail.getSubstituteStart() != null && detail.getSubstituteStart().before(dates[0])))
+				{
+					dates[0] = detail.getSubstituteStart();
+				}
+				if (dates[1] == null || (detail.getSubstituteEnd() != null && detail.getSubstituteEnd().after(dates[1])))
+				{
+					dates[1] = detail.getSubstituteEnd();
+				}
+			}
 		}
-		if (endDate != null)
+		return dates;
+	}
+
+	public static String getDateRange(Calendar[] dates, WeekdayType weekdayType)
+	{
+		if (dates[0] != null && dates[1] != null)
 		{
-			String wd = Weekday.getWeekday(endDate.get(Calendar.DAY_OF_WEEK) - 1).getWeekday(weekdayType);
-			String end = dateFormat.format(endDate.getTime());
-			String endTime = timeFormat.format(endDate.getTime());
-			return (wd.isEmpty() ? "" : wd + ", ") + end + " " + endTime;
+			if (dates[0].get(Calendar.YEAR) == dates[1].get(Calendar.YEAR))
+			{
+				if (dates[0].get(Calendar.MONTH) == dates[1].get(Calendar.MONTH))
+				{
+					if (dates[0].get(Calendar.DAY_OF_MONTH) == dates[1].get(Calendar.DAY_OF_MONTH))
+					{
+						String start = getFormattedDate(dates[0], "dd. MMMM yyyy, HH:mm", weekdayType);
+						String end = getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
+						return start + " - " + end;
+					}
+					else
+					{
+						String start = getFormattedDate(dates[0], "dd.", weekdayType);
+						String end = getFormattedDate(dates[1], "dd. MMMM yyyy,", weekdayType);
+						String startTime = getFormattedDate(dates[0], "HH:mm", WeekdayType.NONE);
+						String endTime = getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
+						return start + " - " + end + " " + startTime + " - " + endTime;
+					}
+				}
+				else
+				{
+					String start = getFormattedDate(dates[0], "dd. MMMM", weekdayType);
+					String end = getFormattedDate(dates[1], "dd. MMMM yyyy,", weekdayType);
+					String startTime = getFormattedDate(dates[0], "HH:mm", WeekdayType.NONE);
+					String endTime = getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
+					return start + " - " + end + " " + startTime + " - " + endTime;
+				}
+			}
+			else
+			{
+				String start = getFormattedDate(dates[0], "dd. MMMM yyyy", weekdayType);
+				String end = getFormattedDate(dates[1], "dd. MMMM yyyy,", weekdayType);
+				String startTime = getFormattedDate(dates[0], "HH:mm", WeekdayType.NONE);
+				String endTime = getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
+				return start + " - " + end + " " + startTime + " - " + endTime;
+			}
+		}
+		if (dates[0] != null)
+		{
+			return getFormattedDate(dates[0], "dd. MMMM yyyy, HH:mm", weekdayType);
+		}
+		if (dates[1] != null)
+		{
+			return getFormattedDate(dates[1], "dd. MMMM yyyy, HH:mm", weekdayType);
 		}
 		return "";
+	}
+
+	public static String getFormattedDate(Calendar date, String format, WeekdayType weekdayType)
+	{
+		DateFormat formatter = new SimpleDateFormat(format);
+		String wd = Weekday.getWeekday(date.get(Calendar.DAY_OF_WEEK) - 1).getWeekday(weekdayType);
+		String formattedDate = formatter.format(date.getTime());
+		return (wd.isEmpty() ? "" : wd + ", ") + formattedDate;
 	}
 	
 	public enum TableKey implements DataMapKey
