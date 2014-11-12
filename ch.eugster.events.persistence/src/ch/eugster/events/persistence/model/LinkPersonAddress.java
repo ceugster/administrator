@@ -410,10 +410,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		}
 		for (AddressGroupMember addressGroupMember : addressGroupMembers)
 		{
-			if (!addressGroupMember.getAddress().getId().equals(address.getId()))
-			{
-				addressGroupMember.setParent(this, address);
-			}
+			addressGroupMember.setParent(this, address);
 		}
 	}
 

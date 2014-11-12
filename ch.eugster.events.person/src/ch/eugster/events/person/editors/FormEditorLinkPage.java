@@ -75,7 +75,6 @@ import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
-import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.AddressSalutation;
 import ch.eugster.events.persistence.model.AddressType;
 import ch.eugster.events.persistence.model.Country;
@@ -1601,7 +1600,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	private void loadAddressContactsValues()
 	{
 		LinkPersonAddress link = getLink();
-		if (link != null)
+		if (link != null && link.getAddress().getId() != null)
 		{
 			this.phone.setText(formatPhoneNumber(link.getAddress().getPhone()));
 			this.fax.setText(formatPhoneNumber(link.getAddress().getFax()));
@@ -1623,30 +1622,33 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		LinkPersonAddress link = getLink();
 		if (link != null)
 		{
-			if (link.getAddress().getSalutation() != null)
+			if (link.getAddress().getId() != null)
 			{
-				this.salutationViewer.setSelection(new StructuredSelection(new AddressSalutation[] { link.getAddress()
-						.getSalutation() }));
+				if (link.getAddress().getSalutation() != null)
+				{
+					this.salutationViewer.setSelection(new StructuredSelection(new AddressSalutation[] { link.getAddress()
+							.getSalutation() }));
+				}
+				this.name.setText(link.getAddress().getName());
+				this.anotherLine.setText(link.getAddress().getAnotherLine());
+				this.address.setText(link.getAddress().getAddress());
+				this.pob.setText(link.getAddress().getPob());
+				if (link.getAddress().getCountry() == null)
+				{
+					link.getAddress().setCountry(AddressFormatter.getInstance().getCountry());
+				}
+				this.countryViewer.setSelection(new StructuredSelection(link.getAddress().getCountry()));
+				this.zip.setData("zipCode", link.getAddress().getZipCode());
+				this.zip.setText(link.getAddress().getZip());
+				this.city.setText(link.getAddress().getCity());
+				String province = link.getAddress().getZipCode() == null ? link.getAddress().getProvince() : link
+						.getAddress().getZipCode().getState();
+				if (province != null)
+				{
+					this.provinceViewer.setSelection(new StructuredSelection(new String[] { province }));
+				}
+				this.notes.setText(link.getAddress().getNotes());
 			}
-			this.name.setText(link.getAddress().getName());
-			this.anotherLine.setText(link.getAddress().getAnotherLine());
-			this.address.setText(link.getAddress().getAddress());
-			this.pob.setText(link.getAddress().getPob());
-			if (link.getAddress().getCountry() == null)
-			{
-				link.getAddress().setCountry(AddressFormatter.getInstance().getCountry());
-			}
-			this.countryViewer.setSelection(new StructuredSelection(link.getAddress().getCountry()));
-			this.zip.setData("zipCode", link.getAddress().getZipCode());
-			this.zip.setText(link.getAddress().getZip());
-			this.city.setText(link.getAddress().getCity());
-			String province = link.getAddress().getZipCode() == null ? link.getAddress().getProvince() : link
-					.getAddress().getZipCode().getState();
-			if (province != null)
-			{
-				this.provinceViewer.setSelection(new StructuredSelection(new String[] { province }));
-			}
-			this.notes.setText(link.getAddress().getNotes());
 		}
 	}
 
@@ -1720,35 +1722,35 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		}
 	}
 
-	private void saveAddressGroupValues()
-	{
-		LinkPersonAddress link = getLink();
-		Collection<AddressGroupMember> addressGroupMembers = link.getAddress().getAddressGroupMembers();
-		for (AddressGroupMember addressGroupMember : addressGroupMembers)
-		{
-			if (!link.isInAddressGroup(addressGroupMember.getAddressGroup()))
-			{
-				if (addressGroupMember.getLink() == null || addressGroupMember.getLink().isDeleted())
-				{
-					addressGroupMember.setParent(link, link.getAddress());
-					link.addAddressGroupMember(addressGroupMember);
-				}
-				else if (!addressGroupMember.getLink().getId().equals(link.getId()))
-				{
-					link.addAddressGroupMember(AddressGroupMember.newInstance(addressGroupMember.getAddressGroup(), link));
-				}
-			}
-		}
-		addressGroupMembers = link.getAddress().getAddressAddressGroupMembers();
-		for (AddressGroupMember addressGroupMember : addressGroupMembers)
-		{
-			if (addressGroupMember.getLink() == null)
-			{
-				addressGroupMember.setParent(link, link.getAddress());
-				link.addAddressGroupMember(addressGroupMember);
-			}
-		}
-	}
+//	private void saveAddressGroupValues()
+//	{
+//		LinkPersonAddress link = getLink();
+//		Collection<AddressGroupMember> addressGroupMembers = link.getAddress().getAddressGroupMembers();
+//		for (AddressGroupMember addressGroupMember : addressGroupMembers)
+//		{
+//			if (!link.isInAddressGroup(addressGroupMember.getAddressGroup()))
+//			{
+//				if (addressGroupMember.getLink() == null || addressGroupMember.getLink().isDeleted())
+//				{
+//					addressGroupMember.setParent(link, link.getAddress());
+//					link.addAddressGroupMember(addressGroupMember);
+//				}
+//				else if (!addressGroupMember.getLink().getId().equals(link.getId()))
+//				{
+//					link.addAddressGroupMember(AddressGroupMember.newInstance(addressGroupMember.getAddressGroup(), link));
+//				}
+//			}
+//		}
+//		addressGroupMembers = link.getAddress().getAddressAddressGroupMembers();
+//		for (AddressGroupMember addressGroupMember : addressGroupMembers)
+//		{
+//			if (addressGroupMember.getLink() == null)
+//			{
+//				addressGroupMember.setParent(link, link.getAddress());
+//				link.addAddressGroupMember(addressGroupMember);
+//			}
+//		}
+//	}
 	
 	@Override
 	public void propertyChange(final PropertyChangeEvent event)
@@ -1867,7 +1869,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		saveAddressContactsValues();
 		saveLinkValues();
 		saveExtendedFieldValues();
-		saveAddressGroupValues();
+//		saveAddressGroupValues();
 		this.setDirty(false);
 	}
 
@@ -2315,10 +2317,10 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			return builder.toString();
 		}
 
-		public LinkPersonAddress getPersonAddressLink()
-		{
-			return this.link;
-		}
+//		public LinkPersonAddress getPersonAddressLink()
+//		{
+//			return this.link;
+//		}
 
 		public Address getAddress()
 		{
