@@ -627,11 +627,14 @@ public class CourseMap extends AbstractDataMap
 				List<BookingType> bookingTypes = course.getBookingTypes();
 				for (BookingType bookingType : bookingTypes)
 				{
-					if (builder.length() != 0)
+					if (!bookingType.isDeleted())
 					{
-						builder = builder.append(", ");
+						if (builder.length() != 0)
+						{
+							builder = builder.append(", ");
+						}
+						builder = builder.append(bookingType.getName() + " " + fmt.format(bookingType.getPrice()));
 					}
-					builder = builder.append(bookingType.getName() + " " + fmt.format(bookingType.getPrice()));
 				}
 				if (!course.getCostNote().isEmpty())
 				{
@@ -666,7 +669,7 @@ public class CourseMap extends AbstractDataMap
 				List<CourseGuide> guides = course.getCourseGuides();
 				for (CourseGuide guide : guides)
 				{
-					if (guide.getGuideType().isUseInPrints())
+					if (!guide.getGuide().isDeleted() && !guide.isDeleted() && guide.getGuideType().isUseInPrints())
 					{
 						if (builder.length() != 0)
 						{
@@ -839,7 +842,7 @@ public class CourseMap extends AbstractDataMap
 				List<CourseDetail> details = course.getCourseDetails();
 				for (CourseDetail detail : details)
 				{
-					if (!detail.getLocation().isEmpty())
+					if (!detail.isDeleted() && !detail.getLocation().isEmpty())
 					{
 						if (builder.length() == 0)
 						{
@@ -849,7 +852,6 @@ public class CourseMap extends AbstractDataMap
 						{
 							builder = builder.append(", " + detail.getLocation());
 						}
-
 					}
 				}
 				return builder.toString();
