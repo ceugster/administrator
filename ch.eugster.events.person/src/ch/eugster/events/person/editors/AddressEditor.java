@@ -1595,7 +1595,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 					while (addressIterator.hasNext())
 					{
 						Address address = addressIterator.next();
-						if (!addressExists(address))
+						if (address != null && !addressExists(address))
 						{
 							props.put("A" + address.getId().toString(), new AddressContentProposal(address));
 						}

@@ -61,110 +61,6 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		this.root = new ViewerRoot(editor);
 	}
 
-//	private void copy(final BookingType source, final BookingType target)
-//	{
-//		target.setAnnulationCharges(source.getAnnulationCharges());
-//		target.setInserted(source.getInserted());
-//		target.setCode(source.getCode());
-//		target.setCourse(source.getCourse());
-//		target.setDeleted(source.isDeleted());
-//		target.setId(source.getId());
-//		target.setMaxAge(source.getMaxAge());
-//		target.setMembership(source.getMembership());
-//		target.setName(source.getName());
-//		target.setPrice(source.getPrice());
-//		target.setUpdated(source.getUpdated());
-//		target.setUser(source.getUser());
-//		target.setVersion(source.getVersion());
-//	}
-//
-//	private void copy(final CourseDetail source, final CourseDetail target)
-//	{
-//		target.setDeleted(source.isDeleted());
-//		target.setEnd(source.getEnd());
-//		target.setId(source.getId());
-//		target.setInserted(source.getInserted());
-//		target.setJourney(source.getJourney());
-//		target.setLocation(source.getLocation());
-//		target.setMeetingPoint(source.getMeetingPoint());
-//		target.setStart(source.getStart());
-//		target.setSubstituteEnd(source.getSubstituteEnd());
-//		target.setSubstituteStart(source.getSubstituteStart());
-//		target.setUpdated(source.getUpdated());
-//		target.setUser(source.getUser());
-//		target.setVersion(source.getVersion());
-//		target.setWithSubstituteDate(source.isWithSubstituteDate());
-//	}
-//
-//	private void copy(final CourseGuide source, final CourseGuide target)
-//	{
-//		target.setDeleted(source.isDeleted());
-//		target.setDescription(source.getDescription());
-//		target.setGuide(source.getGuide());
-//		target.setGuideType(source.getGuideType());
-//		target.setId(source.getId());
-//		target.setInserted(source.getInserted());
-//		target.setNote(source.getNote());
-//		target.setPhone(source.getPhone());
-//		target.setUpdated(source.getUpdated());
-//		target.setUser(source.getUser());
-//		target.setVersion(source.getVersion());
-//		for (Compensation compensation : source.getCompensations())
-//		{
-//			if (!compensation.isDeleted())
-//			{
-//				target.addCompensation(copy(compensation, Compensation.newInstance(compensation.getCourseGuide())));
-//			}
-//		}
-//	}
-//	
-//	private Compensation copy(final Compensation source, Compensation target)
-//	{
-//		target.setAmount(source.getAmount());
-//		target.setCompensationType(source.getCompensationType());
-//		target.setDeleted(source.isDeleted());
-//		target.setId(source.getId());
-//		target.setInserted(source.getInserted());
-//		target.setUpdated(source.getUpdated());
-//		target.setUser(source.getUser());
-//		return target;
-//	}
-
-//	private void update(final CourseGuide source, final CourseGuide target)
-//	{
-//		target.setDeleted(source.isDeleted());
-//		target.setDescription(source.getDescription());
-//		target.setGuide(source.getGuide());
-//		target.setGuideType(source.getGuideType());
-//		target.setId(source.getId());
-//		target.setInserted(source.getInserted());
-//		target.setNote(source.getNote());
-//		target.setPhone(source.getPhone());
-//		target.setUpdated(source.getUpdated());
-//		target.setUser(source.getUser());
-//		target.setVersion(source.getVersion());
-//		for (Compensation compensation : source.getCompensations())
-//		{
-//			if (compensation.getId() == null)
-//			{
-//				if (!compensation.isDeleted())
-//				{
-//					target.addCompensation(compensation);
-//				}
-//			}
-//			else
-//			{
-//				for (Compensation targetCompensation : target.getCompensations())
-//				{
-//					if (targetCompensation.getId().equals(compensation.getId()))
-//					{
-//						copy(compensation, targetCompensation);
-//					}
-//				}
-//			}
-//		}
-//	}
-
 	private IAction createAddBookingTypeAction()
 	{
 		IAction action = new Action()
@@ -693,6 +589,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		@Override
 		public String toString()
 		{
+			
 			return "Buchungsarten (" + this.root.getCourse().getBookingTypes().size() + ")";
 		}
 

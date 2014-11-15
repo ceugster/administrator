@@ -51,7 +51,7 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 
 	private final IStructuredSelection ssel;
 
-	private final String message = "Erstellen einer Kursliste mit Buchungsstand.";
+	private final String message = "Kursbeschreibungen erstellen.";
 
 	private boolean isPageComplete = false;
 
