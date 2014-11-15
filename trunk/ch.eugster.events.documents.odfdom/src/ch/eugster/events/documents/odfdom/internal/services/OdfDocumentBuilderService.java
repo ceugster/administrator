@@ -19,7 +19,6 @@ import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.odftoolkit.odfdom.doc.office.OdfOfficeAutomaticStyles;
 import org.odftoolkit.odfdom.doc.office.OdfOfficeBody;
-import org.odftoolkit.odfdom.doc.office.OdfOfficeStyles;
 import org.odftoolkit.odfdom.doc.office.OdfOfficeText;
 import org.odftoolkit.odfdom.doc.style.OdfStyle;
 import org.odftoolkit.odfdom.doc.style.OdfStyleParagraphProperties;
@@ -43,19 +42,9 @@ import ch.eugster.events.documents.services.DocumentBuilderService;
 
 public class OdfDocumentBuilderService implements DocumentBuilderService
 {
-
 	@Override
 	public IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final Collection<DataMap> maps)
 	{
-		try
-		{
-			monitor.beginTask("Dokument wird erstellt...", 1);
-			monitor.worked(1);
-		}
-		finally
-		{
-			monitor.done();
-		}
 		return Status.CANCEL_STATUS;
 	}
 
@@ -63,14 +52,16 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 	public IStatus buildDocument(IProgressMonitor monitor, final File template, final Collection<DataMap> maps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
+		if (!template.getName().endsWith(".odt"))
+		{
+			return status;
+		}
+
 		try
 		{
-			monitor.beginTask("Dokument wird erstellt...", maps.size());
-			if (template.getName().endsWith(".odt"))
-			{
-				DataMap[] dataMaps = maps.toArray(new DataMap[0]);
-				status = buildTextDocument(new SubProgressMonitor(monitor, maps.size()), template, dataMaps);
-			}
+			monitor.beginTask("Dokument wird erstellt...", 1);
+			DataMap[] dataMaps = maps.toArray(new DataMap[0]);
+			status = buildTextDocument(new SubProgressMonitor(monitor, maps.size()), template, dataMaps);
 			monitor.worked(1);
 		}
 		finally
@@ -84,13 +75,15 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 	public IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap[] maps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
+		if (!template.getName().endsWith(".odt"))
+		{
+			return status;
+		}
+
 		try
 		{
-			monitor.beginTask("Dokument wird erstellt...", maps.length);
-			if (template.getName().endsWith(".odt"))
-			{
-				status = buildTextDocument(new SubProgressMonitor(monitor, maps.length), template, maps);
-			}
+			monitor.beginTask("Dokument wird erstellt...", 1);
+			status = buildTextDocument(new SubProgressMonitor(monitor, maps.length), template, maps);
 			monitor.worked(1);
 		}
 		finally
@@ -104,14 +97,16 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 	public IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap map)
 	{
 		IStatus status = Status.CANCEL_STATUS;
+		if (!template.getName().endsWith(".odt"))
+		{
+			return status;
+		}
+
 		try
 		{
 			monitor.beginTask("Dokument wird erstellt...", 1);
-			if (template.getName().endsWith(".odt"))
-			{
-				DataMap[] maps = new DataMap[] { map };
-				status = buildTextDocument(new SubProgressMonitor(monitor, maps.length), template, maps);
-			}
+			DataMap[] maps = new DataMap[] { map };
+			status = buildTextDocument(new SubProgressMonitor(monitor, maps.length), template, maps);
 			monitor.worked(1);
 		}
 		finally
@@ -124,15 +119,6 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 	@Override
 	public IStatus buildDocument(IProgressMonitor monitor, DataMapKey[] keys, DataMap[] maps)
 	{
-		try
-		{
-			monitor.beginTask("Dokument wird erstellt...", 1);
-			monitor.worked(1);
-		}
-		finally
-		{
-			monitor.done();
-		}
 		return Status.CANCEL_STATUS;
 	}
 
@@ -145,7 +131,6 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 			String styleName = "break-before";
 			OdfDocument document = OdfTextDocument.loadDocument(template);
 			OdfFileDom fileDom = document.getContentDom();
-			OdfOfficeStyles officeStyles = document.getDocumentStyles();
 			OdfOfficeAutomaticStyles styles = fileDom.getAutomaticStyles();
 			OdfStyle style = styles.getStyle(styleName, OdfStyleFamily.Paragraph);
 			if (style == null)

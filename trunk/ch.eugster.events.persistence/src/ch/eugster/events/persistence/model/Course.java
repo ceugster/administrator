@@ -493,7 +493,15 @@ public class Course extends AbstractEntity
 
 	public List<BookingType> getBookingTypes()
 	{
-		return this.bookingTypes;
+		List<BookingType> types = new ArrayList<BookingType>();
+		for (BookingType type : this.bookingTypes)
+		{
+			if (!type.isDeleted())
+			{
+				types.add(type);
+			}
+		}
+		return types;
 	}
 
 	public Category getCategory()
