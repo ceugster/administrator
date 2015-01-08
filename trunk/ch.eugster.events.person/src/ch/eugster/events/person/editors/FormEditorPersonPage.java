@@ -1438,11 +1438,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 			if (this.domainViewer != null)
 			{
 				StructuredSelection ssel = (StructuredSelection) this.domainViewer.getSelection();
-				if (ssel.isEmpty())
-				{
-					person.setDomain(null);
-				}
-				else if (((Domain) ssel.getFirstElement()).getId() == null)
+				if (ssel.isEmpty() || ((Domain) ssel.getFirstElement()).getId() == null)
 				{
 					person.setDomain(null);
 				}

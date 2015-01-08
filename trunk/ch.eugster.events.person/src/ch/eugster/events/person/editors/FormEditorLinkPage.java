@@ -2161,7 +2161,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 		private boolean addressExists(final Address address)
 		{
-			return false;
+			return !address.getPersonLinks().isEmpty();
 		}
 
 		@Override

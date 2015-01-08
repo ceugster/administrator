@@ -156,6 +156,45 @@
    <feature url="features/ch.eugster.events.person.feature_1.0.0.201411141712.jar" id="ch.eugster.events.person.feature" version="1.0.0.201411141712">
       <category name="person"/>
    </feature>
+   <feature url="features/ch.eugster.events.documents.xml.feature_1.0.0.201411171638.jar" id="ch.eugster.events.documents.xml.feature" version="1.0.0.201411171638">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.xml.feature_1.0.0.201411171654.jar" id="ch.eugster.events.documents.xml.feature" version="1.0.0.201411171654">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.xml.feature_1.0.0.201411171655.jar" id="ch.eugster.events.documents.xml.feature" version="1.0.0.201411171655">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.xml.feature_1.0.0.201411171715.jar" id="ch.eugster.events.documents.xml.feature" version="1.0.0.201411171715">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201412081757.jar" id="ch.eugster.events.course.feature" version="1.0.0.201412081757">
+      <category name="course"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.poi.feature_1.0.0.201412081757.jar" id="ch.eugster.events.documents.poi.feature" version="1.0.0.201412081757">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201501081757.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201501081757">
+      <category name="addressgroup"/>
+   </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201501081757.jar" id="ch.eugster.events.course.feature" version="1.0.0.201501081757">
+      <category name="course"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.poi.feature_1.0.0.201501081757.jar" id="ch.eugster.events.documents.poi.feature" version="1.0.0.201501081757">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.donation.feature_1.0.1.201501081757.jar" id="ch.eugster.events.donation.feature" version="1.0.1.201501081757">
+      <category name="donation"/>
+   </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201501081757.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201501081757">
+      <category name="persistence"/>
+   </feature>
+   <feature url="features/ch.eugster.events.person.feature_1.0.0.201501081757.jar" id="ch.eugster.events.person.feature" version="1.0.0.201501081757">
+      <category name="person"/>
+   </feature>
+   <feature url="features/ch.eugster.events.user.feature_1.0.0.201501081757.jar" id="ch.eugster.events.user.feature" version="1.0.0.201501081757">
+      <category name="core"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>
