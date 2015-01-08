@@ -6,7 +6,6 @@
  */
 package ch.eugster.events.donation.editors;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -30,9 +29,7 @@ public class DonationDomainContentProvider implements IStructuredContentProvider
 		{
 			ConnectionService connectionService = (ConnectionService) object;
 			DomainQuery query = (DomainQuery) connectionService.getQuery(Domain.class);
-			List<Domain> domains = new ArrayList<Domain>();
-			domains.add(Domain.newInstance());
-			domains.addAll(query.selectAll());
+			List<Domain> domains = query.selectValids();
 			return domains.toArray(new Domain[0]);
 		}
 		return new Domain[0];
