@@ -2,7 +2,14 @@ package ch.eugster.events.course.reporting.dialogs;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,6 +28,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -37,6 +45,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.reporting.Activator;
 import ch.eugster.events.course.reporting.CourseDescriptionFactory;
+import ch.eugster.events.documents.maps.CourseMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.persistence.model.CourseState;
 import ch.eugster.events.persistence.model.User;
@@ -51,12 +60,18 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 
 	private final IStructuredSelection ssel;
 
-	private final String message = "Kursbeschreibungen erstellen.";
+	private final String message = "Kursbeschreibungen als XML-Datei oder fertiges OpenOffice-Dokument erstellen.";
 
 	private boolean isPageComplete = false;
 
-	private String templatePath = null;
+	private Label pathLabel;
 	
+	private Text pathText;
+	
+	private ExportType exportType = ExportType.TYPE_XML;
+	
+	private String templatePath = null;
+
 	public CourseDescriptionDialog(final Shell parentShell, IStructuredSelection ssel)
 	{
 		super(parentShell);
@@ -66,7 +81,21 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 		{
 			settings = Activator.getDefault().getDialogSettings().addNewSection("course.description.dialog");
 		}
-		templatePath = settings.get("template.path") == null ? "" : settings.get("template.path");
+		int type = 0;
+		try
+		{
+			type = settings.getInt("export.type");
+			if (type < 0 || type > ExportType.values().length - 1)
+			{
+				type = 0;
+			}
+		}
+		catch (NumberFormatException e)
+		{
+			settings.put("export.type", type);
+		}
+		exportType = ExportType.values()[type];
+		templatePath = settings.get(exportType.pathkey()) == null ? "" : settings.get(exportType.pathkey());
 	}
 
 	@Override
@@ -90,6 +119,44 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 		gridData.horizontalSpan = 3;
 
 		Group group = new Group(composite, SWT.SHADOW_ETCHED_IN);
+		group.setLayoutData(gridData);
+		group.setLayout(new GridLayout(2, true));
+		group.setText("Auswahl Ziel-Dokument");
+
+		for (int i = 0; i < ExportType.values().length; i++)
+		{
+			final Button button = new Button(group, SWT.RADIO);
+			button.setText(ExportType.values()[i].text());
+			button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			button.setSelection(i == exportType.ordinal());
+			button.setData("ordinal", ExportType.values()[i]);
+			button.addSelectionListener(new SelectionListener()
+			{
+				@Override
+				public void widgetDefaultSelected(final SelectionEvent e)
+				{
+					widgetSelected(e);
+				}
+
+				@Override
+				public void widgetSelected(final SelectionEvent e)
+				{
+					if (((Button) e.getSource()).getSelection())
+					{
+						exportType = (ExportType) button.getData("ordinal");
+						settings.put(ExportType.key(), exportType.ordinal());
+						pathLabel.setText(exportType.pathlabel());
+						templatePath = settings.get(exportType.pathkey()) == null ? "" : settings.get(exportType.pathkey());
+						pathText.setText(templatePath);
+					}
+				}
+			});
+		}
+
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 3;
+
+		group = new Group(composite, SWT.SHADOW_ETCHED_IN);
 		group.setLayoutData(gridData);
 		group.setLayout(new GridLayout(3, true));
 		group.setText("Auswahl Status");
@@ -119,20 +186,22 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 			});
 		}
 
-		Label label = new Label(composite, SWT.None);
-		label.setLayoutData(new GridData());
-		label.setText("Vorlage");
+		gridData = new GridData();
+		gridData.widthHint = ExportType.maxLabelWith(composite);
+		pathLabel = new Label(composite, SWT.None);
+		pathLabel.setLayoutData(gridData);
+		pathLabel.setText(exportType.pathlabel());
 		
-		final Text path = new Text(composite, SWT.BORDER);
-		path.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		path.setText(templatePath);
-		path.addModifyListener(new ModifyListener() 
+		pathText = new Text(composite, SWT.BORDER);
+		pathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		pathText.setText(templatePath);
+		pathText.addModifyListener(new ModifyListener() 
 		{
 			@Override
 			public void modifyText(ModifyEvent e) 
 			{
-				templatePath = path.getText();
-				settings.put("template.path", templatePath);
+				templatePath = pathText.getText();
+				settings.put(exportType.pathkey(), templatePath);
 			}
 		});
 		
@@ -144,16 +213,24 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 			@Override
 			public void widgetSelected(SelectionEvent e) 
 			{
-				FileDialog dialog = new FileDialog(CourseDescriptionDialog.this.getShell());
+				FileDialog dialog = new FileDialog(CourseDescriptionDialog.this.getShell(), exportType.dialogType());
 				dialog.setFileName(templatePath);
-				dialog.setFilterExtensions(new String[] { "*.odt" });
-				dialog.setFilterIndex(0);
-				dialog.setFilterNames(new String[] { "OpenOffice Textverarbeitung" });
-				dialog.setText("Wählen Sie die gewünschte Vorlage aus");
+				dialog.setFilterExtensions(exportType.filterExtensions());
+				dialog.setFilterIndex(exportType.ordinal());
+				dialog.setFilterNames(exportType.filterNames());
+				dialog.setText(exportType.dialogTitle());
 				String result = dialog.open();
 				if (result != null)
 				{
-					path.setText(result);
+					if (exportType.equals(ExportType.TYPE_XML) || new File(result).isFile())
+					{
+						pathText.setText(result);
+						settings.put(exportType.pathkey(), result);
+					}
+				}
+				if (exportType.equals(ExportType.TYPE_OPENOFFICE) && !(new File(result).isFile()))
+				{
+					MessageDialog.openWarning(CourseDescriptionDialog.this.getShell(), "Vorlage nicht vorhanden", "Die ausgewählte Vorlage ist ungültig oder nicht vorhanden.");
 				}
 			}
 
@@ -189,15 +266,58 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 				}
 				else
 				{
-//					Arrays.sort(factory.getCourses(), new Comparator<CourseMap>() 
-//					{
-//						@Override
-//						public int compare(CourseMap map1, CourseMap map2) 
-//						{
-//							map1.getProperty(CourseMap.Key..FIRST_DATE.getKey())
-//							return 0;
-//						}
-//					});
+					CourseMap[] courses = factory.getCourses();
+					Arrays.sort(courses, new Comparator<CourseMap>() 
+					{
+						@Override
+						public int compare(CourseMap map1, CourseMap map2) 
+						{
+							Date date1 = null;
+							Date date2 = null;
+							String strDate1 = map1.getProperty(CourseMap.Key.FIRST_DATE.getKey());
+							try 
+							{
+								date1 = new SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.getDefault()).parse(strDate1);
+							} 
+							catch (ParseException e1) 
+							{
+								try 
+								{
+									date1 = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).parse(strDate1);
+								} 
+								catch (ParseException e2) 
+								{
+									date1 = null;
+								}
+							}
+							String strDate2 = map2.getProperty(CourseMap.Key.FIRST_DATE.getKey());
+							try 
+							{
+								date2 = new SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.getDefault()).parse(strDate2);
+							} 
+							catch (ParseException e1) 
+							{
+								try 
+								{
+									date2 = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).parse(strDate2);
+								} 
+								catch (ParseException e2) 
+								{
+									date2 = null;
+								}
+							}
+							if (date1 == null)
+							{
+								return -1;
+							}
+							if (date2 == null)
+							{
+								return 1;
+							}
+							return date2.compareTo(date1);
+						}
+					});
+					factory.setCourses(courses);
 					buildDocument(factory);
 				}
 				return Status.OK_STATUS;
@@ -315,6 +435,164 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 
 	public void setTitle()
 	{
-		super.setTitle("Kursliste generieren");
+		super.setTitle("Kursbeschreibungen erstellen");
+	}
+
+	public enum ExportType
+	{
+		TYPE_XML, TYPE_OPENOFFICE;
+		
+		public static int maxLabelWith(Composite composite)
+		{
+			int stringWidth = 0;
+		    GC gc = new GC(composite);
+			for (ExportType type : ExportType.values())
+			{
+			    int width = gc.stringExtent(type.pathlabel()).x;
+			    if (width > stringWidth)
+			    	stringWidth = width;
+			}
+		    gc.dispose();
+		    return stringWidth;
+		}
+		
+		public static String key()
+		{
+			return "export.type";
+		}
+		
+		public String pathkey()
+		{
+			switch (this)
+			{
+			case TYPE_XML:
+			{
+				return "export.path.xml";
+			}
+			case TYPE_OPENOFFICE:
+			{
+				return "export.path.openoffice";
+			}
+			default:
+			{
+				throw new RuntimeException("Invalid export type.");
+			}
+			}
+		}
+		
+		public String[] filterExtensions()
+		{
+			switch (this)
+			{
+			case TYPE_XML:
+			{
+				return new String[] { "*.xml" };
+			}
+			case TYPE_OPENOFFICE:
+			{
+				return new String[] { "*.odt" };
+			}
+			default:
+			{
+				throw new RuntimeException("Invalid export type.");
+			}
+			}
+		}
+
+		public int dialogType()
+		{
+			switch (this)
+			{
+			case TYPE_XML:
+			{
+				return SWT.SAVE;
+			}
+			case TYPE_OPENOFFICE:
+			{
+				return SWT.OPEN;
+			}
+			default:
+			{
+				throw new RuntimeException("Invalid export type.");
+			}
+			}
+		}
+
+		public String dialogTitle()
+		{
+			switch (this)
+			{
+			case TYPE_XML:
+			{
+				return "Speichern";
+			}
+			case TYPE_OPENOFFICE:
+			{
+				return "Öffnen";
+			}
+			default:
+			{
+				throw new RuntimeException("Invalid export type.");
+			}
+			}
+		}
+
+		public String[] filterNames()
+		{
+			switch (this)
+			{
+			case TYPE_XML:
+			{
+				return new String[] { "XML-Datei" };
+			}
+			case TYPE_OPENOFFICE:
+			{
+				return new String[] { "OpenOffice Textverarbeitung" };
+			}
+			default:
+			{
+				throw new RuntimeException("Invalid export type.");
+			}
+			}
+		}
+
+		
+		public String pathlabel()
+		{
+			switch (this)
+			{
+			case TYPE_XML:
+			{
+				return "Name Zieldatei";
+			}
+			case TYPE_OPENOFFICE:
+			{
+				return "OpenOffice Vorlage";
+			}
+			default:
+			{
+				throw new RuntimeException("Invalid export type.");
+			}
+			}
+		}
+		
+		public String text()
+		{
+			switch (this)
+			{
+			case TYPE_XML:
+			{
+				return "als XML-Datei";
+			}
+			case TYPE_OPENOFFICE:
+			{
+				return "als OpenOffice-Dokument";
+			}
+			default:
+			{
+				throw new RuntimeException("Invalid export type.");
+			}
+			}
+		}
 	}
 }

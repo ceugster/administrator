@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
@@ -353,8 +354,8 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 		donation.setPurpose(purpose);
 
 		ssel = (StructuredSelection) this.domainViewer.getSelection();
-		Domain domain = (Domain) ssel.getFirstElement();
-		donation.setDomain(domain.getId() == null ? null : domain);
+		Domain domain = ssel.isEmpty() ? Domain.newInstance() : (Domain) ssel.getFirstElement();
+		donation.setDomain((domain == null || domain.getId() == null) ? null : domain);
 	}
 
 	@Override

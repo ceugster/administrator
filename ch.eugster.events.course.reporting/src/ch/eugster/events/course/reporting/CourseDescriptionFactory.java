@@ -1,6 +1,7 @@
 package ch.eugster.events.course.reporting;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,11 @@ public class CourseDescriptionFactory
 		this.ssel = ssel;
 		this.states = states;
 		this.setSelection();
+	}
+	
+	public void setCourses(CourseMap[] courseMaps)
+	{
+		courses = Arrays.asList(courseMaps);
 	}
 
 	public CourseMap[] getCourses()

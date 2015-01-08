@@ -148,8 +148,9 @@ public class CourseInvitationDialog extends TitleAreaDialog
 	{
 		Collection<DataMap> dataMaps = new ArrayList<DataMap>();
 		Object[] elements = selection.toArray();
-		for (Object element : elements)
+		for (int i = elements.length; i > 0; i--)
 		{
+			Object element = elements[i - 1];
 			if (element instanceof Course)
 			{
 				Course course = (Course) element;

@@ -1945,11 +1945,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 			if (this.domainViewer != null)
 			{
 				StructuredSelection ssel = (StructuredSelection) this.domainViewer.getSelection();
-				if (ssel.isEmpty())
-				{
-					link.getPerson().setDomain(null);
-				}
-				else if (((Domain) ssel.getFirstElement()).getId() == null)
+				if (ssel.isEmpty() ||((Domain) ssel.getFirstElement()).getId() == null)
 				{
 					link.getPerson().setDomain(null);
 				}

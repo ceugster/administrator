@@ -388,15 +388,8 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 			}
 
 			List<Domain> domains = new ArrayList<Domain>();
-			if (this.parent == null)
-			{
-				domains.add(Domain.newInstance());
-			}
-			else
-			{
-				DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
-				domains = query.selectAll();
-			}
+			DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
+			domains = query.selectValids();
 			domainViewer.setInput(domains.toArray(new Domain[0]));
 
 			Domain domain = Domain.newInstance();

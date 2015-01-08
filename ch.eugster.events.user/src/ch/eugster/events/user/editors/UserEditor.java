@@ -331,7 +331,8 @@ public class UserEditor extends AbstractEntityEditor<User>
 		StructuredSelection ssel = (StructuredSelection) this.stateViewer.getSelection();
 		user.setState((User.UserStatus) ssel.getFirstElement());
 		ssel = (StructuredSelection) this.domainViewer.getSelection();
-		user.setDomain(ssel.isEmpty() ? null : (Domain) ssel.getFirstElement());
+		Domain domain = ssel.isEmpty() ? null : (Domain) ssel.getFirstElement();
+		user.setDomain(domain == null || domain.getId() == null ? null : (Domain) ssel.getFirstElement());
 		user.setMinEditorColumns(minEditorColumns.getSelection());
 		user.setMaxEditorColumns(maxEditorColumns.getSelection());
 	}

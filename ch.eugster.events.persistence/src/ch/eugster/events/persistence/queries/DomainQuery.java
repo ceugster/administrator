@@ -62,6 +62,51 @@ public class DomainQuery extends AbstractEntityQuery<Domain>
 		return domains;
 	}
 
+	public List<Domain> selectValids()
+	{
+		Expression expression = new ExpressionBuilder(Domain.class).get("deleted").equal(false);
+		List<Domain> domains = select(Domain.class, expression);
+		if (domains.isEmpty())
+		{
+			Domain domain = Domain.newInstance();
+			domain.setName("Standard");
+			this.merge(domain);
+			domains.add(domain);
+		}
+		return domains;
+	}
+
+	public List<Domain> selectValidsAndEmpty()
+	{
+		Expression expression = new ExpressionBuilder(Domain.class).get("deleted").equal(false);
+		List<Domain> domains = select(Domain.class, expression);
+		if (domains.isEmpty())
+		{
+			Domain domain = Domain.newInstance();
+			domain.setName("Standard");
+			this.merge(domain);
+			domains.add(domain);
+		}
+		domains.add(Domain.newInstance());
+		return domains;
+	}
+
+	public List<Domain> selectValidsAndAllAndEmpty()
+	{
+		Expression expression = new ExpressionBuilder(Domain.class).get("deleted").equal(false);
+		List<Domain> domains = select(Domain.class, expression);
+		if (domains.isEmpty())
+		{
+			Domain domain = Domain.newInstance();
+			domain.setName("Standard");
+			this.merge(domain);
+			domains.add(domain);
+		}
+		domains.add(0, Domain.newInstance("Alle"));
+		domains.add(0, Domain.newInstance("Keine"));
+		return domains;
+	}
+
 	public Domain selectByCode(final String code)
 	{
 		Expression expression = new ExpressionBuilder(Domain.class).get("code").equal(code);
@@ -75,5 +120,4 @@ public class DomainQuery extends AbstractEntityQuery<Domain>
 			return null;
 		}
 	}
-
 }
