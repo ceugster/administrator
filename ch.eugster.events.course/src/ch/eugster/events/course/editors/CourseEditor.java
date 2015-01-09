@@ -1485,9 +1485,9 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			course.setDescription(this.description.getText());
 			if (this.domainViewer != null)
 			{
-				StructuredSelection ssel = (StructuredSelection) this.domainViewer.getSelection();
-				if (!ssel.isEmpty())
-					course.setDomain((Domain) ssel.getFirstElement());
+				IStructuredSelection ssel = (StructuredSelection) this.domainViewer.getSelection();
+				Domain domain = ssel.isEmpty() ? null : (Domain) ssel.getFirstElement();
+				course.setDomain((domain == null || domain.getId() == null) ? null : domain);
 			}
 			// course.setInfoMeeting(this.infoMeeting.getText());
 			course.setInformation(this.information.getText());

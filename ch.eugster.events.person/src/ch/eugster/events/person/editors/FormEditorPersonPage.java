@@ -15,7 +15,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -273,6 +272,11 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 			Control control = extendedFieldControls.get(field.getFieldExtension().getId());
 			field.getFieldExtension().getType().setInput(control, AbstractEntity.stringValueOf(field.getValue()));
 		}
+	}
+	
+	public void setNotesSelectorState(boolean active)
+	{
+		notesSelector.setImage(Activator.getDefault().getImageRegistry().get(active ? Activator.KEY_ON : Activator.KEY_OFF));
 	}
 
 	private void createButtons(final IManagedForm managedForm, final String title, final String description)
@@ -1016,11 +1020,11 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				ImageRegistry imageRegistry = Activator.getDefault().getImageRegistry();
-				Image image = ((Text) e.getSource()).getText().isEmpty() ? imageRegistry.get(Activator.KEY_OFF)
-						: imageRegistry.get(Activator.KEY_ON);
-				notesSelector.setImage(image);
-				notesSelector.redraw();
+//				ImageRegistry imageRegistry = Activator.getDefault().getImageRegistry();
+//				Image image = ((Text) e.getSource()).getText().isEmpty() ? imageRegistry.get(Activator.KEY_OFF)
+//						: imageRegistry.get(Activator.KEY_ON);
+//				notesSelector.setImage(image);
+//				notesSelector.redraw();
 				setDirty(true);
 			}
 		});
