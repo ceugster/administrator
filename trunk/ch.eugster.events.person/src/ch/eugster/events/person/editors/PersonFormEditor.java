@@ -2,6 +2,7 @@ package ch.eugster.events.person.editors;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -198,6 +199,20 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 	{
 		PersonEditorInput input = (PersonEditorInput) this.getEditorInput();
 		this.setPartName(input.getName());
+		boolean hasNotes = !input.getEntity().getNotes().isEmpty();
+		if (!hasNotes)
+		{
+			List<LinkPersonAddress> links = input.getEntity().getValidLinks();
+			for (LinkPersonAddress link : links)
+			{
+				if (!link.getAddress().getNotes().isEmpty())
+				{
+					hasNotes = true;
+					break;
+				}
+			}
+		}
+		
 		for (IFormPage page : this.getPages())
 		{
 			if (page != null && page.getManagedForm() != null)
@@ -205,7 +220,8 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 				if (page instanceof FormEditorPersonPage)
 				{
 					FormEditorPersonPage fpage = (FormEditorPersonPage) page;
-					page.getManagedForm().getForm().setText(fpage.getText());
+					fpage.getManagedForm().getForm().setText(fpage.getText());
+					fpage.setNotesSelectorState(hasNotes);
 				}
 				else if (page instanceof FormEditorLinkPage)
 				{

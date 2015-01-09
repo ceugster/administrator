@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -109,13 +110,13 @@ public class Person extends AbstractEntity
 	private PersonSex sex;
 
 	@OneToMany(cascade = ALL, mappedBy = "person")
-	private Collection<PersonExtendedField> extendedFields = new Vector<PersonExtendedField>();
+	private List<PersonExtendedField> extendedFields = new Vector<PersonExtendedField>();
 
 	/*
 	 * AddressLinks
 	 */
 	@OneToMany(cascade = ALL, mappedBy = "person")
-	private Collection<LinkPersonAddress> links = new Vector<LinkPersonAddress>();
+	private List<LinkPersonAddress> links = new Vector<LinkPersonAddress>();
 
 	/*
 	 * Constructor
@@ -306,14 +307,14 @@ public class Person extends AbstractEntity
 		return AbstractEntity.stringValueOf(this.lastname);
 	}
 
-	public Collection<LinkPersonAddress> getLinks()
+	public List<LinkPersonAddress> getLinks()
 	{
 		return this.links;
 	}
 
-	public Collection<LinkPersonAddress> getValidLinks()
+	public List<LinkPersonAddress> getValidLinks()
 	{
-		Collection<LinkPersonAddress> validLinks = new ArrayList<LinkPersonAddress>();
+		List<LinkPersonAddress> validLinks = new ArrayList<LinkPersonAddress>();
 		for (LinkPersonAddress link : links)
 		{
 			if (!link.isDeleted())
@@ -501,7 +502,7 @@ public class Person extends AbstractEntity
 		this.propertyChangeSupport.firePropertyChange("lastname", this.lastname, this.lastname = lastname);
 	}
 
-	public void setLinks(final Collection<LinkPersonAddress> links)
+	public void setLinks(final List<LinkPersonAddress> links)
 	{
 		this.propertyChangeSupport.firePropertyChange("links", this.links, this.links = links);
 	}
