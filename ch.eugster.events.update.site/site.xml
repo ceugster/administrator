@@ -195,6 +195,15 @@
    <feature url="features/ch.eugster.events.user.feature_1.0.0.201501081757.jar" id="ch.eugster.events.user.feature" version="1.0.0.201501081757">
       <category name="core"/>
    </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201501091656.jar" id="ch.eugster.events.course.feature" version="1.0.0.201501091656">
+      <category name="course"/>
+   </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201501091656.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201501091656">
+      <category name="persistence"/>
+   </feature>
+   <feature url="features/ch.eugster.events.person.feature_1.0.0.201501091656.jar" id="ch.eugster.events.person.feature" version="1.0.0.201501091656">
+      <category name="person"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>
