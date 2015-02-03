@@ -2,7 +2,6 @@ package ch.eugster.events.course.reporting.dialogs;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -314,7 +313,7 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 							{
 								return 1;
 							}
-							return date2.compareTo(date1);
+							return date1.compareTo(date2);
 						}
 					});
 					factory.setCourses(courses);
