@@ -2,6 +2,7 @@ package ch.eugster.events.report.engine;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 public interface ReportService
@@ -17,6 +18,8 @@ public interface ReportService
 	void view(final URL report, final Comparable<?>[] beanArray, final Map<String, Object> parameters)
 			throws IllegalArgumentException;
 
+	List<String> getLabelFormats();
+	
 	public enum Destination
 	{
 		PREVIEW, PRINTER, EXPORT;

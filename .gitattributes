@@ -60,6 +60,7 @@ ch.eugster.events.addressgroup.report/src/ch/eugster/events/addressgroup/report/
 ch.eugster.events.addressgroup.report/src/ch/eugster/events/addressgroup/report/RecipientListFactory.java -text
 ch.eugster.events.addressgroup.report/src/ch/eugster/events/addressgroup/report/dialogs/AddressListDialog.java -text
 ch.eugster.events.addressgroup.report/src/ch/eugster/events/addressgroup/report/dialogs/FormLetterDialog.java -text
+ch.eugster.events.addressgroup.report/src/ch/eugster/events/addressgroup/report/dialogs/LabelDialog.java -text
 ch.eugster.events.addressgroup.report/src/ch/eugster/events/addressgroup/report/handlers/GenerateAddressListHandler.java -text
 ch.eugster.events.addressgroup.report/src/ch/eugster/events/addressgroup/report/handlers/GenerateFormLetterHandler.java -text
 ch.eugster.events.addressgroup.report/src/ch/eugster/events/addressgroup/report/handlers/PrintEmailRecipientsHandler.java -text

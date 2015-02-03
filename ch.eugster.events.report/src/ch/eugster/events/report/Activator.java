@@ -6,6 +6,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 import ch.eugster.events.report.engine.ReportService;
 import ch.eugster.events.report.internal.engine.ReportServiceComponent;
@@ -14,6 +15,13 @@ public class Activator extends AbstractUIPlugin
 {
 	private static Activator activator;
 
+	private ServiceRegistration reportServiceRegistration;
+	
+	public ServiceRegistration getReportServiceRegistration()
+	{
+		return reportServiceRegistration;
+	}
+	
 	@Override
 	protected void initializeImageRegistry(final ImageRegistry imageRegistry)
 	{
@@ -59,7 +67,7 @@ public class Activator extends AbstractUIPlugin
 	{
 		super.start(bundleContext);
 		Activator.activator = this;
-		bundleContext.registerService(ReportService.class.getName(), new ReportServiceComponent(),
+		reportServiceRegistration = bundleContext.registerService(ReportService.class.getName(), new ReportServiceComponent(),
 				new Hashtable<String, Object>());
 	}
 
@@ -72,6 +80,7 @@ public class Activator extends AbstractUIPlugin
 	@Override
 	public void stop(final BundleContext bundleContext) throws Exception
 	{
+		reportServiceRegistration.unregister();
 		super.stop(bundleContext);
 	}
 

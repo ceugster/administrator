@@ -106,25 +106,25 @@ public class Address extends AbstractEntity implements Donator
 	 * Members
 	 */
 	@OneToMany(cascade = ALL, mappedBy = "address")
-	private Collection<Member> members = new Vector<Member>();
+	private List<Member> members = new Vector<Member>();
 
 	/*
 	 * Donations
 	 */
 	@OneToMany(cascade = ALL, mappedBy = "address")
-	private final Collection<Donation> donations = new Vector<Donation>();
+	private final List<Donation> donations = new Vector<Donation>();
 
 	/*
 	 * PersonAddressLinks
 	 */
 	@OneToMany(cascade = ALL, mappedBy = "address")
-	private Collection<LinkPersonAddress> links = new Vector<LinkPersonAddress>();
+	private List<LinkPersonAddress> links = new Vector<LinkPersonAddress>();
 
 	/*
 	 * AddressGroupDetail
 	 */
 	@OneToMany(cascade = ALL, mappedBy = "address")
-	private Collection<AddressGroupMember> addressGroupMembers = new Vector<AddressGroupMember>();
+	private List<AddressGroupMember> addressGroupMembers = new Vector<AddressGroupMember>();
 
 	/*
 	 * Constructor
@@ -192,14 +192,14 @@ public class Address extends AbstractEntity implements Donator
 		return AbstractEntity.stringValueOf(this.address).trim();
 	}
 
-	public Collection<AddressGroupMember> getAddressGroupMembers()
+	public List<AddressGroupMember> getAddressGroupMembers()
 	{
 		return this.addressGroupMembers;
 	}
 
-	public Collection<AddressGroupMember> getAddressAddressGroupMembers()
+	public List<AddressGroupMember> getAddressAddressGroupMembers()
 	{
-		Collection<AddressGroupMember> addressGroupMembers = new ArrayList<AddressGroupMember>();
+		List<AddressGroupMember> addressGroupMembers = new ArrayList<AddressGroupMember>();
 		AddressGroupMember[] members = this.addressGroupMembers.toArray(new AddressGroupMember[0]);
 		for (AddressGroupMember member : members)
 		{
@@ -397,7 +397,7 @@ public class Address extends AbstractEntity implements Donator
 		this.propertyChangeSupport.firePropertyChange("address", this.address, this.address = address.trim());
 	}
 
-	public void setAddressGroupMembers(final Collection<AddressGroupMember> addressGroupMembers)
+	public void setAddressGroupMembers(final List<AddressGroupMember> addressGroupMembers)
 	{
 		this.propertyChangeSupport.firePropertyChange("addressGroupMembers", this.addressGroupMembers,
 				this.addressGroupMembers = addressGroupMembers);
@@ -444,7 +444,7 @@ public class Address extends AbstractEntity implements Donator
 		this.propertyChangeSupport.firePropertyChange("id", this.id, this.id = id);
 	}
 
-	public void setMembers(final Collection<Member> members)
+	public void setMembers(final List<Member> members)
 	{
 		this.propertyChangeSupport.firePropertyChange("members", this.members, this.members = members);
 	}
@@ -454,7 +454,7 @@ public class Address extends AbstractEntity implements Donator
 		this.propertyChangeSupport.firePropertyChange("name", this.name, this.name = name);
 	}
 
-	public void setPersonLinks(final Collection<LinkPersonAddress> links)
+	public void setPersonLinks(final List<LinkPersonAddress> links)
 	{
 		this.propertyChangeSupport.firePropertyChange("links", this.links, this.links = links);
 	}
