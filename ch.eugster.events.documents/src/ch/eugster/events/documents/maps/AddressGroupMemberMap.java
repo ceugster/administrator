@@ -1,6 +1,7 @@
 package ch.eugster.events.documents.maps;
 
 import java.io.Writer;
+import java.util.List;
 
 import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
@@ -18,6 +19,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 
 	public AddressGroupMemberMap(final AddressGroupMember member, boolean isGroup)
 	{
+		isGroup = isGroup(member, isGroup);
 		for (Key key : Key.values())
 		{
 			this.setProperty(key.getKey(), key.getValue(member, isGroup));
@@ -42,6 +44,32 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 		{
 			this.setProperties(new LinkMap(member.getLink()).getProperties());
 		}
+	}
+	
+	private boolean isGroup(AddressGroupMember member, boolean isGroup)
+	{
+		if (!isGroup) return false;
+		List<AddressGroupMember> ms = member.getAddressGroup().getAddressGroupMembers();
+		for (AddressGroupMember m : ms)
+		{
+			if (!m.isDeleted() && m.getAddressGroup().getId().equals(member.getAddressGroup().getId()) && !m.getId().equals(member.getId()) && m.getAddress().getId().equals(member.getAddress().getId()))
+			{
+				return true;
+			}
+		}
+		List<LinkPersonAddress> links = member.getAddress().getValidLinks();
+		for (LinkPersonAddress link : links)
+		{
+			ms = link.getAddressGroupMembers();
+			for (AddressGroupMember m : ms)
+			{
+				if (!m.isDeleted() && m.getAddressGroup().getId().equals(member.getAddressGroup().getId()) && !m.getId().equals(member.getId()) && m.getAddress().getId().equals(member.getAddress().getId()))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public String getId()

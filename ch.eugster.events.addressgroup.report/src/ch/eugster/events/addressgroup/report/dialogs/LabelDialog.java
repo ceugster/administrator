@@ -1,4 +1,4 @@
-package ch.eugster.events.report.dialogs;
+package ch.eugster.events.addressgroup.report.dialogs;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -24,12 +25,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.util.tracker.ServiceTracker;
 
-import ch.eugster.events.report.Activator;
+import ch.eugster.events.addressgroup.report.Activator;
 import ch.eugster.events.report.engine.ReportService;
 import ch.eugster.events.report.engine.ReportService.Destination;
 
-public class LabelSelectionDialog extends TitleAreaDialog
+public class LabelDialog extends TitleAreaDialog
 {
+	private Button groups;
+	
 	private ComboViewer labelViewer;
 
 	private ComboViewer targetViewer;
@@ -58,7 +61,7 @@ public class LabelSelectionDialog extends TitleAreaDialog
 	 *            <code>AddressGroup</code> übergeben worden sein.
 	 * 
 	 */
-	public LabelSelectionDialog(final Shell parentShell)
+	public LabelDialog(final Shell parentShell)
 	{
 		super(parentShell);
 
@@ -89,6 +92,13 @@ public class LabelSelectionDialog extends TitleAreaDialog
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout(2, false));
 
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		
+		groups = new Button(composite, SWT.CHECK);
+		groups.setLayoutData(gridData);
+		groups.setText("Gruppenadressen nur einmal verwenden");
+		
 		Label label = new Label(composite, SWT.None);
 		label.setLayoutData(new GridData());
 		label.setText("Etikettenvorlage");
@@ -116,7 +126,7 @@ public class LabelSelectionDialog extends TitleAreaDialog
 			}
 		});
 		
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), Activator.getDefault().getReportServiceRegistration().getReference(), null);
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ReportService.class.getName(), null);
 		try
 		{
 			tracker.open();

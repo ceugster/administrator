@@ -142,7 +142,7 @@ public class FormLetterDialog extends TitleAreaDialog
 	{
 		if (!member.isDeleted())
 		{
-			AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, this.documentSelector.getSelection());
+			AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, this.useCollectionAddress.getSelection());
 			DataMap existing = map.get(memberMap.getId());
 			if (existing == null)
 			{
