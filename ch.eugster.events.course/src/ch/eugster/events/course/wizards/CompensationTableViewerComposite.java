@@ -3,6 +3,7 @@ package ch.eugster.events.course.wizards;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
@@ -106,7 +107,7 @@ public class CompensationTableViewerComposite extends Composite
 		return new ViewerComposite(parent, style);
 	}
 
-	public Collection<Compensation> getCompensations()
+	public List<Compensation> getCompensations()
 	{
 		return this.compensationList.getCompensations();
 	}
@@ -254,9 +255,9 @@ public class CompensationTableViewerComposite extends Composite
 			}
 		}
 
-		public Collection<Compensation> getCompensations()
+		public List<Compensation> getCompensations()
 		{
-			Collection<Compensation> compensations = new ArrayList<Compensation>();
+			List<Compensation> compensations = new ArrayList<Compensation>();
 			for (CWrapper wrapper : this.wrappers)
 				compensations.add(wrapper.getCompensation());
 

@@ -13,9 +13,7 @@ import org.osgi.util.tracker.ServiceTracker;
 import ch.eugster.events.course.reporting.Activator;
 import ch.eugster.events.course.reporting.dialogs.CommitmentContractDialog;
 import ch.eugster.events.documents.services.DocumentBuilderService;
-import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
-import ch.eugster.events.persistence.model.Participant;
 
 public class CommitmentContractHandler extends AbstractHandler implements IHandler
 {
