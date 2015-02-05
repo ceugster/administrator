@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -24,7 +25,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -34,10 +34,12 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.reporting.Activator;
 import ch.eugster.events.documents.maps.BookingMap;
+import ch.eugster.events.documents.maps.CourseGuideMap;
 import ch.eugster.events.documents.maps.DataMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
+import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.model.UserProperty;
 import ch.eugster.events.persistence.queries.UserQuery;
@@ -154,10 +156,15 @@ public class CourseInvitationDialog extends TitleAreaDialog
 			if (element instanceof Course)
 			{
 				Course course = (Course) element;
-				Collection<Booking> bookings = course.getBookings();
+				List<Booking> bookings = course.getBookings();
 				for (Booking booking : bookings)
 				{
 					dataMaps.add(new BookingMap(booking, true));
+				}
+				List<CourseGuide> courseGuides = course.getCourseGuides();
+				for (CourseGuide courseGuide : courseGuides)
+				{
+					dataMaps.add(new CourseGuideMap(courseGuide, true));
 				}
 			}
 			else if (element instanceof Booking)

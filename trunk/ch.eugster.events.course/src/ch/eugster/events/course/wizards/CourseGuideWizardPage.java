@@ -122,9 +122,6 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 				StructuredSelection ssel = (StructuredSelection) event.getSelection();
 				if (!ssel.isEmpty())
 				{
-					Guide guide = (Guide) ssel.getFirstElement();
-					// CourseGuideWizardPage.this.description.setText(guide.getDescription());
-					// CourseGuideWizardPage.this.phone.setText(guide.getPhone());
 					CourseGuideWizardPage.this.setPageComplete(true);
 				}
 			}

@@ -116,10 +116,9 @@ public class CourseDetail extends AbstractEntity implements Comparable<CourseDet
 		}
 	}
 
-	public CourseDetail copy()
+	public CourseDetail copy(Course course)
 	{
-		CourseDetail copy = CourseDetail.newInstance(this.getCourse());
-		copy.setCourse(this.getCourse());
+		CourseDetail copy = CourseDetail.newInstance(course);
 		copy.setEnd(this.getEnd());
 		copy.setJourney(this.getJourney());
 		copy.setLocation(this.getLocation());
