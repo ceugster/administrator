@@ -353,13 +353,11 @@ public class Course extends AbstractEntity
 				this.courseGuides.add(courseGuide));
 	}
 
-	public Course copy()
+	public Course copy(Season season)
 	{
-		Course copy = Course.newInstance(this.getSeason());
-		copy.setAnnulationDate(this.getAnnulationDate());
+		Course copy = Course.newInstance(season);
 		copy.setBoarding(this.getBoarding());
 		copy.setCategory(this.getCategory());
-		copy.setCode(this.getCode());
 		copy.setContents(this.getContents());
 		copy.setDescription(this.getDescription());
 		copy.setDomain(this.getDomain());
@@ -379,9 +377,8 @@ public class Course extends AbstractEntity
 		copy.setPurpose(this.getPurpose());
 		copy.setRealization(this.getRealization());
 		copy.setRubric(this.getRubric());
-		copy.setSeason(this.getSeason());
 		copy.setSex(this.getSex());
-		copy.setState(this.getState());
+		copy.setState(CourseState.FORTHCOMING);
 		copy.setSubstituted(this.isSubstituted());
 		copy.setTargetPublic(this.getTargetPublic());
 		copy.setTeaser(this.getTeaser());

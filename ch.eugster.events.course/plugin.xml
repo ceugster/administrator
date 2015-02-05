@@ -398,6 +398,18 @@
             id="category.course.payment.term"
             name="Zahlungsbedingungen">
       </category>
+      <command
+            categoryId="category.course"
+            defaultHandler="ch.eugster.events.course.handlers.CourseCopyHandler"
+            id="ch.eugster.events.course.command.copyCourse"
+            name="Kurs kopieren">
+      </command>
+      <command
+            categoryId="category.course"
+            defaultHandler="ch.eugster.events.course.handlers.CoursePasteHandler"
+            id="ch.eugster.events.course.command.pasteCourse"
+            name="Kurs einfügen">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -792,6 +804,41 @@
                   </count>
                   <reference
                         definitionId="ch.eugster.events.course.selection.course">
+                  </reference>
+               </and>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="ch.eugster.events.course.command.copyCourse"
+               hoverIcon="icons/copy_16.png"
+               icon="icons/copy_16.png"
+               label="Kurs kopieren"
+               style="push"
+               tooltip="Ausgewählten Kurs kopieren">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <instanceof
+                        value="ch.eugster.events.persistence.model.Course">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="ch.eugster.events.course.command.pasteCourse"
+               hoverIcon="icons/paste_16.png"
+               icon="icons/paste_16.png"
+               label="Kurs einfügen"
+               style="push"
+               tooltip="Ausgewählten Kurs einfügen">
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <count
+                        value="1">
+                  </count>
+                  <reference
+                        definitionId="ch.eugster.events.course.selection.season">
                   </reference>
                </and>
             </visibleWhen>

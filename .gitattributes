@@ -388,6 +388,7 @@ ch.eugster.events.course/icons/booking2_48.gif -text
 ch.eugster.events.course/icons/booking_48.png -text
 ch.eugster.events.course/icons/calendar_16.gif -text
 ch.eugster.events.course/icons/clear_16.png -text
+ch.eugster.events.course/icons/copy_16.png -text
 ch.eugster.events.course/icons/crown_16.png -text
 ch.eugster.events.course/icons/delete_16.png -text
 ch.eugster.events.course/icons/delete_grey_16.png -text
@@ -407,6 +408,7 @@ ch.eugster.events.course/icons/list_16.png -text
 ch.eugster.events.course/icons/list_grey_16.png -text
 ch.eugster.events.course/icons/new_wiz.png -text
 ch.eugster.events.course/icons/ok_16.gif -text
+ch.eugster.events.course/icons/paste_16.png -text
 ch.eugster.events.course/icons/reset_16.png -text
 ch.eugster.events.course/icons/reset_grey_16.png -text
 ch.eugster.events.course/icons/save_16.png -text
@@ -432,6 +434,7 @@ ch.eugster.events.course/src/ch/eugster/events/course/Constants.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/Perspective.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/actions/CourseCopyAction.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/dialogs/CommitmentContractDialog.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/dialogs/CourseCopyDialog.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/dialogs/SelectBookingTypeDialog.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/editors/BookingEditor.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/editors/BookingEditorInput.java -text
@@ -464,6 +467,8 @@ ch.eugster.events.course/src/ch/eugster/events/course/handlers/AddCourseGuideHan
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/AddCourseHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/AddParticipantHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/AddPaymentTermHandler.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/handlers/CourseCopyHandler.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/handlers/CoursePasteHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteBookingHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteBookingTypeHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteCourseDetailHandler.java -text

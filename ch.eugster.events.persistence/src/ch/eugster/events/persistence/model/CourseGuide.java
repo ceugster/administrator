@@ -1,8 +1,6 @@
 package ch.eugster.events.persistence.model;
 
-import static javax.persistence.CascadeType.ALL;
-
-import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -10,6 +8,7 @@ import javax.persistence.AssociationOverrides;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -65,8 +64,8 @@ public class CourseGuide extends AbstractEntity
 	/**
 	 * Children
 	 */
-	@OneToMany(mappedBy = "courseGuide", cascade = ALL)
-	private Collection<Compensation> compensations = new Vector<Compensation>();
+	@OneToMany(mappedBy = "courseGuide", cascade = CascadeType.ALL)
+	private List<Compensation> compensations = new Vector<Compensation>();
 
 	private CourseGuide()
 	{
@@ -97,7 +96,7 @@ public class CourseGuide extends AbstractEntity
 		return copy;
 	}
 
-	public Collection<Compensation> getCompensations()
+	public List<Compensation> getCompensations()
 	{
 		return this.compensations;
 	}
@@ -139,7 +138,7 @@ public class CourseGuide extends AbstractEntity
 				this.compensations.remove(compensation));
 	}
 
-	public void setCompensations(final Collection<Compensation> compensations)
+	public void setCompensations(final List<Compensation> compensations)
 	{
 		this.propertyChangeSupport.firePropertyChange("compensations", this.compensations,
 				this.compensations = compensations);
