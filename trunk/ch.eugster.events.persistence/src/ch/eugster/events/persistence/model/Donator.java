@@ -1,10 +1,11 @@
 package ch.eugster.events.persistence.model;
 
-import java.util.Collection;
+import java.util.List;
+
 
 public interface Donator
 {
-	public Collection<Donation> getDonations();
+	public List<Donation> getDonations();
 
 	public void addDonation(Donation donation);
 

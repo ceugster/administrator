@@ -3,7 +3,7 @@ package ch.eugster.events.persistence.formatters;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.PersonSettings;
@@ -127,7 +127,7 @@ public class AddressFormatter extends AbstractFormatter
 	private String formatPatternAddressLabel(final Address address, final String label)
 	{
 		StringBuilder newLabel = new StringBuilder();
-		Collection<String> lines = new ArrayList<String>();
+		List<String> lines = new ArrayList<String>();
 		String[] addressLabelFormat = label.split("[|]");
 		String[] variables = getAddressLabelStoredVariables();
 		for (String labelFormat : addressLabelFormat)

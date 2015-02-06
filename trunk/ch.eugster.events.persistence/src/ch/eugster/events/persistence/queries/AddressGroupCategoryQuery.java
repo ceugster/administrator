@@ -37,7 +37,7 @@ public class AddressGroupCategoryQuery extends AbstractEntityQuery<AddressGroupC
 			return true;
 		Expression expression = new ExpressionBuilder(AddressGroupCategory.class).get("code").equal(code);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
-		Collection<AddressGroupCategory> categories = select(AddressGroupCategory.class, expression);
+		List<AddressGroupCategory> categories = select(AddressGroupCategory.class, expression);
 		if (categories.isEmpty())
 		{
 			return true;

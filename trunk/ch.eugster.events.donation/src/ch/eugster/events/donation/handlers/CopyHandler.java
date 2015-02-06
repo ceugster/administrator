@@ -1,7 +1,7 @@
 package ch.eugster.events.donation.handlers;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -35,7 +35,7 @@ public class CopyHandler extends AbstractHandler implements IHandler
 				StructuredSelection ssel = (StructuredSelection) viewer.getSelection();
 				Object[] elements = ssel.toArray();
 
-				Collection<Donation> donations = new ArrayList<Donation>();
+				List<Donation> donations = new ArrayList<Donation>();
 				for (Object element : elements)
 				{
 					if (element instanceof Donation)

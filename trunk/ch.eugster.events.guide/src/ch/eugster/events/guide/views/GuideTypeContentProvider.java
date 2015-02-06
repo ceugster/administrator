@@ -6,7 +6,7 @@
  */
 package ch.eugster.events.guide.views;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,7 +29,7 @@ public class GuideTypeContentProvider implements IStructuredContentProvider
 		{
 			ConnectionService con = (ConnectionService) object;
 			GuideTypeQuery query = (GuideTypeQuery) con.getQuery(GuideType.class);
-			Collection<GuideType> guideTypes = query.selectAll();
+			List<GuideType> guideTypes = query.selectAll();
 			return guideTypes.toArray(new GuideType[0]);
 		}
 		return new GuideType[0];

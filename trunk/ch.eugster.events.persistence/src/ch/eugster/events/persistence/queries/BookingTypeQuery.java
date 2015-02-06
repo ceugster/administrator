@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -17,7 +17,7 @@ public class BookingTypeQuery extends AbstractEntityQuery<BookingType>
 		super(connectionService);
 	}
 
-	public Collection<BookingType> selectByCourse(Course course)
+	public List<BookingType> selectByCourse(Course course)
 	{
 		Expression expression = new ExpressionBuilder(BookingType.class).get("course").equal(course);
 		return select(BookingType.class, expression);

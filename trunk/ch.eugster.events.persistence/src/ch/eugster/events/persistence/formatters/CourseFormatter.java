@@ -6,7 +6,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
+import java.util.List;
 
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.BookingType;
@@ -55,7 +55,7 @@ public class CourseFormatter
 	public String formatBookingTypes(final Course course)
 	{
 		StringBuffer builder = new StringBuffer("");
-		Collection<BookingType> bookingTypes = course.getBookingTypes();
+		List<BookingType> bookingTypes = course.getBookingTypes();
 		for (BookingType bookingType : bookingTypes)
 		{
 			if (builder.length() > 0)
@@ -176,7 +176,7 @@ public class CourseFormatter
 	public String formatCourseGuides(final Course course)
 	{
 		StringBuffer guides = new StringBuffer("");
-		Collection<CourseGuide> courseGuides = course.getCourseGuides();
+		List<CourseGuide> courseGuides = course.getCourseGuides();
 		if (courseGuides.isEmpty())
 			return "";
 
@@ -202,7 +202,7 @@ public class CourseFormatter
 		SimpleDateFormat fdf = new SimpleDateFormat("EEEE, dd.MMMM.yyyy HH:mm");
 		SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd.MMMM.yyyy");
 		SimpleDateFormat hdf = new SimpleDateFormat("HH:mm");
-		Collection<CourseDetail> details = course.getCourseDetails();
+		List<CourseDetail> details = course.getCourseDetails();
 		if (details.isEmpty())
 			return "";
 
@@ -269,7 +269,7 @@ public class CourseFormatter
 	public String formatPlaces(final Course course)
 	{
 		StringBuffer places = new StringBuffer("");
-		Collection<CourseDetail> details = course.getCourseDetails();
+		List<CourseDetail> details = course.getCourseDetails();
 		for (CourseDetail detail : details)
 		{
 			if (places.length() > 0)

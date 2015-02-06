@@ -3,6 +3,7 @@ package ch.eugster.events.addressgroup.report.dialogs;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -79,7 +80,7 @@ public class FormLetterDialog extends TitleAreaDialog
 		this.selection = selection;
 	}
 
-	private IStatus buildDocument(IProgressMonitor monitor, final File template, final Collection<DataMap> dataMaps)
+	private IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap[] dataMaps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
@@ -112,12 +113,12 @@ public class FormLetterDialog extends TitleAreaDialog
 	{
 		if (!addressGroup.isDeleted())
 		{
-			Collection<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
+			List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
 			for (AddressGroupMember member : members)
 			{
 				computeAddressGroupMember(map, member);
 			}
-			// Collection<AddressGroupLink> children =
+			// List<AddressGroupLink> children =
 			// addressGroup.getChildren();
 			// for (AddressGroupLink child : children)
 			// {
@@ -130,7 +131,7 @@ public class FormLetterDialog extends TitleAreaDialog
 	{
 		if (!category.isDeleted())
 		{
-			Collection<AddressGroup> addressGroups = category.getAddressGroups();
+			List<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
 			{
 				computeAddressGroup(map, addressGroup);
@@ -289,8 +290,7 @@ public class FormLetterDialog extends TitleAreaDialog
 	{
 		setCurrentUser();
 		final File template = setTemplateSetting(documentPath.getText());
-		final Collection<DataMap> dataMaps = createDataMaps(selection);
-
+		final DataMap[] dataMaps = createDataMaps(selection).toArray(new DataMap[0]);
 		super.okPressed();
 
 		UIJob job = new UIJob("Dokument wird generiert...")

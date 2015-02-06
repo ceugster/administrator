@@ -72,7 +72,7 @@ public class LinkSearcher extends Composite
 
 	private final boolean searchAddresses;
 
-	private final Collection<ICriteriaChangedListener> listeners = new Vector<ICriteriaChangedListener>();
+	private final List<ICriteriaChangedListener> listeners = new Vector<ICriteriaChangedListener>();
 
 	private ServiceTracker connectionServiceTracker;
 
@@ -358,7 +358,7 @@ public class LinkSearcher extends Composite
 			if (service != null)
 			{
 				FieldExtensionQuery extensionQuery = (FieldExtensionQuery) service.getQuery(FieldExtension.class);
-				Collection<FieldExtension> extensions = extensionQuery.selectSearchables(false);
+				List<FieldExtension> extensions = extensionQuery.selectSearchables(false);
 				for (final FieldExtension extension : extensions)
 				{
 					Label label = new Label(this, SWT.NONE);
@@ -606,7 +606,7 @@ public class LinkSearcher extends Composite
 		return result.toString().trim();
 	}
 
-	private Collection<Person> getPersons(final Collection<LinkPersonAddress> links)
+	private Collection<Person> getPersons(final List<LinkPersonAddress> links)
 	{
 		Map<Long, Person> persons = new HashMap<Long, Person>();
 		for (LinkPersonAddress link : links)
@@ -809,7 +809,7 @@ public class LinkSearcher extends Composite
 			{
 				if (connectionService != null)
 				{
-					Collection<AbstractEntity> selected = new ArrayList<AbstractEntity>();
+					List<AbstractEntity> selected = new ArrayList<AbstractEntity>();
 					LinkPersonAddressQuery linkQuery = (LinkPersonAddressQuery) connectionService
 							.getQuery(LinkPersonAddress.class);
 					int maxRows = new InstanceScope().getNode(Activator.PLUGIN_ID).getInt(
@@ -821,7 +821,7 @@ public class LinkSearcher extends Composite
 						if (!hasPersonCriteria(criteria))
 						{
 							AddressQuery addressQuery = (AddressQuery) connectionService.getQuery(Address.class);
-							Collection<Address> addresses = addressQuery.selectByCriteria(criteria,
+							List<Address> addresses = addressQuery.selectByCriteria(criteria,
 									maxRows - selected.size());
 							for (Address address : addresses)
 							{

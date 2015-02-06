@@ -44,7 +44,7 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 			this.addPage(personPage);
 
 			Person person = getPerson();
-			Collection<LinkPersonAddress> links = person.getLinks();
+			List<LinkPersonAddress> links = person.getLinks();
 			for (LinkPersonAddress link : links)
 			{
 				if (!link.isDeleted())
@@ -75,7 +75,7 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 	}
 
 	@SuppressWarnings("unchecked")
-	public Collection<IFormPage> getPages()
+	public List<IFormPage> getPages()
 	{
 		return this.pages;
 	}
@@ -83,7 +83,7 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 	@Override
 	protected void setDirty(boolean dirty)
 	{
-		Collection<IFormPage> pages = this.getPages();
+		List<IFormPage> pages = this.getPages();
 		for (IFormPage page : pages)
 		{
 			if (page instanceof IPersonFormEditorPage)
@@ -152,8 +152,8 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 	@Override
 	protected void reset()
 	{
-		Collection<Object> pagesToRemove = new ArrayList<Object>();
-		Collection<IFormPage> pages = this.getPages();
+		List<Object> pagesToRemove = new ArrayList<Object>();
+		List<IFormPage> pages = this.getPages();
 		for (IFormPage page : pages)
 		{
 			if (page != null)
@@ -184,7 +184,7 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 	@Override
 	public void saveValues()
 	{
-		Collection<IFormPage> pages = this.getPages();
+		List<IFormPage> pages = this.getPages();
 		for (IFormPage page : pages)
 		{
 			if (page != null && page instanceof IPersonFormEditorPage && page.isDirty())
@@ -236,7 +236,7 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 	protected boolean validate()
 	{
 		boolean valid = true;
-		Collection<IFormPage> pages = this.getPages();
+		List<IFormPage> pages = this.getPages();
 		for (IFormPage page : pages)
 		{
 			if (page != null && page.isDirty() && page instanceof IPersonFormEditorPage)

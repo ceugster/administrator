@@ -2,7 +2,7 @@ package ch.eugster.events.donation.dialogs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -41,7 +41,7 @@ import ch.eugster.events.person.editors.EditorSelector;
 
 public class DonationListDialog extends TitleAreaDialog
 {
-	private Button collectionSelector;
+	private Button ListSelector;
 
 	private final StructuredSelection selection;
 
@@ -55,7 +55,7 @@ public class DonationListDialog extends TitleAreaDialog
 		this.selection = selection;
 	}
 
-	private void buildDocument(final DataMapKey[] keys, final Collection<DataMap> dataMaps)
+	private void buildDocument(final DataMapKey[] keys, final DataMap[] dataMaps)
 	{
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 		try
@@ -88,7 +88,7 @@ public class DonationListDialog extends TitleAreaDialog
 									{
 										DocumentBuilderService builderService = (DocumentBuilderService) service;
 										status = builderService.buildDocument(
-												new SubProgressMonitor(monitor, dataMaps.size()), keys, dataMaps);
+												new SubProgressMonitor(monitor, dataMaps.length), keys, dataMaps);
 										if (status.isOK())
 										{
 											break;
@@ -120,7 +120,7 @@ public class DonationListDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeDonation(final Collection<DataMap> maps, final Donation donation)
+	private void computeDonation(final List<DataMap> maps, final Donation donation)
 	{
 		if (!donation.isDeleted())
 		{
@@ -128,11 +128,11 @@ public class DonationListDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeDonationYear(final Collection<DataMap> maps, final DonationYear year)
+	private void computeDonationYear(final List<DataMap> maps, final DonationYear year)
 	{
 		if (!year.isDeleted())
 		{
-			Collection<Donation> donations = year.getDonations();
+			List<Donation> donations = year.getDonations();
 			for (Donation donation : donations)
 			{
 				computeDonation(maps, donation);
@@ -147,9 +147,9 @@ public class DonationListDialog extends TitleAreaDialog
 		this.createButton(parent, IDialogConstants.CANCEL_ID, "Abbrechen", false);
 	}
 
-	private Collection<DataMap> createDataMaps(final StructuredSelection ssel)
+	private DataMap[] createDataMaps(final StructuredSelection ssel)
 	{
-		Collection<DataMap> maps = new ArrayList<DataMap>();
+		List<DataMap> maps = new ArrayList<DataMap>();
 		Object[] elements = ssel.toArray();
 		for (Object element : elements)
 		{
@@ -164,7 +164,7 @@ public class DonationListDialog extends TitleAreaDialog
 				computeDonation(maps, donation);
 			}
 		}
-		return maps;
+		return maps.toArray(new DataMap[0]);
 	}
 
 	@Override
@@ -180,9 +180,9 @@ public class DonationListDialog extends TitleAreaDialog
 		if (EditorSelector.values()[PersonSettings.getInstance().getEditorSelector()]
 				.equals(EditorSelector.MULTI_PAGE_EDITOR))
 		{
-			collectionSelector = new Button(composite, SWT.CHECK);
-			collectionSelector.setText("Gruppenadressen nur einmal auflisten");
-			collectionSelector.setLayoutData(new GridData());
+			ListSelector = new Button(composite, SWT.CHECK);
+			ListSelector.setText("Gruppenadressen nur einmal auflisten");
+			ListSelector.setLayoutData(new GridData());
 		}
 
 		return parent;
@@ -190,7 +190,7 @@ public class DonationListDialog extends TitleAreaDialog
 
 	private DataMapKey[] getKeys()
 	{
-		Collection<DataMapKey> keys = new ArrayList<DataMapKey>();
+		List<DataMapKey> keys = new ArrayList<DataMapKey>();
 		keys.add(DonationMap.Key.ID);
 		keys.add(PersonMap.Key.SEX);
 		keys.add(PersonMap.Key.FORM);
@@ -237,7 +237,7 @@ public class DonationListDialog extends TitleAreaDialog
 	{
 		setCurrentUser();
 		final DataMapKey[] keys = getKeys();
-		final Collection<DataMap> dataMaps = createDataMaps(selection);
+		final DataMap[] dataMaps = createDataMaps(selection);
 
 		super.okPressed();
 

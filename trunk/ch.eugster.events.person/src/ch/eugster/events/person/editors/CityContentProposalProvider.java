@@ -39,7 +39,7 @@ public class CityContentProposalProvider implements IContentProposalProvider
 		if (service != null)
 		{
 			ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
-			Collection<ZipCode> zipCodes = query.selectByZipCode(zip.getText());
+			List<ZipCode> zipCodes = query.selectByZipCode(zip.getText());
 			Iterator<ZipCode> iterator = zipCodes.iterator();
 			for (int i = 0; iterator.hasNext(); i++)
 			{

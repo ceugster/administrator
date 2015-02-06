@@ -2,9 +2,9 @@ package ch.eugster.events.addressgroup.report.handlers;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -136,7 +136,7 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 	{
 		if (!addressGroup.isDeleted())
 		{
-			Collection<AddressGroupMember> addressGroupMembers = addressGroup.getAddressGroupMembers();
+			List<AddressGroupMember> addressGroupMembers = addressGroup.getAddressGroupMembers();
 			for (AddressGroupMember addressGroupMember : addressGroupMembers)
 			{
 				this.extract(addressGroupMember);
@@ -155,7 +155,7 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 	{
 		if (!category.isDeleted())
 		{
-			Collection<AddressGroup> addressGroups = category.getAddressGroups();
+			List<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
 			{
 				this.extract(addressGroup);

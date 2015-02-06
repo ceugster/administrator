@@ -1,7 +1,7 @@
 package ch.eugster.events.persistence.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -35,7 +35,7 @@ public class DonationYear implements IEntity
 		return year;
 	}
 
-	public Collection<Donation> getDonations()
+	public List<Donation> getDonations()
 	{
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);

@@ -1,6 +1,6 @@
 package ch.eugster.events.person.handlers;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -46,7 +46,7 @@ public class AddPersonHandler extends AbstractHandler implements IHandler
 			if (service != null)
 			{
 				AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
-				Collection<AddressType> addressTypes = query.selectAll(false);
+				List<AddressType> addressTypes = query.selectAll(false);
 				if (addressTypes.isEmpty())
 				{
 					Shell shell = (Shell) context.getParent().getVariable("activeShell");

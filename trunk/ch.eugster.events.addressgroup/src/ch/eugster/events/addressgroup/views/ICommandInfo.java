@@ -1,6 +1,6 @@
 package ch.eugster.events.addressgroup.views;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public interface ICommandInfo
@@ -9,5 +9,5 @@ public interface ICommandInfo
 
 	Map getRefreshFilter();
 
-	Collection<String> getAvailableStateIds();
+	List<String> getAvailableStateIds();
 }

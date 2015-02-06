@@ -1,6 +1,6 @@
 package ch.eugster.events.course.views;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -26,8 +26,8 @@ public class CourseSorter extends ViewerSorter
 			Course course1 = (Course) e1;
 			Course course2 = (Course) e2;
 
-			Collection<CourseDetail> details1 = course1.getCourseDetails();
-			Collection<CourseDetail> details2 = course2.getCourseDetails();
+			List<CourseDetail> details1 = course1.getCourseDetails();
+			List<CourseDetail> details2 = course2.getCourseDetails();
 			if (details1.isEmpty() && details2.isEmpty())
 			{
 				if (course2.getCode().equals(course1.getCode()))

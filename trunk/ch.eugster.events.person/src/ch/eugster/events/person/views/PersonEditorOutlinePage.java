@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -421,7 +421,7 @@ public class PersonEditorOutlinePage extends ContentOutlinePage implements IEnti
 				PersonEditor editor = (PersonEditor) parentElement;
 				LinkPersonAddressEditorInput input = (LinkPersonAddressEditorInput) editor.getEditorInput();
 				LinkPersonAddress link = input.getEntity();
-				Collection<Root> roots = new ArrayList<Root>();
+				List<Root> roots = new ArrayList<Root>();
 				if (link.getPerson().getMembers().size() > 0)
 				{
 					roots.add(new MemberRoot(editor));
@@ -474,8 +474,8 @@ public class PersonEditorOutlinePage extends ContentOutlinePage implements IEnti
 			else if (element instanceof LinkPersonAddress)
 			{
 				LinkPersonAddress lnk = (LinkPersonAddress) element;
-				Collection<Person> persons = new ArrayList<Person>();
-				Collection<LinkPersonAddress> links = lnk.getAddress().getPersonLinks();
+				List<Person> persons = new ArrayList<Person>();
+				List<LinkPersonAddress> links = lnk.getAddress().getPersonLinks();
 				for (LinkPersonAddress link : links)
 				{
 					if (!link.isDeleted())

@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -217,17 +217,17 @@ public class PersonQuery extends AbstractEntityQuery<Person>
 		return phone;
 	}
 
-	public Collection<Person> selectAll(final boolean deletedToo)
+	public List<Person> selectAll(final boolean deletedToo)
 	{
 		return super.selectAll(Person.class, deletedToo);
 	}
 
-	public Collection<Person> selectByCriteria(final Map<String, String> criteria)
+	public List<Person> selectByCriteria(final Map<String, String> criteria)
 	{
 		return selectByCriteria(criteria, 0);
 	}
 
-	public Collection<Person> selectByCriteria(final Map<String, String> criteria, final int maxResults)
+	public List<Person> selectByCriteria(final Map<String, String> criteria, final int maxResults)
 	{
 		Expression expression = createCriteriaExpression(criteria, new ExpressionBuilder(Person.class));
 		return select(Person.class, expression, maxResults);

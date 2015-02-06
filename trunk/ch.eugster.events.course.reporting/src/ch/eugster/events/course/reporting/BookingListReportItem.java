@@ -1,7 +1,7 @@
 package ch.eugster.events.course.reporting;
 
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.BookingAnnulatedState;
@@ -148,7 +148,7 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 		this.name = course.getTitle();
 		this.date = course.getFirstDate() == null ? null : course.getFirstDate().getTime();
 		this.status = course.getState().code();
-		Collection<Booking> bookings = course.getBookings();
+		List<Booking> bookings = course.getBookings();
 		for (Booking booking : bookings)
 		{
 			this.amount += booking.getAmount();

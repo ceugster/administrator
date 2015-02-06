@@ -204,7 +204,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 	
 	public boolean isInAddressGroup(AddressGroup addressGroup)
 	{
-		Collection<AddressGroupMember> addressGroupMembers = this.getAddressGroupMembers();
+		List<AddressGroupMember> addressGroupMembers = this.getAddressGroupMembers();
 		for (AddressGroupMember addressGroupMember : addressGroupMembers)
 		{
 			if (!addressGroupMember.isDeleted() && addressGroupMember.getAddressGroup().getId().equals(addressGroup.getId()))
@@ -215,7 +215,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		return false;
 	}
 
-	public Collection<LinkPersonAddressExtendedField> getContacts()
+	public List<LinkPersonAddressExtendedField> getContacts()
 	{
 		return contacts;
 	}
@@ -230,7 +230,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		return stringValueOf(this.email);
 	}
 
-	public Collection<LinkPersonAddressExtendedField> getExtendedFields()
+	public List<LinkPersonAddressExtendedField> getExtendedFields()
 	{
 		return extendedFields;
 	}
@@ -311,12 +311,12 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		return false;
 	}
 
-	public Collection<Member> getMembers()
+	public List<Member> getMembers()
 	{
 		return this.members;
 	}
 
-	public Collection<Participant> getParticipants()
+	public List<Participant> getParticipants()
 	{
 		return this.participants;
 	}

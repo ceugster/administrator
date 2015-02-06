@@ -23,7 +23,7 @@ public class CountryQuery extends AbstractEntityQuery<Country>
 	{
 		Expression expression = new ExpressionBuilder().get("deleted").equal(false);
 		expression = expression.and(new ExpressionBuilder().get("iso3166alpha2").equal(code));
-		Collection<Country> countries = select(Country.class, expression);
+		List<Country> countries = select(Country.class, expression);
 		try
 		{
 			return countries.iterator().next();
@@ -41,7 +41,7 @@ public class CountryQuery extends AbstractEntityQuery<Country>
 			return true;
 		}
 		Expression expression = new ExpressionBuilder(Country.class).get("iso31662numeric").equal(code);
-		Collection<Country> countries = select(Country.class, expression);
+		List<Country> countries = select(Country.class, expression);
 		if (countries.isEmpty())
 		{
 			return true;
@@ -73,7 +73,7 @@ public class CountryQuery extends AbstractEntityQuery<Country>
 			return true;
 		}
 		Expression expression = new ExpressionBuilder(Country.class).get("iso3166alpha2").equal(code);
-		Collection<Country> countries = select(Country.class, expression);
+		List<Country> countries = select(Country.class, expression);
 		if (countries.isEmpty())
 		{
 			return true;
@@ -105,7 +105,7 @@ public class CountryQuery extends AbstractEntityQuery<Country>
 			return true;
 		}
 		Expression expression = new ExpressionBuilder(Country.class).get("iso3166alpha3").equal(code);
-		Collection<Country> countries = select(Country.class, expression);
+		List<Country> countries = select(Country.class, expression);
 		if (countries.isEmpty())
 		{
 			return true;
@@ -135,7 +135,7 @@ public class CountryQuery extends AbstractEntityQuery<Country>
 		return super.selectAll(Country.class);
 	}
 
-	public Collection<Country> selectByIso3166alpha2Code(final String code)
+	public List<Country> selectByIso3166alpha2Code(final String code)
 	{
 		Expression expression = new ExpressionBuilder(Country.class).get("iso3166alpha2").equalsIgnoreCase(code);
 		return select(Country.class, expression);
@@ -147,7 +147,7 @@ public class CountryQuery extends AbstractEntityQuery<Country>
 		return this.findByIso3166Alpha2Code(locale.getISO3Country());
 	}
 
-	public Collection<Country> selectPrefixes()
+	public List<Country> selectPrefixes()
 	{
 		Expression expression = new ExpressionBuilder(Country.class).get("phonePrefix").notNull();
 		expression = expression.and(new ExpressionBuilder().get("phonePrefix").notEqual(""));
@@ -156,7 +156,7 @@ public class CountryQuery extends AbstractEntityQuery<Country>
 		return select(Country.class, expression);
 	}
 
-	public Collection<Country> selectVisibles()
+	public List<Country> selectVisibles()
 	{
 		Expression expression = new ExpressionBuilder(Country.class).get("deleted").equal(false);
 		expression = expression.and(new ExpressionBuilder().get("visible").equal(true));

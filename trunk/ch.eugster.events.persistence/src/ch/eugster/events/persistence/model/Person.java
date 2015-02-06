@@ -167,9 +167,9 @@ public class Person extends AbstractEntity
 		return copy;
 	}
 
-	public Collection<LinkPersonAddress> getActiveLinks()
+	public List<LinkPersonAddress> getActiveLinks()
 	{
-		Collection<LinkPersonAddress> activeLinks = new ArrayList<LinkPersonAddress>();
+		List<LinkPersonAddress> activeLinks = new ArrayList<LinkPersonAddress>();
 		for (LinkPersonAddress link : this.getLinks())
 		{
 			if (!link.isDeleted())
@@ -180,10 +180,10 @@ public class Person extends AbstractEntity
 		return activeLinks;
 	}
 
-	public Collection<AddressGroupMember> getAddressGroupMembers()
+	public List<AddressGroupMember> getAddressGroupMembers()
 	{
-		Collection<AddressGroupMember> members = new ArrayList<AddressGroupMember>();
-		Collection<LinkPersonAddress> links = this.getActiveLinks();
+		List<AddressGroupMember> members = new ArrayList<AddressGroupMember>();
+		List<LinkPersonAddress> links = this.getActiveLinks();
 		for (LinkPersonAddress link : links)
 		{
 			if (!link.isDeleted())
@@ -256,12 +256,12 @@ public class Person extends AbstractEntity
 		return this.domain;
 	}
 
-	public Collection<Donation> getDonations()
+	public List<Donation> getDonations()
 	{
-		Collection<Donation> donations = new ArrayList<Donation>();
+		List<Donation> donations = new ArrayList<Donation>();
 		try
 		{
-			Collection<LinkPersonAddress> links = this.getActiveLinks();
+			List<LinkPersonAddress> links = this.getActiveLinks();
 			for (LinkPersonAddress link : links)
 			{
 				donations.addAll(link.getDonations());
@@ -279,7 +279,7 @@ public class Person extends AbstractEntity
 		return AbstractEntity.stringValueOf(this.email);
 	}
 
-	public Collection<PersonExtendedField> getExtendedFields()
+	public List<PersonExtendedField> getExtendedFields()
 	{
 		return extendedFields;
 	}
@@ -339,9 +339,9 @@ public class Person extends AbstractEntity
 		return null;
 	}
 
-	public Collection<Member> getMembers()
+	public List<Member> getMembers()
 	{
-		Collection<Member> members = new Vector<Member>();
+		List<Member> members = new Vector<Member>();
 		for (LinkPersonAddress link : links)
 		{
 			members.addAll(link.getMembers());
@@ -354,10 +354,10 @@ public class Person extends AbstractEntity
 		return stringValueOf(notes);
 	}
 
-	public Collection<Participant> getParticipants()
+	public List<Participant> getParticipants()
 	{
-		Collection<Participant> participants = new ArrayList<Participant>();
-		Collection<LinkPersonAddress> links = this.getActiveLinks();
+		List<Participant> participants = new ArrayList<Participant>();
+		List<LinkPersonAddress> links = this.getActiveLinks();
 		for (LinkPersonAddress link : links)
 		{
 			if (!link.isDeleted())
@@ -405,7 +405,7 @@ public class Person extends AbstractEntity
 
 	public boolean hasDonationsForYear(final int year)
 	{
-		Collection<Donation> donations = this.getDonations();
+		List<Donation> donations = this.getDonations();
 		for (Donation donation : donations)
 		{
 			if (!donation.isDeleted() && donation.getDonationDate().get(Calendar.YEAR) == year)
@@ -460,7 +460,7 @@ public class Person extends AbstractEntity
 	@Override
 	public void setDeleted(final boolean deleted)
 	{
-		Collection<LinkPersonAddress> links = this.getActiveLinks();
+		List<LinkPersonAddress> links = this.getActiveLinks();
 		if (links != null)
 		{
 			for (LinkPersonAddress link : links)

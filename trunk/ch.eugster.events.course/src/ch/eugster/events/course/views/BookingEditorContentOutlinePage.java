@@ -4,8 +4,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -234,7 +234,7 @@ public class BookingEditorContentOutlinePage extends ContentOutlinePage implemen
 					if (course.getBookingTypes().size() > 1)
 					{
 						IMenuManager subMenu = new MenuManager("Buchungsart ändern");
-						Collection<BookingType> bookingTypes = course.getBookingTypes();
+						List<BookingType> bookingTypes = course.getBookingTypes();
 						for (BookingType bookingType : bookingTypes)
 						{
 							if (participant.getBookingType() == null
@@ -313,7 +313,7 @@ public class BookingEditorContentOutlinePage extends ContentOutlinePage implemen
 				super.run();
 				if (EmailHelper.getInstance().isEmailSupported())
 				{
-					Collection<String> emails = new ArrayList<String>();
+					List<String> emails = new ArrayList<String>();
 					for (Participant participant : participants)
 					{
 						if (EmailHelper.getInstance().isValidAddress(participant.getLink().getPerson().getEmail()))
@@ -334,7 +334,7 @@ public class BookingEditorContentOutlinePage extends ContentOutlinePage implemen
 
 	private void createSendEmailAction(final IMenuManager manager, final ParticipantGroup participantGroup)
 	{
-		Collection<Participant> participants = new ArrayList<Participant>();
+		List<Participant> participants = new ArrayList<Participant>();
 		for (Participant participant : participantGroup.getParticipants())
 		{
 			if (!participant.isDeleted())
@@ -512,7 +512,7 @@ public class BookingEditorContentOutlinePage extends ContentOutlinePage implemen
 	{
 		protected ViewerRoot root;
 
-		private final Collection<PropertyChangeListener> propertyChangeListeners = new ArrayList<PropertyChangeListener>();
+		private final List<PropertyChangeListener> propertyChangeListeners = new ArrayList<PropertyChangeListener>();
 
 		public Group(final ViewerRoot root)
 		{
@@ -544,7 +544,7 @@ public class BookingEditorContentOutlinePage extends ContentOutlinePage implemen
 	{
 		private Booking booking;
 
-		private Collection<Participant> participants = new ArrayList<Participant>();
+		private List<Participant> participants = new ArrayList<Participant>();
 
 		public ParticipantGroup(final ViewerRoot root, final Booking booking)
 		{
@@ -552,7 +552,7 @@ public class BookingEditorContentOutlinePage extends ContentOutlinePage implemen
 			this.booking = booking;
 		}
 
-		public Collection<Participant> getParticipants()
+		public List<Participant> getParticipants()
 		{
 			return this.participants;
 		}

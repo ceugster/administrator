@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -24,7 +24,7 @@ public class VisitThemeQuery extends AbstractEntityQuery<VisitTheme>
 		}
 		Expression expression = new ExpressionBuilder(VisitTheme.class).get("name").equal(name);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
-		Collection<VisitTheme> visitThemes = this.select(VisitTheme.class, expression);
+		List<VisitTheme> visitThemes = this.select(VisitTheme.class, expression);
 		if (visitThemes.isEmpty())
 		{
 			return true;
