@@ -809,6 +809,30 @@
             </visibleWhen>
          </command>
          <command
+               commandId="ch.eugster.events.course.command.deleteCourse"
+               disabledIcon="icons/delete_grey_16.png"
+               hoverIcon="icons/delete_16.png"
+               icon="icons/delete_16.png"
+               label="Kurs entfernen"
+               style="push"
+               tooltip="Ausgewählten Kurs entfernen">
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <count
+                        value="1">
+                  </count>
+                  <reference
+                        definitionId="ch.eugster.events.course.selection.course">
+                  </reference>
+               </and>
+            </visibleWhen>
+         </command>
+         <separator
+               name="ch.eugster.events.course.separator1"
+               visible="true">
+         </separator>
+         <command
                commandId="ch.eugster.events.course.command.copyCourse"
                hoverIcon="icons/copy_16.png"
                icon="icons/copy_16.png"
@@ -843,28 +867,8 @@
                </and>
             </visibleWhen>
          </command>
-         <command
-               commandId="ch.eugster.events.course.command.deleteCourse"
-               disabledIcon="icons/delete_grey_16.png"
-               hoverIcon="icons/delete_16.png"
-               icon="icons/delete_16.png"
-               label="Kurs entfernen"
-               style="push"
-               tooltip="Ausgewählten Kurs entfernen">
-            <visibleWhen
-                  checkEnabled="false">
-               <and>
-                  <count
-                        value="1">
-                  </count>
-                  <reference
-                        definitionId="ch.eugster.events.course.selection.course">
-                  </reference>
-               </and>
-            </visibleWhen>
-         </command>
          <separator
-               name="ch.eugster.events.course.separator1"
+               name="ch.eugster.events.course.separator2"
                visible="true">
          </separator>
          <command
@@ -877,7 +881,7 @@
                tooltip="Hinzufügen einer Buchung zum ausgewählten Kurs">
          </command>
          <separator
-               name="ch.eugster.events.course.separator2"
+               name="ch.eugster.events.course.separator3"
                visible="true">
          </separator>
          <command
