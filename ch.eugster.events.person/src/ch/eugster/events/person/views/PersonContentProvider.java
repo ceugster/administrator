@@ -7,7 +7,7 @@
 package ch.eugster.events.person.views;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -37,8 +37,8 @@ public class PersonContentProvider implements ITreeContentProvider
 		}
 		else if (parentElement instanceof Person)
 		{
-			Collection<LinkPersonAddress> secondaryAddresses = new ArrayList<LinkPersonAddress>();
-			Collection<LinkPersonAddress> links = ((Person) parentElement).getLinks();
+			List<LinkPersonAddress> secondaryAddresses = new ArrayList<LinkPersonAddress>();
+			List<LinkPersonAddress> links = ((Person) parentElement).getLinks();
 			for (LinkPersonAddress link : links)
 			{
 				if (link.getPerson().getDefaultLink() == null
@@ -92,7 +92,7 @@ public class PersonContentProvider implements ITreeContentProvider
 		else if (element instanceof Person)
 		{
 			int count = 0;
-			Collection<LinkPersonAddress> links = ((Person) element).getLinks();
+			List<LinkPersonAddress> links = ((Person) element).getLinks();
 			for (LinkPersonAddress link : links)
 			{
 				if (link.getPerson().getDefaultLink() == null

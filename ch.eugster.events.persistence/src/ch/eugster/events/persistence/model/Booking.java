@@ -4,7 +4,7 @@ import static javax.persistence.CascadeType.ALL;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -164,7 +164,7 @@ public class Booking extends AbstractEntity
 	 * Teilnehmer in dieser Buchung
 	 */
 	@OneToMany(cascade = ALL, mappedBy = "booking")
-	private Collection<Participant> participants = new Vector<Participant>();
+	private List<Participant> participants = new Vector<Participant>();
 
 	private Booking()
 	{
@@ -356,9 +356,9 @@ public class Booking extends AbstractEntity
 		return count;
 	}
 
-	public Collection<Participant> getParticipants()
+	public List<Participant> getParticipants()
 	{
-		Collection<Participant> ps = new ArrayList<Participant>();
+		List<Participant> ps = new ArrayList<Participant>();
 		for (Participant participant : this.participants)
 		{
 			if (!participant.isDeleted())
@@ -514,7 +514,7 @@ public class Booking extends AbstractEntity
 		this.propertyChangeSupport.firePropertyChange("participant", this.participant, this.participant = participant);
 	}
 
-	public void setParticipants(final Collection<Participant> participants)
+	public void setParticipants(final List<Participant> participants)
 	{
 		this.propertyChangeSupport.firePropertyChange("participants", this.participants,
 				this.participants = participants);

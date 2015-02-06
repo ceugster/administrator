@@ -1,7 +1,7 @@
 package ch.eugster.events.course.wizards;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 
@@ -17,8 +17,8 @@ public class PersonBookingViewerContentProvider extends ArrayContentProvider
 	{
 		if (inputElement instanceof LinkPersonAddress)
 		{
-			Collection<Booking> bookings = new ArrayList<Booking>();
-			Collection<Participant> participants = ((LinkPersonAddress) inputElement).getParticipants();
+			List<Booking> bookings = new ArrayList<Booking>();
+			List<Participant> participants = ((LinkPersonAddress) inputElement).getParticipants();
 			for (Participant participant : participants)
 				if (!bookings.contains(participant.getBooking()))
 					bookings.add(participant.getBooking());

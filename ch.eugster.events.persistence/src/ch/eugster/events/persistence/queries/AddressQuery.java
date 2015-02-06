@@ -1,7 +1,7 @@
 package ch.eugster.events.persistence.queries;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -34,12 +34,12 @@ public class AddressQuery extends AbstractEntityQuery<Address>
 		return this.count(Address.class, expression);
 	}
 
-	public Collection<Address> selectByAddressAsLike(final String address)
+	public List<Address> selectByAddressAsLike(final String address)
 	{
-		Collection<Address> addresses = new ArrayList<Address>();
+		List<Address> addresses = new ArrayList<Address>();
 		Expression expression = new ExpressionBuilder(Address.class).get("deleted").equal(false);
 		expression = expression.and(new ExpressionBuilder().get("address").likeIgnoreCase(address + "%"));
-		Collection<Address> selected = this.select(Address.class, expression);
+		List<Address> selected = this.select(Address.class, expression);
 		for (Address select : selected)
 		{
 			if (select.getPersonLinks() == null || select.getPersonLinks().isEmpty())
@@ -50,13 +50,13 @@ public class AddressQuery extends AbstractEntityQuery<Address>
 		return addresses;
 	}
 
-	public Collection<Address> selectWithEmptyProvince()
+	public List<Address> selectWithEmptyProvince()
 	{
 		Expression expression = new ExpressionBuilder(Address.class).get("deleted").equal(false);
 		expression.and(new ExpressionBuilder().get("country").notNull());
 		Expression empty = new ExpressionBuilder().get("province").isNull().or(new ExpressionBuilder().get("province").equal(""));
 		expression = expression.and(empty);
-		Collection<Address> selected = this.select(Address.class, expression);
+		List<Address> selected = this.select(Address.class, expression);
 		return selected;
 	}
 
@@ -183,7 +183,7 @@ public class AddressQuery extends AbstractEntityQuery<Address>
 		return phone;
 	}
 
-	public Collection<Address> selectAddresses(final Map<String, String> criteria)
+	public List<Address> selectAddresses(final Map<String, String> criteria)
 	{
 
 		if (criteria.size() == 0)
@@ -205,7 +205,7 @@ public class AddressQuery extends AbstractEntityQuery<Address>
 		return select(Address.class, expression);
 	}
 
-	public Collection<Address> selectByCriteria(final Map<String, String> criteria, final int maxResults)
+	public List<Address> selectByCriteria(final Map<String, String> criteria, final int maxResults)
 	{
 		Expression expression = createCriteriaExpression(criteria);
 		if (expression != null)

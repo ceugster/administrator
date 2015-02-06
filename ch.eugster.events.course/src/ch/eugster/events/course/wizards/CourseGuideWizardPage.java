@@ -1,7 +1,7 @@
 package ch.eugster.events.course.wizards;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -110,7 +110,7 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 		if (service != null)
 		{
 			GuideQuery query = (GuideQuery) service.getQuery(Guide.class);
-			Collection<Guide> guides = query.selectAll();
+			List<Guide> guides = query.selectAll();
 			this.guideViewer.setInput(guides.toArray(new Guide[0]));
 		}
 
@@ -145,7 +145,7 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 		if (service != null)
 		{
 			GuideTypeQuery query = (GuideTypeQuery) service.getQuery(GuideType.class);
-			Collection<GuideType> guideTypes = query.selectAll();
+			List<GuideType> guideTypes = query.selectAll();
 			this.guideTypeViewer.setInput(guideTypes);
 		}
 
@@ -439,10 +439,10 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 		@Override
 		public Object[] getElements(final Object inputElement)
 		{
-			if (inputElement instanceof Collection)
+			if (inputElement instanceof List)
 			{
-				Collection<GuideType> guideTypes = new ArrayList<GuideType>();
-				Collection<?> gts = (Collection<?>) inputElement;
+				List<GuideType> guideTypes = new ArrayList<GuideType>();
+				List<?> gts = (List<?>) inputElement;
 				for (Object gt : gts)
 				{
 					if (gt instanceof GuideType)

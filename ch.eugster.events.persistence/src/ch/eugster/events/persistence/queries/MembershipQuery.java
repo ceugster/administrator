@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import ch.eugster.events.persistence.model.Membership;
 import ch.eugster.events.persistence.service.ConnectionService;
@@ -13,7 +13,7 @@ public class MembershipQuery extends AbstractEntityQuery<Membership>
 		super(connectionService);
 	}
 
-	public Collection<Membership> selectAll()
+	public List<Membership> selectAll()
 	{
 		return super.selectAll(Membership.class);
 	}

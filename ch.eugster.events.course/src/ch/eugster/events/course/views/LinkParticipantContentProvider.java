@@ -1,8 +1,8 @@
 package ch.eugster.events.course.views;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -27,7 +27,7 @@ public class LinkParticipantContentProvider implements ITreeContentProvider
 		{
 			Person person = (Person) parent;
 			Map<Long, Booking> bookings = new HashMap<Long, Booking>();
-			Collection<Participant> participants = person.getDefaultLink().getParticipants();
+			List<Participant> participants = person.getDefaultLink().getParticipants();
 			for (Participant participant : participants)
 			{
 				if (participant.getBooking() != null)
@@ -43,8 +43,8 @@ public class LinkParticipantContentProvider implements ITreeContentProvider
 		else if (parent instanceof LinkPersonAddress)
 		{
 			LinkPersonAddress link = (LinkPersonAddress) parent;
-			Collection<Participant> participants = link.getParticipants();
-			Collection<Booking> bookings = new ArrayList<Booking>();
+			List<Participant> participants = link.getParticipants();
+			List<Booking> bookings = new ArrayList<Booking>();
 			for (Participant participant : participants)
 			{
 				if (!bookings.contains(participant.getBooking()))

@@ -1,7 +1,7 @@
 package ch.eugster.events.addressgroup.handlers;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -39,7 +39,7 @@ public class CopyHandler extends AbstractHandler implements IHandler
 				StructuredSelection ssel = (StructuredSelection) viewer.getSelection();
 				Object[] elements = ssel.toArray();
 
-				Collection<AddressGroup> groups = new ArrayList<AddressGroup>();
+				List<AddressGroup> groups = new ArrayList<AddressGroup>();
 				for (Object element : elements)
 				{
 					if (element instanceof AddressGroup)
@@ -56,7 +56,7 @@ public class CopyHandler extends AbstractHandler implements IHandler
 				StructuredSelection ssel = (StructuredSelection) viewer.getSelection();
 				Object[] elements = ssel.toArray();
 
-				Collection<AddressGroupMember> members = new ArrayList<AddressGroupMember>();
+				List<AddressGroupMember> members = new ArrayList<AddressGroupMember>();
 				for (Object element : elements)
 				{
 					if (element instanceof AddressGroupMember)

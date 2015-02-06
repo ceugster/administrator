@@ -3,9 +3,9 @@ package ch.eugster.events.person.editors;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -186,7 +186,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	// private void updateAddressLabel()
 	// {
-	// Collection<String> labelLines = new ArrayList<String>();
+	// List<String> labelLines = new ArrayList<String>();
 	// String pattern = GlobalSettings.getInstance().getAddressLabelFormat();
 	// if (pattern.isEmpty())
 	// {
@@ -1046,7 +1046,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private ZipCode findZipCode(final Country country, final String zip)
 	{
-		Collection<ZipCode> zipCodes = null;
+		List<ZipCode> zipCodes = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -1356,7 +1356,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private Country[] selectCountries()
 	{
-		Collection<Country> countries = null;
+		List<Country> countries = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -1372,7 +1372,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private String[] selectProvinceCodes(final Country country)
 	{
-		Collection<String> states = null;
+		List<String> states = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -1388,7 +1388,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private AddressSalutation[] selectSalutations()
 	{
-		Collection<AddressSalutation> salutations = new ArrayList<AddressSalutation>();
+		List<AddressSalutation> salutations = new ArrayList<AddressSalutation>();
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -1410,7 +1410,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private void updateAddressLabel()
 	{
-		Collection<String> labelLines = new ArrayList<String>();
+		List<String> labelLines = new ArrayList<String>();
 		String pattern = PersonSettings.getInstance().getAddressLabelFormat();
 		if (pattern.isEmpty())
 		{
@@ -1590,7 +1590,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 				if (service != null)
 				{
 					AddressQuery addressQuery = (AddressQuery) service.getQuery(Address.class);
-					Collection<Address> addresses = addressQuery.selectByAddressAsLike(contents);
+					List<Address> addresses = addressQuery.selectByAddressAsLike(contents);
 					Iterator<Address> addressIterator = addresses.iterator();
 					while (addressIterator.hasNext())
 					{

@@ -1,6 +1,7 @@
 package ch.eugster.events.course.editors;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 
@@ -26,7 +27,7 @@ public class RubricContentProvider extends ArrayContentProvider
 			{
 				rubrics = (Rubric[]) inputElement;
 			}
-			else if (inputElement instanceof Collection<?>)
+			else if (inputElement instanceof List<?>)
 			{
 				rubrics = ((Collection<Rubric>) inputElement).toArray(new Rubric[0]);
 			}
@@ -39,7 +40,7 @@ public class RubricContentProvider extends ArrayContentProvider
 				rubrics[i + 1] = list[i];
 			rubrics[0] = Rubric.newInstance();
 		}
-		else if (inputElement instanceof Collection<?>)
+		else if (inputElement instanceof List<?>)
 		{
 			Rubric[] list = ((Collection<Rubric>) inputElement).toArray(new Rubric[0]);
 			rubrics = new Rubric[list.length + 1];

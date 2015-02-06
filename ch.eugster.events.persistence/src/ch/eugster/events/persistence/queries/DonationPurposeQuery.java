@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.eclipse.persistence.expressions.Expression;
@@ -23,7 +23,7 @@ public class DonationPurposeQuery extends AbstractEntityQuery<DonationPurpose>
 			return true;
 		}
 		Expression expression = new ExpressionBuilder(DonationPurpose.class).get("code").equal(code);
-		Collection<DonationPurpose> purposes = select(DonationPurpose.class, expression);
+		List<DonationPurpose> purposes = select(DonationPurpose.class, expression);
 		if (purposes.isEmpty())
 		{
 			return true;
@@ -48,7 +48,7 @@ public class DonationPurposeQuery extends AbstractEntityQuery<DonationPurpose>
 		}
 	}
 
-	public Collection<DonationPurpose> selectAll()
+	public List<DonationPurpose> selectAll()
 	{
 		return super.selectAll(DonationPurpose.class);
 	}
@@ -56,7 +56,7 @@ public class DonationPurposeQuery extends AbstractEntityQuery<DonationPurpose>
 	public DonationPurpose selectByCode(final String code)
 	{
 		Expression expression = new ExpressionBuilder(DonationPurpose.class).get("code").equal(code);
-		Collection<DonationPurpose> purposes = select(DonationPurpose.class, expression);
+		List<DonationPurpose> purposes = select(DonationPurpose.class, expression);
 		try
 		{
 			return purposes.iterator().next();

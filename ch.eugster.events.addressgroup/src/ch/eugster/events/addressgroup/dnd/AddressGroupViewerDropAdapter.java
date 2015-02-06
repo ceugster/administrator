@@ -1,6 +1,6 @@
 package ch.eugster.events.addressgroup.dnd;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -126,7 +126,7 @@ public class AddressGroupViewerDropAdapter extends ViewerDropAdapter
 		boolean update = false;
 		if (this.applyFilter(booking))
 		{
-			Collection<Participant> participants = booking.getParticipants();
+			List<Participant> participants = booking.getParticipants();
 			{
 				for (Participant participant : participants)
 				{
@@ -143,7 +143,7 @@ public class AddressGroupViewerDropAdapter extends ViewerDropAdapter
 		boolean update = false;
 		if (this.applyFilter(course))
 		{
-			Collection<Booking> bookings = course.getBookings();
+			List<Booking> bookings = course.getBookings();
 			{
 				for (Booking booking : bookings)
 				{
@@ -180,7 +180,7 @@ public class AddressGroupViewerDropAdapter extends ViewerDropAdapter
 		boolean update = false;
 		if (this.applyFilter(season))
 		{
-			Collection<Course> courses = season.getCourses();
+			List<Course> courses = season.getCourses();
 			{
 				for (Course course : courses)
 				{

@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -24,7 +24,7 @@ public class GuideTypeQuery extends AbstractEntityQuery<GuideType>
 		}
 		Expression expression = new ExpressionBuilder(GuideType.class).get("code").equal(code);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
-		Collection<GuideType> guideTypes = select(GuideType.class, expression);
+		List<GuideType> guideTypes = select(GuideType.class, expression);
 		if (guideTypes.isEmpty())
 		{
 			return true;
@@ -49,7 +49,7 @@ public class GuideTypeQuery extends AbstractEntityQuery<GuideType>
 		}
 	}
 
-	public Collection<GuideType> selectAll()
+	public List<GuideType> selectAll()
 	{
 		return super.selectAll(GuideType.class);
 	}

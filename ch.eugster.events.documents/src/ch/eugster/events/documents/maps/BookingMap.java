@@ -7,12 +7,10 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 
-import ch.eugster.events.documents.maps.AddressMap.TableKey;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.CourseDetail;
 import ch.eugster.events.persistence.model.CourseGuide;
@@ -514,7 +512,7 @@ public class BookingMap extends AbstractDataMap
 				case PARTICIPANTS:
 				{
 					List<DataMap> tableMaps = new ArrayList<DataMap>();
-					Collection<Participant> participants = booking.getParticipants();
+					List<Participant> participants = booking.getParticipants();
 					for (Participant participant : participants)
 					{
 						tableMaps.add(new ParticipantMap(participant));
@@ -524,7 +522,7 @@ public class BookingMap extends AbstractDataMap
 				case COURSE_DETAILS:
 				{
 					List<DataMap> tableMaps = new ArrayList<DataMap>();
-					Collection<CourseDetail> courseDetails = booking.getCourse().getCourseDetails();
+					List<CourseDetail> courseDetails = booking.getCourse().getCourseDetails();
 					for (CourseDetail courseDetail : courseDetails)
 					{
 						tableMaps.add(new CourseDetailMap(courseDetail));
@@ -534,7 +532,7 @@ public class BookingMap extends AbstractDataMap
 				case COURSE_GUIDES:
 				{
 					List<DataMap> tableMaps = new ArrayList<DataMap>();
-					Collection<CourseGuide> courseGuides = booking.getCourse().getCourseGuides();
+					List<CourseGuide> courseGuides = booking.getCourse().getCourseGuides();
 					for (CourseGuide courseGuide : courseGuides)
 					{
 						tableMaps.add(new CourseGuideMap(courseGuide, false));

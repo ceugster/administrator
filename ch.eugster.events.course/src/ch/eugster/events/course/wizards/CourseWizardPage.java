@@ -3,8 +3,8 @@ package ch.eugster.events.course.wizards;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -79,7 +79,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 
 	private AlreadyParticipantFilter alreadyParticipantFilter = null;
 
-	private final Collection<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
+	private final List<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
 
 	private ServiceTracker connectionServiceTracker;
 
@@ -516,18 +516,18 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 	{
 		private final TreeViewer viewer;
 
-		private final Collection<Course> courses = new ArrayList<Course>();
+		private final List<Course> courses = new ArrayList<Course>();
 
 		public AlreadyParticipantFilter(final TreeViewer viewer, final Booking booking)
 		{
 			this.viewer = viewer;
 
-			Collection<Participant> participants = booking.getParticipants();
+			List<Participant> participants = booking.getParticipants();
 			for (Participant participant : participants)
 			{
 				if (!participant.isDeleted() && !participant.getLink().isDeleted())
 				{
-					Collection<Participant> otherCourseParticipants = participant.getLink().getParticipants();
+					List<Participant> otherCourseParticipants = participant.getLink().getParticipants();
 					for (Participant otherCourseParticipant : otherCourseParticipants)
 					{
 						if (!otherCourseParticipant.isDeleted() && !otherCourseParticipant.getLink().isDeleted()
@@ -571,7 +571,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 						Participant participant = (Participant) object;
 						if (!participant.isDeleted() && !participant.getLink().isDeleted())
 						{
-							Collection<Participant> otherCourseParticipants = participant.getLink().getParticipants();
+							List<Participant> otherCourseParticipants = participant.getLink().getParticipants();
 							for (Participant otherCourseParticipant : otherCourseParticipants)
 							{
 								if (!otherCourseParticipant.isDeleted()

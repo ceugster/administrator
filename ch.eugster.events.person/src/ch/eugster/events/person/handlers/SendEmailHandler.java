@@ -1,8 +1,8 @@
 package ch.eugster.events.person.handlers;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -27,7 +27,7 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 			EvaluationContext context = (EvaluationContext) event.getApplicationContext();
 			if (context.getParent().getVariable("selection") instanceof StructuredSelection)
 			{
-				Collection<String> addresses = new ArrayList<String>();
+				List<String> addresses = new ArrayList<String>();
 				StructuredSelection ssel = (StructuredSelection) context.getParent().getVariable("selection");
 				Iterator<?> iterator = ssel.iterator();
 				while (iterator.hasNext())

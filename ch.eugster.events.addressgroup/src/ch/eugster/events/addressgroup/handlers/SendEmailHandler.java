@@ -1,8 +1,8 @@
 package ch.eugster.events.addressgroup.handlers;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -19,7 +19,7 @@ import ch.eugster.events.ui.helpers.EmailHelper;
 
 public class SendEmailHandler extends AbstractHandler implements IHandler
 {
-	private final Collection<String> addresses = new ArrayList<String>();
+	private final List<String> addresses = new ArrayList<String>();
 
 	private void addAddress(final String address)
 	{
@@ -80,7 +80,7 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 	{
 		if (!addressGroup.isDeleted())
 		{
-			Collection<AddressGroupMember> addressGroupMembers = addressGroup.getAddressGroupMembers();
+			List<AddressGroupMember> addressGroupMembers = addressGroup.getAddressGroupMembers();
 			for (AddressGroupMember addressGroupMember : addressGroupMembers)
 			{
 				this.extract(addressGroupMember);
@@ -99,7 +99,7 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 	{
 		if (!category.isDeleted())
 		{
-			Collection<AddressGroup> addressGroups = category.getAddressGroups();
+			List<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
 			{
 				this.extract(addressGroup);

@@ -203,7 +203,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
-	private Collection<FieldExtension> extensions = new ArrayList<FieldExtension>();
+	private List<FieldExtension> extensions = new ArrayList<FieldExtension>();
 
 	private Map<Long, ExtendedField> extendedFields = new HashMap<Long, ExtendedField>();
 
@@ -235,7 +235,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			if (service != null)
 			{
 				FieldExtensionQuery query = (FieldExtensionQuery) service.getQuery(FieldExtension.class);
-				Collection<FieldExtension> extensions = query.selectByTarget(FieldExtensionTarget.PERSON, false);
+				List<FieldExtension> extensions = query.selectByTarget(FieldExtensionTarget.PERSON, false);
 				if (extensions.size() > 0)
 				{
 					LinkPersonAddress link = getLink();
@@ -1029,7 +1029,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			public void linkActivated(final HyperlinkEvent e)
 			{
 				List<AddressType> unusedAddressTypes = new ArrayList<AddressType>();
-				Collection<IFormPage> usedPages = getEditor().getPages();
+				List<IFormPage> usedPages = getEditor().getPages();
 				for (AddressType addressType : addressTypes)
 				{
 					boolean found = false;
@@ -1322,7 +1322,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	// private ZipCode findZipCode(final Country country, final String zip)
 	// {
-	// Collection<ZipCode> zipCodes = null;
+	// List<ZipCode> zipCodes = null;
 	// ServiceTracker tracker = new
 	// ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 	// ConnectionService.class.getName(), null);
@@ -1383,7 +1383,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	private AddressType[] getAddressTypes()
 	{
-		Collection<AddressType> addressTypes = null;
+		List<AddressType> addressTypes = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -1451,7 +1451,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	public LinkPersonAddress getLink()
 	{
 		PersonEditorInput input = (PersonEditorInput) this.getEditor().getEditorInput();
-		Collection<LinkPersonAddress> links = input.getEntity().getLinks();
+		List<LinkPersonAddress> links = input.getEntity().getLinks();
 		for (LinkPersonAddress link : links)
 		{
 			if (!link.isDeleted())
@@ -1481,7 +1481,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	private List<AddressType> getUnusedAddressTypes(final AddressType[] addressTypes)
 	{
 		List<AddressType> unusedAddressTypes = new ArrayList<AddressType>();
-		Collection<IFormPage> usedPages = getEditor().getPages();
+		List<IFormPage> usedPages = getEditor().getPages();
 		for (AddressType addressType : addressTypes)
 		{
 			boolean found = false;
@@ -1725,7 +1725,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 //	private void saveAddressGroupValues()
 //	{
 //		LinkPersonAddress link = getLink();
-//		Collection<AddressGroupMember> addressGroupMembers = link.getAddress().getAddressGroupMembers();
+//		List<AddressGroupMember> addressGroupMembers = link.getAddress().getAddressGroupMembers();
 //		for (AddressGroupMember addressGroupMember : addressGroupMembers)
 //		{
 //			if (!link.isInAddressGroup(addressGroupMember.getAddressGroup()))
@@ -1875,7 +1875,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	private Country[] selectCountries()
 	{
-		Collection<Country> countries = null;
+		List<Country> countries = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -1891,7 +1891,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	private String[] selectProvinceCodes(final Country country)
 	{
-		Collection<String> states = null;
+		List<String> states = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -1913,7 +1913,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	private AddressSalutation[] selectSalutations()
 	{
-		Collection<AddressSalutation> salutations = new ArrayList<AddressSalutation>();
+		List<AddressSalutation> salutations = new ArrayList<AddressSalutation>();
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -2137,7 +2137,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			Person person = input.getEntity();
 			if (person.getId() != null && person.getId().equals(link.getPerson().getId()))
 			{
-				Collection<IFormPage> pages = editorPage.getEditor().getPages();
+				List<IFormPage> pages = editorPage.getEditor().getPages();
 				for (IFormPage page : pages)
 				{
 					if (page instanceof FormEditorLinkPage)
@@ -2175,7 +2175,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 				if (service != null)
 				{
 					LinkPersonAddressQuery linkQuery = (LinkPersonAddressQuery) service.getQuery(LinkPersonAddress.class);
-					Collection<LinkPersonAddress> links = linkQuery.selectByAddressAsLike(contents);
+					List<LinkPersonAddress> links = linkQuery.selectByAddressAsLike(contents);
 					Iterator<LinkPersonAddress> linkIterator = links.iterator();
 					while (linkIterator.hasNext())
 					{
@@ -2186,7 +2186,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 						}
 					}
 					AddressQuery addressQuery = (AddressQuery) service.getQuery(Address.class);
-					Collection<Address> addresses = addressQuery.selectByAddressAsLike(contents);
+					List<Address> addresses = addressQuery.selectByAddressAsLike(contents);
 					Iterator<Address> addressIterator = addresses.iterator();
 					while (addressIterator.hasNext())
 					{

@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.model;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -86,7 +86,7 @@ public class User extends AbstractEntity
 	private String lastUsedFormLetter;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-	private final Collection<UserProperty> userProperties = new Vector<UserProperty>();
+	private final List<UserProperty> userProperties = new Vector<UserProperty>();
 
 	private User()
 	{
@@ -129,7 +129,7 @@ public class User extends AbstractEntity
 		return AbstractEntity.stringValueOf(this.password);
 	}
 
-	public Collection<UserProperty> getProperties()
+	public List<UserProperty> getProperties()
 	{
 		return userProperties;
 	}

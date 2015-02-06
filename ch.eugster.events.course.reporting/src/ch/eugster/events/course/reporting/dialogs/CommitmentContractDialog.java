@@ -3,7 +3,7 @@ package ch.eugster.events.course.reporting.dialogs;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -82,8 +82,8 @@ public class CommitmentContractDialog extends TitleAreaDialog
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 				{
-					Collection<DataMap> maps = createDataMaps();
-					if (maps.size() == 0)
+					DataMap[] maps = createDataMaps().toArray(new DataMap[0]);
+					if (maps.length == 0)
 					{
 						MessageDialog.openConfirm(getShell(), MSG_TITLE_NO_COURSES, MSG_TITLE_NO_COURSES);
 					}
@@ -106,7 +106,7 @@ public class CommitmentContractDialog extends TitleAreaDialog
 												.getService(reference);
 										DocumentBuilderService builderService = service;
 										IStatus status = builderService.buildDocument(new SubProgressMonitor(monitor,
-												maps.size()), new File(userPropertyTemplatePath.getValue()), maps);
+												maps.length), new File(userPropertyTemplatePath.getValue()), maps);
 										if (status.isOK())
 										{
 											break;
@@ -151,16 +151,16 @@ public class CommitmentContractDialog extends TitleAreaDialog
 		this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
 	}
 
-	private Collection<DataMap> createDataMaps()
+	private List<DataMap> createDataMaps()
 	{
-		Collection<DataMap> dataMaps = new ArrayList<DataMap>();
+		List<DataMap> dataMaps = new ArrayList<DataMap>();
 		Object[] elements = selection.toArray();
 		for (Object element : elements)
 		{
 			if (element instanceof Course)
 			{
 				Course course = (Course) element;
-				Collection<CourseGuide> courseGuides = course.getCourseGuides();
+				List<CourseGuide> courseGuides = course.getCourseGuides();
 				for (CourseGuide courseGuide : courseGuides)
 				{
 					dataMaps.add(new CourseGuideMap(courseGuide, true));

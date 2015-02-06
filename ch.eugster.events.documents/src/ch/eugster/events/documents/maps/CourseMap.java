@@ -868,7 +868,7 @@ public class CourseMap extends AbstractDataMap
 	public static Calendar[] getDates(Course course)
 	{
 		Calendar[] dates = new Calendar[2];
-		Collection<CourseDetail> details = course.getCourseDetails();
+		List<CourseDetail> details = course.getCourseDetails();
 		for (CourseDetail detail : details)
 		{
 			if (!detail.isDeleted())
@@ -889,7 +889,7 @@ public class CourseMap extends AbstractDataMap
 	public static Calendar[] getSubstitutionDates(Course course)
 	{
 		Calendar[] dates = new Calendar[2];
-		Collection<CourseDetail> details = course.getCourseDetails();
+		List<CourseDetail> details = course.getCourseDetails();
 		for (CourseDetail detail : details)
 		{
 			if (!detail.isDeleted())
@@ -1062,7 +1062,7 @@ public class CourseMap extends AbstractDataMap
 				case BOOKINGS:
 				{
 					List<DataMap> tableMaps = new ArrayList<DataMap>();
-					Collection<Booking> bookings = course.getBookings();
+					List<Booking> bookings = course.getBookings();
 					for (Booking booking : bookings)
 					{
 						if (!booking.isDeleted())
@@ -1075,7 +1075,7 @@ public class CourseMap extends AbstractDataMap
 				case BOOKING_TYPES:
 				{
 					List<DataMap> tableMaps = new ArrayList<DataMap>();
-					Collection<BookingType> bookingTypes = course.getBookingTypes();
+					List<BookingType> bookingTypes = course.getBookingTypes();
 					for (BookingType bookingType : bookingTypes)
 					{
 						if (!bookingType.isDeleted())
@@ -1088,7 +1088,7 @@ public class CourseMap extends AbstractDataMap
 				case DETAILS:
 				{
 					List<DataMap> tableMaps = new ArrayList<DataMap>();
-					Collection<CourseDetail> details = course.getCourseDetails();
+					List<CourseDetail> details = course.getCourseDetails();
 					for (CourseDetail detail : details)
 					{
 						if (!detail.isDeleted())
@@ -1101,7 +1101,7 @@ public class CourseMap extends AbstractDataMap
 				case GUIDES:
 				{
 					List<DataMap> tableMaps = new ArrayList<DataMap>();
-					Collection<CourseGuide> guides = course.getCourseGuides();
+					List<CourseGuide> guides = course.getCourseGuides();
 					for (CourseGuide guide : guides)
 					{
 						if (!guide.isDeleted())

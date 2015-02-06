@@ -3,9 +3,9 @@ package ch.eugster.events.donation.dialogs;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -127,7 +127,7 @@ public class DonationAddressListDialog extends TitleAreaDialog
 
 	private DataMapKey[] getKeys()
 	{
-		Collection<DataMapKey> keys = new ArrayList<DataMapKey>();
+		List<DataMapKey> keys = new ArrayList<DataMapKey>();
 		keys.add(DonationMap.Key.TYPE);
 		keys.add(DonationMap.Key.ID);
 		keys.add(PersonMap.Key.SEX);
@@ -170,8 +170,8 @@ public class DonationAddressListDialog extends TitleAreaDialog
 
 	private void buildDocument()
 	{
-		Collection<DataMap> maps = createDataMaps(selectionMode);
-		if (maps.size() == 0)
+		final DataMap[] dataMaps = createDataMaps(selectionMode);
+		if (dataMaps.length == 0)
 		{
 			MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 					MSG_TITLE_NO_BOOKINGS, null, "Die Auswahl enthält keine auswertbaren Elemente.",
@@ -180,7 +180,6 @@ public class DonationAddressListDialog extends TitleAreaDialog
 		}
 		else
 		{
-			final DataMap[] dataMaps = maps.toArray(new DataMap[0]);
 			Arrays.sort(dataMaps, new Comparator<DataMap>()
 			{
 				@Override
@@ -288,7 +287,7 @@ public class DonationAddressListDialog extends TitleAreaDialog
 		this.createButton(parent, IDialogConstants.CANCEL_ID, CANCEL_BUTTON_TEXT, false);
 	}
 
-	private Collection<DataMap> createDataMaps(SelectionMode selectionMode)
+	private DataMap[] createDataMaps(SelectionMode selectionMode)
 	{
 		Map<String, DataMap> dataMaps = new HashMap<String, DataMap>();
 		if (selectionMode.equals(SelectionMode.PERSON))
@@ -331,7 +330,7 @@ public class DonationAddressListDialog extends TitleAreaDialog
 		{
 			createDataMaps(selectedDonationYear, selectedDonationPurpose, selectedDomain, dataMaps);
 		}
-		return dataMaps.values();
+		return dataMaps.values().toArray(new DataMap[0]);
 	}
 
 	private void createDataMaps(final Address address, final Integer year, DonationPurpose purpose, Domain domain,
@@ -604,7 +603,7 @@ public class DonationAddressListDialog extends TitleAreaDialog
 			this.getButton(IDialogConstants.OK_ID).setEnabled(this.isPageComplete);
 	}
 
-	private void setRange(final Collection<Donation> donations)
+	private void setRange(final List<Donation> donations)
 	{
 		for (Donation donation : donations)
 		{

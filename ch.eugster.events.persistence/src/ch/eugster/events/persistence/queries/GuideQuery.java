@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import ch.eugster.events.persistence.model.Guide;
 import ch.eugster.events.persistence.service.ConnectionService;
@@ -12,7 +12,7 @@ public class GuideQuery extends AbstractEntityQuery<Guide>
 		super(service);
 	}
 
-	public Collection<Guide> selectAll()
+	public List<Guide> selectAll()
 	{
 		return this.selectAll(Guide.class);
 	}

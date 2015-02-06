@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -18,13 +18,13 @@ public class MemberQuery extends AbstractEntityQuery<Member>
 		super(connectionService);
 	}
 
-	public Collection<Member> selectByLink(LinkPersonAddress linkPersonAddress)
+	public List<Member> selectByLink(LinkPersonAddress linkPersonAddress)
 	{
 		Expression expression = new ExpressionBuilder(Member.class).get("link").equal(linkPersonAddress);
 		return select(Member.class, expression);
 	}
 
-	public Collection<Member> selectByAddress(Address address)
+	public List<Member> selectByAddress(Address address)
 	{
 		Expression expression = new ExpressionBuilder(Member.class).get("address").equal(address);
 		return select(Member.class, expression);

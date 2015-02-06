@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.ExpressionBuilder;
 
@@ -17,7 +17,7 @@ public class VisitSettingsQuery extends AbstractEntityQuery<VisitSettings>
 
 	public VisitSettings select()
 	{
-		Collection<VisitSettings> settings = select(VisitSettings.class, new ExpressionBuilder());
+		List<VisitSettings> settings = select(VisitSettings.class, new ExpressionBuilder());
 		return settings.isEmpty() ? null : settings.iterator().next();
 	}
 }

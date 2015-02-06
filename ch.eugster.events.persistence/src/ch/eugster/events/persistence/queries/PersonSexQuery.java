@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -23,7 +23,7 @@ public class PersonSexQuery extends AbstractEntityQuery<PersonSex>
 		}
 		Expression expression = new ExpressionBuilder(PersonSex.class).get("salutation").equal(name);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
-		Collection<PersonSex> personSexes = select(PersonSex.class, expression);
+		List<PersonSex> personSexes = select(PersonSex.class, expression);
 		if (personSexes.isEmpty())
 		{
 			return true;
@@ -48,7 +48,7 @@ public class PersonSexQuery extends AbstractEntityQuery<PersonSex>
 		}
 	}
 
-	public Collection<PersonSex> selectAll()
+	public List<PersonSex> selectAll()
 	{
 		return super.selectAll(PersonSex.class);
 	}

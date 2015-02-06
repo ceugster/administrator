@@ -3,7 +3,6 @@ package ch.eugster.events.course.wizards;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -105,7 +104,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 
 	private IDialogSettings dialogSettings;
 
-	private final Collection<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
+	private final List<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
 
 	public ParticipantWizardPage(final String pageName, final IBookingWizard wizard)
 	{
@@ -347,7 +346,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			public void criteriaChanged(final AbstractEntity[] entities)
 			{
-				Collection<LinkPersonAddress> revisedLinks = new ArrayList<LinkPersonAddress>();
+				List<LinkPersonAddress> revisedLinks = new ArrayList<LinkPersonAddress>();
 				// BookingWizard wizard = (BookingWizard) this.getWizard();
 				// ViewerRoot root = (ViewerRoot)
 				// ParticipantWizardPage.this.participantViewer.getInput();
@@ -356,7 +355,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 					if (entity instanceof Person)
 					{
 						Person person = (Person) entity;
-						Collection<LinkPersonAddress> links = person.getLinks();
+						List<LinkPersonAddress> links = person.getLinks();
 						for (LinkPersonAddress link : links)
 						{
 							revisedLinks.add(link);
@@ -1453,7 +1452,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				if (this.getViewer().getInput() instanceof Booking)
 				{
 					Booking booking = (Booking) this.getViewer().getInput();
-					Collection<Participant> participants = new ArrayList<Participant>();
+					List<Participant> participants = new ArrayList<Participant>();
 					LinkPersonAddress[] links = (LinkPersonAddress[]) data;
 					for (LinkPersonAddress link : links)
 					{
@@ -1473,7 +1472,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 
 		private void setBookingType(final Participant participant)
 		{
-			Collection<BookingType> bookingTypes = this.booking.getCourse().getBookingTypes();
+			List<BookingType> bookingTypes = this.booking.getCourse().getBookingTypes();
 			BookingType bestMatch = null;
 			for (BookingType bookingType : bookingTypes)
 			{
@@ -1525,10 +1524,10 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	//
 	// private Participant defaultParticipant;
 	//
-	// private final Collection<Participant> participants = new
+	// private final List<Participant> participants = new
 	// Vector<Participant>();
 	//
-	// private final Collection<ISelectionChangedListener>
+	// private final List<ISelectionChangedListener>
 	// selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
 	//
 	// public ViewerRoot(final TableViewer viewer)
@@ -1579,7 +1578,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	// public int getParticipantCount()
 	// {
 	// int count = 0;
-	// Collection<Participant> participants = getParticipants();
+	// List<Participant> participants = getParticipants();
 	// for (Participant participant : participants)
 	// {
 	// count += participant.getCount();
@@ -1587,14 +1586,14 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	// return count;
 	// }
 	//
-	// public Collection<Participant> getParticipants()
+	// public List<Participant> getParticipants()
 	// {
 	// return this.participants;
 	// }
 	//
 	// public StructuredSelection getSelection()
 	// {
-	// Collection<Participant> selection = new ArrayList<Participant>();
+	// List<Participant> selection = new ArrayList<Participant>();
 	// for (Participant participant : this.participants)
 	// {
 	// if (!participant.isDeleted())
@@ -1629,7 +1628,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	//
 	// public void setBooking(final Booking booking)
 	// {
-	// Collection<Participant> participants = booking.getParticipants();
+	// List<Participant> participants = booking.getParticipants();
 	// for (Participant participant : participants)
 	// {
 	// Participant target = Participant.newInstance();

@@ -75,7 +75,7 @@ public class LinkMap extends AbstractDataMap
 			this.addTableMaps(key.getKey(), key.getTableMaps(link, year, purpose, domain));
 		}
 
-		Collection<LinkPersonAddressExtendedField> extendedFields = link.getExtendedFields();
+		List<LinkPersonAddressExtendedField> extendedFields = link.getExtendedFields();
 		for (LinkPersonAddressExtendedField extendedField : extendedFields)
 		{
 			ExtendedFieldKey key = new ExtendedFieldKey(extendedField.getFieldExtension());
@@ -89,9 +89,9 @@ public class LinkMap extends AbstractDataMap
 		}
 	}
 
-	public static Collection<DataMapKey> getExtendedFieldKeys()
+	public static List<DataMapKey> getExtendedFieldKeys()
 	{
-		Collection<DataMapKey> keys = new ArrayList<DataMapKey>();
+		List<DataMapKey> keys = new ArrayList<DataMapKey>();
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -100,7 +100,7 @@ public class LinkMap extends AbstractDataMap
 		{
 			ConnectionService connectionService = (ConnectionService) service;
 			FieldExtensionQuery query = (FieldExtensionQuery) connectionService.getQuery(FieldExtension.class);
-			Collection<FieldExtension> fieldExtensions = query.selectByTarget(FieldExtensionTarget.PA_LINK, false);
+			List<FieldExtension> fieldExtensions = query.selectByTarget(FieldExtensionTarget.PA_LINK, false);
 			for (FieldExtension fieldExtension : fieldExtensions)
 			{
 				keys.add(new ExtendedFieldKey(fieldExtension));
@@ -270,7 +270,7 @@ public class LinkMap extends AbstractDataMap
 				case TOTAL_DONATIONS:
 				{
 					double totalAmount = 0D;
-					Collection<Donation> donations = link.getPerson().getDonations();
+					List<Donation> donations = link.getPerson().getDonations();
 					for (Donation donation : donations)
 					{
 						if (!donation.isDeleted())
@@ -325,7 +325,7 @@ public class LinkMap extends AbstractDataMap
 				case TOTAL_DONATIONS:
 				{
 					double totalAmount = 0D;
-					Collection<Donation> donations = link.getPerson().getDonations();
+					List<Donation> donations = link.getPerson().getDonations();
 					for (Donation donation : donations)
 					{
 						if (!donation.isDeleted())
@@ -417,7 +417,7 @@ public class LinkMap extends AbstractDataMap
 				case DONATIONS:
 				{
 					List<DataMap> tableMaps = new ArrayList<DataMap>();
-					Collection<Donation> donations = link.getPerson().getDonations();
+					List<Donation> donations = link.getPerson().getDonations();
 					for (Donation donation : donations)
 					{
 						addDonation(donation, tableMaps, year, purpose, domain);

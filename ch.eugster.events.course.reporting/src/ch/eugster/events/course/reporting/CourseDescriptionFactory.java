@@ -2,8 +2,8 @@ package ch.eugster.events.course.reporting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -15,7 +15,7 @@ import ch.eugster.events.persistence.model.Season;
 
 public class CourseDescriptionFactory
 {
-	private Collection<CourseMap> courses = new ArrayList<CourseMap>();
+	private List<CourseMap> courses = new ArrayList<CourseMap>();
 
 	private IStructuredSelection ssel;
 

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.PlatformUI;
@@ -80,7 +80,7 @@ public class EmailHelper
 	{
 		try
 		{
-			Collection<String> emails = new ArrayList<String>();
+			List<String> emails = new ArrayList<String>();
 			for (String address : addresses)
 			{
 				if (!emails.contains(address))

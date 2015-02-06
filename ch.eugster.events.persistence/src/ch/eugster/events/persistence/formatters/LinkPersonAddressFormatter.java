@@ -1,7 +1,7 @@
 package ch.eugster.events.persistence.formatters;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.PersonSettings;
@@ -23,7 +23,7 @@ public class LinkPersonAddressFormatter extends AbstractFormatter
 
 	private String formatPatternLabel(final LinkPersonAddress link, final String label)
 	{
-		Collection<String> lines = new ArrayList<String>();
+		List<String> lines = new ArrayList<String>();
 		String[] addressLabelFormat = label.split("[|]");
 		String[] variables = PersonFormatter.getInstance().getPersonLabelStoredVariables();
 		for (String labelFormat : addressLabelFormat)

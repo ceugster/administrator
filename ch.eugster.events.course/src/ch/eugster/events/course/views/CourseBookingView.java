@@ -1,7 +1,7 @@
 package ch.eugster.events.course.views;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -652,7 +652,7 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 				Course course = (Course) object;
 				this.bookingStateLabelColumn1.setText("Minimale Teilnehmerzahl: " + course.getMinParticipants()
 						+ " | Maximale Teilnehmerzahl: " + course.getMaxParticipants());
-				Collection<Booking> bookings = course.getBookings();
+				List<Booking> bookings = course.getBookings();
 				for (Booking booking : bookings)
 				{
 					BookingStateCount state = states.get(booking.getState());

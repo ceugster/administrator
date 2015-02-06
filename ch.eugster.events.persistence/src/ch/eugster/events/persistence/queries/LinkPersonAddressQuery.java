@@ -255,7 +255,7 @@ public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddres
 		return phone;
 	}
 
-	public Collection<LinkPersonAddress> selectByAddressAsLike(final String address)
+	public List<LinkPersonAddress> selectByAddressAsLike(final String address)
 	{
 		Expression expression = new ExpressionBuilder().get("address").get("deleted").equal(false);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
@@ -264,18 +264,18 @@ public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddres
 		return this.select(LinkPersonAddress.class, expression);
 	}
 
-	public Collection<LinkPersonAddress> selectByCriteria(final Map<String, String> criteria,
+	public List<LinkPersonAddress> selectByCriteria(final Map<String, String> criteria,
 			final Map<String, FieldExtension> extensions)
 	{
 		return selectByCriteria(criteria, extensions, 0);
 	}
 
-	public Collection<LinkPersonAddress> selectByCriteria(final Map<String, String> criteria,
+	public List<LinkPersonAddress> selectByCriteria(final Map<String, String> criteria,
 			final Map<String, FieldExtension> extensions, final int maxResults)
 	{
 		Expression expression = createCriteriaExpression(criteria, extensions, new ExpressionBuilder(
 				LinkPersonAddress.class));
-		Collection<LinkPersonAddress> links = select(LinkPersonAddress.class, expression, maxResults);
+		List<LinkPersonAddress> links = select(LinkPersonAddress.class, expression, maxResults);
 		return links;
 	}
 

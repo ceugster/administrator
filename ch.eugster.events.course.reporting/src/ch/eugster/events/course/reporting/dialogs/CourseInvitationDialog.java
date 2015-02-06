@@ -3,7 +3,6 @@ package ch.eugster.events.course.reporting.dialogs;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,12 +33,13 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.reporting.Activator;
 import ch.eugster.events.documents.maps.BookingMap;
-import ch.eugster.events.documents.maps.CourseGuideMap;
 import ch.eugster.events.documents.maps.DataMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseGuide;
+import ch.eugster.events.persistence.model.LinkPersonAddress;
+import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.model.UserProperty;
 import ch.eugster.events.persistence.queries.UserQuery;
@@ -75,7 +75,7 @@ public class CourseInvitationDialog extends TitleAreaDialog
 		this.selection = selection;
 	}
 
-	private void buildDocument(final Collection<DataMap> dataMaps)
+	private void buildDocument(final DataMap[] dataMaps)
 	{
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
 		try
@@ -102,7 +102,7 @@ public class CourseInvitationDialog extends TitleAreaDialog
 											.getService(reference);
 									DocumentBuilderService builderService = service;
 									IStatus status = builderService.buildDocument(new SubProgressMonitor(monitor,
-											dataMaps.size()), new File(userPropertyTemplatePath.getValue()), dataMaps);
+											dataMaps.length), new File(userPropertyTemplatePath.getValue()), dataMaps);
 									if (status.isOK())
 									{
 										break;
@@ -146,9 +146,9 @@ public class CourseInvitationDialog extends TitleAreaDialog
 		this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
 	}
 
-	private Collection<DataMap> createDataMaps()
+	private List<DataMap> createDataMaps()
 	{
-		Collection<DataMap> dataMaps = new ArrayList<DataMap>();
+		List<DataMap> dataMaps = new ArrayList<DataMap>();
 		Object[] elements = selection.toArray();
 		for (int i = elements.length; i > 0; i--)
 		{
@@ -164,7 +164,11 @@ public class CourseInvitationDialog extends TitleAreaDialog
 				List<CourseGuide> courseGuides = course.getCourseGuides();
 				for (CourseGuide courseGuide : courseGuides)
 				{
-					dataMaps.add(new CourseGuideMap(courseGuide, true));
+					LinkPersonAddress link = courseGuide.getGuide().getLink();
+					Booking booking = Booking.newInstance(courseGuide.getCourse());
+					Participant participant = Participant.newInstance(link, booking);
+					booking.setParticipant(participant);
+					dataMaps.add(new BookingMap(booking, true));
 				}
 			}
 			else if (element instanceof Booking)
@@ -259,9 +263,9 @@ public class CourseInvitationDialog extends TitleAreaDialog
 	protected void okPressed()
 	{
 		setUserPath();
-		Collection<DataMap> dataMaps = createDataMaps();
+		DataMap[] dataMaps = createDataMaps().toArray(new DataMap[0]);
 		super.okPressed();
-		if (dataMaps.isEmpty())
+		if (dataMaps.length == 0)
 		{
 			MessageDialog.openConfirm(this.getShell(), MSG_TITLE_NO_COURSES, MSG_TITLE_NO_COURSES);
 		}

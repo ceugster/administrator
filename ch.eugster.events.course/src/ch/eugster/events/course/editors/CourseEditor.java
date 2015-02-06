@@ -3,7 +3,6 @@ package ch.eugster.events.course.editors;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -426,7 +425,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			if (service != null)
 			{
 				CategoryQuery query = (CategoryQuery) service.getQuery(Category.class);
-				Collection<Category> categories = query.selectAll();
+				List<Category> categories = query.selectAll();
 				this.categoryViewer.setInput(categories.toArray(new Category[0]));
 			}
 			this.categoryViewer.addSelectionChangedListener(new ISelectionChangedListener()
@@ -459,7 +458,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			if (service != null)
 			{
 				RubricQuery query = (RubricQuery) service.getQuery(Rubric.class);
-				Collection<Rubric> rubrics = query.selectAll();
+				List<Rubric> rubrics = query.selectAll();
 				this.rubricViewer.setInput(rubrics.toArray(new Rubric[0]));
 			}
 			this.rubricViewer.addSelectionChangedListener(new ISelectionChangedListener()
@@ -512,7 +511,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 		if (service != null)
 		{
 			UserQuery query = (UserQuery) service.getQuery(User.class);
-			Collection<User> users = query.selectAll();
+			List<User> users = query.selectAll();
 			this.userViewer.setInput(users.toArray(new User[0]));
 		}
 		this.userViewer.addSelectionChangedListener(new ISelectionChangedListener()

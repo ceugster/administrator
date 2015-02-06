@@ -1,7 +1,6 @@
 package ch.eugster.events.course.reporting;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -59,7 +58,7 @@ public class ParticipantListFactory
 
 		StringBuilder builder = new StringBuilder();
 		List<CourseGuide> courseGuides = new ArrayList<CourseGuide>();
-		Collection<CourseGuide> guides = course.getCourseGuides();
+		List<CourseGuide> guides = course.getCourseGuides();
 		for (CourseGuide guide : guides)
 		{
 			courseGuides.add(guide);
@@ -128,7 +127,7 @@ public class ParticipantListFactory
 		parameters.put("dates", builder.toString());
 
 		Map<IBookingState, Integer> counts = new HashMap<IBookingState, Integer>();
-		Collection<Booking> bookings = course.getBookings();
+		List<Booking> bookings = course.getBookings();
 		for (Booking booking : bookings)
 		{
 			Integer count = counts.get(booking.getBookingState(course.getState()));
@@ -199,10 +198,10 @@ public class ParticipantListFactory
 	public int setCourse(final Course course)
 	{
 		this.course = course;
-		Collection<Booking> bookings = course.getBookings();
+		List<Booking> bookings = course.getBookings();
 		for (Booking booking : bookings)
 		{
-			Collection<Participant> participants = booking.getParticipants();
+			List<Participant> participants = booking.getParticipants();
 			for (Participant participant : participants)
 			{
 				this.participantListReportItems.add(new ParticipantListReportItem(participant));
@@ -215,13 +214,13 @@ public class ParticipantListFactory
 	{
 		this.course = course;
 		this.bookingStates = bookingStates;
-		Collection<Booking> bookings = course.getBookings();
+		List<Booking> bookings = course.getBookings();
 		for (Booking booking : bookings)
 		{
 			Integer value = bookingStates.get(booking.getBookingState(course.getState()));
 			if (value != null && value.intValue() > 0)
 			{
-				Collection<Participant> participants = booking.getParticipants();
+				List<Participant> participants = booking.getParticipants();
 				for (Participant participant : participants)
 				{
 					this.participantListReportItems.add(new ParticipantListReportItem(participant));

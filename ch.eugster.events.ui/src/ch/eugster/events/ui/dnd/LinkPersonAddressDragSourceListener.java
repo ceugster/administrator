@@ -34,7 +34,7 @@ public class LinkPersonAddressDragSourceListener implements DragSourceListener
 	public void dragSetData(DragSourceEvent event)
 	{
 		IStructuredSelection ssel = (IStructuredSelection) this.sourceViewer.getSelection();
-		Collection<IEntity> links = new ArrayList<IEntity>();
+		List<IEntity> links = new ArrayList<IEntity>();
 		List<AbstractEntity> entities = ssel.toList();
 		for (AbstractEntity entity : entities)
 		{

@@ -2,7 +2,6 @@ package ch.eugster.events.course.wizards;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor;
@@ -229,9 +228,9 @@ public class CompensationTableViewerComposite extends Composite
 	{
 		public static final long serialVersionUID = 100000001l;
 
-		private Collection<CWrapper> wrappers = new ArrayList<CWrapper>();
+		private List<CWrapper> wrappers = new ArrayList<CWrapper>();
 
-		private final Collection<Listener> listeners = new ArrayList<Listener>();
+		private final List<Listener> listeners = new ArrayList<Listener>();
 
 		public void addListener(final Listener listener)
 		{
@@ -264,7 +263,7 @@ public class CompensationTableViewerComposite extends Composite
 			return compensations;
 		}
 
-		public Collection<CWrapper> getWrappers()
+		public List<CWrapper> getWrappers()
 		{
 			return this.wrappers;
 		}
@@ -503,7 +502,7 @@ public class CompensationTableViewerComposite extends Composite
 				if (this.compensationTypes == null)
 				{
 					CompensationTypeQuery query = (CompensationTypeQuery) service.getQuery(CompensationType.class);
-					Collection<CompensationType> compensationTypes = query.selectAll();
+					List<CompensationType> compensationTypes = query.selectAll();
 					this.compensationTypes = compensationTypes.toArray(new CompensationType[0]);
 					this.entries = new String[this.compensationTypes.length];
 					for (int i = 0; i < this.entries.length; i++)

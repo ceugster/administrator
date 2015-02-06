@@ -1,6 +1,6 @@
 package ch.eugster.events.person.dialogs;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -170,7 +170,7 @@ public class ChangeAddressTypeDialog extends TitleAreaDialog
 
 	private FormEditorPersonPage getPersonPage(final PersonFormEditor editor)
 	{
-		Collection<IFormPage> pages = editor.getPages();
+		List<IFormPage> pages = editor.getPages();
 		for (IFormPage page : pages)
 		{
 			if (page instanceof FormEditorPersonPage)

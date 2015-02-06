@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -24,7 +24,7 @@ public class CompensationTypeQuery extends AbstractEntityQuery<CompensationType>
 		}
 		Expression expression = new ExpressionBuilder(CompensationType.class).get("code").equal(code);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
-		Collection<CompensationType> compensationTypes = select(CompensationType.class, expression);
+		List<CompensationType> compensationTypes = select(CompensationType.class, expression);
 		if (compensationTypes.isEmpty())
 		{
 			return true;
@@ -49,7 +49,7 @@ public class CompensationTypeQuery extends AbstractEntityQuery<CompensationType>
 		}
 	}
 
-	public Collection<CompensationType> selectAll()
+	public List<CompensationType> selectAll()
 	{
 		return super.selectAll(CompensationType.class);
 	}

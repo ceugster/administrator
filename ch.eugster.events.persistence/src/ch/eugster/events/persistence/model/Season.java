@@ -1,7 +1,7 @@
 package ch.eugster.events.persistence.model;
 
 import java.util.Calendar;
-import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
@@ -71,7 +71,7 @@ public class Season extends AbstractEntity
 	 * Children
 	 */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "season")
-	private Collection<Course> courses;
+	private List<Course> courses;
 
 	private Season()
 	{
@@ -87,7 +87,7 @@ public class Season extends AbstractEntity
 		return AbstractEntity.stringValueOf(this.code);
 	}
 
-	public Collection<Course> getCourses()
+	public List<Course> getCourses()
 	{
 		return this.courses;
 	}

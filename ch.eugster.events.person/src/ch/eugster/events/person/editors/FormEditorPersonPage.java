@@ -176,11 +176,11 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 
 	private Text website;
 
-	private Collection<FieldExtension> extensions = new ArrayList<FieldExtension>();
+	private List<FieldExtension> extensions = new ArrayList<FieldExtension>();
 
 	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
-	private final Collection<IPropertyChangeListener> listeners = new ArrayList<IPropertyChangeListener>();
+	private final List<IPropertyChangeListener> listeners = new ArrayList<IPropertyChangeListener>();
 
 	private Map<Long, ExtendedField> extendedFields = new HashMap<Long, ExtendedField>();
 
@@ -847,7 +847,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 		if (service != null)
 		{
 			PersonSexQuery query = (PersonSexQuery) service.getQuery(PersonSex.class);
-			Collection<PersonSex> sexes = query.selectAll();
+			List<PersonSex> sexes = query.selectAll();
 			this.sexRadioGroupViewer.setInput(sexes.toArray(new PersonSex[0]));
 		}
 		tracker.close();
@@ -1089,7 +1089,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 
 	private AddressType[] getAddressTypes()
 	{
-		Collection<AddressType> addressTypes = null;
+		List<AddressType> addressTypes = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -1500,7 +1500,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 
 	private PersonTitle[] selectPersonTitles()
 	{
-		Collection<PersonTitle> titles = null;
+		List<PersonTitle> titles = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -1517,7 +1517,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 
 	private Country[] selectPrefixes()
 	{
-		Collection<Country> prefixes = null;
+		List<Country> prefixes = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
