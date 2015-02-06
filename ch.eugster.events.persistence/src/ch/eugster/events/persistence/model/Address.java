@@ -4,7 +4,6 @@ import static javax.persistence.CascadeType.ALL;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
@@ -243,7 +242,7 @@ public class Address extends AbstractEntity implements Donator
 		return this.country;
 	}
 
-	public Collection<Donation> getDonations()
+	public List<Donation> getDonations()
 	{
 		return donations;
 	}
@@ -276,7 +275,7 @@ public class Address extends AbstractEntity implements Donator
 		return null;
 	}
 
-	public Collection<Member> getMembers()
+	public List<Member> getMembers()
 	{
 		return members;
 	}
@@ -286,7 +285,7 @@ public class Address extends AbstractEntity implements Donator
 		return AbstractEntity.stringValueOf(this.name);
 	}
 
-	public Collection<LinkPersonAddress> getPersonLinks()
+	public List<LinkPersonAddress> getPersonLinks()
 	{
 		return this.links;
 	}
@@ -348,7 +347,7 @@ public class Address extends AbstractEntity implements Donator
 
 	public boolean hasDonationsForYear(final int year)
 	{
-		Collection<Donation> donations = this.getDonations();
+		List<Donation> donations = this.getDonations();
 		for (Donation donation : donations)
 		{
 			if (!donation.isDeleted() && donation.getDonationDate().get(Calendar.YEAR) == year)

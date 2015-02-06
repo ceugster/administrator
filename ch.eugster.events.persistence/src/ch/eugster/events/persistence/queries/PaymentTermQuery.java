@@ -30,7 +30,7 @@ public class PaymentTermQuery extends AbstractEntityQuery<PaymentTerm>
 		}
 		Expression expression = new ExpressionBuilder(PaymentTerm.class).get("text").equal(text);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
-		Collection<PaymentTerm> paymentTerms = select(PaymentTerm.class, expression);
+		List<PaymentTerm> paymentTerms = select(PaymentTerm.class, expression);
 		if (paymentTerms.isEmpty())
 		{
 			return true;

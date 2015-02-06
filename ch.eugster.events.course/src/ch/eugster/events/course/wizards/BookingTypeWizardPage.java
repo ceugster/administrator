@@ -2,7 +2,7 @@ package ch.eugster.events.course.wizards;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -127,7 +127,7 @@ public class BookingTypeWizardPage extends WizardPage implements Listener, Selec
 			if (service != null)
 			{
 				MembershipQuery query = (MembershipQuery) service.getQuery(Membership.class);
-				Collection<Membership> memberships = query.selectAll();
+				List<Membership> memberships = query.selectAll();
 				memberships.add(Membership.newInstance());
 				membershipViewer.setInput(memberships.toArray(new Membership[0]));
 			}

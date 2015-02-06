@@ -6,7 +6,7 @@
  */
 package ch.eugster.events.person.views;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,7 +29,7 @@ public class PersonTitleContentProvider implements IStructuredContentProvider
 		{
 			ConnectionService service = (ConnectionService) object;
 			PersonTitleQuery query = (PersonTitleQuery) service.getQuery(PersonTitle.class);
-			Collection<PersonTitle> titles = query.selectAll();
+			List<PersonTitle> titles = query.selectAll();
 			return titles.toArray(new PersonTitle[0]);
 		}
 		else if (object instanceof PersonTitle[])

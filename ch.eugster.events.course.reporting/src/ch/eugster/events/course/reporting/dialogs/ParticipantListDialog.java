@@ -2,7 +2,7 @@ package ch.eugster.events.course.reporting.dialogs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -40,7 +40,7 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class ParticipantListDialog extends TitleAreaDialog
 {
-	// private Button collectionSelector;
+	// private Button ListSelector;
 
 	private final StructuredSelection selection;
 
@@ -54,7 +54,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 		this.selection = selection;
 	}
 
-	private void buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final Collection<DataMap> dataMaps)
+	private void buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap[] dataMaps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
@@ -78,7 +78,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 						if (service instanceof DocumentBuilderService)
 						{
 							DocumentBuilderService builderService = (DocumentBuilderService) service;
-							status = builderService.buildDocument(new SubProgressMonitor(monitor, dataMaps.size()),
+							status = builderService.buildDocument(new SubProgressMonitor(monitor, dataMaps.length),
 									keys, dataMaps);
 							if (status.isOK())
 							{
@@ -100,11 +100,11 @@ public class ParticipantListDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeBooking(final Collection<DataMap> map, final Booking booking)
+	private void computeBooking(final List<DataMap> map, final Booking booking)
 	{
 		if (!booking.isDeleted())
 		{
-			Collection<Participant> participants = booking.getParticipants();
+			List<Participant> participants = booking.getParticipants();
 			for (Participant participant : participants)
 			{
 				computeParticipant(map, participant);
@@ -112,11 +112,11 @@ public class ParticipantListDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeSeason(final Collection<DataMap> map, final Season season)
+	private void computeSeason(final List<DataMap> map, final Season season)
 	{
 		if (!season.isDeleted())
 		{
-			Collection<Course> courses = season.getCourses();
+			List<Course> courses = season.getCourses();
 			for (Course course : courses)
 			{
 				computeCourse(map, course);
@@ -124,11 +124,11 @@ public class ParticipantListDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeCourse(final Collection<DataMap> map, final Course course)
+	private void computeCourse(final List<DataMap> map, final Course course)
 	{
 		if (!course.isDeleted())
 		{
-			Collection<Booking> bookings = course.getBookings();
+			List<Booking> bookings = course.getBookings();
 			for (Booking booking : bookings)
 			{
 				computeBooking(map, booking);
@@ -136,7 +136,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeParticipant(final Collection<DataMap> map, final Participant participant)
+	private void computeParticipant(final List<DataMap> map, final Participant participant)
 	{
 		if (!participant.isDeleted())
 		{
@@ -151,9 +151,9 @@ public class ParticipantListDialog extends TitleAreaDialog
 		this.createButton(parent, IDialogConstants.CANCEL_ID, "Abbrechen", false);
 	}
 
-	private Collection<DataMap> createDataMaps(final StructuredSelection ssel)
+	private List<DataMap> createDataMaps(final StructuredSelection ssel)
 	{
-		Collection<DataMap> maps = new ArrayList<DataMap>();
+		List<DataMap> maps = new ArrayList<DataMap>();
 		Object[] elements = ssel.toArray();
 		for (Object element : elements)
 		{
@@ -185,9 +185,9 @@ public class ParticipantListDialog extends TitleAreaDialog
 		// (EditorSelector.values()[PersonSettings.getInstance().getEditorSelector()]
 		// .equals(EditorSelector.MULTI_PAGE_EDITOR))
 		// {
-		// collectionSelector = new Button(composite, SWT.CHECK);
-		// collectionSelector.setText("Gruppenadressen nur einmal auflisten");
-		// collectionSelector.setLayoutData(new GridData());
+		// ListSelector = new Button(composite, SWT.CHECK);
+		// ListSelector.setText("Gruppenadressen nur einmal auflisten");
+		// ListSelector.setLayoutData(new GridData());
 		// }
 
 		return parent;
@@ -195,7 +195,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 
 	private DataMapKey[] getKeys()
 	{
-		Collection<DataMapKey> keys = new ArrayList<DataMapKey>();
+		List<DataMapKey> keys = new ArrayList<DataMapKey>();
 		keys.add(AddressMap.Key.NAME);
 		keys.add(AddressMap.Key.PHONE);
 		keys.add(AddressMap.Key.ADDRESS);
@@ -239,7 +239,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 	{
 		setCurrentUser();
 		final DataMapKey[] keys = getKeys();
-		final Collection<DataMap> dataMaps = createDataMaps(selection);
+		final DataMap[] dataMaps = createDataMaps(selection).toArray(new DataMap[0]);
 
 		super.okPressed();
 
@@ -254,7 +254,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 					try
 					{
 						monitor.beginTask("Dokument wird erstellt...", 1);
-						buildDocument(new SubProgressMonitor(monitor, dataMaps.size()), keys, dataMaps);
+						buildDocument(new SubProgressMonitor(monitor, dataMaps.length), keys, dataMaps);
 						monitor.done();
 					}
 					finally

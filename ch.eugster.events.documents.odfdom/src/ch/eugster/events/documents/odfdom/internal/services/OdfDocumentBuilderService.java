@@ -3,7 +3,6 @@ package ch.eugster.events.documents.odfdom.internal.services;
 import java.awt.Desktop;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,34 +41,34 @@ import ch.eugster.events.documents.services.DocumentBuilderService;
 
 public class OdfDocumentBuilderService implements DocumentBuilderService
 {
-	@Override
-	public IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final Collection<DataMap> maps)
-	{
-		return Status.CANCEL_STATUS;
-	}
-
-	@Override
-	public IStatus buildDocument(IProgressMonitor monitor, final File template, final Collection<DataMap> maps)
-	{
-		IStatus status = Status.CANCEL_STATUS;
-		if (!template.getName().endsWith(".odt"))
-		{
-			return status;
-		}
-
-		try
-		{
-			monitor.beginTask("Dokument wird erstellt...", 1);
-			DataMap[] dataMaps = maps.toArray(new DataMap[0]);
-			status = buildTextDocument(new SubProgressMonitor(monitor, maps.size()), template, dataMaps);
-			monitor.worked(1);
-		}
-		finally
-		{
-			monitor.done();
-		}
-		return status;
-	}
+//	@Override
+//	public IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final List<DataMap> maps)
+//	{
+//		return Status.CANCEL_STATUS;
+//	}
+//
+//	@Override
+//	public IStatus buildDocument(IProgressMonitor monitor, final File template, final List<DataMap> maps)
+//	{
+//		IStatus status = Status.CANCEL_STATUS;
+//		if (!template.getName().endsWith(".odt"))
+//		{
+//			return status;
+//		}
+//
+//		try
+//		{
+//			monitor.beginTask("Dokument wird erstellt...", 1);
+//			DataMap[] dataMaps = maps.toArray(new DataMap[0]);
+//			status = buildTextDocument(new SubProgressMonitor(monitor, maps.size()), template, dataMaps);
+//			monitor.worked(1);
+//		}
+//		finally
+//		{
+//			monitor.done();
+//		}
+//		return status;
+//	}
 
 	@Override
 	public IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap[] maps)
@@ -190,7 +189,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 
 	private OdfTableRow[] collectTableRows(final OdfTable table)
 	{
-		Collection<OdfTableRow> rows = new ArrayList<OdfTableRow>();
+		List<OdfTableRow> rows = new ArrayList<OdfTableRow>();
 		NodeList list = table.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++)
 		{
@@ -234,7 +233,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 	private void fillTable(final OdfFileDom fileDom, final OdfTable table, final DataMap map)
 	{
 		String name = table.getOdfAttributeValue(OdfAttributeNames.TABLENAME.getOdfName());
-		List<DataMap> collection = map.getTableMaps(name);
+		DataMap[] maps = map.getTableMaps(name).toArray(new DataMap[0]);
 
 		OdfTableRow[] rows = this.collectTableRows(table);
 		OdfTableRow totalRow = null;
@@ -261,13 +260,12 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 			table.removeChild(totalRow);
 		}
 
-		if (collection == null || collection.isEmpty())
+		if (maps == null || maps.length == 0)
 		{
 			this.fillDummyRow(fileDom, inputRow, new EmptyDataMap());
 		}
 		else
 		{
-			DataMap[] maps = collection.toArray(new DataMap[0]);
 			this.fillTableRow(fileDom, rows[startingRow], maps[0]);
 			for (int i = 1; i < maps.length; i++)
 			{

@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.model;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -52,7 +52,7 @@ public class VisitTheme extends AbstractEntity
 	 * Children
 	 */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "theme")
-	private Collection<Visit> visits = new Vector<Visit>();
+	private List<Visit> visits = new Vector<Visit>();
 
 	private VisitTheme()
 	{
@@ -94,7 +94,7 @@ public class VisitTheme extends AbstractEntity
 		return AbstractEntity.stringValueOf(name);
 	}
 
-	public Collection<Visit> getVisits()
+	public List<Visit> getVisits()
 	{
 		return visits;
 	}
@@ -125,7 +125,7 @@ public class VisitTheme extends AbstractEntity
 		this.name = name;
 	}
 
-	public void setVisits(final Collection<Visit> visits)
+	public void setVisits(final List<Visit> visits)
 	{
 		this.propertyChangeSupport.firePropertyChange("visits", this.visits, this.visits = visits);
 	}

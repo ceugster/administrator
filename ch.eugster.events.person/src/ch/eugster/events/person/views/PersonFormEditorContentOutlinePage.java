@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -368,11 +368,11 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public Object[] getChildren()
 		{
-			Collection<LinkPersonAddress> others = new ArrayList<LinkPersonAddress>();
+			List<LinkPersonAddress> others = new ArrayList<LinkPersonAddress>();
 			if (currentPage instanceof FormEditorLinkPage)
 			{
 				FormEditorLinkPage page = (FormEditorLinkPage) currentPage;
-				Collection<LinkPersonAddress> links = page.getLink().getAddress().getPersonLinks();
+				List<LinkPersonAddress> links = page.getLink().getAddress().getPersonLinks();
 				for (LinkPersonAddress link : links)
 				{
 					if (!link.isDeleted() && !link.getPerson().isDeleted() && page.getLink().getId() != null
@@ -416,7 +416,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			if (currentPage instanceof FormEditorLinkPage)
 			{
 				FormEditorLinkPage page = (FormEditorLinkPage) currentPage;
-				Collection<LinkPersonAddress> links = page.getLink().getAddress().getPersonLinks();
+				List<LinkPersonAddress> links = page.getLink().getAddress().getPersonLinks();
 				for (LinkPersonAddress link : links)
 				{
 					if (!link.isDeleted() && !link.getPerson().isDeleted() && page.getLink().getId() != null
@@ -592,7 +592,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				 */
 				FormEditorPersonPage page = (FormEditorPersonPage) parentElement;
 				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				Collection<Root> roots = new ArrayList<Root>();
+				List<Root> roots = new ArrayList<Root>();
 				roots.add(new MemberRoot(page));
 				roots.add(new ParticipantRoot(page));
 				roots.add(new DonationRoot(page));
@@ -605,7 +605,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				 * Es wurde ein AdressEditor ausgewählt
 				 */
 				FormEditorLinkPage page = (FormEditorLinkPage) parentElement;
-				Collection<Root> roots = new ArrayList<Root>();
+				List<Root> roots = new ArrayList<Root>();
 				roots.add(new AddressRoot(page));
 				roots.add(new MemberRoot(page));
 				roots.add(new ParticipantRoot(page));
@@ -647,8 +647,8 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			else if (element instanceof LinkPersonAddress)
 			{
 				LinkPersonAddress lnk = (LinkPersonAddress) element;
-				Collection<Person> persons = new ArrayList<Person>();
-				Collection<LinkPersonAddress> links = lnk.getAddress().getPersonLinks();
+				List<Person> persons = new ArrayList<Person>();
+				List<LinkPersonAddress> links = lnk.getAddress().getPersonLinks();
 				for (LinkPersonAddress link : links)
 				{
 					if (!link.isDeleted())
@@ -710,7 +710,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			return Integer.valueOf(Order.COURSES.ordinal());
 		}
 
-		private Collection<Participant> getParticipants()
+		private List<Participant> getParticipants()
 		{
 			if (this.currentPage instanceof FormEditorPersonPage)
 			{

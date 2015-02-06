@@ -6,7 +6,7 @@
  */
 package ch.eugster.events.rubric.views;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,7 +29,7 @@ public class RubricContentProvider implements IStructuredContentProvider
 		{
 			ConnectionService service = (ConnectionService) object;
 			RubricQuery query = (RubricQuery) service.getQuery(Rubric.class);
-			Collection<Rubric> rubrics = query.selectAll();
+			List<Rubric> rubrics = query.selectAll();
 			return rubrics.toArray(new Rubric[0]);
 		}
 		return new Rubric[0];

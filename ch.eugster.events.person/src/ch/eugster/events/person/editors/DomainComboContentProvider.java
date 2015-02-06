@@ -2,6 +2,7 @@ package ch.eugster.events.person.editors;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 
@@ -26,7 +27,7 @@ public class DomainComboContentProvider extends ArrayContentProvider
 		{
 			ConnectionService connectionService = (ConnectionService) inputElement;
 			DomainQuery query = (DomainQuery) connectionService.getQuery(Domain.class);
-			Collection<Domain> domains = new ArrayList<Domain>();
+			List<Domain> domains = new ArrayList<Domain>();
 			if (this.mandatoryDomain)
 			{
 				domains.add(Domain.newInstance());
@@ -52,7 +53,7 @@ public class DomainComboContentProvider extends ArrayContentProvider
 				return allDomains;
 			}
 		}
-		else if (inputElement instanceof Collection<?>)
+		else if (inputElement instanceof List<?>)
 		{
 			if (this.mandatoryDomain)
 			{
@@ -60,8 +61,8 @@ public class DomainComboContentProvider extends ArrayContentProvider
 			}
 			else
 			{
-				Collection<Domain> domains = (Collection<Domain>) inputElement;
-				Collection<Domain> withEmpty = new ArrayList<Domain>();
+				List<Domain> domains = (List<Domain>) inputElement;
+				List<Domain> withEmpty = new ArrayList<Domain>();
 				withEmpty.add(Domain.newInstance());
 				withEmpty.addAll(domains);
 				return withEmpty.toArray(new Domain[0]);

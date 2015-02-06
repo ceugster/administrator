@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -22,7 +22,7 @@ public class AddressGroupQuery extends AbstractEntityQuery<AddressGroup>
 			return true;
 		Expression expression = new ExpressionBuilder(AddressGroup.class).get("code").equal(code);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
-		Collection<AddressGroup> addressGroups = select(AddressGroup.class, expression);
+		List<AddressGroup> addressGroups = select(AddressGroup.class, expression);
 		if (addressGroups.isEmpty())
 		{
 			return true;

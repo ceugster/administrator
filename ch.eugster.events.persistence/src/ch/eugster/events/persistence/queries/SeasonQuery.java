@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -24,7 +24,7 @@ public class SeasonQuery extends AbstractEntityQuery<Season>
 		}
 		Expression expression = new ExpressionBuilder(Season.class).get("code").equal(code);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
-		Collection<Season> seasons = select(Season.class, expression);
+		List<Season> seasons = select(Season.class, expression);
 		if (seasons.isEmpty())
 		{
 			return true;
@@ -49,12 +49,12 @@ public class SeasonQuery extends AbstractEntityQuery<Season>
 		}
 	}
 
-	public Collection<Season> selectAll()
+	public List<Season> selectAll()
 	{
 		return super.selectAll(Season.class);
 	}
 
-	public Collection<Season> selectClosed(final boolean closed)
+	public List<Season> selectClosed(final boolean closed)
 	{
 		Expression expression = new ExpressionBuilder(Season.class).get("closed").equal(closed)
 				.and(new ExpressionBuilder().get("deleted").equal(false));

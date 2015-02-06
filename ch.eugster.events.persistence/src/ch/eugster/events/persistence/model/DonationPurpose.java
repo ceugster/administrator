@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.model;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -49,7 +49,7 @@ public class DonationPurpose extends AbstractEntity
 	 * Children
 	 */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "purpose")
-	private final Collection<Donation> donations = new Vector<Donation>();
+	private final List<Donation> donations = new Vector<Donation>();
 
 	private DonationPurpose()
 	{
@@ -75,7 +75,7 @@ public class DonationPurpose extends AbstractEntity
 		return AbstractEntity.stringValueOf(this.description);
 	}
 
-	public Collection<Donation> getDonations()
+	public List<Donation> getDonations()
 	{
 		return donations;
 	}

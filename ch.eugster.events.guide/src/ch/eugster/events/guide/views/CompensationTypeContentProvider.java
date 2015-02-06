@@ -6,7 +6,7 @@
  */
 package ch.eugster.events.guide.views;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,7 +29,7 @@ public class CompensationTypeContentProvider implements IStructuredContentProvid
 		{
 			ConnectionService con = (ConnectionService) object;
 			CompensationTypeQuery query = (CompensationTypeQuery) con.getQuery(CompensationType.class);
-			Collection<CompensationType> compensationTypes = query.selectAll();
+			List<CompensationType> compensationTypes = query.selectAll();
 			return compensationTypes.toArray(new CompensationType[0]);
 		}
 		return new CompensationType[0];

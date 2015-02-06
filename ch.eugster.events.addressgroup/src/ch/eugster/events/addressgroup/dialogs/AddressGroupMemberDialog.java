@@ -1,6 +1,5 @@
 package ch.eugster.events.addressgroup.dialogs;
 
-import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.List;
@@ -105,7 +104,7 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 				if (element instanceof AddressGroupCategory)
 				{
 					AddressGroupCategory category = (AddressGroupCategory) element;
-					Collection<AddressGroup> addressGroups = category.getAddressGroups();
+					List<AddressGroup> addressGroups = category.getAddressGroups();
 					int checked = 0;
 					for (AddressGroup addressGroup : addressGroups)
 					{
@@ -138,7 +137,7 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		if (object instanceof AddressGroupCategory)
 		{
 			AddressGroupCategory category = (AddressGroupCategory) object;
-			Collection<AddressGroup> addressGroups = category.getAddressGroups();
+			List<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
 			{
 				this.updateMonitor(addressGroup, event.getChecked());
@@ -169,13 +168,13 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		ConnectionService service = (ConnectionService) tracker.getService();
 		if (service != null)
 		{
-			Collection<AddressGroupMember> members = null;
+			List<AddressGroupMember> members = null;
 			AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
 			if (this.parent instanceof LinkPersonAddress)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) this.parent;
 				members = query.selectByLink(link);
-				Collection<AddressGroupMember> addressMembers = link.getAddress().getAddressAddressGroupMembers();
+				List<AddressGroupMember> addressMembers = link.getAddress().getAddressAddressGroupMembers();
 				members.addAll(addressMembers);
 			}
 			else if (this.parent instanceof Address)
@@ -364,7 +363,7 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		if (event.getElement() instanceof AddressGroupCategory)
 		{
 			AddressGroupCategory category = ((AddressGroupCategory) event.getElement());
-			Collection<AddressGroup> addressGroups = category.getAddressGroups();
+			List<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
 			{
 				Monitor monitor = this.monitors.get(addressGroup.getId());

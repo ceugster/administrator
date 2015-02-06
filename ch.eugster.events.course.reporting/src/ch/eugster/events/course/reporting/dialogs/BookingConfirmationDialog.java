@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -99,8 +100,8 @@ public class BookingConfirmationDialog extends TitleAreaDialog
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 				{
-					Collection<DataMap> maps = createDataMaps();
-					if (maps.size() == 0)
+					DataMap[] maps = createDataMaps().toArray(new DataMap[0]);
+					if (maps.length == 0)
 					{
 						MessageDialog.openConfirm(getShell(), MSG_TITLE_NO_BOOKINGS, MSG_NO_BOOKINGS);
 					}
@@ -123,7 +124,7 @@ public class BookingConfirmationDialog extends TitleAreaDialog
 												.getService(reference);
 										DocumentBuilderService builderService = service;
 										IStatus status = builderService.buildDocument(new SubProgressMonitor(monitor,
-												maps.size()), new File(userPropertyTemplatePath.getValue()), maps);
+												maps.length), new File(userPropertyTemplatePath.getValue()), maps);
 										if (status.isOK())
 										{
 											break;
@@ -200,7 +201,7 @@ public class BookingConfirmationDialog extends TitleAreaDialog
 	{
 		if (!course.isDeleted())
 		{
-			Collection<Booking> bookings = course.getBookings();
+			List<Booking> bookings = course.getBookings();
 			for (Booking booking : bookings)
 			{
 				createDataMap(booking, dataMaps);

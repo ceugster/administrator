@@ -1,8 +1,8 @@
 package ch.eugster.events.member.dialog;
 
-import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -237,7 +237,7 @@ public class MemberDialog extends TitleAreaDialog implements ICheckStateListener
 		if (service != null)
 		{
 			MemberQuery query = (MemberQuery) service.getQuery(Member.class);
-			Collection<Member> members = null;
+			List<Member> members = null;
 			if (this.entity instanceof LinkPersonAddress)
 			{
 				members = query.selectByLink((LinkPersonAddress) this.entity);
@@ -255,7 +255,7 @@ public class MemberDialog extends TitleAreaDialog implements ICheckStateListener
 			}
 
 			MembershipQuery membershipQuery = (MembershipQuery) service.getQuery(Membership.class);
-			Collection<Membership> memberships = membershipQuery.selectAll();
+			List<Membership> memberships = membershipQuery.selectAll();
 			membershipViewer.setInput(memberships.toArray(new Membership[0]));
 		}
 		tracker.close();

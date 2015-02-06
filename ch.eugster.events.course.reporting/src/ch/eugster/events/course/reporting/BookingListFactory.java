@@ -1,8 +1,8 @@
 package ch.eugster.events.course.reporting;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -14,7 +14,7 @@ import ch.eugster.events.persistence.model.User;
 
 public class BookingListFactory
 {
-	private Collection<BookingListReportItem> bookingListReportItems = new ArrayList<BookingListReportItem>();
+	private List<BookingListReportItem> bookingListReportItems = new ArrayList<BookingListReportItem>();
 
 	private IStructuredSelection ssel;
 

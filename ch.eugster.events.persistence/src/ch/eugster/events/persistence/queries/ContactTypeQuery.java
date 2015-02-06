@@ -1,7 +1,7 @@
 package ch.eugster.events.persistence.queries;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -20,13 +20,13 @@ public class ContactTypeQuery extends AbstractEntityQuery<ContactType>
 		super(service);
 	}
 
-	public Collection<ContactType> selectContactTypes()
+	public List<ContactType> selectContactTypes()
 	{
 		Expression expression = new ExpressionBuilder();
 		return this.select(ContactType.class, expression);
 	}
 
-	public Collection<ContactType> selectContactTypes(Class<? extends IEntity>[] ownerClasses)
+	public List<ContactType> selectContactTypes(Class<? extends IEntity>[] ownerClasses)
 	{
 		Expression expression = null;
 		for (Class<? extends IEntity> ownerClass : ownerClasses)

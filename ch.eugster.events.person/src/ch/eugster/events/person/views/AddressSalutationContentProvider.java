@@ -6,7 +6,7 @@
  */
 package ch.eugster.events.person.views;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,7 +29,7 @@ public class AddressSalutationContentProvider implements IStructuredContentProvi
 		{
 			ConnectionService service = (ConnectionService) object;
 			AddressSalutationQuery query = (AddressSalutationQuery) service.getQuery(AddressSalutation.class);
-			Collection<AddressSalutation> titles = query.selectAll();
+			List<AddressSalutation> titles = query.selectAll();
 			return titles.toArray(new AddressSalutation[0]);
 		}
 		else if (object instanceof AddressSalutation[])

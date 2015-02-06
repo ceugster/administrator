@@ -2,7 +2,7 @@ package ch.eugster.events.persistence.model;
 
 import static javax.persistence.CascadeType.ALL;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -66,7 +66,7 @@ public class Membership extends AbstractEntity
 	 * Children
 	 */
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "membership", cascade = ALL)
-	private final Collection<Member> members = new Vector<Member>();
+	private final List<Member> members = new Vector<Member>();
 
 	private Membership()
 	{
@@ -130,7 +130,7 @@ public class Membership extends AbstractEntity
 		return null;
 	}
 
-	public Collection<Member> getMembers()
+	public List<Member> getMembers()
 	{
 		return this.members;
 	}

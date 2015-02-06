@@ -4,9 +4,9 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.action.MenuManager;
@@ -1561,8 +1561,8 @@ public class PersonView extends ViewPart
 			if (service != null)
 			{
 				PersonQuery query = (PersonQuery) service.getQuery(Person.class);
-				Collection<Person> persons = query.selectByCriteria(criteria);
-				Collection<LinkPersonAddress> links = new ArrayList<LinkPersonAddress>();
+				List<Person> persons = query.selectByCriteria(criteria);
+				List<LinkPersonAddress> links = new ArrayList<LinkPersonAddress>();
 				for (Person person : persons)
 				{
 					links.addAll(person.getLinks());

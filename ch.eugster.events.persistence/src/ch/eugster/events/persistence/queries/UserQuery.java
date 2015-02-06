@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.eclipse.persistence.expressions.Expression;
@@ -27,7 +27,7 @@ public class UserQuery extends AbstractEntityQuery<User>
 	public boolean isUsernameUnique(final String username, final Long id)
 	{
 		Expression expression = new ExpressionBuilder(User.class).get("username").equal(username);
-		Collection<User> users = select(User.class, expression);
+		List<User> users = select(User.class, expression);
 		if (users.isEmpty())
 		{
 			return true;
@@ -52,7 +52,7 @@ public class UserQuery extends AbstractEntityQuery<User>
 		}
 	}
 
-	public Collection<User> selectAll()
+	public List<User> selectAll()
 	{
 		return super.selectAll(User.class);
 	}
@@ -60,7 +60,7 @@ public class UserQuery extends AbstractEntityQuery<User>
 	public User selectByUsername(final String username)
 	{
 		Expression expression = new ExpressionBuilder(User.class).get("username").equal(username);
-		Collection<User> users = select(User.class, expression);
+		List<User> users = select(User.class, expression);
 		try
 		{
 			return users.iterator().next();

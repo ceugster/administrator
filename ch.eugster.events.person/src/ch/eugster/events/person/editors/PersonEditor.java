@@ -138,7 +138,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 	private static final String LABEL_SECTION_EXPANDED = "label.section.expanded";
 
-	private final Collection<IPropertyChangeListener> listeners = new ArrayList<IPropertyChangeListener>();
+	private final List<IPropertyChangeListener> listeners = new ArrayList<IPropertyChangeListener>();
 
 	private EntityAdapter entityAdapter;
 
@@ -252,7 +252,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 			if (service != null)
 			{
 				FieldExtensionQuery query = (FieldExtensionQuery) service.getQuery(FieldExtension.class);
-				Collection<FieldExtension> extensions = query.selectAll(false);
+				List<FieldExtension> extensions = query.selectAll(false);
 				if (extensions.size() > 0)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) this.getEditorInput().getAdapter(
@@ -502,7 +502,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 		if (service != null)
 		{
 			PersonSexQuery query = (PersonSexQuery) service.getQuery(PersonSex.class);
-			Collection<PersonSex> sexes = query.selectAll();
+			List<PersonSex> sexes = query.selectAll();
 			this.sexRadioGroupViewer.setInput(sexes.toArray(new PersonSex[0]));
 		}
 		tracker.close();
@@ -1521,7 +1521,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 	private ZipCode findZipCode(final Country country, final String zip)
 	{
-		Collection<ZipCode> zipCodes = null;
+		List<ZipCode> zipCodes = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -2008,7 +2008,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 	private Country[] selectCountries()
 	{
-		Collection<Country> countries = null;
+		List<Country> countries = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -2041,7 +2041,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 	private PersonTitle[] selectPersonTitles()
 	{
-		Collection<PersonTitle> titles = null;
+		List<PersonTitle> titles = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -2058,7 +2058,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 	private Country[] selectPrefixes()
 	{
-		Collection<Country> prefixes = null;
+		List<Country> prefixes = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -2074,7 +2074,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 	private String[] selectProvinceCodes(final Country country)
 	{
-		Collection<String> states = null;
+		List<String> states = null;
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -2126,7 +2126,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 	private void updateSingleLabel()
 	{
-		Collection<String> labelLines = new ArrayList<String>();
+		List<String> labelLines = new ArrayList<String>();
 		String pattern = PersonSettings.getInstance().getPersonLabelFormat();
 		if (pattern.isEmpty())
 		{

@@ -1,8 +1,8 @@
 package ch.eugster.events.persistence.queries;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -25,14 +25,14 @@ public class VisitQuery extends AbstractEntityQuery<Visit>
 		return this.count(Visit.class, expression);
 	}
 
-	public Collection<Visit> selectAppointed()
+	public List<Visit> selectAppointed()
 	{
 		Expression expression = new ExpressionBuilder(Visit.class).get("start").notNull();
 		expression = expression.and(new ExpressionBuilder().get("end").notNull());
 		return this.select(Visit.class, expression);
 	}
 
-	public Collection<Visit> selectAfterLastYear()
+	public List<Visit> selectAfterLastYear()
 	{
 		Calendar calendar = GregorianCalendar.getInstance();
 		calendar.set(Calendar.MONTH, 0);
@@ -44,11 +44,11 @@ public class VisitQuery extends AbstractEntityQuery<Visit>
 
 		Expression expression = new ExpressionBuilder(Visit.class).get("end").isNull()
 				.or(new ExpressionBuilder().get("end").greaterThanEqual(calendar));
-		Collection<Visit> visits = this.select(Visit.class, expression);
+		List<Visit> visits = this.select(Visit.class, expression);
 		return visits;
 	}
 
-	public Collection<Visit> selectAll()
+	public List<Visit> selectAll()
 	{
 		return this.selectAll(Visit.class);
 	}

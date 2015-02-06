@@ -6,7 +6,7 @@
  */
 package ch.eugster.events.person.views;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,7 +29,7 @@ public class FieldExtensionContentProvider implements IStructuredContentProvider
 		{
 			ConnectionService service = (ConnectionService) object;
 			FieldExtensionQuery query = (FieldExtensionQuery) service.getQuery(FieldExtension.class);
-			Collection<FieldExtension> extensions = query.selectAll();
+			List<FieldExtension> extensions = query.selectAll();
 			return extensions.toArray(new FieldExtension[0]);
 		}
 		else if (object instanceof FieldExtension[])

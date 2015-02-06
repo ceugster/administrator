@@ -6,7 +6,7 @@
  */
 package ch.eugster.events.season.views;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,7 +29,7 @@ public class SeasonContentProvider implements IStructuredContentProvider
 		{
 			ConnectionService service = (ConnectionService) object;
 			SeasonQuery query = (SeasonQuery) service.getQuery(Season.class);
-			Collection<Season> seasons = query.selectAll();
+			List<Season> seasons = query.selectAll();
 			return seasons.toArray(new Season[0]);
 		}
 

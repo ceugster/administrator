@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.persistence.expressions.Expression;
@@ -20,7 +20,7 @@ public class ZipCodeQuery extends AbstractEntityQuery<ZipCode>
 		super(connectionService);
 	}
 
-	public Collection<ZipCode> selectByCountryAndZipCode(Country country, String code)
+	public List<ZipCode> selectByCountryAndZipCode(Country country, String code)
 	{
 		Expression expression = new ExpressionBuilder().get("deleted").equal(false);
 		expression = expression.and(new ExpressionBuilder().get("country").equal(country));
@@ -28,7 +28,7 @@ public class ZipCodeQuery extends AbstractEntityQuery<ZipCode>
 		return this.select(ZipCode.class, expression);
 	}
 
-	public Collection<ZipCode> selectByZipCode(String code)
+	public List<ZipCode> selectByZipCode(String code)
 	{
 		Expression expression = new ExpressionBuilder().get("deleted").equal(false);
 		expression = expression.and(new ExpressionBuilder().get("zip").equal(code));
@@ -36,14 +36,14 @@ public class ZipCodeQuery extends AbstractEntityQuery<ZipCode>
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Collection<String> selectStates(Country country)
+	public List<String> selectStates(Country country)
 	{
-		Collection<String> states = new Vector<String>();
+		List<String> states = new Vector<String>();
 		ReportQuery query = new ReportQuery(ZipCode.class, new ExpressionBuilder().get("country").equal(country));
 		query.setDistinctState(ReportQuery.USE_DISTINCT);
 		query.addAscendingOrdering("state");
 		query.addAttribute("state");
-		Collection<ReportQueryResult> results = (Collection<ReportQueryResult>) connectionService.getSession()
+		List<ReportQueryResult> results = (List<ReportQueryResult>) connectionService.getSession()
 				.executeQuery(query);
 		for (ReportQueryResult result : results)
 		{

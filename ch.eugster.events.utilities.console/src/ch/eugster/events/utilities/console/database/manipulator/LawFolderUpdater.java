@@ -1,7 +1,7 @@
 package ch.eugster.events.utilities.console.database.manipulator;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -34,7 +34,7 @@ public class LawFolderUpdater implements CommandProvider
 			}
 
 			FieldExtensionQuery extensionQuery = (FieldExtensionQuery) service.getQuery(FieldExtension.class);
-			Collection<FieldExtension> extensions = extensionQuery.selectByTarget(FieldExtensionTarget.PERSON, false);
+			List<FieldExtension> extensions = extensionQuery.selectByTarget(FieldExtensionTarget.PERSON, false);
 			Map<String, FieldExtension> existingExtensions = new HashMap<String, FieldExtension>();
 			String[] keys = new String[] { "Gesetzesordner", "Funktion", "Ressort" };
 
@@ -93,10 +93,10 @@ public class LawFolderUpdater implements CommandProvider
 		return help.append("\tgo - inserts a new field extension to person named 'gesetzesordner'\n").toString();
 	}
 
-	private void insertExisting(final String[] keys, final Collection<FieldExtension> collection,
+	private void insertExisting(final String[] keys, final List<FieldExtension> List,
 			final Map<String, FieldExtension> map, final FieldExtensionQuery query)
 	{
-		for (FieldExtension extension : collection)
+		for (FieldExtension extension : List)
 		{
 			if (extension.getLabel().equals(keys[0]))
 			{
@@ -127,7 +127,7 @@ public class LawFolderUpdater implements CommandProvider
 	private void updateLawFolders(final ConnectionService service, final FieldExtension extension)
 	{
 		PersonQuery personQuery = (PersonQuery) service.getQuery(Person.class);
-		Collection<Person> persons = personQuery.selectAll(false);
+		List<Person> persons = personQuery.selectAll(false);
 		for (Person person : persons)
 		{
 			String fullNotes = person.getNotes();

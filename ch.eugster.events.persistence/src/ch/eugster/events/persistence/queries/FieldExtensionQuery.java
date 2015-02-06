@@ -1,7 +1,7 @@
 package ch.eugster.events.persistence.queries;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -17,17 +17,17 @@ public class FieldExtensionQuery extends AbstractEntityQuery<FieldExtension>
 		super(service);
 	}
 
-	public Collection<FieldExtension> selectAll()
+	public List<FieldExtension> selectAll()
 	{
 		return super.selectAll(FieldExtension.class, true);
 	}
 
-	public Collection<FieldExtension> selectAll(final boolean deletedToo)
+	public List<FieldExtension> selectAll(final boolean deletedToo)
 	{
 		return super.selectAll(FieldExtension.class, deletedToo);
 	}
 
-	public Collection<FieldExtension> selectByTarget(final FieldExtensionTarget target, final boolean deletedToo)
+	public List<FieldExtension> selectByTarget(final FieldExtensionTarget target, final boolean deletedToo)
 	{
 		if (target == null)
 		{
@@ -43,7 +43,7 @@ public class FieldExtensionQuery extends AbstractEntityQuery<FieldExtension>
 		return select(FieldExtension.class, expression);
 	}
 
-	public Collection<FieldExtension> selectSearchables(final boolean deletedToo)
+	public List<FieldExtension> selectSearchables(final boolean deletedToo)
 	{
 		Expression expression = new ExpressionBuilder(FieldExtension.class).get("searchable").equal(true);
 		if (!deletedToo)

@@ -1,7 +1,7 @@
 package ch.eugster.events.addressgroup.dnd;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -151,13 +151,13 @@ public class AddressGroupTransfer extends ByteArrayTransfer
 	public void setData(final int operation, final Object[] objects)
 	{
 		this.operation = operation;
-		Collection<AddressGroup> groups = new ArrayList<AddressGroup>();
+		List<AddressGroup> groups = new ArrayList<AddressGroup>();
 		for (Object object : objects)
 		{
 			if (object instanceof AddressGroupCategory)
 			{
 				AddressGroupCategory category = (AddressGroupCategory) object;
-				Collection<AddressGroup> addressGroups = category.getAddressGroups();
+				List<AddressGroup> addressGroups = category.getAddressGroups();
 				for (AddressGroup addressGroup : addressGroups)
 				{
 					groups.add(addressGroup);

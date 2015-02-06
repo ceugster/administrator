@@ -1,7 +1,7 @@
 package ch.eugster.events.ui.dnd;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -150,7 +150,7 @@ public class DonationTransfer extends ByteArrayTransfer
 	public void setData(final int operation, final Object[] objects)
 	{
 		this.operation = operation;
-		Collection<Donation> donations = new ArrayList<Donation>();
+		List<Donation> donations = new ArrayList<Donation>();
 		for (Object object : objects)
 		{
 			if (object instanceof Donation)

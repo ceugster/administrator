@@ -6,7 +6,7 @@
  */
 package ch.eugster.events.course.views;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -30,7 +30,7 @@ public class PaymentTermContentProvider implements IStructuredContentProvider
 		{
 			ConnectionService service = (ConnectionService) object;
 			PaymentTermQuery query = (PaymentTermQuery) service.getQuery(PaymentTerm.class);
-			Collection<PaymentTerm> paymentTerms = query.selectAll();
+			List<PaymentTerm> paymentTerms = query.selectAll();
 			return paymentTerms.toArray(new PaymentTerm[0]);
 		}
 

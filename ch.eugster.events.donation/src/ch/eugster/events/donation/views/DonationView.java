@@ -7,7 +7,6 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Currency;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -116,7 +115,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 
 	private IDialogSettings settings;
 
-	private Collection<Domain> allAndEmptyDomains = new ArrayList<Domain>();
+	private List<Domain> allAndEmptyDomains = new ArrayList<Domain>();
 
 	private DonationPurpose allPurposes = DonationPurpose.newInstance("Alle");
 
@@ -766,7 +765,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 			{
 				ConnectionService connectionService = (ConnectionService) inputElement;
 				DonationQuery query = (DonationQuery) connectionService.getQuery(Donation.class);
-				Collection<DonationYear> years = query.selectYears();
+				List<DonationYear> years = query.selectYears();
 				return years.toArray(new DonationYear[0]);
 			}
 			return new DonationYear[0];
@@ -802,7 +801,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		{
 			if (inputElement instanceof ConnectionService)
 			{
-				Collection<DonationPurpose> purposes = new ArrayList<DonationPurpose>();
+				List<DonationPurpose> purposes = new ArrayList<DonationPurpose>();
 				purposes.add(allPurposes);
 				ConnectionService connectionService = (ConnectionService) inputElement;
 				DonationPurposeQuery query = (DonationPurposeQuery) connectionService.getQuery(DonationPurpose.class);
@@ -829,9 +828,9 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 
 	private class DomainContentProvider extends ArrayContentProvider
 	{
-		private Collection<Domain> allAndEmptyDomains;
+		private List<Domain> allAndEmptyDomains;
 
-		public DomainContentProvider(Collection<Domain> allAndEmptyDomains)
+		public DomainContentProvider(List<Domain> allAndEmptyDomains)
 		{
 			this.allAndEmptyDomains = allAndEmptyDomains;
 		}

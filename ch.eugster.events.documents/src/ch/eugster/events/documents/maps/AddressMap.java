@@ -406,7 +406,7 @@ public class AddressMap extends AbstractDataMap
 				case TOTAL_DONATIONS:
 				{
 					double totalAmount = 0D;
-					Collection<Donation> donations = address.getDonations();
+					List<Donation> donations = address.getDonations();
 					for (Donation donation : donations)
 					{
 						if (!donation.isDeleted())
@@ -507,7 +507,7 @@ public class AddressMap extends AbstractDataMap
 				case TOTAL_DONATIONS:
 				{
 					double totalAmount = 0D;
-					Collection<Donation> donations = address.getDonations();
+					List<Donation> donations = address.getDonations();
 					for (Donation donation : donations)
 					{
 						if (!donation.isDeleted())
@@ -599,7 +599,7 @@ public class AddressMap extends AbstractDataMap
 				case DONATIONS:
 				{
 					List<DataMap> tableMaps = new ArrayList<DataMap>();
-					Collection<Donation> donations = address.getDonations();
+					List<Donation> donations = address.getDonations();
 					for (Donation donation : donations)
 					{
 						addDonation(donation, tableMaps, year, purpose, domain);

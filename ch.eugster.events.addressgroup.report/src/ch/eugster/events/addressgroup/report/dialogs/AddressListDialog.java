@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -124,12 +125,12 @@ public class AddressListDialog extends TitleAreaDialog
 	{
 		if (!addressGroup.isDeleted())
 		{
-			Collection<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
+			List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
 			for (AddressGroupMember member : members)
 			{
 				computeAddressGroupMember(map, member);
 			}
-			// Collection<AddressGroupLink> children =
+			// List<AddressGroupLink> children =
 			// addressGroup.getChildren();
 			// for (AddressGroupLink child : children)
 			// {
@@ -142,7 +143,7 @@ public class AddressListDialog extends TitleAreaDialog
 	{
 		if (!category.isDeleted())
 		{
-			Collection<AddressGroup> addressGroups = category.getAddressGroups();
+			List<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
 			{
 				computeAddressGroup(map, addressGroup);
@@ -257,7 +258,7 @@ public class AddressListDialog extends TitleAreaDialog
 
 	private DataMapKey[] getSortKeys()
 	{
-		Collection<DataMapKey> keys = new ArrayList<DataMapKey>();
+		List<DataMapKey> keys = new ArrayList<DataMapKey>();
 		keys.add(PersonMap.Key.LASTNAME);
 		keys.add(LinkMap.Key.MEMBER);
 		return keys.toArray(new DataMapKey[0]);
@@ -265,7 +266,7 @@ public class AddressListDialog extends TitleAreaDialog
 
 	private DataMapKey[] getKeys()
 	{
-		Collection<DataMapKey> keys = new ArrayList<DataMapKey>();
+		List<DataMapKey> keys = new ArrayList<DataMapKey>();
 		keys.add(AddressGroupMemberMap.Key.TYPE);
 		keys.add(AddressGroupMemberMap.Key.ID);
 		keys.add(PersonMap.Key.SEX);

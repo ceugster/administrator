@@ -2,7 +2,7 @@ package ch.eugster.events.persistence.model;
 
 import static javax.persistence.CascadeType.ALL;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -51,7 +51,7 @@ public class Guide extends AbstractEntity
 	private String phone;
 
 	@OneToMany(mappedBy = "guide", cascade = ALL)
-	private Collection<CourseGuide> courseGuides = new Vector<CourseGuide>();
+	private List<CourseGuide> courseGuides = new Vector<CourseGuide>();
 
 	private Guide()
 	{
@@ -70,7 +70,7 @@ public class Guide extends AbstractEntity
 				this.courseGuides.add(courseGuide));
 	}
 
-	public Collection<CourseGuide> getCourseGuides()
+	public List<CourseGuide> getCourseGuides()
 	{
 		return this.courseGuides;
 	}
@@ -123,7 +123,7 @@ public class Guide extends AbstractEntity
 				this.courseGuides.remove(courseGuide));
 	}
 
-	public void setCourseGuides(final Collection<CourseGuide> courseGuides)
+	public void setCourseGuides(final List<CourseGuide> courseGuides)
 	{
 		this.propertyChangeSupport.firePropertyChange("courseGuides", this.courseGuides,
 				this.courseGuides = courseGuides);

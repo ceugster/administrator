@@ -1,8 +1,8 @@
 package ch.eugster.events.course.reporting.dialogs;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -213,7 +213,7 @@ public class PrintLabelDialog extends TitleAreaDialog
 			if (object instanceof Season)
 			{
 				Season season = (Season) object;
-				Collection<Course> courses = season.getCourses();
+				List<Course> courses = season.getCourses();
 				for (Course course : courses)
 				{
 					if (states.get(course.getState()) == null)
@@ -402,14 +402,14 @@ public class PrintLabelDialog extends TitleAreaDialog
 	{
 		if (!course.isDeleted())
 		{
-			Collection<Booking> bookings = course.getBookings();
+			List<Booking> bookings = course.getBookings();
 			for (Booking booking : bookings)
 			{
 				this.extract(factory, booking);
 			}
 			if (settings.getBoolean("guides"))
 			{
-				Collection<CourseGuide> guides = course.getCourseGuides();
+				List<CourseGuide> guides = course.getCourseGuides();
 				for (CourseGuide guide : guides)
 				{
 					this.extract(factory, guide);
@@ -441,7 +441,7 @@ public class PrintLabelDialog extends TitleAreaDialog
 	{
 		if (!season.isDeleted())
 		{
-			Collection<Course> courses = season.getCourses();
+			List<Course> courses = season.getCourses();
 			for (Course course : courses)
 			{
 				this.extract(factory, course);

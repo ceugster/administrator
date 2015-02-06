@@ -56,7 +56,7 @@ public class DeleteDoubleMembersHandler extends AbstractHandler implements IHand
 	private void compute(ConnectionService service, Domain domain)
 	{
 		AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) service.getQuery(AddressGroupCategory.class);
-		Collection<AddressGroupCategory> categories = query.selectByDomain(domain);
+		List<AddressGroupCategory> categories = query.selectByDomain(domain);
 		for (AddressGroupCategory category : categories)
 		{
 			compute(service, category);
@@ -66,11 +66,11 @@ public class DeleteDoubleMembersHandler extends AbstractHandler implements IHand
 	private void compute(ConnectionService service, AddressGroupCategory category)
 	{
 		Calendar calendar = GregorianCalendar.getInstance();
-		Collection<AddressGroup> addressGroups = category.getAddressGroups();
+		List<AddressGroup> addressGroups = category.getAddressGroups();
 		for (AddressGroup addressGroup : addressGroups)
 		{
 			Map<String, AddressGroupMember> members = new HashMap<String, AddressGroupMember>();
-			Collection<AddressGroupMember> addressGroupMembers = addressGroup.getAddressGroupMembers();
+			List<AddressGroupMember> addressGroupMembers = addressGroup.getAddressGroupMembers();
 			for (AddressGroupMember addressGroupMember : addressGroupMembers)
 			{
 				String id = addressGroupMember.getLink() == null || addressGroupMember.getLink().isDeleted()

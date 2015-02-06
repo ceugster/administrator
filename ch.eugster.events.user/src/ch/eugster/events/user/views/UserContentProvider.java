@@ -6,7 +6,7 @@
  */
 package ch.eugster.events.user.views;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,7 +29,7 @@ public class UserContentProvider implements IStructuredContentProvider
 		{
 			ConnectionService service = (ConnectionService) object;
 			UserQuery query = (UserQuery) service.getQuery(User.class);
-			Collection<User> users = query.selectAll();
+			List<User> users = query.selectAll();
 			return users.toArray(new User[0]);
 		}
 

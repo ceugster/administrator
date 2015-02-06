@@ -3,7 +3,7 @@ package ch.eugster.events.documents.maps;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -31,7 +31,7 @@ public class PersonMap extends AbstractDataMap
 		{
 			this.setProperty(key.getKey(), key.getValue(person));
 		}
-		Collection<PersonExtendedField> extendedFields = person.getExtendedFields();
+		List<PersonExtendedField> extendedFields = person.getExtendedFields();
 		for (PersonExtendedField extendedField : extendedFields)
 		{
 			ExtendedFieldKey key = new ExtendedFieldKey(extendedField.getFieldExtension());
@@ -45,9 +45,9 @@ public class PersonMap extends AbstractDataMap
 		}
 	}
 
-	public static Collection<DataMapKey> getExtendedFieldKeys()
+	public static List<DataMapKey> getExtendedFieldKeys()
 	{
-		Collection<DataMapKey> keys = new ArrayList<DataMapKey>();
+		List<DataMapKey> keys = new ArrayList<DataMapKey>();
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
@@ -56,7 +56,7 @@ public class PersonMap extends AbstractDataMap
 		{
 			ConnectionService connectionService = (ConnectionService) service;
 			FieldExtensionQuery query = (FieldExtensionQuery) connectionService.getQuery(FieldExtension.class);
-			Collection<FieldExtension> fieldExtensions = query.selectByTarget(FieldExtensionTarget.PERSON, false);
+			List<FieldExtension> fieldExtensions = query.selectByTarget(FieldExtensionTarget.PERSON, false);
 			for (FieldExtension fieldExtension : fieldExtensions)
 			{
 				keys.add(new ExtendedFieldKey(fieldExtension));

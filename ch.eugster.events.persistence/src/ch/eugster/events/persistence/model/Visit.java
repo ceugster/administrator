@@ -4,7 +4,7 @@ import static javax.persistence.CascadeType.ALL;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.AssociationOverride;
@@ -105,10 +105,10 @@ public class Visit extends AbstractEntity
 	private Calendar end;
 
 	@OneToMany(mappedBy = "visit", cascade = ALL)
-	private Collection<VisitAppliance> appliances = new Vector<VisitAppliance>();
+	private List<VisitAppliance> appliances = new Vector<VisitAppliance>();
 
 	@OneToMany(mappedBy = "visit", cascade = ALL)
-	private Collection<VisitVisitor> visitors = new Vector<VisitVisitor>();
+	private List<VisitVisitor> visitors = new Vector<VisitVisitor>();
 
 	private Visit()
 	{
@@ -125,7 +125,7 @@ public class Visit extends AbstractEntity
 		this.propertyChangeSupport.firePropertyChange("visitors", this.visitors, this.visitors.add(visitor));
 	}
 
-	public Collection<VisitAppliance> getAppliances()
+	public List<VisitAppliance> getAppliances()
 	{
 		return appliances;
 	}
@@ -226,7 +226,7 @@ public class Visit extends AbstractEntity
 		return theme;
 	}
 
-	public Collection<VisitVisitor> getVisitors()
+	public List<VisitVisitor> getVisitors()
 	{
 		return this.visitors;
 	}

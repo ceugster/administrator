@@ -1,8 +1,8 @@
 package ch.eugster.events.course.handlers;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -20,7 +20,7 @@ import ch.eugster.events.ui.helpers.EmailHelper;
 
 public class SendEmailHandler extends AbstractHandler implements IHandler
 {
-	private final Collection<String> addresses = new ArrayList<String>();
+	private final List<String> addresses = new ArrayList<String>();
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException
@@ -71,7 +71,7 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 	{
 		if (!season.isDeleted())
 		{
-			Collection<Course> courses = season.getCourses();
+			List<Course> courses = season.getCourses();
 			for (Course course : courses)
 			{
 				this.extract(course);
@@ -83,7 +83,7 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 	{
 		if (!course.isDeleted())
 		{
-			Collection<Booking> bookings = course.getBookings();
+			List<Booking> bookings = course.getBookings();
 			for (Booking booking : bookings)
 			{
 				this.extract(booking);
@@ -95,7 +95,7 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 	{
 		if (!booking.isDeleted())
 		{
-			Collection<Participant> participants = booking.getParticipants();
+			List<Participant> participants = booking.getParticipants();
 			for (Participant participant : participants)
 			{
 				this.extract(participant);

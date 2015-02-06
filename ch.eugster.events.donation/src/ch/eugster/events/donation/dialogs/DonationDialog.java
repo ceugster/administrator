@@ -3,9 +3,9 @@ package ch.eugster.events.donation.dialogs;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -205,7 +205,7 @@ public class DonationDialog extends TitleAreaDialog
 		if (service != null)
 		{
 			DonationPurposeQuery query = (DonationPurposeQuery) service.getQuery(DonationPurpose.class);
-			Collection<DonationPurpose> purposes = query.selectAll();
+			List<DonationPurpose> purposes = query.selectAll();
 			this.purpose.setInput(purposes.toArray(new DonationPurpose[0]));
 		}
 		tracker.close();

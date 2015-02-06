@@ -2,7 +2,7 @@ package ch.eugster.events.course.views;
 
 import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.State;
@@ -594,7 +594,7 @@ public class CourseView extends AbstractEntityView implements IDoubleClickListen
 				if (show)
 				{
 					seasonCount++;
-					Collection<Course> courses = season.getCourses();
+					List<Course> courses = season.getCourses();
 					for (Course course : courses)
 					{
 						show = true;

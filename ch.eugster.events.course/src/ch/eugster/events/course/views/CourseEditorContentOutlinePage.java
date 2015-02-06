@@ -3,7 +3,7 @@ package ch.eugster.events.course.views;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -253,11 +253,11 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 			}
 		};
 
-		Collection<Booking> bookings = bookingType.getCourse().getBookings();
+		List<Booking> bookings = bookingType.getCourse().getBookings();
 		{
 			for (Booking booking : bookings)
 			{
-				Collection<Participant> participants = booking.getParticipants();
+				List<Participant> participants = booking.getParticipants();
 				for (Participant participant : participants)
 				{
 					if (participant.getBookingType() != null
@@ -461,7 +461,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 				super.run();
 				if (EmailHelper.getInstance().isEmailSupported())
 				{
-					Collection<String> emails = new ArrayList<String>();
+					List<String> emails = new ArrayList<String>();
 					for (CourseGuide courseGuide : courseGuides)
 					{
 						if (EmailHelper.getInstance().isValidAddress(
@@ -483,7 +483,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 
 	private IAction createSendEmailAction(final CourseGuideGroup courseGuideGroup)
 	{
-		Collection<CourseGuide> courseGuides = new ArrayList<CourseGuide>();
+		List<CourseGuide> courseGuides = new ArrayList<CourseGuide>();
 		for (CourseGuide courseGuide : courseGuideGroup.getCourseGuides())
 		{
 			if (!courseGuide.isDeleted())
@@ -546,7 +546,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 
 	public class BookingTypeGroup extends Group
 	{
-//		private final Collection<BookingType> bookingTypes = new Vector<BookingType>();
+//		private final List<BookingType> bookingTypes = new Vector<BookingType>();
 
 		public BookingTypeGroup(final ViewerRoot root)
 		{
@@ -570,7 +570,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 			this.firePropertyChange(new PropertyChangeEvent(this, "bookingTypeAdded", this, this));
 		}
 
-		public Collection<BookingType> getBookingTypes()
+		public List<BookingType> getBookingTypes()
 		{
 			return this.root.getCourse().getBookingTypes();
 		}
@@ -618,12 +618,12 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 
 	public class CourseDetailGroup extends Group
 	{
-//		private final Collection<CourseDetail> courseDetails = new Vector<CourseDetail>();
+//		private final List<CourseDetail> courseDetails = new Vector<CourseDetail>();
 
 		public CourseDetailGroup(final ViewerRoot root)
 		{
 			super(root);
-//			Collection<CourseDetail> sources = root.getCourse().getCourseDetails();
+//			List<CourseDetail> sources = root.getCourse().getCourseDetails();
 //			for (CourseDetail source : sources)
 //			{
 //				if (!source.isDeleted())
@@ -641,7 +641,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 			this.firePropertyChange(new PropertyChangeEvent(this, "courseDetailAdded", this, this));
 		}
 
-		public Collection<CourseDetail> getCourseDetails()
+		public List<CourseDetail> getCourseDetails()
 		{
 			return this.root.getCourse().getCourseDetails();
 		}
@@ -846,12 +846,12 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 
 	public class CourseGuideGroup extends Group
 	{
-//		private final Collection<CourseGuide> courseGuides = new Vector<CourseGuide>();
+//		private final List<CourseGuide> courseGuides = new Vector<CourseGuide>();
 
 		public CourseGuideGroup(final ViewerRoot root)
 		{
 			super(root);
-//			Collection<CourseGuide> sources = root.getCourse().getCourseGuides();
+//			List<CourseGuide> sources = root.getCourse().getCourseGuides();
 //			for (CourseGuide source : sources)
 //			{
 //				if (!source.isDeleted())
@@ -869,7 +869,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 			this.firePropertyChange(new PropertyChangeEvent(this, "courseGuideAdded", this, this));
 		}
 
-		public Collection<CourseGuide> getCourseGuides()
+		public List<CourseGuide> getCourseGuides()
 		{
 			return this.root.getCourse().getCourseGuides();
 		}
@@ -917,7 +917,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 	{
 		protected ViewerRoot root;
 
-		private final Collection<PropertyChangeListener> propertyChangeListeners = new ArrayList<PropertyChangeListener>();
+		private final List<PropertyChangeListener> propertyChangeListeners = new ArrayList<PropertyChangeListener>();
 
 		public Group(final ViewerRoot root)
 		{

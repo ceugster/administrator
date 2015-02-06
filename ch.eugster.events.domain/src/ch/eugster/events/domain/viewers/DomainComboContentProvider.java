@@ -1,6 +1,7 @@
 package ch.eugster.events.domain.viewers;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 
@@ -26,7 +27,7 @@ public class DomainComboContentProvider extends ArrayContentProvider
 			{
 				domains = (Domain[]) inputElement;
 			}
-			else if (inputElement instanceof Collection<?>)
+			else if (inputElement instanceof List<?>)
 			{
 				domains = ((Collection<Domain>) inputElement).toArray(new Domain[0]);
 			}
@@ -39,7 +40,7 @@ public class DomainComboContentProvider extends ArrayContentProvider
 				domains[i + 1] = list[i];
 			domains[0] = Domain.newInstance();
 		}
-		else if (inputElement instanceof Collection<?>)
+		else if (inputElement instanceof List<?>)
 		{
 			Domain[] list = ((Collection<Domain>) inputElement).toArray(new Domain[0]);
 			domains = new Domain[list.length + 1];

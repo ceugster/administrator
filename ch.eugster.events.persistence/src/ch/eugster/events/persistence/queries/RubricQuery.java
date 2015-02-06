@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -24,7 +24,7 @@ public class RubricQuery extends AbstractEntityQuery<Rubric>
 		}
 		Expression expression = new ExpressionBuilder(Rubric.class).get("code").equal(code);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
-		Collection<Rubric> rubrics = select(Rubric.class, expression);
+		List<Rubric> rubrics = select(Rubric.class, expression);
 		if (rubrics.isEmpty())
 		{
 			return true;
@@ -49,7 +49,7 @@ public class RubricQuery extends AbstractEntityQuery<Rubric>
 		}
 	}
 
-	public Collection<Rubric> selectAll()
+	public List<Rubric> selectAll()
 	{
 		return super.selectAll(Rubric.class);
 	}

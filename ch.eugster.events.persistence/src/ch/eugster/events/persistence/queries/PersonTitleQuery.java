@@ -1,7 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
@@ -20,18 +19,18 @@ public class PersonTitleQuery extends AbstractEntityQuery<PersonTitle>
 		super(connectionService);
 	}
 
-	public Collection<PersonTitle> selectAll()
+	public List<PersonTitle> selectAll()
 	{
 		return super.selectAll(PersonTitle.class, true);
 	}
 
-	public Collection<PersonTitle> selectAll(final boolean deletedToo)
+	public List<PersonTitle> selectAll(final boolean deletedToo)
 	{
 		return super.selectAll(PersonTitle.class, deletedToo);
 	}
 
 	@SuppressWarnings("unchecked")
-	public Collection<PersonTitle> selectMatching(final String input)
+	public List<PersonTitle> selectMatching(final String input)
 	{
 		Expression expression = new ExpressionBuilder(PersonTitle.class);
 		expression = expression.get("title").likeIgnoreCase(input + "%");

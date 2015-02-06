@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -16,7 +16,7 @@ public class ApplianceQuery extends AbstractEntityQuery<Appliance>
 		super(connectionService);
 	}
 
-	public Collection<Appliance> selectAll()
+	public List<Appliance> selectAll()
 	{
 		return this.selectAll(Appliance.class);
 	}
@@ -27,7 +27,7 @@ public class ApplianceQuery extends AbstractEntityQuery<Appliance>
 			return true;
 		Expression expression = new ExpressionBuilder(Appliance.class).get("name").equal(name);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
-		Collection<Appliance> appliances = select(Appliance.class, expression);
+		List<Appliance> appliances = select(Appliance.class, expression);
 		if (appliances.isEmpty())
 		{
 			return true;

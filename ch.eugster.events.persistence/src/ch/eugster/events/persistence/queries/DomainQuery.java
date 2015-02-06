@@ -24,7 +24,7 @@ public class DomainQuery extends AbstractEntityQuery<Domain>
 			return true;
 		}
 		Expression expression = new ExpressionBuilder(Domain.class).get("code").equal(code);
-		Collection<Domain> domains = select(Domain.class, expression);
+		List<Domain> domains = select(Domain.class, expression);
 		if (domains.isEmpty())
 		{
 			return true;
@@ -110,7 +110,7 @@ public class DomainQuery extends AbstractEntityQuery<Domain>
 	public Domain selectByCode(final String code)
 	{
 		Expression expression = new ExpressionBuilder(Domain.class).get("code").equal(code);
-		Collection<Domain> domains = select(Domain.class, expression);
+		List<Domain> domains = select(Domain.class, expression);
 		try
 		{
 			return domains.iterator().next();

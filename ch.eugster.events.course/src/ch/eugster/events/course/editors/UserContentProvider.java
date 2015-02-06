@@ -1,6 +1,7 @@
 package ch.eugster.events.course.editors;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 
@@ -25,7 +26,7 @@ public class UserContentProvider extends ArrayContentProvider
 			{
 				users = (User[]) inputElement;
 			}
-			else if (inputElement instanceof Collection<?>)
+			else if (inputElement instanceof List<?>)
 			{
 				users = ((Collection<User>) inputElement).toArray(new User[0]);
 			}
@@ -39,7 +40,7 @@ public class UserContentProvider extends ArrayContentProvider
 				for (int i = 0; i < list.length; i++)
 					users[i + 1] = list[i];
 			}
-			else if (inputElement instanceof Collection<?>)
+			else if (inputElement instanceof List<?>)
 			{
 				User[] list = ((Collection<User>) inputElement).toArray(new User[0]);
 				users = new User[list.length + 1];

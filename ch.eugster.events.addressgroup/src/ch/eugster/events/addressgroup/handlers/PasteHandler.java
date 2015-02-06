@@ -1,8 +1,8 @@
 package ch.eugster.events.addressgroup.handlers;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -80,7 +80,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 			// ClipboardHelper.getClipboard().getContents(CourseTransfer.getTransfer());
 			// if (content instanceof Object[])
 			// {
-			// Collection<Booking> bookings = getBookings((Object[]) content);
+			// List<Booking> bookings = getBookings((Object[]) content);
 			// if (!bookings.isEmpty())
 			// {
 			// this.insert(target, bookings.toArray(new Booking[0]),
@@ -268,9 +268,9 @@ public class PasteHandler extends AbstractHandler implements IHandler
 		return Status.OK_STATUS;
 	}
 
-	// private Collection<Booking> extractBookings(final Course course)
+	// private List<Booking> extractBookings(final Course course)
 	// {
-	// Collection<Booking> bookings = new ArrayList<Booking>();
+	// List<Booking> bookings = new ArrayList<Booking>();
 	// if (!course.isDeleted())
 	// {
 	// for (Booking booking : course.getBookings())
@@ -284,12 +284,12 @@ public class PasteHandler extends AbstractHandler implements IHandler
 	// return bookings;
 	// }
 
-	// private Collection<Booking> extractBookings(final Season season)
+	// private List<Booking> extractBookings(final Season season)
 	// {
-	// Collection<Booking> bookings = new ArrayList<Booking>();
+	// List<Booking> bookings = new ArrayList<Booking>();
 	// if (!season.isDeleted())
 	// {
-	// Collection<Course> courses = season.getCourses();
+	// List<Course> courses = season.getCourses();
 	// for (Course course : courses)
 	// {
 	// bookings.addAll(this.extractBookings(course));
@@ -301,7 +301,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 	private boolean found(final AddressGroup target, final LinkPersonAddress link)
 	{
 		boolean found = false;
-		Collection<AddressGroupMember> targetMembers = target.getAddressGroupMembers();
+		List<AddressGroupMember> targetMembers = target.getAddressGroupMembers();
 		for (AddressGroupMember targetMember : targetMembers)
 		{
 			if (targetMember.getLink() != null)
@@ -331,7 +331,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 	private boolean found(final AddressGroup target, final Address address)
 	{
 		boolean found = false;
-		Collection<AddressGroupMember> targetMembers = target.getAddressGroupMembers();
+		List<AddressGroupMember> targetMembers = target.getAddressGroupMembers();
 		for (AddressGroupMember targetMember : targetMembers)
 		{
 			if (targetMember.getLink() == null || targetMember.getLink().isDeleted()
@@ -350,7 +350,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 	private boolean found(final AddressGroupCategory target, final AddressGroup addressGroup)
 	{
 		boolean found = false;
-		Collection<AddressGroup> targetAddressGroups = target.getAddressGroups();
+		List<AddressGroup> targetAddressGroups = target.getAddressGroups();
 		for (AddressGroup targetAddressGroup : targetAddressGroups)
 		{
 			if (targetAddressGroup.getId().equals(addressGroup.getId()))
@@ -371,7 +371,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 	// AddressGroupMember>();
 	// for (AddressGroup addressGroup : addressGroups)
 	// {
-	// Collection<AddressGroupMember> ms = addressGroup.getMembers();
+	// List<AddressGroupMember> ms = addressGroup.getMembers();
 	// for (AddressGroupMember m : ms)
 	// {
 	// if (m.getLink() == null)
@@ -390,16 +390,16 @@ public class PasteHandler extends AbstractHandler implements IHandler
 	// }
 	// }
 	// }
-	// Collection<AddressGroupMember> members = new
+	// List<AddressGroupMember> members = new
 	// ArrayList<AddressGroupMember>();
 	// members.addAll(addressMembers.values());
 	// members.addAll(linkMembers.values());
 	// return members.toArray(new AddressGroupMember[0]);
 	// }
 
-	// private Collection<Booking> getBookings(final Object[] content)
+	// private List<Booking> getBookings(final Object[] content)
 	// {
-	// Collection<Booking> bookings = new ArrayList<Booking>();
+	// List<Booking> bookings = new ArrayList<Booking>();
 	// Object[] elements = content;
 	// for (Object element : elements)
 	// {
@@ -482,7 +482,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 	// private void insert(final AddressGroup target, final Booking[] bookings,
 	// final int type)
 	// {
-	// Collection<AddressGroupMember> members = new
+	// List<AddressGroupMember> members = new
 	// ArrayList<AddressGroupMember>();
 	// for (Booking booking : bookings)
 	// {
@@ -499,7 +499,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 	private AddressGroupCategory[] insertAddressGroupMembers(final AddressGroup target,
 			final AddressGroupMember[] members, final int type)
 	{
-		Collection<AddressGroupCategory> categoriesToUpdate = new ArrayList<AddressGroupCategory>();
+		List<AddressGroupCategory> categoriesToUpdate = new ArrayList<AddressGroupCategory>();
 		for (AddressGroupMember member : members)
 		{
 			if (!member.isDeleted())
@@ -638,7 +638,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 	private AddressGroupCategory[] insertAddressGroups(final AddressGroup target, final AddressGroup[] sources,
 			final int type)
 	{
-		Collection<AddressGroupCategory> categoriesToUpdate = new ArrayList<AddressGroupCategory>();
+		List<AddressGroupCategory> categoriesToUpdate = new ArrayList<AddressGroupCategory>();
 		for (AddressGroup source : sources)
 		{
 			if (!source.isDeleted())
@@ -665,7 +665,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 	private AddressGroupCategory[] insertAddressGroups(final AddressGroupCategory target, final AddressGroup[] sources,
 			final int type)
 	{
-		Collection<AddressGroupCategory> categoriesToUpdate = new ArrayList<AddressGroupCategory>();
+		List<AddressGroupCategory> categoriesToUpdate = new ArrayList<AddressGroupCategory>();
 		for (AddressGroup source : sources)
 		{
 			if (!source.isDeleted())

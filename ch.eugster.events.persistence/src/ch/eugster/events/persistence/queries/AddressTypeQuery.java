@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -23,7 +23,7 @@ public class AddressTypeQuery extends AbstractEntityQuery<AddressType>
 		}
 		Expression expression = new ExpressionBuilder(AddressType.class).get("name").equal(name);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
-		Collection<AddressType> addressTypes = select(AddressType.class, expression);
+		List<AddressType> addressTypes = select(AddressType.class, expression);
 		if (addressTypes.isEmpty())
 		{
 			return true;
@@ -48,14 +48,14 @@ public class AddressTypeQuery extends AbstractEntityQuery<AddressType>
 		}
 	}
 
-	public Collection<AddressType> selectAll()
+	public List<AddressType> selectAll()
 	{
 		return selectAll(true);
 	}
 
-	public Collection<AddressType> selectAll(final boolean deletedToo)
+	public List<AddressType> selectAll(final boolean deletedToo)
 	{
-		Collection<AddressType> addressTypes = super.selectAll(AddressType.class, deletedToo);
+		List<AddressType> addressTypes = super.selectAll(AddressType.class, deletedToo);
 		if (addressTypes.isEmpty())
 		{
 			AddressType addressType = AddressType.newInstance();

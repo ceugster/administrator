@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.Collection;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -21,7 +20,6 @@ import org.apache.poi.ss.usermodel.Font;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -69,22 +67,22 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 		sheet.autoSizeColumn(columnIndex);
 	}
 
-	@Override
-	public IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final Collection<DataMap> maps)
-	{
-		IStatus status = Status.OK_STATUS;
-		try
-		{
-			monitor.beginTask("Dokument wird erstellt...", 1);
-			status = buildDocument(new SubProgressMonitor(monitor, maps.size()), keys, maps.toArray(new DataMap[0]));
-			monitor.worked(1);
-		}
-		finally
-		{
-			monitor.done();
-		}
-		return status;
-	}
+//	@Override
+//	public IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final List<DataMap> maps)
+//	{
+//		IStatus status = Status.OK_STATUS;
+//		try
+//		{
+//			monitor.beginTask("Dokument wird erstellt...", 1);
+//			status = buildDocument(new SubProgressMonitor(monitor, maps.size()), keys, maps.toArray(new DataMap[0]));
+//			monitor.worked(1);
+//		}
+//		finally
+//		{
+//			monitor.done();
+//		}
+//		return status;
+//	}
 
 	@Override
 	public IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap[] maps)
@@ -138,11 +136,11 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 		return Status.CANCEL_STATUS;
 	}
 
-	@Override
-	public IStatus buildDocument(IProgressMonitor monitor, final File file, final Collection<DataMap> maps)
-	{
-		return Status.CANCEL_STATUS;
-	}
+//	@Override
+//	public IStatus buildDocument(IProgressMonitor monitor, final File file, final List<DataMap> maps)
+//	{
+//		return Status.CANCEL_STATUS;
+//	}
 
 	@Override
 	public IStatus buildDocument(IProgressMonitor monitor, final File file, final DataMap map)

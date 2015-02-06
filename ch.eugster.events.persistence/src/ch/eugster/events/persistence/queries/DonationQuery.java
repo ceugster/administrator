@@ -1,7 +1,7 @@
 package ch.eugster.events.persistence.queries;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -23,30 +23,30 @@ public class DonationQuery extends AbstractEntityQuery<Donation>
 		super(connectionService);
 	}
 
-	public Collection<Donation> selectByLink(LinkPersonAddress link)
+	public List<Donation> selectByLink(LinkPersonAddress link)
 	{
 		Expression expression = new ExpressionBuilder(Donation.class).get("link").equal(link);
 		return select(Donation.class, expression);
 	}
 
 	@SuppressWarnings("unchecked")
-	public Collection<String> selectPurposes()
+	public List<String> selectPurposes()
 	{
 		ReportQuery query = new ReportQuery();
 		query.setJPQLString("SELECT DISTINCT d.purpose FROM Donation AS d");
-		return (Collection<String>) connectionService.getSession().executeQuery(query);
+		return (List<String>) connectionService.getSession().executeQuery(query);
 	}
 
 	@SuppressWarnings("unchecked")
-	public Collection<DonationYear> selectYears()
+	public List<DonationYear> selectYears()
 	{
 		Expression expression = new ExpressionBuilder();
 		ReportQuery query = new ReportQuery(Donation.class, expression);
 		query.addAttribute("year", expression.get("year"), Integer.class);
 		query.setDistinctState(ObjectLevelReadQuery.USE_DISTINCT);
-		Collection<ReportQueryResult> results = (Collection<ReportQueryResult>) connectionService.getSession()
+		List<ReportQueryResult> results = (List<ReportQueryResult>) connectionService.getSession()
 				.executeQuery(query);
-		Collection<DonationYear> years = new ArrayList<DonationYear>();
+		List<DonationYear> years = new ArrayList<DonationYear>();
 		for (ReportQueryResult result : results)
 		{
 			Integer year = (Integer) result.get("year");
@@ -59,13 +59,13 @@ public class DonationQuery extends AbstractEntityQuery<Donation>
 	}
 
 	@SuppressWarnings("unchecked")
-	public Collection<Donation> selectByYear(Integer year)
+	public List<Donation> selectByYear(Integer year)
 	{
 		ReadAllQuery query = new ReadAllQuery(Donation.class);
 		ExpressionBuilder builder = query.getExpressionBuilder();
 		Expression expression = builder.get("year").equal(year);
 		query.setSelectionCriteria(expression);
-		Collection<Donation> donations = (Collection<Donation>) connectionService.getSession().executeQuery(query);
+		List<Donation> donations = (List<Donation>) connectionService.getSession().executeQuery(query);
 		return donations;
 	}
 

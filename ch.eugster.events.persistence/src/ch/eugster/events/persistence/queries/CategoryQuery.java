@@ -1,6 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -24,7 +24,7 @@ public class CategoryQuery extends AbstractEntityQuery<Category>
 		}
 		Expression expression = new ExpressionBuilder(Category.class).get("code").equal(code);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
-		Collection<Category> categories = select(Category.class, expression);
+		List<Category> categories = select(Category.class, expression);
 		if (categories.isEmpty())
 		{
 			return true;
@@ -49,7 +49,7 @@ public class CategoryQuery extends AbstractEntityQuery<Category>
 		}
 	}
 
-	public Collection<Category> selectAll()
+	public List<Category> selectAll()
 	{
 		return super.selectAll(Category.class);
 	}

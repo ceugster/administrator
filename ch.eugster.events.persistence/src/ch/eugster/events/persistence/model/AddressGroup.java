@@ -80,14 +80,14 @@ public class AddressGroup extends AbstractEntity
 	// * Parents
 	// */
 	// @OneToMany(mappedBy = "parent", cascade = ALL)
-	// private final Collection<AddressGroupLink> parents = new
+	// private final List<AddressGroupLink> parents = new
 	// Vector<AddressGroupLink>();
 
 	// /*
 	// * Children
 	// */
 	// @OneToMany(mappedBy = "parent", cascade = ALL)
-	// private final Collection<AddressGroupLink> children = new
+	// private final List<AddressGroupLink> children = new
 	// Vector<AddressGroupLink>();
 
 	private AddressGroup()
@@ -138,7 +138,7 @@ public class AddressGroup extends AbstractEntity
 		return this.addressGroupCategory;
 	}
 
-	// public Collection<AddressGroupLink> getChildren()
+	// public List<AddressGroupLink> getChildren()
 	// {
 	// return children;
 	// }
@@ -182,7 +182,7 @@ public class AddressGroup extends AbstractEntity
 		return AbstractEntity.stringValueOf(this.name);
 	}
 
-	// public Collection<AddressGroupLink> getParents()
+	// public List<AddressGroupLink> getParents()
 	// {
 	// return parents;
 	// }

@@ -2,7 +2,6 @@ package ch.eugster.events.documents.maps;
 
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import ch.eugster.events.persistence.model.BookingType;
@@ -343,7 +342,7 @@ public class CourseGuideMap extends AbstractDataMap
 			{
 			case COMPENSATIONS:
 			{
-				Collection<Compensation> compensations = courseGuide.getCompensations();
+				List<Compensation> compensations = courseGuide.getCompensations();
 				for (Compensation compensation : compensations)
 				{
 					if (!compensation.isDeleted())
@@ -355,7 +354,7 @@ public class CourseGuideMap extends AbstractDataMap
 			}
 			case COMPENSATIONS_SALARY:
 			{
-				Collection<Compensation> compensations = courseGuide.getCompensations();
+				List<Compensation> compensations = courseGuide.getCompensations();
 				for (Compensation compensation : compensations)
 				{
 					if (!compensation.isDeleted())
@@ -371,7 +370,7 @@ public class CourseGuideMap extends AbstractDataMap
 			}
 			case COMPENSATIONS_CHARGES:
 			{
-				Collection<Compensation> compensations = courseGuide.getCompensations();
+				List<Compensation> compensations = courseGuide.getCompensations();
 				for (Compensation compensation : compensations)
 				{
 					if (!compensation.isDeleted())
@@ -386,7 +385,7 @@ public class CourseGuideMap extends AbstractDataMap
 			}
 			case OTHER_COURSE_GUIDES:
 			{
-				Collection<CourseGuide> courseGuides = courseGuide.getCourse().getCourseGuides();
+				List<CourseGuide> courseGuides = courseGuide.getCourse().getCourseGuides();
 				for (CourseGuide otherCourseGuide : courseGuides)
 				{
 					if (!otherCourseGuide.getId().equals(courseGuide.getId()))
@@ -398,7 +397,7 @@ public class CourseGuideMap extends AbstractDataMap
 			}
 			case COURSE_DETAILS:
 			{
-				Collection<CourseDetail> courseDetails = courseGuide.getCourse().getCourseDetails();
+				List<CourseDetail> courseDetails = courseGuide.getCourse().getCourseDetails();
 				for (CourseDetail courseDetail : courseDetails)
 				{
 					if (!courseDetail.isDeleted())
@@ -410,7 +409,7 @@ public class CourseGuideMap extends AbstractDataMap
 			}
 			case COURSE_BOOKING_TYPES:
 			{
-				Collection<BookingType> bookingTypes = courseGuide.getCourse().getBookingTypes();
+				List<BookingType> bookingTypes = courseGuide.getCourse().getBookingTypes();
 				for (BookingType bookingType : bookingTypes)
 				{
 					if (!bookingType.isDeleted())
