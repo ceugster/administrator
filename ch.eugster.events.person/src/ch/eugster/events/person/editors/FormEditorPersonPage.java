@@ -2,7 +2,6 @@ package ch.eugster.events.person.editors;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +72,7 @@ import ch.eugster.events.persistence.events.EntityAdapter;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
+import ch.eugster.events.persistence.formatters.PhoneFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressType;
@@ -104,11 +104,6 @@ import ch.eugster.events.person.views.PersonTitleSorter;
 import ch.eugster.events.ui.dialogs.Message;
 import ch.eugster.events.ui.helpers.BrowseHelper;
 import ch.eugster.events.ui.helpers.EmailHelper;
-
-import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
-import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 public class FormEditorPersonPage extends FormPage implements IPersonFormEditorPage
 {
@@ -177,8 +172,6 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 	private Text website;
 
 	private List<FieldExtension> extensions = new ArrayList<FieldExtension>();
-
-	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
 	private final List<IPropertyChangeListener> listeners = new ArrayList<IPropertyChangeListener>();
 
@@ -439,16 +432,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 					String numValue = getNumValue(phone.getText());
 					if (!numValue.isEmpty())
 					{
-						try
-						{
-							PhoneNumber phoneNumber = phoneUtil.parse(numValue, country.getIso3166alpha2());
-							String number = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
-							phone.setText(number);
-						}
-						catch (NumberParseException e)
-						{
-
-						}
+						phone.setText(PhoneFormatter.format(numValue, country));
 					}
 				}
 				setDirty(true);
@@ -474,7 +458,6 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 						.getSelection();
 				if (ssel.getFirstElement() instanceof Country)
 				{
-					StringBuilder editValue = new StringBuilder();
 					String value = FormEditorPersonPage.this.phone.getText().trim();
 					value = removeSpaces(value);
 					boolean dirty = isDirty();
@@ -503,26 +486,16 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 						String phoneString = phone.getText();
 						if (!phoneString.isEmpty())
 						{
+							boolean dirty = isDirty();
 							Country country = (Country) ssel.getFirstElement();
-							try
+							phone.setText(PhoneFormatter.format(phoneString, country));
+							if (dirty)
 							{
-								PhoneNumber phoneNumber = phoneUtil.parse(phoneString, country.getIso3166alpha2());
-								phoneString = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
-								boolean dirty = isDirty();
-								phone.setText(phoneString);
-								if (dirty)
-								{
-									setDirty(true);
-								}
-								else
-								{
-									setDirty(false);
-								}
-
+								setDirty(true);
 							}
-							catch (NumberParseException ex)
+							else
 							{
-
+								setDirty(false);
 							}
 						}
 					}
@@ -1078,7 +1051,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 	}
 
 	@Override
-	public Object getAdapter(final Class clazz)
+	public Object getAdapter(@SuppressWarnings("rawtypes") final Class clazz)
 	{
 		if (clazz.equals(LinkPersonAddress.class))
 		{
@@ -1262,16 +1235,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 			String phoneString = person.getPhone();
 			if (!phoneString.isEmpty())
 			{
-				try
-				{
-					PhoneNumber phoneNumber = phoneUtil.parse(phoneString, country.getIso3166alpha2());
-					phoneString = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
-					this.phone.setText(phoneString);
-				}
-				catch (NumberParseException e)
-				{
-					e.printStackTrace();
-				}
+				this.phone.setText(PhoneFormatter.format(phoneString, country));
 			}
 
 		}

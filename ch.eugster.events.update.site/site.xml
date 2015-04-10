@@ -279,6 +279,21 @@
    <feature url="features/ch.eugster.events.utilities.console.feature_1.0.0.201502061046.jar" id="ch.eugster.events.utilities.console.feature" version="1.0.0.201502061046">
       <category name="utilities"/>
    </feature>
+   <feature url="features/ch.eugster.events.documents.feature_1.0.0.201504100944.jar" id="ch.eugster.events.documents.feature" version="1.0.0.201504100944">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.xml.feature_1.0.0.201504100944.jar" id="ch.eugster.events.documents.xml.feature" version="1.0.0.201504100944">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.odfdom.feature_1.0.0.201504100944.jar" id="ch.eugster.events.documents.odfdom.feature" version="1.0.0.201504100944">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.person.feature_1.0.0.201504100944.jar" id="ch.eugster.events.person.feature" version="1.0.0.201504100944">
+      <category name="person"/>
+   </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201504100944.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201504100944">
+      <category name="persistence"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>

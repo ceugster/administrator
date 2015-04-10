@@ -20,6 +20,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import ch.eugster.events.persistence.formatters.AddressFormatter;
+import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
+import ch.eugster.events.persistence.formatters.PersonFormatter;
+
 @Entity
 @Table(name = "events_guide")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "guide_user_id")) })
@@ -114,6 +118,32 @@ public class Guide extends AbstractEntity
 		else
 		{
 			return this.phone;
+		}
+	}
+	
+	public String getFormattedPhone()
+	{
+		if (this.phone == null || this.phone.isEmpty())
+		{
+			if (this.getLink().getPerson().getPhone().isEmpty())
+			{
+				if (this.getLink().getAddress().getPhone().isEmpty())
+				{
+					return LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(this.getLink().getAddress().getCountry(), this.getLink().getPhone());
+				}
+				else
+				{
+					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(this.getLink().getAddress().getCountry(), this.getLink().getAddress().getPhone());
+				}
+			}
+			else
+			{
+				return PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(this.getLink().getPerson().getCountry(), this.getLink().getPerson().getPhone());
+			}
+		}
+		else
+		{
+			return LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(this.getLink().getAddress().getCountry(), this.phone);
 		}
 	}
 

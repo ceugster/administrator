@@ -201,7 +201,7 @@ public class CourseGuideMap extends AbstractDataMap
 				}
 				case PHONE:
 				{
-					return courseGuide.getPhone();
+					return courseGuide.getFormattedPhone();
 				}
 				case STATE:
 				{
