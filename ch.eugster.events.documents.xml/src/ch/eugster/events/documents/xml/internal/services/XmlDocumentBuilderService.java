@@ -25,35 +25,6 @@ public class XmlDocumentBuilderService implements DocumentBuilderService
 {
 	private String[] applicableExtensions = new String[] { ".xml" };
 
-//	@Override
-//	public IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final List<DataMap> maps)
-//	{
-//		return Status.CANCEL_STATUS;
-//	}
-//
-//	@Override
-//	public IStatus buildDocument(IProgressMonitor monitor, final File template, final List<DataMap> maps)
-//	{
-//		IStatus status = Status.CANCEL_STATUS;
-//		if (!validExtension(template))
-//		{
-//			return status;
-//		}
-//		
-//		try
-//		{
-//			monitor.beginTask("Dokument wird erstellt...", 1);
-//			DataMap[] dataMaps = maps.toArray(new DataMap[0]);
-//			status = buildTextDocument(new SubProgressMonitor(monitor, maps.size()), template, dataMaps);
-//			monitor.worked(1);
-//		}
-//		finally
-//		{
-//			monitor.done();
-//		}
-//		return status;
-//	}
-
 	@Override
 	public IStatus buildDocument(IProgressMonitor monitor, File template, final DataMap[] maps)
 	{
@@ -136,9 +107,8 @@ public class XmlDocumentBuilderService implements DocumentBuilderService
 			Document document = new Document(courses);
 			document.setRootElement(courses);
 
-			for (int i = maps.length; i > 0; i--)
+			for (DataMap map : maps)
 			{
-				DataMap map = maps[i - 1];
 				Element course = new Element("course");
 				Properties props = map.getProperties();
 				@SuppressWarnings({ "rawtypes", "unchecked" })
