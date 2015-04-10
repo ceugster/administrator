@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: XML Document Bundle
+Bundle-SymbolicName: ch.eugster.events.documents.xml;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: ch.eugster.events.documents.xml.internal.Activator
+Bundle-Vendor: Christian Eugster
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: ch.eugster.events.documents;bundle-version="1.0.2",
+ org.eclipse.core.runtime;bundle-version="3.6.0",
+ org.jdom;bundle-version="1.0.0"

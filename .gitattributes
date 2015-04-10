@@ -610,6 +610,16 @@ ch.eugster.events.documents.test/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.documents.test/META-INF/MANIFEST.MF -text
 ch.eugster.events.documents.test/build.properties -text
 ch.eugster.events.documents.test/src/ch/eugster/events/documents/test/DocumentTest.java -text
+ch.eugster.events.documents.xml.feature/.project -text
+ch.eugster.events.documents.xml.feature/build.properties -text
+ch.eugster.events.documents.xml.feature/feature.xml -text
+ch.eugster.events.documents.xml/.classpath -text
+ch.eugster.events.documents.xml/.project -text
+ch.eugster.events.documents.xml/.settings/org.eclipse.pde.core.prefs -text
+ch.eugster.events.documents.xml/META-INF/MANIFEST.MF -text
+ch.eugster.events.documents.xml/build.properties -text
+ch.eugster.events.documents.xml/src/ch/eugster/events/documents/xml/internal/Activator.java -text
+ch.eugster.events.documents.xml/src/ch/eugster/events/documents/xml/internal/services/XmlDocumentBuilderService.java -text
 ch.eugster.events.documents/.classpath -text
 ch.eugster.events.documents/.project -text
 ch.eugster.events.documents/.settings/org.eclipse.jdt.core.prefs -text
