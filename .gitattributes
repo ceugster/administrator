@@ -557,6 +557,7 @@ ch.eugster.events.documents.odfdom/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.documents.odfdom/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.documents.odfdom/META-INF/MANIFEST.MF -text
 ch.eugster.events.documents.odfdom/OSGI-INF/document-builder-service.xml -text
+ch.eugster.events.documents.odfdom/OSGI-INF/service.xml -text
 ch.eugster.events.documents.odfdom/build.properties -text
 ch.eugster.events.documents.odfdom/lib/odfdom.jar -text
 ch.eugster.events.documents.odfdom/lib/resolver.jar -text
