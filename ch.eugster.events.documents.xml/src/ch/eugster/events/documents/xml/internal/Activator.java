@@ -13,8 +13,6 @@ public class Activator implements BundleActivator {
 
 	private static BundleContext context;
 
-	private ServiceRegistration xmlDocumentBuilderServiceRegistration;
-	
 	public static BundleContext getContext() {
 		return context;
 	}
@@ -25,7 +23,6 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		xmlDocumentBuilderServiceRegistration = context.registerService(DocumentBuilderService.class.getName(), new XmlDocumentBuilderService(), new Hashtable());
 	}
 
 	/*
@@ -34,7 +31,6 @@ public class Activator implements BundleActivator {
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
-		xmlDocumentBuilderServiceRegistration.unregister();
 	}
 
 }
