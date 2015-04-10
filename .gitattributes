@@ -934,6 +934,7 @@ ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/Donat
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/ImageConverter.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/LinkPersonAddressFormatter.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/PersonFormatter.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/PhoneFormatter.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/handlers/StartConnectionWizardHandler.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/handlers/UpdateAddressGroupMembersHandler.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/AbstractEntity.java -text

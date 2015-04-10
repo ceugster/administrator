@@ -41,35 +41,6 @@ import ch.eugster.events.documents.services.DocumentBuilderService;
 
 public class OdfDocumentBuilderService implements DocumentBuilderService
 {
-//	@Override
-//	public IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final List<DataMap> maps)
-//	{
-//		return Status.CANCEL_STATUS;
-//	}
-//
-//	@Override
-//	public IStatus buildDocument(IProgressMonitor monitor, final File template, final List<DataMap> maps)
-//	{
-//		IStatus status = Status.CANCEL_STATUS;
-//		if (!template.getName().endsWith(".odt"))
-//		{
-//			return status;
-//		}
-//
-//		try
-//		{
-//			monitor.beginTask("Dokument wird erstellt...", 1);
-//			DataMap[] dataMaps = maps.toArray(new DataMap[0]);
-//			status = buildTextDocument(new SubProgressMonitor(monitor, maps.size()), template, dataMaps);
-//			monitor.worked(1);
-//		}
-//		finally
-//		{
-//			monitor.done();
-//		}
-//		return status;
-//	}
-
 	@Override
 	public IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap[] maps)
 	{

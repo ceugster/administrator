@@ -19,6 +19,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
+
 @Entity
 @Table(name = "events_course_guide")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "course_guide_user_id")) })
@@ -129,7 +131,12 @@ public class CourseGuide extends AbstractEntity
 
 	public String getPhone()
 	{
-		return (this.phone == null || this.phone.isEmpty()) ? this.getGuide().getPhone() : this.phone;
+		return (this.phone == null || this.phone.isEmpty()) ? this.getGuide().getFormattedPhone() : this.phone;
+	}
+
+	public String getFormattedPhone()
+	{
+		return (this.phone == null || this.phone.isEmpty()) ? this.getGuide().getFormattedPhone() : LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(this.getGuide().getLink().getAddress().getCountry(), this.phone);
 	}
 
 	public void removeCompensation(final Compensation compensation)
