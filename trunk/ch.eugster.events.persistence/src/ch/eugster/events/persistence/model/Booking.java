@@ -369,6 +369,19 @@ public class Booking extends AbstractEntity
 		return ps;
 	}
 
+	public int countParticipants(BookingType bookingType)
+	{
+		int participantCount = 0;
+		for (Participant participant : this.participants)
+		{
+			if (!participant.isDeleted() && participant.getBookingType() != null && participant.getBookingType().getId().equals(bookingType.getId()))
+			{
+				participantCount += participant.getCount();
+			}
+		}
+		return participantCount;
+	}
+
 	public Calendar getParticipationConfirmationSentDate()
 	{
 		return this.participationConfirmationSentDate;
