@@ -123,27 +123,20 @@ public class Guide extends AbstractEntity
 	
 	public String getFormattedPhone()
 	{
-		if (this.phone == null || this.phone.isEmpty())
+		if (this.getLink().getPerson().getPhone().isEmpty())
 		{
-			if (this.getLink().getPerson().getPhone().isEmpty())
+			if (this.getLink().getAddress().getPhone().isEmpty())
 			{
-				if (this.getLink().getAddress().getPhone().isEmpty())
-				{
-					return LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(this.getLink().getAddress().getCountry(), this.getLink().getPhone());
-				}
-				else
-				{
-					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(this.getLink().getAddress().getCountry(), this.getLink().getAddress().getPhone());
-				}
+				return LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(this.getLink().getAddress().getCountry(), this.getLink().getPhone());
 			}
 			else
 			{
-				return PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(this.getLink().getPerson().getCountry(), this.getLink().getPerson().getPhone());
+				return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(this.getLink().getAddress().getCountry(), this.getLink().getAddress().getPhone());
 			}
 		}
 		else
 		{
-			return LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(this.getLink().getAddress().getCountry(), this.phone);
+			return PersonFormatter.getInstance().formatPhoneWithOptionalPrefix(this.getLink().getPerson().getCountry(), this.getLink().getPerson().getPhone());
 		}
 	}
 

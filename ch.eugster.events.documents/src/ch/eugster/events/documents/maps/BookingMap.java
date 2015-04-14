@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 
 import ch.eugster.events.persistence.model.Booking;
+import ch.eugster.events.persistence.model.BookingType;
 import ch.eugster.events.persistence.model.CourseDetail;
 import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.IBookingState;
@@ -96,13 +97,17 @@ public class BookingMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		AMOUNT, ANNULATION_STATE, BOOKING_CONFIRMATION_SENT_DATE, BOOKING_STATE, BOOKING_DATE, DONE_STATE, FORTHCOMING_STATE, INVITATION_SENT_DATE, NOTE, PARTICIPANT_COUNT, PARTICIPATION_CONFIRMATION_SENT_DATE, PAYED_AMOUNT, PAYED_BACK_AMOUNT, PAYED_DATE, PAYED_BACK_DATE, STATE, PAYMENT_TERM;
+		AMOUNT_DETAILED, AMOUNT, ANNULATION_STATE, BOOKING_CONFIRMATION_SENT_DATE, BOOKING_STATE, BOOKING_DATE, DONE_STATE, FORTHCOMING_STATE, INVITATION_SENT_DATE, NOTE, PARTICIPANT_COUNT, PARTICIPATION_CONFIRMATION_SENT_DATE, PAYED_AMOUNT, PAYED_BACK_AMOUNT, PAYED_DATE, PAYED_BACK_DATE, STATE, PAYMENT_TERM;
 
 		@Override
 		public String getDescription()
 		{
 			switch (this)
 			{
+				case AMOUNT_DETAILED:
+				{
+					return "Buchungsbetrag detailliert";
+				}
 				case AMOUNT:
 				{
 					return "Buchungsbetrag";
@@ -183,6 +188,10 @@ public class BookingMap extends AbstractDataMap
 		{
 			switch (this)
 			{
+				case AMOUNT_DETAILED:
+				{
+					return "total_amount_detailed";
+				}
 				case AMOUNT:
 				{
 					return "total_amount";
@@ -263,6 +272,10 @@ public class BookingMap extends AbstractDataMap
 		{
 			switch (this)
 			{
+				case AMOUNT_DETAILED:
+				{
+					return "Buchungsbetrag detailliert";
+				}
 				case AMOUNT:
 				{
 					return "Buchungsbetrag";
@@ -342,6 +355,20 @@ public class BookingMap extends AbstractDataMap
 		{
 			switch (this)
 			{
+				case AMOUNT_DETAILED:
+				{
+					String amount = amountFormatter.format(booking.getAmount());
+					List<BookingType> bookingTypes = booking.getCourse().getBookingTypes();
+					for (BookingType bookingType : bookingTypes)
+					{
+						int participantCount = booking.countParticipants(bookingType);
+						if (participantCount > 0)
+						{
+							amount = amount + ", " + participantCount + " x " + bookingType.getName() + " à " + amountFormatter.format(bookingType.getPrice());
+						}
+					}
+					return amount;
+				}
 				case AMOUNT:
 				{
 					return amountFormatter.format(booking.getAmount());
