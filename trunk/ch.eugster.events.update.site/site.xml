@@ -303,6 +303,15 @@
    <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201504141905.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201504141905">
       <category name="persistence"/>
    </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201504160858.jar" id="ch.eugster.events.course.feature" version="1.0.0.201504160858">
+      <category name="course"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.xml.feature_1.0.0.201504160938.jar" id="ch.eugster.events.documents.xml.feature" version="1.0.0.201504160938">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.xml.feature_1.0.0.201504160943.jar" id="ch.eugster.events.documents.xml.feature" version="1.0.0.201504160943">
+      <category name="documents"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>
