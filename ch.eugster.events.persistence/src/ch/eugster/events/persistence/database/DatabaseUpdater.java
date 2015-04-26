@@ -1185,6 +1185,20 @@ public abstract class DatabaseUpdater
 							ok = executeSqlQuery(con, builder.toString());
 						}
 					}
+					if (structureVersion == 30)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						StringBuilder builder = new StringBuilder("UPDATE events_zip_code SET zip_code_country_id = 125 WHERE zip_code_state = 'FL'");
+						log(LogService.LOG_INFO, builder.toString());
+						System.out.println(builder.toString());
+						ok = executeSqlQuery(con, builder.toString());
+
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						builder = new StringBuilder("UPDATE events_address a LEFT JOIN events_zip_code z ON a.address_zip = z.zip_code_zip SET a.address_zip_code_id = z.zip_code_id, a.address_country_id = z.zip_code_country_id WHERE a.address_country_id = 212 OR a.address_country_id = 125");
+						log(LogService.LOG_INFO, builder.toString());
+						System.out.println(builder.toString());
+						ok = executeSqlQuery(con, builder.toString());
+					}
 
 					stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);
 				}

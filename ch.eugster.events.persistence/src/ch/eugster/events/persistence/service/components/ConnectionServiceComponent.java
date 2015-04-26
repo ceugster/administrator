@@ -491,7 +491,7 @@ public class ConnectionServiceComponent implements ConnectionService
 			{
 				entityManager = emf.createEntityManager();
 				DatabaseConfigurer configurer = new DatabaseConfigurer();
-				configurer.configureDatabase();
+				configurer.configureDatabase(this);
 			}
 		}
 		catch (Exception e)
