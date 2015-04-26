@@ -6,18 +6,17 @@
  */
 package ch.eugster.events.persistence.database;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.GregorianCalendar;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.ui.progress.UIJob;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
-import org.osgi.util.tracker.ServiceTracker;
 
-import ch.eugster.events.persistence.Activator;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.Version;
 import ch.eugster.events.persistence.preferences.PreferenceInitializer;
@@ -25,26 +24,22 @@ import ch.eugster.events.persistence.queries.DomainQuery;
 import ch.eugster.events.persistence.queries.VersionQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
-public class DatabaseConfigurer
+public class DatabaseConfigurer implements IRunnableWithProgress
 {
+	private ConnectionService connectionService;
+	
 	public DatabaseConfigurer()
 	{
 	}
 
-	private IStatus configure(final IProgressMonitor monitor)
+	public void run(final IProgressMonitor monitor)
 	{
-		IStatus status = Status.OK_STATUS;
-		monitor.beginTask("Die Datenbank wird konfiguriert...", 1150);
+		monitor.beginTask("Die Datenbank wird konfiguriert...", 2);
 		try
 		{
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
-			tracker.open();
-
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
+			if (this.connectionService != null)
 			{
-				VersionQuery query = (VersionQuery) service.getQuery(Version.class);
+				VersionQuery query = (VersionQuery) connectionService.getQuery(Version.class);
 				Version version = query.find(Version.class, Long.valueOf(1L));
 				if (version == null)
 				{
@@ -60,8 +55,6 @@ public class DatabaseConfigurer
 					}
 					catch (BackingStoreException e)
 					{
-						String msg = "Die Version in den Einstellungen konnte nicht aktualisiert werden.";
-						status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, msg, e);
 					}
 				}
 				else
@@ -75,7 +68,7 @@ public class DatabaseConfigurer
 						version = query.merge(version);
 					}
 				}
-				DomainQuery domainQuery = (DomainQuery) service.getQuery(Domain.class);
+				DomainQuery domainQuery = (DomainQuery) connectionService.getQuery(Domain.class);
 				if (domainQuery.selectAll().isEmpty())
 				{
 					Domain domain = Domain.newInstance();
@@ -84,41 +77,28 @@ public class DatabaseConfigurer
 					domainQuery.merge(domain);
 				}
 			}
-			tracker.close();
 		}
 		finally
 		{
 			monitor.done();
 		}
-
-		return status;
 	}
 
-	public IStatus configureDatabase()
+	public IStatus configureDatabase(ConnectionService connectionService)
 	{
+		this.connectionService = connectionService;
 		IStatus status = Status.OK_STATUS;
-
-		UIJob job = new UIJob("Configuring database...")
-		{
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor)
-			{
-				IStatus status = null;
-				try
-				{
-					monitor.beginTask("Die Datenbank wird konfiguriert...", 100);
-					status = DatabaseConfigurer.this.configure(new SubProgressMonitor(monitor, 100));
-				}
-				finally
-				{
-					monitor.done();
-				}
-				return status;
-			}
-		};
-		job.schedule();
-
+//		ProgressMonitorDialog dialog = new ProgressMonitorDialog(null);
+//		try 
+//		{
+//			dialog.run(false, false, this);
+//		} 
+//		catch (InvocationTargetException e) 
+//		{
+//		} 
+//		catch (InterruptedException e) 
+//		{
+//		}
 		return status;
 	}
-
 }
