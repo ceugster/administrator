@@ -112,9 +112,16 @@ public class AddressType extends AbstractEntity
 		{
 			if (this.image != null)
 			{
-				InputStream in = new ByteArrayInputStream(this.image);
-				ImageData imageData = new ImageData(in);
-				image = new Image(Display.getCurrent(), imageData);
+				try
+				{
+					InputStream in = new ByteArrayInputStream(this.image);
+					ImageData imageData = new ImageData(in);
+					image = new Image(Display.getCurrent(), imageData);
+				}
+				catch (Exception e)
+				{
+					
+				}
 			}
 		}
 		catch (Exception e)
