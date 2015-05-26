@@ -60,19 +60,19 @@ public abstract class AbstractFormatter
 				else
 				{
 					phoneNumber = phoneFormatter.parse(phone, country.getIso3166alpha2());
-				}
-				if (country.getId().equals(defaultCountry.getId()))
-				{
-					number = phoneFormatter.format(phoneNumber, PhoneNumberFormat.NATIONAL);
-				}
-				else
-				{
-					number = phoneFormatter.format(phoneNumber, PhoneNumberFormat.INTERNATIONAL);
+					if (country.getId().equals(defaultCountry.getId()))
+					{
+						number = phoneFormatter.format(phoneNumber, PhoneNumberFormat.NATIONAL);
+					}
+					else
+					{
+						number = phoneFormatter.format(phoneNumber, PhoneNumberFormat.INTERNATIONAL);
+					}
 				}
 			}
 			catch (NumberParseException e)
 			{
-				return "";
+				number = "";
 			}
 		}
 		return number;
