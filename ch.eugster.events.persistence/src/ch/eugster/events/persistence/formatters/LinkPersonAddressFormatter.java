@@ -107,7 +107,7 @@ public class LinkPersonAddressFormatter extends AbstractFormatter
 			}
 			newLabel = newLabel.append(line);
 		}
-		return newLabel.toString();
+		return newLabel.toString().replace("  ", " ");
 	}
 
 	public String getLabel(final LinkPersonAddress link)
