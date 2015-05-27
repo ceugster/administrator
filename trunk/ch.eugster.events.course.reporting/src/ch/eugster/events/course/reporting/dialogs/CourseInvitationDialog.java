@@ -36,6 +36,7 @@ import ch.eugster.events.documents.maps.BookingMap;
 import ch.eugster.events.documents.maps.DataMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.persistence.model.Booking;
+import ch.eugster.events.persistence.model.BookingForthcomingState;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
@@ -67,6 +68,8 @@ public class CourseInvitationDialog extends TitleAreaDialog
 
 	private static final String DIALOG_TITLE = "Vorlage Kurseinladung";
 
+	private static final String DIALOG_MSG = "Die Einladungen werden nur für angemeldete Personen erstellt.";
+	
 	private boolean isPageComplete = false;
 
 	public CourseInvitationDialog(final Shell parentShell, final StructuredSelection selection)
@@ -159,7 +162,10 @@ public class CourseInvitationDialog extends TitleAreaDialog
 				List<Booking> bookings = course.getBookings();
 				for (Booking booking : bookings)
 				{
-					dataMaps.add(new BookingMap(booking, true));
+					if (booking.getState().equals(BookingForthcomingState.BOOKED))
+					{
+						dataMaps.add(new BookingMap(booking, true));
+					}
 				}
 				List<CourseGuide> courseGuides = course.getCourseGuides();
 				for (CourseGuide courseGuide : courseGuides)
@@ -251,6 +257,13 @@ public class CourseInvitationDialog extends TitleAreaDialog
 			}
 		});
 
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 3;
+		
+		label = new Label(composite, SWT.None);
+		label.setText(DIALOG_MSG);
+		label.setLayoutData(gridData);
+		
 		return parent;
 	}
 
