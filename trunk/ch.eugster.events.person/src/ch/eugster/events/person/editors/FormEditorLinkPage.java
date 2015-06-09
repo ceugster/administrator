@@ -531,7 +531,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 64;
 
-		notes = toolkit.createText(client, "");
+		notes = toolkit.createText(client, "", SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		notes.setLayoutData(gridData);
 		notes.addModifyListener(new ModifyListener()
 		{
