@@ -379,11 +379,13 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 			{
 				for (AddressGroupMember member : members)
 				{
-					AddressGroupMember addressGroupMember = member;
-					Monitor monitor = new Monitor(addressGroupMember.getAddressGroup(), !addressGroupMember.isDeleted());
-					monitor.checked = !addressGroupMember.isDeleted();
-					this.monitors.put(addressGroupMember.getAddressGroup().getId(), monitor);
-					this.current.put(addressGroupMember.getAddressGroup().getId(), addressGroupMember);
+					Monitor monitor = this.monitors.get(member.getAddressGroup().getId());
+					if (monitor == null || !monitor.checked)
+					{
+						monitor = new Monitor(member.getAddressGroup(), !member.isDeleted());
+					}
+					this.monitors.put(member.getAddressGroup().getId(), monitor);
+					this.current.put(member.getAddressGroup().getId(), member);
 				}
 			}
 
