@@ -1,7 +1,6 @@
 package ch.eugster.events.addressgroup.views;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -380,12 +379,16 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 				for (AddressGroupMember member : members)
 				{
 					Monitor monitor = this.monitors.get(member.getAddressGroup().getId());
-					if (monitor == null || !monitor.checked)
+					if (monitor == null)
 					{
 						monitor = new Monitor(member.getAddressGroup(), !member.isDeleted());
+						this.monitors.put(member.getAddressGroup().getId(), monitor);
+						this.current.put(member.getAddressGroup().getId(), member);
 					}
-					this.monitors.put(member.getAddressGroup().getId(), monitor);
-					this.current.put(member.getAddressGroup().getId(), member);
+					else if (!monitor.checked)
+					{
+						monitor.checked = !member.isDeleted();
+					}
 				}
 			}
 

@@ -187,12 +187,16 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 				{
 					member = (AddressGroupMember) query.refresh(member);
 					Monitor monitor = this.monitors.get(member.getAddressGroup().getId());
-					if (monitor == null || !monitor.checked)
+					if (monitor == null)
 					{
 						monitor = new Monitor(member.getAddressGroup(), !member.isDeleted());
+						this.monitors.put(member.getAddressGroup().getId(), monitor);
+						this.current.put(member.getAddressGroup().getId(), member);
 					}
-					this.monitors.put(member.getAddressGroup().getId(), monitor);
-					this.current.put(member.getAddressGroup().getId(), member);
+					else if (!monitor.checked)
+					{
+						monitor.checked = !member.isDeleted();
+					}
 				}
 			}
 		}
