@@ -1,5 +1,6 @@
 package ch.eugster.events.importer.wizards;
 
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,13 +8,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import org.apache.poi.EmptyFileException;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -32,12 +43,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.importer.Activator;
+import ch.eugster.events.persistence.model.Membership;
+import ch.eugster.events.persistence.queries.MembershipQuery;
+import ch.eugster.events.persistence.service.ConnectionService;
 
-import com.sun.media.sound.InvalidFormatException;
-
-public class SelectSourceWizardPage extends WizardPage implements ISelectionProvider, ISelectionChangedListener
+public class SelectSourceWizardPage extends WizardPage implements ISelectionProvider
 {
 	private final ImportWizard wizard;
 
@@ -49,6 +62,10 @@ public class SelectSourceWizardPage extends WizardPage implements ISelectionProv
 
 	private ComboViewer sheetSelector;
 
+	private Button updateExisting;
+	
+	private ComboViewer membershipSelector;
+	
 	private static final String[] FILE_EXTENSIONS = new String[] { ".xls", ".xlsx" };
 
 	private static final String[] FILE_VERSIONS = new String[] { "Excel-Arbeitsmappe (bis 2003)",
@@ -62,13 +79,6 @@ public class SelectSourceWizardPage extends WizardPage implements ISelectionProv
 		this.wizard = wizard;
 		init();
 	}
-
-	// public Sheet getSelectedSheet()
-	// {
-	// StructuredSelection ssel = (StructuredSelection)
-	// this.sheetSelector.getSelection();
-	// return ssel.isEmpty() ? null : (Sheet) ssel.getFirstElement();
-	// }
 
 	private void init()
 	{
@@ -88,6 +98,14 @@ public class SelectSourceWizardPage extends WizardPage implements ISelectionProv
 		if (settings.get("selected.type") == null)
 		{
 			settings.put("selected.type", 0);
+		}
+		if (settings.get("membership.id") == null)
+		{
+			settings.put("membership.id", 0);
+		}
+		if (settings.get("update.existing") == null)
+		{
+			settings.put("update.existing", false);
 		}
 	}
 
@@ -113,8 +131,13 @@ public class SelectSourceWizardPage extends WizardPage implements ISelectionProv
 			public void modifyText(ModifyEvent e)
 			{
 				File file = new File(sourceFilename.getText());
-				workbook = checkFileType(checkFile(file));
-				if (workbook != null)
+				Workbook workbook = checkFileType(checkFile(file));
+				if (workbook == null)
+				{
+					settings.put("file", file.getAbsolutePath());
+					sheetSelector.setInput(null);
+				}
+				else
 				{
 					settings.put("file", file.getAbsolutePath());
 					if (file.getParentFile() != null)
@@ -197,17 +220,133 @@ public class SelectSourceWizardPage extends WizardPage implements ISelectionProv
 				return super.getText(element);
 			}
 		});
-		sheetSelector.addSelectionChangedListener(this);
+		sheetSelector.addSelectionChangedListener(new ISelectionChangedListener() 
+		{
+			@Override
+			public void selectionChanged(SelectionChangedEvent event)
+			{
+				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
+				if (ssel.getFirstElement() instanceof Sheet)
+				{
+					SelectSourceWizardPage page = SelectSourceWizardPage.this;
+					Sheet sheet = (Sheet) ssel.getFirstElement();
+					page.wizard.setSheet(sheet);
+					ISelectionChangedListener[] listeners = page.sheetSelectorListeners.toArray(new ISelectionChangedListener[0]);
+					for (ISelectionChangedListener listener : listeners)
+					{
+						listener.selectionChanged(event);
+					}
+					page.setPageComplete();
+				}
+			}
+		});
 
+		gridData = new GridData(GridData.FILL_BOTH);
+		gridData.horizontalSpan = 3;
+		
+		Composite filler = new Composite(composite, SWT.None);
+		filler.setLayoutData(gridData);
+		
+		label = new Label(composite, SWT.None);
+		label.setLayoutData(new GridData());
+		label.setText("Institution");
+
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+
+		combo = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN);
+		combo.setLayoutData(gridData);
+
+		membershipSelector = new ComboViewer(combo);
+		membershipSelector.setContentProvider(new ArrayContentProvider());
+		membershipSelector.setLabelProvider(new LabelProvider()
+		{
+
+			@Override
+			public String getText(Object element)
+			{
+				if (element instanceof Membership)
+				{
+					Membership membership = (Membership) element;
+					return membership.getName();
+				}
+				return super.getText(element);
+			}
+		});
+		membershipSelector.addSelectionChangedListener(new ISelectionChangedListener()
+		{
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) 
+			{
+				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
+				Membership membership = (Membership) ssel.getFirstElement();
+				SelectSourceWizardPage.this.wizard.setMembership(membership);
+				settings.put("membership.id", membership.getId().longValue());
+			}
+		});
+
+		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
+		tracker.open();
+		try
+		{
+			ConnectionService connectionService = (ConnectionService) tracker.getService();
+			MembershipQuery query = (MembershipQuery) connectionService.getQuery(Membership.class);
+			List<Membership> memberships = query.selectAll(false);
+			membershipSelector.setInput(memberships.toArray(new Membership[0]));
+			Long id = settings.getLong("membership.id");
+			Membership membership = query.find(Membership.class, id);
+			if (membership != null)
+			{
+				membershipSelector.setSelection(new StructuredSelection( new Membership[] { membership } ));
+			}
+		}
+		finally
+		{
+			tracker.close();
+		}
+
+		label = new Label(composite, SWT.None);
+		label.setLayoutData(new GridData());
+		
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		
+		updateExisting = new Button(composite, SWT.CHECK);
+		updateExisting.setLayoutData(gridData);
+		updateExisting.setText("Bestehende Adressen aktualisieren");
+		updateExisting.setSelection(settings.getBoolean("update.existing"));
+		updateExisting.addSelectionListener(new SelectionListener() 
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e) 
+			{
+				SelectSourceWizardPage.this.wizard.setUpdateExistingAddresses(updateExisting.getSelection());
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) 
+			{
+				widgetSelected(e);
+			}
+		});
+		
 		if (this.getWizard() instanceof ImportWizard)
 		{
 			ImportWizard wizard = (ImportWizard) this.getWizard();
 			ShowSourceWizardPage page = (ShowSourceWizardPage) wizard.getPage(ShowSourceWizardPage.class.getName());
 			sheetSelector.addSelectionChangedListener(page);
 		}
-		sourceFilename.setText(settings.get("file"));
+
+		String filename = settings.get("file");
+		File file = new File(filename == null ? System.getProperty("user.home") : filename);
+		sourceFilename.setText(file.isFile() ? file.getAbsolutePath() : "");
 
 		this.setControl(composite);
+	}
+	
+	private void setPageComplete()
+	{
+		super.setPageComplete(isPageComplete());
 	}
 
 	private File checkFile(File file)
@@ -230,27 +369,56 @@ public class SelectSourceWizardPage extends WizardPage implements ISelectionProv
 				{
 					try
 					{
-						InputStream in = new FileInputStream(file.getAbsolutePath());
-						Workbook workbook = WorkbookFactory.create(in);
-						in.close();
-						return workbook;
+						InputStream is = new FileInputStream(file.getAbsolutePath());
+						try
+						{
+							Workbook workbook = WorkbookFactory.create(is);
+							return workbook;
+						}
+						catch (FileNotFoundException e2)
+						{
+							e2.printStackTrace();
+						}
+						catch (IOException e1)
+						{
+							e1.printStackTrace();
+						} 
+						catch (EncryptedDocumentException e) 
+						{
+							e.printStackTrace();
+						} 
+						catch (InvalidFormatException e) 
+						{
+						}
+						catch (EmptyFileException e)
+						{
+							Toolkit.getDefaultToolkit().beep();
+							MessageDialog.openConfirm(this.getShell(), "Ungültige Datei", "Die ausgewählte Datei ist leer und kann deshalb nicht verarbeitet werden.");
+						}
+						catch (IllegalArgumentException e)
+						{
+							Toolkit.getDefaultToolkit().beep();
+							MessageDialog.openConfirm(this.getShell(), "Ungültiges Dateiformat", "Die ausgewählte Datei ist keine Excel-Datei und kann deshalb nicht verarbeitet werden.");
+						}
+						finally
+						{
+							is.close();
+						}
 					}
-					catch (FileNotFoundException e2)
+					catch (IOException e)
 					{
-						e2.printStackTrace();
-					}
-					catch (InvalidFormatException e1)
-					{
-						e1.printStackTrace();
-					}
-					catch (IOException e1)
-					{
-						e1.printStackTrace();
+						
 					}
 				}
 			}
 		}
 		return null;
+	}
+	
+	public Membership getMembership()
+	{
+		IStructuredSelection ssel = (IStructuredSelection) membershipSelector.getSelection();
+		return ssel.isEmpty() ? null : (Membership) ssel.getFirstElement();
 	}
 
 	private class SheetSelectorContentProvider implements IStructuredContentProvider
@@ -283,6 +451,11 @@ public class SelectSourceWizardPage extends WizardPage implements ISelectionProv
 			return new Sheet[0];
 		}
 	}
+	
+	public boolean isUpdateExisting()
+	{
+		return this.updateExisting.getSelection();
+	}
 
 	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener)
@@ -309,12 +482,9 @@ public class SelectSourceWizardPage extends WizardPage implements ISelectionProv
 	}
 
 	@Override
-	public void selectionChanged(SelectionChangedEvent event)
+	public boolean isPageComplete()
 	{
-		ISelectionChangedListener[] listeners = this.sheetSelectorListeners.toArray(new ISelectionChangedListener[0]);
-		for (ISelectionChangedListener listener : listeners)
-		{
-			listener.selectionChanged(event);
-		}
+		return !this.sheetSelector.getSelection().isEmpty() && !this.membershipSelector.getSelection().isEmpty();
 	}
+	
 }

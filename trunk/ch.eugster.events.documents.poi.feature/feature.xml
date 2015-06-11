@@ -235,6 +235,8 @@ litigation.
       <import plugin="org.eclipse.core.jobs"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.osgi.services"/>
+      <import plugin="ch.eugster.docx4j"/>
+      <import plugin="ch.eugster.poi"/>
    </requires>
 
    <plugin

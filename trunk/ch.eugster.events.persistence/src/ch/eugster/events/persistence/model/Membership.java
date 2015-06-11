@@ -62,6 +62,10 @@ public class Membership extends AbstractEntity
 	@JoinColumn(name = "membership_address_id", referencedColumnName = "address_id")
 	private Address address;
 
+	@Basic
+	@Column(name = "membership_field_mapping")
+	private String fieldMapping;
+
 	/*
 	 * Children
 	 */
@@ -189,6 +193,14 @@ public class Membership extends AbstractEntity
 	public void setName(final String name)
 	{
 		this.propertyChangeSupport.firePropertyChange("name", this.name, this.name = name);
+	}
+
+	public void setFieldMapping(String fieldMapping) {
+		this.fieldMapping = fieldMapping;
+	}
+
+	public String getFieldMapping() {
+		return fieldMapping;
 	}
 
 	public static Membership newInstance()

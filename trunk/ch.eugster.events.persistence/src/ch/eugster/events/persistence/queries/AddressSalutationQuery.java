@@ -48,6 +48,13 @@ public class AddressSalutationQuery extends AbstractEntityQuery<AddressSalutatio
 		}
 	}
 
+	public List<AddressSalutation> selectBySalutation(String salutation)
+	{
+		Expression expression = new ExpressionBuilder(AddressSalutation.class).get("deleted").equal(false);
+		expression = expression.and(new ExpressionBuilder().get("salutation").equal(salutation));
+		return this.select(AddressSalutation.class, expression);
+	}
+	
 	public List<AddressSalutation> selectAll()
 	{
 		return super.selectAll(AddressSalutation.class);
