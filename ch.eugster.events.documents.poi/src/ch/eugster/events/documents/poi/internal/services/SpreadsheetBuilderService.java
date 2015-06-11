@@ -6,17 +6,16 @@ import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.util.Calendar;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -32,7 +31,7 @@ import ch.eugster.events.documents.services.DocumentBuilderService;
 
 public class SpreadsheetBuilderService implements DocumentBuilderService
 {
-	private void addHeader(final HSSFSheet sheet)
+	private void addHeader(final Sheet sheet)
 	{
 		DateFormat dateFormat = DateFormat.getDateInstance();
 		DateFormat timeFormat = DateFormat.getTimeInstance();
@@ -41,20 +40,20 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 		this.setHeader(sheet, timeFormat.format(Calendar.getInstance().getTime()), Header.RIGHT);
 	}
 
-	private void addRow(final DataMapKey[] keys, final DataMap dataMap, final HSSFSheet sheet, final int rowIndex,
-			final HSSFCellStyle style, final HSSFFont font)
+	private void addRow(final DataMapKey[] keys, final DataMap dataMap, final Sheet sheet, final int rowIndex,
+			final CellStyle style, final Font font)
 	{
-		HSSFRow row = this.createRow(sheet, (short) rowIndex);
+		Row row = this.createRow(sheet, (short) rowIndex);
 		for (int i = 0; i < keys.length; i++)
 		{
 			this.createCell(row, (short) i, dataMap.getProperty(keys[i].getKey()), font, style);
 		}
 	}
 
-	private void addTitles(final DataMapKey[] keys, final HSSFSheet sheet, final int rowIndex,
-			final HSSFCellStyle style, final HSSFFont font)
+	private void addTitles(final DataMapKey[] keys, final Sheet sheet, final int rowIndex,
+			final CellStyle style, final Font font)
 	{
-		HSSFRow row = this.createRow(sheet, (short) rowIndex);
+		Row row = this.createRow(sheet, (short) rowIndex);
 
 		for (int i = 0; i < keys.length; i++)
 		{
@@ -62,7 +61,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 		}
 	}
 
-	protected void autoSizeColumn(final HSSFSheet sheet, final int columnIndex)
+	protected void autoSizeColumn(final Sheet sheet, final int columnIndex)
 	{
 		sheet.autoSizeColumn(columnIndex);
 	}
@@ -91,21 +90,21 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 		try
 		{
 			monitor.beginTask("Dokument wird erstellt...", maps.length);
-			HSSFWorkbook workbook = this.createWorkbook();
-			HSSFCellStyle style = this.createStyle(workbook, new short[] { CellStyle.BORDER_NONE,
+			Workbook workbook = this.createWorkbook();
+			CellStyle style = this.createStyle(workbook, new short[] { CellStyle.BORDER_NONE,
 					CellStyle.BORDER_NONE, CellStyle.BORDER_NONE, CellStyle.BORDER_NONE });
-			HSSFFont normal = this.createFont(workbook, "Verdana", Font.BOLDWEIGHT_NORMAL, (short) 8);
-			HSSFFont bold = this.createFont(workbook, "Verdana", Font.BOLDWEIGHT_BOLD, (short) 8);
+			Font normal = this.createFont(workbook, "Verdana", Font.BOLDWEIGHT_NORMAL, (short) 8);
+			Font bold = this.createFont(workbook, "Verdana", Font.BOLDWEIGHT_BOLD, (short) 8);
 
 			int counter = 0;
-			HSSFSheet sheet = null;
+			Sheet sheet = null;
 			for (DataMap map : maps)
 			{
 				if (counter == 0)
 				{
 					sheet = this.createSheet(workbook, "Adressen");
 					sheet.getPrintSetup().setLandscape(false);
-					sheet.getPrintSetup().setPaperSize(HSSFPrintSetup.A4_PAPERSIZE);
+					sheet.getPrintSetup().setPaperSize(PrintSetup.A4_PAPERSIZE);
 					this.addHeader(sheet);
 					this.addTitles(keys, sheet, counter, style, bold);
 				}
@@ -148,47 +147,47 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 		return Status.CANCEL_STATUS;
 	}
 
-	protected void createCell(final HSSFRow row, final int col, final Double value, final HSSFFont font,
-			final HSSFCellStyle style)
+	protected void createCell(final Row row, final int col, final Double value, final Font font,
+			final CellStyle style)
 	{
-		HSSFCell cell = row.createCell(col);
+		Cell cell = row.createCell(col);
 		cell.setCellStyle(style);
 		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 		cell.setCellValue(value);
 	}
 
-	protected void createCell(final HSSFRow row, final int col, final String value, final HSSFFont font,
-			final HSSFCellStyle style)
+	protected void createCell(final Row row, final int col, final String value, final Font font,
+			final CellStyle style)
 	{
-		HSSFRichTextString string = new HSSFRichTextString(value);
+		RichTextString string = new XSSFRichTextString(value);
 		string.applyFont(font);
-		HSSFCell cell = row.createCell(col);
+		Cell cell = row.createCell(col);
 		cell.setCellStyle(style);
 		cell.setCellValue(string);
 	}
 
-	protected HSSFFont createFont(final HSSFWorkbook workbook, final String name, final short type, final short height)
+	protected Font createFont(final Workbook workbook, final String name, final short type, final short height)
 	{
-		HSSFFont font = workbook.createFont();
+		Font font = workbook.createFont();
 		font.setBoldweight(type);
 		font.setFontName(name);
 		font.setFontHeightInPoints(height);
 		return font;
 	}
 
-	protected HSSFRow createRow(final HSSFSheet sheet, final int index)
+	protected Row createRow(final Sheet sheet, final int index)
 	{
 		return sheet.createRow(index);
 	}
 
-	protected HSSFSheet createSheet(final HSSFWorkbook workbook, final String name)
+	protected Sheet createSheet(final Workbook workbook, final String name)
 	{
 		return workbook.createSheet(name);
 	}
 
-	protected HSSFCellStyle createStyle(final HSSFWorkbook workbook, final short[] borders)
+	protected CellStyle createStyle(final Workbook workbook, final short[] borders)
 	{
-		HSSFCellStyle style = workbook.createCellStyle();
+		CellStyle style = workbook.createCellStyle();
 		style.setBorderTop(borders[0]);
 		style.setBorderBottom(borders[0]);
 		style.setBorderLeft(borders[0]);
@@ -196,30 +195,30 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 		return style;
 	}
 
-	protected HSSFRichTextString createText(final HSSFFont font)
+	protected RichTextString createText(final Font font)
 	{
-		HSSFRichTextString text = new HSSFRichTextString();
+		RichTextString text = new XSSFRichTextString();
 		text.applyFont(font);
 		return text;
 	}
 
-	protected HSSFWorkbook createWorkbook()
+	protected Workbook createWorkbook()
 	{
-		return new HSSFWorkbook();
+		return new XSSFWorkbook();
 	}
 
-	protected int getLastRowNumber(final HSSFSheet sheet)
+	protected int getLastRowNumber(final Sheet sheet)
 	{
 		return sheet.getLastRowNum();
 	}
 
-	protected void packColumns(final HSSFSheet sheet, final int start, final int end)
+	protected void packColumns(final Sheet sheet, final int start, final int end)
 	{
 		for (int i = start; i < end; i++)
 			sheet.autoSizeColumn(i);
 	}
 
-	protected void setHeader(final HSSFSheet sheet, final String value, final Header header)
+	protected void setHeader(final Sheet sheet, final String value, final Header header)
 	{
 		if (header.equals(Header.LEFT))
 			sheet.getHeader().setLeft(value);
@@ -229,7 +228,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 			sheet.getHeader().setRight(value);
 	}
 
-	private IStatus showDocument(final HSSFWorkbook workbook) throws Exception
+	private IStatus showDocument(final Workbook workbook) throws Exception
 	{
 		IStatus status = Status.OK_STATUS;
 

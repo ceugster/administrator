@@ -15,6 +15,20 @@ public class PersonSexQuery extends AbstractEntityQuery<PersonSex>
 		super(connectionService);
 	}
 
+	public List<PersonSex> selectBySalutation(String salutation)
+	{
+		Expression expression = new ExpressionBuilder(PersonSex.class).get("deleted").equal(false);
+		expression = expression.and(new ExpressionBuilder().get("salutation").equal(salutation));
+		return this.select(PersonSex.class, expression);
+	}
+	
+	public List<PersonSex> selectBySymbol(String symbol)
+	{
+		Expression expression = new ExpressionBuilder(PersonSex.class).get("deleted").equal(false);
+		expression = expression.and(new ExpressionBuilder().get("symbol").equal(symbol));
+		return this.select(PersonSex.class, expression);
+	}
+	
 	public boolean isNameUnique(final String name, final Long id)
 	{
 		if (name == null || name.length() == 0)
