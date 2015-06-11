@@ -8,6 +8,7 @@ import org.eclipse.persistence.expressions.ExpressionBuilder;
 import org.eclipse.persistence.jpa.JpaHelper;
 import org.eclipse.persistence.queries.ReadAllQuery;
 
+import ch.eugster.events.persistence.model.PersonSex;
 import ch.eugster.events.persistence.model.PersonTitle;
 import ch.eugster.events.persistence.service.ConnectionService;
 
@@ -24,6 +25,13 @@ public class PersonTitleQuery extends AbstractEntityQuery<PersonTitle>
 		return super.selectAll(PersonTitle.class, true);
 	}
 
+	public List<PersonTitle> selectByTitle(String title)
+	{
+		Expression expression = new ExpressionBuilder(PersonTitle.class).get("deleted").equal(false);
+		expression = expression.and(new ExpressionBuilder().get("title").equal(title));
+		return this.select(PersonTitle.class, expression);
+	}
+	
 	public List<PersonTitle> selectAll(final boolean deletedToo)
 	{
 		return super.selectAll(PersonTitle.class, deletedToo);

@@ -7,7 +7,6 @@ import static javax.persistence.CascadeType.REFRESH;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -431,6 +430,21 @@ public class Person extends AbstractEntity
 		return false;
 	}
 
+	public boolean isMember(Membership membership)
+	{
+		for (LinkPersonAddress link : links)
+		{
+			for (Member member : link.getMembers())
+			{
+				if (!member.isDeleted() && member.getMembership().getId().equals(membership.getId()))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public void removeExtendedFields(final PersonExtendedField extendedField)
 	{
 		this.propertyChangeSupport.firePropertyChange("removeField", this.extendedFields,
@@ -536,7 +550,7 @@ public class Person extends AbstractEntity
 	{
 		this.propertyChangeSupport.firePropertyChange("website", this.website, this.website = website);
 	}
-
+	
 	public static Person newInstance()
 	{
 		return (Person) AbstractEntity.newInstance(new Person());

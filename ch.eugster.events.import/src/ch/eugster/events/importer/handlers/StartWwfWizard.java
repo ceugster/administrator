@@ -23,7 +23,7 @@ public class StartWwfWizard extends AbstractHandler implements IHandler
 		ImportWizard wizard = new ImportWizard();
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.setPageSize(new Point(600, 400));
-		int result = dialog.open();
+		dialog.open();
 		return Status.OK_STATUS;
 	}
 

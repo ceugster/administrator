@@ -115,12 +115,15 @@ public class ShowSourceWizardPage extends WizardPage implements IPageChangedList
 		withHeader = new Button(composite, SWT.CHECK);
 		withHeader.setText("Erste Zeile enthält Spaltentitel");
 		withHeader.setLayoutData(gridData);
+		withHeader.setSelection(settings.getBoolean("with.header"));
 		withHeader.addSelectionListener(new SelectionListener()
 		{
 			@Override
 			public void widgetSelected(SelectionEvent e)
 			{
-				settings.put("with.header", withHeader.getSelection());
+				boolean header = ShowSourceWizardPage.this.withHeader.getSelection();
+				settings.put("with.header", header);
+				ShowSourceWizardPage.this.wizard.setWithHeader(header);
 				update = Update.COLUMNS_AND_ROWS;
 				updateTable();
 			}
@@ -131,7 +134,6 @@ public class ShowSourceWizardPage extends WizardPage implements IPageChangedList
 				widgetSelected(e);
 			}
 		});
-		withHeader.setSelection(settings.getBoolean("with.header"));
 
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.horizontalSpan = 2;
@@ -157,39 +159,37 @@ public class ShowSourceWizardPage extends WizardPage implements IPageChangedList
 		return this.viewer;
 	}
 
-	public boolean isWithHeader()
-	{
-		return withHeader.getSelection();
-	}
-
 	private void updateTable()
 	{
-		if (update.equals(Update.ROWS) || update.equals(Update.COLUMNS_AND_ROWS))
+		if (update != null)
 		{
-			if (update.equals(Update.COLUMNS_AND_ROWS))
+			if (update.equals(Update.ROWS) || update.equals(Update.COLUMNS_AND_ROWS))
 			{
-				updateColumns(this.wizard.getSheet());
+				if (update.equals(Update.COLUMNS_AND_ROWS))
+				{
+					updateColumns(this.wizard.getSheet());
+				}
+				int firstRow = withHeader.getSelection() ? 1 : 0;
+				int maxRows = Math.min(this.wizard.getSheet().getLastRowNum() - firstRow, Integer.MAX_VALUE);
+				if (rowSpinner.getSelection() > maxRows)
+				{
+					rowSpinner.setSelection(maxRows);
+				}
+				rowSpinner.setMaximum(maxRows);
+				int rowCount = rowSpinner.getSelection() == 0 ? maxRows : rowSpinner.getSelection() + firstRow;
+				Collection<Row> rows = new ArrayList<Row>();
+				for (int i = firstRow; i < rowCount; i++)
+				{
+					rows.add(this.wizard.getSheet().getRow(i));
+				}
+				this.viewer.setInput(rows.toArray(new Row[0]));
+				TableColumn[] columns = this.viewer.getTable().getColumns();
+				for (TableColumn column : columns)
+				{
+					column.pack();
+				}
+				update = Update.NONE;
 			}
-			int firstRow = withHeader.getSelection() ? 1 : 0;
-			int maxRows = Math.min(this.wizard.getSheet().getLastRowNum() - firstRow, Integer.MAX_VALUE);
-			if (rowSpinner.getSelection() > maxRows)
-			{
-				rowSpinner.setSelection(maxRows);
-			}
-			rowSpinner.setMaximum(maxRows);
-			int rowCount = rowSpinner.getSelection() == 0 ? maxRows : rowSpinner.getSelection() + firstRow;
-			Collection<Row> rows = new ArrayList<Row>();
-			for (int i = firstRow; i < rowCount; i++)
-			{
-				rows.add(this.wizard.getSheet().getRow(i));
-			}
-			this.viewer.setInput(rows.toArray(new Row[0]));
-			TableColumn[] columns = this.viewer.getTable().getColumns();
-			for (TableColumn column : columns)
-			{
-				column.pack();
-			}
-			update = Update.NONE;
 		}
 	}
 
@@ -204,56 +204,59 @@ public class ShowSourceWizardPage extends WizardPage implements IPageChangedList
 		if (sheet != null)
 		{
 			Row row = sheet.getRow(sheet.getFirstRowNum());
-			Iterator<Cell> cells = row.cellIterator();
-			int columnStyle = SWT.None;
-			while (cells.hasNext())
+			if (row != null)
 			{
-				Cell cell = cells.next();
-				switch (cell.getCellStyle().getAlignment())
+				Iterator<Cell> cells = row.cellIterator();
+				int columnStyle = SWT.None;
+				while (cells.hasNext())
 				{
-					case CellStyle.ALIGN_CENTER:
+					Cell cell = cells.next();
+					switch (cell.getCellStyle().getAlignment())
 					{
-						columnStyle = SWT.CENTER;
-					}
-					case CellStyle.ALIGN_RIGHT:
-					{
-						columnStyle = SWT.RIGHT;
-					}
-					default:
-					{
-						columnStyle = SWT.LEFT;
-					}
-				}
-				TableViewerColumn viewerColumn = new TableViewerColumn(viewer, columnStyle);
-				viewerColumn.setLabelProvider(new CellLabelProvider()
-				{
-					@Override
-					public void update(ViewerCell viewerCell)
-					{
-						if (viewerCell.getElement() instanceof Row)
+						case CellStyle.ALIGN_CENTER:
 						{
-							Row row = (Row) viewerCell.getElement();
-							Cell cell = row.getCell(viewerCell.getColumnIndex());
-							if (cell != null)
+							columnStyle = SWT.CENTER;
+						}
+						case CellStyle.ALIGN_RIGHT:
+						{
+							columnStyle = SWT.RIGHT;
+						}
+						default:
+						{
+							columnStyle = SWT.LEFT;
+						}
+					}
+					TableViewerColumn viewerColumn = new TableViewerColumn(viewer, columnStyle);
+					viewerColumn.setLabelProvider(new CellLabelProvider()
+					{
+						@Override
+						public void update(ViewerCell viewerCell)
+						{
+							if (viewerCell.getElement() instanceof Row)
 							{
-								viewerCell.setText(wizard.evaluateCell(cell));
-								int alignment = wizard.evaluateAlignment(cell);
-								if (viewer.getTable().getColumn(viewerCell.getColumnIndex()).getAlignment() != alignment)
+								Row row = (Row) viewerCell.getElement();
+								Cell cell = row.getCell(viewerCell.getColumnIndex());
+								if (cell != null)
 								{
-									viewer.getTable().getColumn(viewerCell.getColumnIndex()).setAlignment(alignment);
+									viewerCell.setText(wizard.evaluateCell(cell));
+									int alignment = wizard.evaluateAlignment(cell);
+									if (viewer.getTable().getColumn(viewerCell.getColumnIndex()).getAlignment() != alignment)
+									{
+										viewer.getTable().getColumn(viewerCell.getColumnIndex()).setAlignment(alignment);
+									}
 								}
 							}
 						}
+					});
+					if (this.withHeader.getSelection())
+					{
+						String value = this.wizard.evaluateCell(cell);
+						viewerColumn.getColumn().setText(value == null ? "" + cell.getColumnIndex() : value);
 					}
-				});
-				if (this.withHeader.getSelection())
-				{
-					String value = this.wizard.evaluateCell(cell);
-					viewerColumn.getColumn().setText(value == null ? "" + cell.getColumnIndex() : value);
-				}
-				else
-				{
-					viewerColumn.getColumn().setText(Integer.valueOf(cell.getColumnIndex() + 1).toString());
+					else
+					{
+						viewerColumn.getColumn().setText(Integer.valueOf(cell.getColumnIndex() + 1).toString());
+					}
 				}
 			}
 		}

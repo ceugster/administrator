@@ -318,6 +318,33 @@
    <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201504261125.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201504261125">
       <category name="persistence"/>
    </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201505261706.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201505261706">
+      <category name="persistence"/>
+   </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201505271732.jar" id="ch.eugster.events.course.feature" version="1.0.0.201505271732">
+      <category name="course"/>
+   </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201505271732.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201505271732">
+      <category name="persistence"/>
+   </feature>
+   <feature url="features/ch.eugster.events.person.feature_1.0.0.201506090949.jar" id="ch.eugster.events.person.feature" version="1.0.0.201506090949">
+      <category name="person"/>
+   </feature>
+   <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201506092023.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201506092023">
+      <category name="addressgroup"/>
+   </feature>
+   <feature url="features/ch.eugster.events.core.feature_1.0.0.201506112111.jar" id="ch.eugster.events.core.feature" version="1.0.0.201506112111">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.poi.feature_1.0.0.201506112111.jar" id="ch.eugster.events.documents.poi.feature" version="1.0.0.201506112111">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201506112111.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201506112111">
+      <category name="persistence"/>
+   </feature>
+   <feature url="features/ch.eugster.events.import.feature_1.0.0.201506112111.jar" id="ch.eugster.events.import.feature" version="1.0.0.201506112111">
+      <category name="member"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>

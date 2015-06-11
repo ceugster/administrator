@@ -17,4 +17,9 @@ public class MembershipQuery extends AbstractEntityQuery<Membership>
 	{
 		return super.selectAll(Membership.class);
 	}
+
+	public List<Membership> selectAll(boolean deletedToo)
+	{
+		return super.selectAll(Membership.class, deletedToo);
+	}
 }
