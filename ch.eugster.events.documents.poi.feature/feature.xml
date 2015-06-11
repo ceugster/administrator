@@ -228,6 +228,10 @@ Each party waives its rights to a jury trial in any resulting
 litigation.
    </license>
 
+   <includes
+         id="ch.eugster.poi.feature"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
@@ -235,8 +239,7 @@ litigation.
       <import plugin="org.eclipse.core.jobs"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="ch.eugster.docx4j"/>
-      <import plugin="ch.eugster.poi"/>
+      <import plugin="ch.eugster.poi" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
