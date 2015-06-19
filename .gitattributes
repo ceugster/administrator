@@ -790,6 +790,7 @@ ch.eugster.events.guide/src/ch/eugster/events/guide/views/CompensationTypeView.j
 ch.eugster.events.guide/src/ch/eugster/events/guide/views/GuideTypeContentProvider.java -text
 ch.eugster.events.guide/src/ch/eugster/events/guide/views/GuideTypeSorter.java -text
 ch.eugster.events.guide/src/ch/eugster/events/guide/views/GuideTypeView.java -text
+ch.eugster.events.import.feature/.project -text
 ch.eugster.events.import/.classpath -text
 ch.eugster.events.import/.project -text
 ch.eugster.events.import/.settings/org.eclipse.jdt.core.prefs -text
