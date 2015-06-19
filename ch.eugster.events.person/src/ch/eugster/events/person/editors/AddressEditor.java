@@ -1010,7 +1010,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 64;
 
-		notes = formToolkit.createText(composite, "");
+		notes = formToolkit.createText(composite, "", SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		notes.setLayoutData(gridData);
 		notes.addModifyListener(new ModifyListener()
 		{

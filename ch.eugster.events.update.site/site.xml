@@ -78,6 +78,15 @@
    <feature url="features/ch.eugster.events.importer.feature_1.0.0.201506112301.jar" id="ch.eugster.events.importer.feature" version="1.0.0.201506112301">
       <category name="member"/>
    </feature>
+   <feature url="features/ch.eugster.events.documents.poi.feature_1.0.0.201506191733.jar" id="ch.eugster.events.documents.poi.feature" version="1.0.0.201506191733">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201506191806.jar" id="ch.eugster.events.course.feature" version="1.0.0.201506191806">
+      <category name="course"/>
+   </feature>
+   <feature url="features/ch.eugster.events.person.feature_1.0.0.201506191806.jar" id="ch.eugster.events.person.feature" version="1.0.0.201506191806">
+      <category name="person"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>
