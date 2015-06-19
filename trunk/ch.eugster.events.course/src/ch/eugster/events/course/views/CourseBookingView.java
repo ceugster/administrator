@@ -55,6 +55,7 @@ import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.BookingAnnulatedState;
 import ch.eugster.events.persistence.model.BookingDoneState;
 import ch.eugster.events.persistence.model.BookingForthcomingState;
+import ch.eugster.events.persistence.model.BookingType;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.IBookingState;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
@@ -69,9 +70,11 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 
 	private TreeViewer viewer;
 
-	private Label bookingStateLabelColumn1;
+	private Label bookingViewLabelMinMaxParticipants;
 
-	private Label bookingStateLabelColumn2;
+	private Label bookingViewLabelBookingStates;
+
+	private Label bookingViewLabelBookingTypes;
 
 	public CourseBookingView()
 	{
@@ -268,12 +271,14 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		composite.setLayout(new GridLayout());
 
-		this.bookingStateLabelColumn1 = new Label(composite, SWT.NONE);
-		this.bookingStateLabelColumn1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.bookingViewLabelMinMaxParticipants = new Label(composite, SWT.NONE);
+		this.bookingViewLabelMinMaxParticipants.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		this.bookingStateLabelColumn2 = new Label(composite, SWT.NONE);
-		this.bookingStateLabelColumn2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.bookingViewLabelBookingStates = new Label(composite, SWT.NONE);
+		this.bookingViewLabelBookingStates.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+		this.bookingViewLabelBookingTypes = new Label(composite, SWT.NONE);
+		this.bookingViewLabelBookingTypes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
 	@Override
@@ -635,13 +640,13 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 		rows = Math.max(rows, BookingAnnulatedState.values().length);
 		rows = (rows / 2) + (rows % 2);
 
-		if (this.bookingStateLabelColumn1 != null)
+		if (this.bookingViewLabelMinMaxParticipants != null)
 		{
 			if (object == null)
 			{
 				for (int i = 0; i < rows; i++)
 				{
-					this.bookingStateLabelColumn1.setText(this.bookingStateLabelColumn1.getText() + "\n");
+					this.bookingViewLabelMinMaxParticipants.setText(this.bookingViewLabelMinMaxParticipants.getText() + "\n");
 					// this.bookingStateLabelColumn2.setText(this.bookingStateLabelColumn2.getText()
 					// + "\n");
 				}
@@ -649,8 +654,9 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 			else if (object instanceof Course)
 			{
 				Map<IBookingState, BookingStateCount> states = new HashMap<IBookingState, BookingStateCount>();
+				Map<BookingType, BookingTypeCount> types = new HashMap<BookingType, BookingTypeCount>();
 				Course course = (Course) object;
-				this.bookingStateLabelColumn1.setText("Minimale Teilnehmerzahl: " + course.getMinParticipants()
+				this.bookingViewLabelMinMaxParticipants.setText("Minimale Teilnehmerzahl: " + course.getMinParticipants()
 						+ " | Maximale Teilnehmerzahl: " + course.getMaxParticipants());
 				List<Booking> bookings = course.getBookings();
 				for (Booking booking : bookings)
@@ -665,23 +671,57 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 					{
 						state.addCount(booking.getParticipantCount());
 					}
+					List<Participant> participants = booking.getParticipants();
+					for (Participant participant : participants)
+					{
+						BookingType bookingType = participant.getBookingType();
+						BookingTypeCount type = types.get(bookingType);
+						if (type == null)
+						{
+							type = new BookingTypeCount(bookingType, participant.getCount());
+							types.put(bookingType, type);
+						}
+						else
+						{
+							type.addCount(participant.getCount());
+						}
+					}
 				}
 				StringBuilder text = new StringBuilder();
+				int total = 0;
 				for (BookingStateCount state : states.values())
 				{
-					text = text.append(state.getBookingStateName() + ": " + state.getCount() + " ");
+					if (text.length() == 0)
+					{
+						text = text.append("Buchungsstatus: " + state.getBookingStateName() + ": " + state.getCount());
+					}
+					else
+					{
+						text = text.append(" | " + state.getBookingStateName() + ": " + state.getCount());
+					}
+					total += state.getCount();
 				}
-				this.bookingStateLabelColumn2.setText(text.toString().trim());
-				// for (int i = rows; i < count.length; i++)
-				// {
-				// this.bookingStateLabelColumn2.setText(this.bookingStateLabelColumn2.getText()
-				// + states[i].toString() + ": " + count[i]);
-				// if (!this.bookingStateLabelColumn2.getText().isEmpty())
-				// this.bookingStateLabelColumn2.setText(this.bookingStateLabelColumn2.getText()
-				// + "\n");
-				// }
+				text = text.append(" | Total: " + total);
+				this.bookingViewLabelBookingStates.setText(text.toString().trim());
+
+				text = new StringBuilder();
+				total = 0;
+				for (BookingTypeCount type : types.values())
+				{
+					if (text.length() == 0)
+					{
+						text = text.append("Buchungsarten: " + type.getBookingTypeName() + ": " + type.getCount());
+					}
+					else
+					{
+						text = text.append(" | " + type.getBookingTypeName() + ": " + type.getCount());
+					}
+					total += type.getCount();
+				}
+				text = text.append(" | Total: " + total);
+				this.bookingViewLabelBookingTypes.setText(text.toString().trim());
 			}
-			this.bookingStateLabelColumn1.getParent().getParent().layout();
+			this.bookingViewLabelMinMaxParticipants.getParent().getParent().layout();
 		}
 	}
 
@@ -700,6 +740,34 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 		public String getBookingStateName()
 		{
 			return state.toString();
+		}
+
+		public int getCount()
+		{
+			return this.count;
+		}
+
+		public void addCount(int count)
+		{
+			this.count += count;
+		}
+	}
+
+	private class BookingTypeCount
+	{
+		int count;
+
+		BookingType type;
+
+		public BookingTypeCount(BookingType type, int count)
+		{
+			this.count = count;
+			this.type = type;
+		}
+
+		public String getBookingTypeName()
+		{
+			return type.getName();
 		}
 
 		public int getCount()
