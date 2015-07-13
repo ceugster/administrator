@@ -1,5 +1,11 @@
 package ch.eugster.events.persistence.model;
 
+import static javax.persistence.CascadeType.ALL;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
 import javax.persistence.AttributeOverride;
@@ -11,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -44,6 +51,13 @@ public class Visitor extends AbstractEntity implements LinkPersonAddressChild, I
 	@Basic
 	@Column(name = "visitor_selected_email")
 	private SelectedEmail selectedEmail;
+
+	@Basic
+	@Column(name = "visitor_color")
+	private int color;
+
+	@OneToMany(cascade = ALL, mappedBy = "visitor")
+	private List<VisitVisitor> visitorVisits = new Vector<VisitVisitor>();
 
 	private Visitor()
 	{
@@ -150,6 +164,48 @@ public class Visitor extends AbstractEntity implements LinkPersonAddressChild, I
 	{
 		this.propertyChangeSupport.firePropertyChange("selectedPhone", this.selectedPhone,
 				this.selectedPhone = selectedPhone);
+	}
+
+	public void addVisit(VisitVisitor visitVisitor) 
+	{
+		this.propertyChangeSupport.firePropertyChange("visitorVisits", this.visitorVisits,
+				this.visitorVisits.add(visitVisitor));
+	}
+
+	public List<VisitVisitor> getVisitorVisits(boolean deletedToo) 
+	{
+		List<VisitVisitor> visitorsVisits = new ArrayList<VisitVisitor>();
+		for (VisitVisitor visitorVisit : this.visitorVisits)
+		{
+			if (deletedToo || !visitorVisit.isDeleted())
+			{
+				visitorsVisits.add(visitorVisit);
+			}
+		}
+		return visitorsVisits;
+	}
+	
+	public void setDeleted(boolean deleted)
+	{
+		for (VisitVisitor visitorVisit : this.visitorVisits)
+		{
+			if (visitorVisit.isDeleted() != deleted)
+			{
+				visitorVisit.setDeleted(deleted);
+			}
+		}
+		super.setDeleted(deleted);
+	}
+
+	public void setColor(int color) 
+	{
+		this.propertyChangeSupport.firePropertyChange("color", this.color,
+				this.color = color);
+	}
+
+	public int getColor() 
+	{
+		return color;
 	}
 
 	public static Visitor newInstance()

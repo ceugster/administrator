@@ -136,8 +136,8 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 		label.setLayoutData(new GridData());
 		label.setText("Filter");
 
-		final AddressGroupMemberNameFilter nameFilter = new AddressGroupMemberNameFilter();
-		nameFilter.setFilter(this.dialogSettings.get("member.filter"));
+		final AddressGroupMemberFilter memberFilter = new AddressGroupMemberFilter();
+		memberFilter.setFilter(this.dialogSettings.get("member.filter"));
 
 		this.filter = new Text(filterComposite, SWT.BORDER);
 		this.filter.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -149,7 +149,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			{
 				String value = AddressGroupMemberView.this.filter.getText();
 				AddressGroupMemberView.this.dialogSettings.put("member.filter", value);
-				nameFilter.setFilter(value);
+				memberFilter.setFilter(value);
 				internalRefresh();
 			}
 		});
@@ -188,7 +188,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 		this.viewer = new TableViewer(table);
 		this.viewer.setContentProvider(new AddressGroupMemberContentProvider());
 		this.viewer.setSorter(this.sorter);
-		this.viewer.setFilters(new ViewerFilter[] { deletedFilter, nameFilter });
+		this.viewer.setFilters(new ViewerFilter[] { deletedFilter, memberFilter });
 		this.viewer.addDoubleClickListener(this);
 		this.viewer.addSelectionChangedListener(new ISelectionChangedListener()
 		{

@@ -15,6 +15,11 @@ public class VisitThemeQuery extends AbstractEntityQuery<VisitTheme>
 	{
 		super(connectionService);
 	}
+	
+	public List<VisitTheme> selectAll(boolean deletedToo)
+	{
+		return super.selectAll(VisitTheme.class, deletedToo);
+	}
 
 	public boolean isNameUnique(String name, Long id)
 	{

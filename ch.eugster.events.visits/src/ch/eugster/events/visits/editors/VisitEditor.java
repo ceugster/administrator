@@ -70,8 +70,6 @@ import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
-import ch.eugster.events.persistence.model.Address;
-import ch.eugster.events.persistence.model.AddressType;
 import ch.eugster.events.persistence.model.Appliance;
 import ch.eugster.events.persistence.model.ISelectedEmailProvider;
 import ch.eugster.events.persistence.model.ISelectedPhoneProvider;
@@ -204,6 +202,16 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		{
 			applianceViewer.add(entity);
 		}
+		else if (entity instanceof Visit)
+		{
+			VisitEditorInput input = (VisitEditorInput) this.getEditorInput();
+			if (input.getEntity().getId() != null && entity.getId().equals(input.getEntity().getId()))
+			{
+				Visit visit = (Visit) entity;
+				input.setEntity(visit);
+				this.loadValues();
+			}
+		}
 	}
 
 	@Override
@@ -231,6 +239,16 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		else if (entity instanceof Appliance)
 		{
 			applianceViewer.refresh();
+		}
+		else if (entity instanceof Visit)
+		{
+			VisitEditorInput input = (VisitEditorInput) this.getEditorInput();
+			if (input.getEntity().getId() != null && entity.getId().equals(input.getEntity().getId()))
+			{
+				Visit visit = (Visit) entity;
+				input.setEntity(visit);
+				this.loadValues();
+			}
 		}
 	}
 
@@ -300,9 +318,9 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 			{
 				ConnectionService service = (ConnectionService) super.addingService(reference);
 				VisitThemeQuery themeQuery = (VisitThemeQuery) service.getQuery(VisitTheme.class);
-				themeViewer.setInput(themeQuery.selectAll(VisitTheme.class, true).toArray(new VisitTheme[0]));
+				themeViewer.setInput(themeQuery.selectAll(true).toArray(new VisitTheme[0]));
 				TeacherQuery teacherQuery = (TeacherQuery) service.getQuery(Teacher.class);
-				teacherViewer.setInput(teacherQuery.selectAll(Teacher.class, false).toArray(new Teacher[0]));
+				teacherViewer.setInput(teacherQuery.selectAll(false).toArray(new Teacher[0]));
 				VisitorQuery visitorQuery = (VisitorQuery) service.getQuery(Visitor.class);
 				Collection<Visitor> visitors = new ArrayList<Visitor>();
 				visitors.add(Visitor.newInstance());
@@ -349,6 +367,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		EntityMediator.addListener(Teacher.class, this);
 		EntityMediator.addListener(SchoolClass.class, this);
 		EntityMediator.addListener(Visitor.class, this);
+		EntityMediator.addListener(Visit.class, this);
 	}
 
 	private void createThemeSection(ScrolledForm parent)
@@ -1481,34 +1500,12 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 
 	private void setAddressData(Teacher teacher)
 	{
-		if (teacher != null)
-		{
-			if (Activator.getDefault().getSettings().getDefaultAddressType() != null)
-			{
-				AddressType addressType = Activator.getDefault().getSettings().getDefaultAddressType();
-				Collection<LinkPersonAddress> links = teacher.getLink().getPerson().getLinks();
-				for (LinkPersonAddress link : links)
-				{
-					if (link.getAddressType().getId().equals(addressType.getId()))
-					{
-						this.name.setText(link.getAddress().getName());
-						this.address.setText(link.getAddress().getAddress());
-						this.city.setText(AddressFormatter.getInstance().formatCityLine(link.getAddress()));
-						this.addressPhone.setText(link.getAddress().getPhone());
-						this.addressEmail.setText(link.getAddress().getEmail());
-						this.sendAddressEmail
-								.setEnabled(!Address.stringValueOf(link.getAddress().getEmail()).isEmpty());
-						return;
-					}
-				}
-			}
-		}
-		this.name.setText("");
-		this.address.setText("");
-		this.city.setText("");
-		this.addressPhone.setText("");
-		this.addressEmail.setText("");
-		this.sendAddressEmail.setEnabled(false);
+		this.name.setText(teacher == null ? "" : teacher.getLink().getAddress().getName());
+		this.address.setText(teacher == null ? "" : teacher.getLink().getAddress().getAddress());
+		this.city.setText(teacher == null ? "" : AddressFormatter.getInstance().formatCityLine(teacher.getLink().getAddress()));
+		this.addressPhone.setText(teacher == null ? "" : teacher.getLink().getAddress().getPhone());
+		this.addressEmail.setText(teacher == null ? "" : teacher.getLink().getAddress().getEmail());
+		this.sendAddressEmail.setEnabled(!this.addressEmail.getText().isEmpty());
 	}
 
 	@Override
@@ -1747,6 +1744,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		EntityMediator.removeListener(Teacher.class, this);
 		EntityMediator.removeListener(SchoolClass.class, this);
 		EntityMediator.removeListener(Visitor.class, this);
+		EntityMediator.removeListener(Visit.class, this);
 	}
 
 	private void sendEmail(String email)

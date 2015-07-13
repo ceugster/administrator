@@ -212,6 +212,41 @@ public abstract class DatabaseUpdater
 		return false;
 	}
 
+	public void updateSequenceTable(final java.sql.Connection con)
+	{
+		try
+		{
+			List<String> tableNames = new ArrayList<String>();
+			DatabaseMetaData dbmd = con.getMetaData();
+			ResultSet rs = dbmd.getTables(null, null, null, new String[] { "TABLE" });
+			while (rs.next())
+			{
+				String tableName = rs.getString(rs.findColumn("TABLE_NAME"));
+				if (!tableName.equals("events_sequence"))
+				{
+					tableNames.add(tableName);
+				}
+			}
+			for (String tableName : tableNames)
+			{
+				String sql = "SELECT * FROM events_sequence WHERE seq_name = '" + tableName + "_id_seq'";
+				Statement stm = con.createStatement();
+				ResultSet rst = stm.executeQuery(sql);
+				if (!rst.next())
+				{
+					sql = "INSERT INTO events_sequence (seq_name, seq_count) VALUES ('" + tableName + "_id_seq', 1)";
+					Statement stmu = con.createStatement();
+					stmu.execute(sql);
+				}
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+	
 	protected boolean tableExists(final java.sql.Connection con, final String tableName)
 	{
 		try
@@ -1208,6 +1243,25 @@ public abstract class DatabaseUpdater
 						{
 							StringBuilder builder = new StringBuilder("ALTER TABLE " + tableName + " ");
 							builder.append("ADD COLUMN " + columnName + " " + this.getClobTypeName() + " NULL");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+					}
+					if (structureVersion == 32)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						updateSequenceTable(con);
+					}
+					if (structureVersion == 33)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						String tableName = "events_visitor";
+						String columnName = "visitor_color";
+						if (!columnExists(con, tableName, columnName))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE " + tableName + " ");
+							builder.append("ADD COLUMN " + columnName + " INTEGER DEFAULT 0");
 							log(LogService.LOG_INFO, builder.toString());
 							System.out.println(builder.toString());
 							ok = executeSqlQuery(con, builder.toString());

@@ -8,7 +8,7 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IWorkbenchPart;
 
-import ch.eugster.events.visits.views.OverviewView;
+import ch.eugster.events.visits.views.ThemeView;
 
 public class SetTodayCentered extends AbstractHandler implements IHandler
 {
@@ -20,9 +20,9 @@ public class SetTodayCentered extends AbstractHandler implements IHandler
 		{
 			EvaluationContext context = (EvaluationContext) event.getApplicationContext();
 			IWorkbenchPart activePart = (IWorkbenchPart) context.getParent().getVariable("activePart");
-			if (activePart instanceof OverviewView)
+			if (activePart instanceof ThemeView)
 			{
-				OverviewView view = (OverviewView) activePart;
+				ThemeView view = (ThemeView) activePart;
 				view.setTodayCentered();
 			}
 		}

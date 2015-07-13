@@ -12,10 +12,10 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="ch.eugster.events.visits.views.OverviewView"
+            class="ch.eugster.events.visits.views.ThemeView"
             icon="icons/panda.png"
-            id="ch.eugster.events.visits.overview"
-            name="Übersicht"
+            id="ch.eugster.events.visits.theme.gantt"
+            name="Themen"
             restorable="true">
       </view>
       <view
@@ -52,6 +52,13 @@
             name="Emailkonti"
             restorable="true">
       </view>
+      <view
+            class="ch.eugster.events.visits.views.VisitView"
+            icon="icons/panda.png"
+            id="ch.eugster.events.visits.visit.view"
+            name="Besuche"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -63,11 +70,22 @@
                   commandId="org.eclipse.ui.views.showView"
                   hoverIcon="icons/panda.png"
                   icon="icons/panda.png"
-                  label="Übersicht"
+                  label="Besuchsliste"
                   style="push">
                <parameter
                      name="org.eclipse.ui.views.showView.viewId"
-                     value="ch.eugster.events.visits.overview">
+                     value="ch.eugster.events.visits.visit.view">
+               </parameter>
+            </command>
+            <command
+                  commandId="org.eclipse.ui.views.showView"
+                  hoverIcon="icons/panda.png"
+                  icon="icons/panda.png"
+                  label="Themenübersicht"
+                  style="push">
+               <parameter
+                     name="org.eclipse.ui.views.showView.viewId"
+                     value="ch.eugster.events.visits.theme.gantt">
                </parameter>
             </command>
             <command
@@ -150,7 +168,7 @@
             allPopups="false"
             locationURI="toolbar:ch.eugster.events.visits.overview?after=additions">
          <command
-               commandId="ch.eugster.events.visits.new"
+               commandId="ch.eugster.events.visits.add"
                disabledIcon="icons/add_grey_16.gif"
                hoverIcon="icons/add_16.gif"
                icon="icons/add_16.gif"
@@ -318,6 +336,60 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="toolbar:ch.eugster.events.visits.visit.view?after=additions">
+         <command
+               commandId="ch.eugster.events.visits.visit.add"
+               disabledIcon="icons/add_grey_16.gif"
+               hoverIcon="icons/add_16.gif"
+               icon="icons/add_16.gif"
+               label="Hinzufügen"
+               style="push">
+         </command>
+         <command
+               commandId="ch.eugster.events.visits.visit.edit"
+               disabledIcon="icons/edit_grey_16.png"
+               hoverIcon="icons/edit_16.png"
+               icon="icons/edit_16.png"
+               label="Bearbeiten"
+               style="push">
+         </command>
+         <command
+               commandId="ch.eugster.events.visits.visit.delete"
+               disabledIcon="icons/delete_grey_16.png"
+               hoverIcon="icons/delete_16.png"
+               icon="icons/delete_16.png"
+               label="Entfernen"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:ch.eugster.events.visits.visit.view?after=addictions">
+         <command
+               commandId="ch.eugster.events.visits.visit.add"
+               disabledIcon="icons/add_grey_16.gif"
+               hoverIcon="icons/add_16.gif"
+               icon="icons/add_16.gif"
+               label="Hinzufügen"
+               style="push">
+         </command>
+         <command
+               commandId="ch.eugster.events.visits.visit.edit"
+               disabledIcon="icons/edit_grey_16.png"
+               hoverIcon="icons/edit_16.png"
+               icon="icons/edit_16.png"
+               label="Bearbeiten"
+               style="push">
+         </command>
+         <command
+               commandId="ch.eugster.events.visits.visit.delete"
+               disabledIcon="icons/delete_grey_16.png"
+               hoverIcon="icons/delete_16.png"
+               icon="icons/delete_16.png"
+               label="Entfernen"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -381,8 +453,18 @@
       </command>
       <command
             defaultHandler="ch.eugster.events.visits.handlers.AddVisitHandler"
-            id="ch.eugster.events.visits.new"
+            id="ch.eugster.events.visits.visit.add"
             name="Neuer Besuch">
+      </command>
+      <command
+            defaultHandler="ch.eugster.events.visits.handlers.EditVisitHandler"
+            id="ch.eugster.events.visits.visit.edit"
+            name="Besuch bearbeiten">
+      </command>
+      <command
+            defaultHandler="ch.eugster.events.visits.handlers.DeleteVisitHandler"
+            id="ch.eugster.events.visits.visit.delete"
+            name="Besuch entfernen">
       </command>
       <command
             defaultHandler="ch.eugster.events.visits.handlers.NewApplianceHandler"
@@ -738,6 +820,10 @@
       <context
             id="ch.eugster.events.visits.email.context"
             name="EmailkontoKontext">
+      </context>
+      <context
+            id="ch.eugster.events.visits.visit.context"
+            name="Besucherkontext">
       </context>
    </extension>
    <extension

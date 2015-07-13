@@ -319,6 +319,18 @@ public class Visit extends AbstractEntity
 		this.theme = theme;
 	}
 
+	public void setDeleted(boolean deleted)
+	{
+		for (VisitVisitor visitorVisit : visitors)
+		{
+			if (visitorVisit.isDeleted() != deleted)
+			{
+				visitorVisit.setDeleted(deleted);
+			}
+		}
+		super.setDeleted(deleted);
+	}
+
 	public static Visit newInstance()
 	{
 		return (Visit) AbstractEntity.newInstance(new Visit());
