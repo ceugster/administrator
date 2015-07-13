@@ -1,5 +1,8 @@
 package ch.eugster.events.visits.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -15,6 +18,8 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
@@ -41,6 +46,8 @@ import ch.eugster.events.visits.editors.VisitThemeEditorInput;
 
 public class VisitThemeView extends AbstractEntityView implements IDoubleClickListener, EntityListener
 {
+	private List<Color> colors = new ArrayList<Color>();
+	
 	private IContextActivation ctxActivation;
 
 	private TableViewer viewer;
@@ -64,6 +71,11 @@ public class VisitThemeView extends AbstractEntityView implements IDoubleClickLi
 		ctxService.deactivateContext(ctxActivation);
 
 		EntityMediator.removeListener(VisitTheme.class, this);
+		
+		for (Color color : colors)
+		{
+			color.dispose();
+		}
 		super.dispose();
 	}
 
@@ -118,8 +130,16 @@ public class VisitThemeView extends AbstractEntityView implements IDoubleClickLi
 				Object object = cell.getElement();
 				if (object instanceof VisitTheme)
 				{
-					cell.setText(((VisitTheme) object).getName());
 					cell.setImage(Activator.getDefault().getImageRegistry().get("theme"));
+					VisitTheme theme = (VisitTheme) object;
+					cell.setText(theme.getName());
+					if (theme.getColor() != null)
+					{
+						java.awt.Color c = new java.awt.Color(theme.getColor().intValue());
+						Color color = new Color(VisitThemeView.this.getSite().getShell().getDisplay(), new RGB(c.getRed(), c.getGreen(), c.getBlue()));
+						colors.add(color);
+						cell.setBackground(color);
+					}
 				}
 			}
 		});

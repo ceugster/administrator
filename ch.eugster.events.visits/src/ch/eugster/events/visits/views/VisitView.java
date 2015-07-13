@@ -1,9 +1,8 @@
 package ch.eugster.events.visits.views;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -17,13 +16,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
@@ -40,11 +35,9 @@ import org.osgi.util.tracker.ServiceTracker;
 import ch.eugster.events.persistence.events.EntityListener;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
-import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Visit;
-import ch.eugster.events.persistence.model.VisitTheme;
 import ch.eugster.events.persistence.model.VisitVisitor;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.views.AbstractEntityView;
@@ -52,10 +45,8 @@ import ch.eugster.events.visits.Activator;
 import ch.eugster.events.visits.editors.VisitEditor;
 import ch.eugster.events.visits.editors.VisitEditorInput;
 
-public class VisitsToDoView extends AbstractEntityView implements IDoubleClickListener, EntityListener
+public class VisitView extends AbstractEntityView implements IDoubleClickListener, EntityListener
 {
-	private final Map<Long, Color> colors = new HashMap<Long, Color>();
-
 	private IContextActivation ctxActivation;
 
 	private TableViewer viewer;
@@ -69,7 +60,7 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 		EntityMediator.addListener(Visit.class, this);
 
 		IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
-		ctxActivation = ctxService.activateContext("ch.eugster.events.visits.todo.context");
+		ctxActivation = ctxService.activateContext("ch.eugster.events.visits.visit.context");
 	}
 
 	@Override
@@ -97,6 +88,7 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 		if (entity instanceof Visit)
 		{
 			this.viewer.add(entity);
+			this.packColumns();
 		}
 	}
 
@@ -106,6 +98,7 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 		if (entity instanceof Visit)
 		{
 			this.viewer.refresh(entity);
+			this.packColumns();
 		}
 	}
 
@@ -119,28 +112,8 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 		table.setHeaderVisible(true);
 
 		viewer = new TableViewer(table);
-		viewer.setContentProvider(new VisitTableContentProvider());
-		viewer.setSorter(new ViewerSorter()
-		{
-			@Override
-			public int compare(Viewer viewer, Object e1, Object e2)
-			{
-				Visit v1 = (Visit) e1;
-				Visit v2 = (Visit) e2;
-				Calendar start1 = v1.getStart();
-				Calendar start2 = v2.getStart();
-				if (start1 == null)
-				{
-					return 1;
-				}
-				if (start2 == null)
-				{
-					return -1;
-				}
-				return start1.compareTo(start2);
-			}
-		});
-		viewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter(), new VisitTodoFilter() });
+		viewer.setContentProvider(new VisitContentProvider());
+		viewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
 		viewer.addDoubleClickListener(this);
 
 		TableViewerColumn tableViewerColumn = new TableViewerColumn(viewer, SWT.NONE);
@@ -152,23 +125,30 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 				Object object = cell.getElement();
 				if (object instanceof Visit)
 				{
-					Visit visit = (Visit) object;
-					String period = visit.getFormattedPeriod();
-					cell.setText(period);
-					if (period.isEmpty())
-					{
-						cell.setBackground(getErrorBackground());
-					}
-					else if (visit.getTheme() != null && visit.getTheme().getColor() != null)
-					{
-						cell.setBackground(getBackground(visit.getTheme()));
-					}
+					cell.setText(((Visit) object).getTheme().getName());
 				}
 			}
 		});
 		TableColumn tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
-		tableColumn.setText("Schulbesuch");
+		tableColumn.setText("Thema");
+
+		tableViewerColumn = new TableViewerColumn(viewer, SWT.NONE);
+		tableViewerColumn.setLabelProvider(new CellLabelProvider()
+		{
+			@Override
+			public void update(ViewerCell cell)
+			{
+				Object object = cell.getElement();
+				if (object instanceof Visit)
+				{
+					cell.setText(((Visit) object).getSchoolClass().getName());
+				}
+			}
+		});
+		tableColumn = tableViewerColumn.getColumn();
+		tableColumn.setResizable(true);
+		tableColumn.setText("Schule");
 
 		tableViewerColumn = new TableViewerColumn(viewer, SWT.NONE);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
@@ -180,59 +160,27 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 				if (object instanceof Visit)
 				{
 					Visit visit = (Visit) object;
-					VisitTheme theme = visit.getTheme();
-					cell.setText(theme == null ? "" : theme.getName());
-					if (theme == null)
+					StringBuilder names = new StringBuilder();
+					List<VisitVisitor> visitors = visit.getVisitors();
+					for (VisitVisitor visitor : visitors)
 					{
-						cell.setBackground(getErrorBackground());
-					}
-					else if (visit.getTheme().getColor() != null)
-					{
-						cell.setBackground(getBackground(visit.getTheme()));
-					}
-				}
-			}
-		});
-		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setResizable(true);
-		tableColumn.setText("Thema");
-
-		for (final VisitVisitor.VisitorType visitorType : VisitVisitor.VisitorType.values())
-		{
-			tableViewerColumn = new TableViewerColumn(viewer, SWT.NONE);
-			tableViewerColumn.setLabelProvider(new CellLabelProvider()
-			{
-				@Override
-				public void update(ViewerCell cell)
-				{
-					Object object = cell.getElement();
-					if (object instanceof Visit)
-					{
-						Visit visit = (Visit) object;
-						Collection<VisitVisitor> visitors = visit.getVisitors();
-						if (visitors.isEmpty())
+						String name = PersonFormatter.getInstance().formatLastnameFirstname(visitor.getVisitor().getLink().getPerson());
+						if (names.length() == 0)
 						{
-							cell.setBackground(getErrorBackground());
+							names = names.append(name);
 						}
 						else
 						{
-							for (VisitVisitor visitor : visitors)
-							{
-								if (!visitor.isDeleted() && visitor.getType().equals(visitorType))
-								{
-									cell.setText(PersonFormatter.getInstance().formatLastnameFirstname(
-											visitor.getVisitor().getLink().getPerson()));
-								}
-							}
-							cell.setBackground(getBackground(visit.getTheme()));
+							names = names.append(", " + name);
 						}
 					}
+					cell.setText(names.toString());
 				}
-			});
-			tableColumn = tableViewerColumn.getColumn();
-			tableColumn.setResizable(true);
-			tableColumn.setText(visitorType.label());
-		}
+			}
+		});
+		tableColumn = tableViewerColumn.getColumn();
+		tableColumn.setResizable(true);
+		tableColumn.setText("Besucher");
 
 		tableViewerColumn = new TableViewerColumn(viewer, SWT.NONE);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
@@ -243,127 +191,45 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 				Object object = cell.getElement();
 				if (object instanceof Visit)
 				{
+					StringBuilder daterange = new StringBuilder();
 					Visit visit = (Visit) object;
-					if (visit.getTeacher() == null)
+					Calendar start = visit.getStart();
+					Calendar end = visit.getEnd();
+					if (start != null && end != null)
 					{
-						cell.setBackground(getErrorBackground());
+						if (start.get(Calendar.YEAR) == end.get(Calendar.YEAR))
+						{
+							if (start.get(Calendar.MONTH) == end.get(Calendar.MONTH))
+							{
+								if (start.get(Calendar.DATE) == end.get(Calendar.DATE))
+								{
+									daterange = daterange.append(SimpleDateFormat.getDateInstance().format(start.getTime()));
+									daterange = daterange.append(" " + new SimpleDateFormat("HH:mm").format(start.getTime()));
+									daterange = daterange.append("-" + new SimpleDateFormat("HH:mm").format(end.getTime()));
+								}
+							}
+						}
+						if (daterange.length() == 0)
+						{
+							daterange = daterange.append(new SimpleDateFormat("dd.MM.yyyy HH:mm").format(start.getTime()));
+							daterange = daterange.append("-" + new SimpleDateFormat("dd.MM.yyyy HH:mm").format(end.getTime()));
+						}
 					}
-					else
+					else if (end == null)
 					{
-						cell.setText(PersonFormatter.getInstance().formatLastnameFirstname(
-								visit.getTeacher().getLink().getPerson()));
-						cell.setBackground(getBackground(visit.getTheme()));
+						daterange = daterange.append(new SimpleDateFormat("dd.MM.yyyy HH:mm").format(start.getTime()));
 					}
+					else if (start == null)
+					{
+						daterange = daterange.append(new SimpleDateFormat("dd.MM.yyyy HH:mm").format(end.getTime()));
+					}
+					cell.setText(daterange.toString());
 				}
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
-		tableColumn.setText("Lehrperson");
-
-		tableViewerColumn = new TableViewerColumn(viewer, SWT.NONE);
-		tableViewerColumn.setLabelProvider(new CellLabelProvider()
-		{
-			@Override
-			public void update(ViewerCell cell)
-			{
-				Object object = cell.getElement();
-				if (object instanceof Visit)
-				{
-					Visit visit = (Visit) object;
-					if (visit.getSchoolClass() == null)
-					{
-						cell.setBackground(getErrorBackground());
-					}
-					else
-					{
-						cell.setText(visit.getSchoolClass().getName());
-						cell.setBackground(getBackground(visit.getTheme()));
-					}
-				}
-			}
-		});
-		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setResizable(true);
-		tableColumn.setText("Schulklasse");
-
-		tableViewerColumn = new TableViewerColumn(viewer, SWT.NONE);
-		tableViewerColumn.setLabelProvider(new CellLabelProvider()
-		{
-			@Override
-			public void update(ViewerCell cell)
-			{
-				Object object = cell.getElement();
-				if (object instanceof Visit)
-				{
-					Visit visit = (Visit) object;
-					cell.setText(Integer.valueOf(visit.getPupils()).toString());
-					if (visit.getPupils() == 0)
-					{
-						cell.setBackground(getErrorBackground());
-					}
-					else
-					{
-						cell.setBackground(getBackground(visit.getTheme()));
-					}
-				}
-			}
-		});
-		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setResizable(true);
-		tableColumn.setText("Klassengrösse");
-
-		tableViewerColumn = new TableViewerColumn(viewer, SWT.NONE);
-		tableViewerColumn.setLabelProvider(new CellLabelProvider()
-		{
-			@Override
-			public void update(ViewerCell cell)
-			{
-				Object object = cell.getElement();
-				if (object instanceof Visit)
-				{
-					Visit visit = (Visit) object;
-					if (visit.getTeacher() == null)
-					{
-						cell.setBackground(getErrorBackground());
-					}
-					else
-					{
-						cell.setText(AddressFormatter.getInstance().formatCityLine(visit.getTeacher().getLink().getAddress()));
-						cell.setBackground(getBackground(visit.getTheme()));
-					}
-				}
-			}
-		});
-		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setResizable(true);
-		tableColumn.setText("Ort");
-
-		tableViewerColumn = new TableViewerColumn(viewer, SWT.NONE);
-		tableViewerColumn.setLabelProvider(new CellLabelProvider()
-		{
-			@Override
-			public void update(ViewerCell cell)
-			{
-				Object object = cell.getElement();
-				if (object instanceof Visit)
-				{
-					Visit visit = (Visit) object;
-					if (visit.getTeacher() == null)
-					{
-						cell.setBackground(getErrorBackground());
-					}
-					else
-					{
-						cell.setText(visit.getTeacher().getLink().getAddress().getProvince());
-						cell.setBackground(getBackground(visit.getTheme()));
-					}
-				}
-			}
-		});
-		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setResizable(true);
-		tableColumn.setText("Kanton");
+		tableColumn.setText("Durchführung");
 
 		createContextMenu();
 
@@ -381,12 +247,8 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						viewer.setInput(connectionService);
-						TableColumn[] columns = viewer.getTable().getColumns();
-						for (TableColumn column : columns)
-						{
-							column.pack();
-						}
+						VisitView.this.viewer.setInput(connectionService);
+						VisitView.this.packColumns();
 						return Status.OK_STATUS;
 					}
 				};
@@ -436,11 +298,6 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 		}
 	}
 
-	private Color getErrorBackground()
-	{
-		return viewer.getTable().getDisplay().getSystemColor(SWT.COLOR_RED);
-	}
-
 	private void editVisit(Visit visit)
 	{
 		try
@@ -454,27 +311,19 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 		}
 	}
 
-	private Color getBackground(VisitTheme theme)
-	{
-		if (theme == null || theme.getColor() == null)
-		{
-			return this.viewer.getTable().getDisplay().getSystemColor(SWT.COLOR_WHITE);
-		}
-
-		Color color = colors.get(theme.getId());
-		if (color == null)
-		{
-			java.awt.Color c = new java.awt.Color(theme.getColor().intValue());
-			color = new Color(this.viewer.getTable().getDisplay(), new RGB(c.getRed(), c.getGreen(), c.getBlue()));
-			colors.put(theme.getId(), color);
-		}
-		return color;
-	}
-
 	@Override
 	public void setFocus()
 	{
 		this.viewer.getTable().setFocus();
+	}
+	
+	private void packColumns()
+	{
+		TableColumn[] columns = this.viewer.getTable().getColumns();
+		for (TableColumn column : columns)
+		{
+			column.pack();
+		}
 	}
 
 }

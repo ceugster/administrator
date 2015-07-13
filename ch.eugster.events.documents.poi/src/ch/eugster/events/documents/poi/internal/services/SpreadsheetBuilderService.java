@@ -156,9 +156,13 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 		cell.setCellValue(value);
 	}
 
-	protected void createCell(final Row row, final int col, final String value, final Font font,
+	protected void createCell(final Row row, final int col, String value, final Font font,
 			final CellStyle style)
 	{
+		if (value == null)
+		{
+			value = "";
+		}
 		RichTextString string = new XSSFRichTextString(value);
 		string.applyFont(font);
 		Cell cell = row.createCell(col);
@@ -238,7 +242,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 
 		try
 		{
-			File tmpFile = File.createTempFile("tmp", ".xls");
+			File tmpFile = File.createTempFile("tmp", ".xlsx");
 			tmpFile.deleteOnExit();
 			FileOutputStream fileOut = new FileOutputStream(tmpFile);
 			workbook.write(fileOut);

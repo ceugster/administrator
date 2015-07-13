@@ -3,6 +3,7 @@ package ch.eugster.events.visits.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -11,18 +12,18 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import ch.eugster.events.persistence.model.VisitTheme;
-import ch.eugster.events.persistence.queries.VisitThemeQuery;
+import ch.eugster.events.persistence.model.Visit;
+import ch.eugster.events.persistence.queries.VisitQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.visits.Activator;
 
-public class DeleteVisitThemeHandler extends AbstractHandler
+public class DeleteVisitHandler extends AbstractHandler implements IHandler 
 {
 	private ServiceTracker connectionServiceTracker;
 
 	private ConnectionService connectionService;
 
-	public DeleteVisitThemeHandler()
+	public DeleteVisitHandler()
 	{
 		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null)
@@ -56,42 +57,28 @@ public class DeleteVisitThemeHandler extends AbstractHandler
 			if (selection instanceof StructuredSelection)
 			{
 				StructuredSelection ssel = (StructuredSelection) selection;
-				if (ssel.getFirstElement() instanceof VisitTheme)
+				if (ssel.getFirstElement() instanceof Visit)
 				{
-					VisitTheme visitTheme = (VisitTheme) ssel.getFirstElement();
+					Visit visit = (Visit) ssel.getFirstElement();
 					if (connectionService != null)
 					{
 						IWorkbenchPart part = (IWorkbenchPart) context.getParent().getVariable("activePart");
 						Shell shell = part.getSite().getShell();
-						if (visitTheme.getVisits(false).size() == 0)
+						String title = "Löschbestätigung";
+						StringBuilder msg = new StringBuilder("Soll der ausgewählte Besuch " + visit.getTheme().getName()
+								+ " entfernt werden?");
+						int icon = MessageDialog.QUESTION;
+						String[] buttons = new String[] { "Ja", "Nein" };
+						MessageDialog dialog = new MessageDialog(shell, title, null, msg.toString(), icon, buttons,
+								0);
+						if (dialog.open() == 0)
 						{
-							String title = "Löschbestätigung";
-							StringBuilder msg = new StringBuilder("Soll das ausgewählte Thema " + visitTheme.getName()
-									+ " entfernt werden?");
-							int icon = MessageDialog.QUESTION;
-							String[] buttons = new String[] { "Ja", "Nein" };
-							MessageDialog dialog = new MessageDialog(shell, title, null, msg.toString(), icon, buttons,
-									0);
-							if (dialog.open() == 0)
+							if (connectionService != null)
 							{
-								if (connectionService != null)
-								{
-									VisitThemeQuery deleteQuery = (VisitThemeQuery) connectionService
-											.getQuery(VisitTheme.class);
-									deleteQuery.delete(visitTheme);
-								}
+								VisitQuery deleteQuery = (VisitQuery) connectionService
+										.getQuery(Visit.class);
+								deleteQuery.delete(visit);
 							}
-						}
-						else
-						{
-							String title = visitTheme.getName();
-							StringBuilder msg = new StringBuilder("Das ausgewählte Thema " + visitTheme.getName()
-									+ " kann nicht entfernt werden");
-							int icon = MessageDialog.INFORMATION;
-							String[] buttons = new String[] { "OK" };
-							MessageDialog dialog = new MessageDialog(shell, title, null, msg.toString(), icon, buttons,
-									0);
-							dialog.open();
 						}
 					}
 				}

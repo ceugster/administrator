@@ -93,7 +93,7 @@ public class VisitsPreferenceStore extends ScopedPreferenceStore
 		if (service != null)
 		{
 			AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
-			addressTypes.addAll(query.selectAll(AddressType.class, false));
+			addressTypes.addAll(query.selectAll(false));
 		}
 		tracker.close();
 		availableAddressTypes = addressTypes.toArray(new AddressType[0]);

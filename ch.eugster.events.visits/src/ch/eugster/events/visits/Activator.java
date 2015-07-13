@@ -69,7 +69,7 @@ public class Activator extends AbstractUIPlugin
 				if (service != null)
 				{
 					VisitSettingsQuery query = (VisitSettingsQuery) service.getQuery(VisitSettings.class);
-					settings = query.select();
+					Activator.this.settings = query.select();
 				}
 				return service;
 			}
