@@ -1,5 +1,6 @@
 package ch.eugster.events.persistence.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -94,9 +95,17 @@ public class VisitTheme extends AbstractEntity
 		return AbstractEntity.stringValueOf(name);
 	}
 
-	public List<Visit> getVisits()
+	public List<Visit> getVisits(boolean deletedToo)
 	{
-		return visits;
+		List<Visit> validVisits = new ArrayList<Visit>();
+		for (Visit visit : this.visits)
+		{
+			if (deletedToo || !visit.isDeleted())
+			{
+				validVisits.add(visit);
+			}
+		}
+		return validVisits;
 	}
 
 	public void removeVisit(final Visit visit)

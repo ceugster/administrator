@@ -157,6 +157,22 @@ public class PersonFormatter extends AbstractFormatter
 		return sb.toString();
 	}
 
+	public String formatLastnameFirstnameInitial(final Person person)
+	{
+		StringBuilder sb = new StringBuilder("");
+		if (!person.getLastname().isEmpty())
+		{
+			sb.append(person.getLastname().trim());
+		}
+		if (!person.getFirstname().isEmpty())
+		{
+			if (sb.length() > 0)
+				sb.append(" ");
+			sb.append(person.getFirstnameInitial());
+		}
+		return sb.toString();
+	}
+
 	public String[] getPersonLabelStoredVariables()
 	{
 		return new String[] { "${organization}", "${salutation}", "${title}", "${firstname}", "${lastname}",

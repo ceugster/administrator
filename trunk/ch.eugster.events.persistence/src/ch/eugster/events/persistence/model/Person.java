@@ -288,6 +288,11 @@ public class Person extends AbstractEntity
 		return AbstractEntity.stringValueOf(this.firstname);
 	}
 
+	public String getFirstnameInitial()
+	{
+		return getFirstname().isEmpty() ? "" : (getFirstname().substring(0, 1) + ".");
+	}
+	
 	public PersonForm getForm()
 	{
 		if (this.form == null)
