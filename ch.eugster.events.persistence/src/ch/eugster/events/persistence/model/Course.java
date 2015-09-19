@@ -253,6 +253,22 @@ public class Course extends AbstractEntity
 	private Calendar lastBookingDate;
 
 	/*
+	 * Versand Voranzeige
+	 */
+	@Basic
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "course_advance_notice_date")
+	private Calendar advanceNoticeDate;
+
+	/*
+	 * Voranzeige verschickt am
+	 */
+	@Basic
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "course_advance_notice_done_date")
+	private Calendar advanceNoticeDoneDate;
+
+	/*
 	 * Versand Einladung
 	 */
 	@Basic
@@ -1102,6 +1118,26 @@ public class Course extends AbstractEntity
 	public String getCostNote() 
 	{
 		return stringValueOf(costNote);
+	}
+
+	public void setAdvanceNoticeDate(Calendar advanceNoticeDate)
+	{
+		this.propertyChangeSupport.firePropertyChange("advanceNoticeDate", this.advanceNoticeDate, this.advanceNoticeDate = advanceNoticeDate);
+	}
+
+	public Calendar getAdvanceNoticeDate() 
+	{
+		return advanceNoticeDate;
+	}
+
+	public void setAdvanceNoticeDoneDate(Calendar advanceNoticeDoneDate) 
+	{
+		this.propertyChangeSupport.firePropertyChange("advanceNoticeDoneDate", this.advanceNoticeDoneDate, this.advanceNoticeDoneDate = advanceNoticeDoneDate);
+	}
+
+	public Calendar getAdvanceNoticeDoneDate() 
+	{
+		return advanceNoticeDoneDate;
 	}
 
 	public static Course newInstance(final Season season)

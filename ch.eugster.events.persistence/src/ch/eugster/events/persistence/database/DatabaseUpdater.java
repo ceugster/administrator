@@ -1267,6 +1267,45 @@ public abstract class DatabaseUpdater
 							ok = executeSqlQuery(con, builder.toString());
 						}
 					}
+					if (structureVersion == 34)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						String tableName = "events_participant";
+						String columnName = "participant_free";
+						if (!columnExists(con, tableName, columnName))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE " + tableName + " ");
+							builder.append("ADD COLUMN " + columnName + " SMALLINT DEFAULT 0");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+					}
+					if (structureVersion == 35)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						String tableName = "events_course";
+						String columnName = "course_advance_notice_date";
+						if (!columnExists(con, tableName, columnName))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE " + tableName + " ");
+							builder.append("ADD COLUMN " + columnName + " DATETIME");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+						tableName = "events_course";
+						columnName = "course_advance_notice_done_date";
+						if (!columnExists(con, tableName, columnName))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE " + tableName + " ");
+							builder.append("ADD COLUMN " + columnName + " DATETIME");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+					}
+
 
 					stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);
 				}

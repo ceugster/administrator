@@ -155,6 +155,10 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 
 	private CDateTime lastBookingDate;
 
+	private CDateTime advanceNoticeDate;
+	
+	private CDateTime advanceNoticeDoneDate;
+	
 	private CDateTime invitationDate;
 
 	private CDateTime invitationDoneDate;
@@ -1124,6 +1128,45 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			}
 		});
 
+		label = this.formToolkit.createLabel(composite, "Versand Voranzeige", SWT.TRAIL);
+		label.setLayoutData(new GridData());
+
+		gridData = new GridData();
+		gridData.widthHint = 112;
+
+		this.advanceNoticeDate = new CDateTime(composite, CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
+		this.advanceNoticeDate.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+		this.advanceNoticeDate.setLayoutData(gridData);
+		this.advanceNoticeDate.setSelection(new Date());
+		this.advanceNoticeDate.setNullText("");
+		this.advanceNoticeDate.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(final SelectionEvent event)
+			{
+				CourseEditor.this.setDirty(true);
+			}
+		});
+
+		label = this.formToolkit.createLabel(composite, "Voranzeige verschickt", SWT.TRAIL);
+		label.setLayoutData(new GridData());
+
+		gridData = new GridData();
+		gridData.widthHint = 112;
+
+		this.advanceNoticeDoneDate = new CDateTime(composite, CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
+		this.advanceNoticeDoneDate.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+		this.advanceNoticeDoneDate.setLayoutData(gridData);
+		this.advanceNoticeDoneDate.setNullText("");
+		this.advanceNoticeDoneDate.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(final SelectionEvent event)
+			{
+				CourseEditor.this.setDirty(true);
+			}
+		});
+
 		label = this.formToolkit.createLabel(composite, "Versand Einladungen", SWT.TRAIL);
 		label.setLayoutData(new GridData());
 
@@ -1346,6 +1389,24 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			// this.infoMeeting.setText(course.getInfoMeeting());
 			this.information.setText(course.getInformation());
 
+			if (course.getAdvanceNoticeDate() == null)
+			{
+				this.advanceNoticeDate.setSelection(null);
+			}
+			else
+			{
+				this.advanceNoticeDate.setSelection(course.getAdvanceNoticeDate().getTime());
+			}
+
+			if (course.getAdvanceNoticeDoneDate() == null)
+			{
+				this.advanceNoticeDoneDate.setSelection(null);
+			}
+			else
+			{
+				this.advanceNoticeDoneDate.setSelection(course.getAdvanceNoticeDoneDate().getTime());
+			}
+
 			if (course.getInvitationDate() == null)
 			{
 				this.invitationDate.setSelection(null);
@@ -1490,6 +1551,28 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			}
 			// course.setInfoMeeting(this.infoMeeting.getText());
 			course.setInformation(this.information.getText());
+
+			if (this.advanceNoticeDate.getSelection() == null)
+			{
+				calendar = null;
+			}
+			else
+			{
+				calendar = GregorianCalendar.getInstance();
+				calendar.setTime(this.advanceNoticeDate.getSelection());
+			}
+			course.setAdvanceNoticeDate(calendar);
+
+			if (this.advanceNoticeDoneDate.getSelection() == null)
+			{
+				calendar = null;
+			}
+			else
+			{
+				calendar = GregorianCalendar.getInstance();
+				calendar.setTime(this.advanceNoticeDoneDate.getSelection());
+			}
+			course.setAdvanceNoticeDoneDate(calendar);
 
 			if (this.invitationDate.getSelection() == null)
 			{

@@ -135,4 +135,9 @@ public class RecipientListFactory
 	{
 		return recipients.size();
 	}
+
+	public static boolean isEmpty()
+	{
+		return recipients.size() == 0;
+	}
 }

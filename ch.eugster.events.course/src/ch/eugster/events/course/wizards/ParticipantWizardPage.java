@@ -19,6 +19,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -91,6 +92,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 	// private ViewerRoot root;
 
 	private final Map<Long, BookingType> bookingTypes = new HashMap<Long, BookingType>();
+
+	private String[] free = new String[] { "Nein", "Ja" };
 
 	private LinkSearcher searcher;
 
@@ -1062,22 +1065,57 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setText("Buchungsart");
 		tableColumn.setResizable(true);
-		// tableColumn.addSelectionListener(new SelectionListener()
-		// {
-		// @Override
-		// public void widgetDefaultSelected(final SelectionEvent event)
-		// {
-		// this.widgetSelected(event);
-		// }
-		//
-		// @Override
-		// public void widgetSelected(final SelectionEvent event)
-		// {
-		// ((PersonSorter)
-		// ParticipantWizardPage.this.participantViewer.getSorter()).setCurrentColumn(9);
-		// ParticipantWizardPage.this.participantViewer.refresh();
-		// }
-		// });
+
+		tableViewerColumn = new TableViewerColumn(this.participantViewer, SWT.LEFT);
+		tableViewerColumn.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public void update(final ViewerCell cell)
+			{
+				Object element = cell.getElement();
+				if (element instanceof Participant)
+				{
+					Participant participant = (Participant) element;
+					cell.setText(participant.isFree() ? free[1] : free[0]);
+				}
+			}
+		});
+		tableViewerColumn.setEditingSupport(new EditingSupport(this.participantViewer)
+		{
+
+			@Override
+			protected boolean canEdit(final Object element)
+			{
+				return true;
+			}
+
+			@Override
+			protected CellEditor getCellEditor(final Object element)
+			{
+				return new ComboBoxCellEditor(ParticipantWizardPage.this.participantViewer.getTable(), free);
+			}
+
+			@Override
+			protected Object getValue(final Object element)
+			{
+				Participant participant = (Participant) element;
+				return participant.isFree() ? Integer.valueOf(1) : Integer.valueOf(0);
+			}
+
+			@Override
+			protected void setValue(final Object element, final Object value)
+			{
+				Participant participant = (Participant) element;
+				int index = ((Integer) value).intValue();
+				participant.setFree(index == 0 ? false : true);
+				ParticipantWizardPage.this.participantViewer.refresh(element);
+				updatePageState();
+			}
+
+		});
+		tableColumn = tableViewerColumn.getColumn();
+		tableColumn.setText("Gratis");
+		tableColumn.setResizable(true);
 
 		tableViewerColumn = new TableViewerColumn(this.participantViewer, SWT.RIGHT);
 		tableViewerColumn.setLabelProvider(new ColumnLabelProvider()

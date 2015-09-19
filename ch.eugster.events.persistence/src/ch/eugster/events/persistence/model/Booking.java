@@ -193,7 +193,33 @@ public class Booking extends AbstractEntity
 		for (Participant participant : this.participants)
 		{
 			if (!participant.isDeleted() && participant.getBookingType() != null)
-				amount += participant.getBookingType().getPrice() * participant.getCount();
+			{
+				amount += participant.getAmount();
+			}
+		}
+		return amount;
+	}
+
+	/**
+	 * 
+	 * @return amount
+	 */
+	public double getAmount(IBookingState[] relevantBookingStates)
+	{
+		double amount = 0d;
+		for (Participant participant : this.participants)
+		{
+			if (!participant.isDeleted() && participant.getBookingType() != null)
+			{
+				for (IBookingState bookingState : relevantBookingStates)
+				{
+					IBookingState participantState = participant.getBooking().getBookingState(participant.getBooking().getCourse().getState());
+					if (participantState.equals(bookingState))
+					{
+						amount += participant.getAmount();
+					}
+				}
+			}
 		}
 		return amount;
 	}
