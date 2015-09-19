@@ -240,7 +240,7 @@ public class ParticipantMap extends AbstractDataMap
 					{
 						return "";
 					}
-					return numberFormatter.format(participant.getBookingType().getPrice());
+					return numberFormatter.format(participant.getPrice());
 				}
 				case COUNT:
 				{

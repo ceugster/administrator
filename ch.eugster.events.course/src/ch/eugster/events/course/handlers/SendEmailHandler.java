@@ -98,7 +98,10 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 			List<Participant> participants = booking.getParticipants();
 			for (Participant participant : participants)
 			{
-				this.extract(participant);
+				if (!participant.isDeleted())
+				{
+					this.extract(participant);
+				}
 			}
 		}
 	}
@@ -107,15 +110,10 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 	{
 		if (!participant.getLink().isDeleted() && !participant.getLink().getPerson().isDeleted())
 		{
-			if (!participant.getLink().getPerson().getEmail().isEmpty())
+			String email = participant.getEmail();
+			if (!email.isEmpty() && !this.addresses.contains(email))
 			{
-				if (!this.addresses.contains(participant.getLink().getPerson().getEmail()))
-					this.addresses.add(participant.getLink().getPerson().getEmail());
-			}
-			if (!participant.getLink().getEmail().isEmpty())
-			{
-				if (!this.addresses.contains(participant.getLink().getEmail()))
-					this.addresses.add(participant.getLink().getEmail());
+				this.addresses.add(email);
 			}
 		}
 	}

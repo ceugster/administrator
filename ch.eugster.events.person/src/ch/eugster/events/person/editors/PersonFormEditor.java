@@ -226,7 +226,8 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 				else if (page instanceof FormEditorLinkPage)
 				{
 					FormEditorLinkPage fpage = (FormEditorLinkPage) page;
-					page.getManagedForm().getForm().setText(fpage.getText());
+					fpage.deleteAddressIfNoLinks();
+					fpage.getManagedForm().getForm().setText(fpage.getText());
 				}
 			}
 		}

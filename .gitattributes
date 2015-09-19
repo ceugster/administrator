@@ -435,6 +435,7 @@ ch.eugster.events.course/src/ch/eugster/events/course/Perspective.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/actions/CourseCopyAction.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/dialogs/CommitmentContractDialog.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/dialogs/CourseCopyDialog.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/dialogs/InvitationDialog.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/dialogs/SelectBookingTypeDialog.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/editors/BookingEditor.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/editors/BookingEditorInput.java -text
@@ -1238,19 +1239,6 @@ ch.eugster.events.report.commons/.project -text
 ch.eugster.events.report.commons/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.report.commons/META-INF/MANIFEST.MF -text
 ch.eugster.events.report.commons/build.properties -text
-ch.eugster.events.report.commons/ch.eugster.events.report.commons/.classpath -text
-ch.eugster.events.report.commons/ch.eugster.events.report.commons/.project -text
-ch.eugster.events.report.commons/ch.eugster.events.report.commons/.settings/org.eclipse.jdt.core.prefs -text
-ch.eugster.events.report.commons/ch.eugster.events.report.commons/META-INF/MANIFEST.MF -text
-ch.eugster.events.report.commons/ch.eugster.events.report.commons/build.properties -text
-ch.eugster.events.report.commons/ch.eugster.events.report.commons/lib/commons-LICENSE.txt -text
-ch.eugster.events.report.commons/ch.eugster.events.report.commons/lib/commons-NOTICE.txt -text
-ch.eugster.events.report.commons/ch.eugster.events.report.commons/lib/commons-beanutils-1.8.0.jar -text
-ch.eugster.events.report.commons/ch.eugster.events.report.commons/lib/commons-collections-2.1.1.jar -text
-ch.eugster.events.report.commons/ch.eugster.events.report.commons/lib/commons-digester-2.1.jar -text
-ch.eugster.events.report.commons/ch.eugster.events.report.commons/lib/commons-javaflow-20060411.jar -text
-ch.eugster.events.report.commons/ch.eugster.events.report.commons/lib/commons-logging-1.1.1.jar -text
-ch.eugster.events.report.commons/ch.eugster.events.report.commons/src/ch/eugster/events/report/commons/Activator.java -text
 ch.eugster.events.report.commons/lib/commons-LICENSE.txt -text
 ch.eugster.events.report.commons/lib/commons-NOTICE.txt -text
 ch.eugster.events.report.commons/lib/commons-beanutils-1.8.0.jar -text

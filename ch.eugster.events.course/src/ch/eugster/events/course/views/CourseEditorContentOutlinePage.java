@@ -30,6 +30,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 import ch.eugster.events.course.Activator;
 import ch.eugster.events.course.dialogs.CommitmentContractDialog;
+import ch.eugster.events.course.dialogs.InvitationDialog;
 import ch.eugster.events.course.editors.CourseEditor;
 import ch.eugster.events.course.editors.CourseEditorInput;
 import ch.eugster.events.course.wizards.BookingTypeWizard;
@@ -201,6 +202,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 					manager.add(CourseEditorContentOutlinePage.this.createDeleteCourseGuideAction());
 					manager.add(new Separator());
 					manager.add(CourseEditorContentOutlinePage.this.createCommitmentContractAction());
+					manager.add(CourseEditorContentOutlinePage.this.createInvitationAction());
 				}
 			}
 		});
@@ -344,7 +346,28 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 		};
 
 		action.setText("Einsatzvertrag generieren");
-//		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("DELETE"));
+		return action;
+	}
+
+	private IAction createInvitationAction()
+	{
+		IAction action = new Action()
+		{
+			@Override
+			public void run()
+			{
+				super.run();
+				StructuredSelection ssel = (StructuredSelection) CourseEditorContentOutlinePage.this.getTreeViewer()
+						.getSelection();
+				if (!ssel.isEmpty() && ssel.getFirstElement() instanceof CourseGuide)
+				{
+					InvitationDialog dialog = new InvitationDialog(CourseEditorContentOutlinePage.this.getSite().getShell(), ssel);
+					dialog.open();
+				}
+			}
+		};
+
+		action.setText("Einladung generieren");
 		return action;
 	}
 

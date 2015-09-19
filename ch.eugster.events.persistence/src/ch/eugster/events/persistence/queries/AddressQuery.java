@@ -37,8 +37,7 @@ public class AddressQuery extends AbstractEntityQuery<Address>
 	public List<Address> selectByAddressAsLike(final String address)
 	{
 		List<Address> addresses = new ArrayList<Address>();
-		Expression expression = new ExpressionBuilder(Address.class).get("deleted").equal(false);
-		expression = expression.and(new ExpressionBuilder().get("address").likeIgnoreCase(address + "%"));
+		Expression expression = new ExpressionBuilder().get("address").likeIgnoreCase(address + "%");
 		List<Address> selected = this.select(Address.class, expression);
 		for (Address select : selected)
 		{

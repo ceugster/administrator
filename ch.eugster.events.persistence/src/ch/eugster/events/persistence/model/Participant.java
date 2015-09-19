@@ -19,6 +19,8 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.eclipse.persistence.annotations.Convert;
+
 @Entity
 @Table(name = "events_participant")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "participant_user_id")) })
@@ -58,6 +60,11 @@ public class Participant extends AbstractEntity
 	@Column(name = "participant_count")
 	private int count = 1;
 
+	@Basic
+	@Convert("booleanConverter")
+	@Column(name = "participant_free")
+	private boolean free = false;
+
 	private Participant()
 	{
 		super();
@@ -90,7 +97,17 @@ public class Participant extends AbstractEntity
 	{
 		return count;
 	}
+	
+	public double getPrice()
+	{
+		return this.isFree() || this.bookingType == null ? 0d : this.bookingType.getPrice();
+	}
 
+	public double getAmount()
+	{
+		return this.getPrice() * this.count;
+	}
+	
 	public Calendar getDate()
 	{
 		return this.date;
@@ -102,6 +119,20 @@ public class Participant extends AbstractEntity
 		return this.id;
 	}
 
+	public String getEmail()
+	{
+		String email = this.link.getPerson().getEmail();
+		if (email.isEmpty())
+		{
+			email = this.link.getEmail();
+			if (email.isEmpty())
+			{
+				email = this.link.getAddress().getEmail();
+			}
+		}
+		return email;
+	}
+	
 	public LinkPersonAddress getLink()
 	{
 		return this.link;
@@ -150,6 +181,16 @@ public class Participant extends AbstractEntity
 	public void setLink(final LinkPersonAddress link)
 	{
 		this.propertyChangeSupport.firePropertyChange("link", this.link, this.link = link);
+	}
+
+	public void setFree(boolean free) 
+	{
+		this.propertyChangeSupport.firePropertyChange("free", this.free, this.free = free);
+	}
+
+	public boolean isFree() 
+	{
+		return free;
 	}
 
 	public static void copy(final Participant source, final Participant target)

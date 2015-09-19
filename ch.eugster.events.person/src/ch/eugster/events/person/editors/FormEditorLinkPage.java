@@ -199,6 +199,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	private Label groupLabel;
 
 	private AddressType addressType;
+	
+	private Address originalAddress;
 
 	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -1771,9 +1773,12 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			LinkPersonAddress link = getLink();
 			if (link != null)
 			{
-				link.getAddress().removeLink(link);
+				this.originalAddress = link.getAddress();
+				if (address.isDeleted())
+				{
+					address.undelete();
+				}
 				link.setAddress(address);
-				link.getAddress().addLink(link);
 				loadAddressValues();
 				loadAddressContactsValues();
 			}
@@ -1787,6 +1792,36 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			city.setText(proposal.getZipCode().getCity());
 			countryViewer.setSelection(new StructuredSelection(proposal.getZipCode().getCountry()));
 			countryViewer.setData("country", proposal.getZipCode().getCountry());
+		}
+	}
+	
+	public void deleteAddressIfNoLinks()
+	{
+		if (this.originalAddress != null && !this.originalAddress.getId().equals(this.getLink().getAddress().getId()))
+		{
+			if (!this.originalAddress.isDeleted() && this.originalAddress.getValidLinks().size() == 0)
+			{
+				ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+						ConnectionService.class.getName(), null);
+				try
+				{
+					tracker.open();
+					ConnectionService service = (ConnectionService) tracker.getService();
+					if (service != null)
+					{
+						AddressQuery query = (AddressQuery) service.getQuery(Address.class);
+						query.merge(this.originalAddress);
+					}
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+				finally
+				{
+					tracker.close();
+				}
+			}
 		}
 	}
 
@@ -1864,6 +1899,16 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	public void saveValues()
 	{
+		if (this.originalAddress != null && !this.originalAddress.getId().equals(this.getLink().getAddress().getId()))
+		{
+			if (!this.originalAddress.isDeleted() && this.originalAddress.getValidLinks().size() == 1 && this.originalAddress.getValidLinks().get(0).getId().equals(this.getLink().getId()))
+			{
+				this.originalAddress.removeLink(this.getLink());
+				this.originalAddress.setDeleted(true);
+				this.getLink().getAddress().addLink(getLink());
+			}
+		}
+
 		saveAddressValues();
 		saveAddressContactsValues();
 		saveLinkValues();

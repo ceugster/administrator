@@ -86,6 +86,9 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 						if (buildRecipientsList(ssel, Filter.ALL) > 0)
 						{
 							printRecipientList();
+
+							if (!RecipientListFactory.isEmpty())
+								EmailHelper.getInstance().sendEmail(RecipientListFactory.getEmails());
 						}
 					}
 				}

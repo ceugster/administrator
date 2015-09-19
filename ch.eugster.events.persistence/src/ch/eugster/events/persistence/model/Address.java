@@ -427,6 +427,11 @@ public class Address extends AbstractEntity implements Donator
 		super.setDeleted(deleted);
 	}
 
+	public void undelete()
+	{
+		this.deleted = false;
+	}
+
 	public void setEmail(final String email)
 	{
 		this.email = email;
