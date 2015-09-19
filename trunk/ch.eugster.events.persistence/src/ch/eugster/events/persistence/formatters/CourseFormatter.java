@@ -88,6 +88,29 @@ public class CourseFormatter
 		return text.toString();
 	}
 
+	public String formatComboEntryBookingType(Participant participant)
+	{
+		String code = participant.getBookingType().getCode();
+		String name = participant.getBookingType().getName();
+
+		StringBuffer text = new StringBuffer("");
+
+		if (code.length() > 0)
+		{
+			text = text.append(code);
+			if (name.length() > 0)
+				text = text.append(" - ");
+		}
+		if (name.length() > 0)
+			text.append(name);
+
+		if (text.length() > 0)
+			text.append(", ");
+
+		text.append(NumberFormat.getCurrencyInstance().format(participant.getPrice()));
+		return text.toString();
+	}
+
 	public String formatComboEntry(final CompensationType compensationType)
 	{
 		String code = compensationType.getCode();

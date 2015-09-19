@@ -9,6 +9,7 @@ import ch.eugster.events.persistence.model.BookingDoneState;
 import ch.eugster.events.persistence.model.BookingForthcomingState;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseState;
+import ch.eugster.events.persistence.model.IBookingState;
 
 public class BookingListReportItem implements Comparable<BookingListReportItem>
 {
@@ -30,9 +31,9 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 
 	private int canceled;
 
-	private int participated;
-
-	private int brokeOff;
+//	private int participated;
+//
+//	private int brokeOff;
 
 	private int notParticipated;
 
@@ -151,7 +152,7 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 		List<Booking> bookings = course.getBookings();
 		for (Booking booking : bookings)
 		{
-			this.amount += booking.getAmount();
+			this.amount += booking.getAmount(new IBookingState[] { BookingForthcomingState.BOOKED, BookingDoneState.PARTICIPATED });
 			this.payed += booking.getPayAmount();
 
 			if (course.getState().equals(CourseState.FORTHCOMING))

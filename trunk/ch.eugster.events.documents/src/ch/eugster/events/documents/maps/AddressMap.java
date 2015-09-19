@@ -79,7 +79,7 @@ public class AddressMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		NAME, ANOTHER_LINE, ADDRESS, POB, ZIP, CITY, COUNTRY, PHONE, FAX, SALUTATION, EMAIL, WEBSITE, POLITE, MAILING_ADDRESS, COUNTY, TOTAL_DONATIONS, MEMBER;
+		NAME, ANOTHER_LINE, ADDRESS, POB, ZIP, CITY, COUNTRY, PHONE, FAX, SALUTATION, EMAIL, WEBSITE, POLITE, MAILING_ADDRESS, COUNTY, TOTAL_DONATIONS, MEMBER, NOTES;
 
 		@Override
 		public String getDescription()
@@ -153,6 +153,10 @@ public class AddressMap extends AbstractDataMap
 				case MEMBER:
 				{
 					return "Mitglied";
+				}
+				case NOTES:
+				{
+					return "Bemerkungen Adresse";
 				}
 				default:
 				{
@@ -234,6 +238,10 @@ public class AddressMap extends AbstractDataMap
 				{
 					return "member";
 				}
+				case NOTES:
+				{
+					return "notes";
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -313,6 +321,10 @@ public class AddressMap extends AbstractDataMap
 				case MEMBER:
 				{
 					return "Mitglied";
+				}
+				case NOTES:
+				{
+					return "Bemerkungen Adresse";
 				}
 				default:
 				{
@@ -430,6 +442,10 @@ public class AddressMap extends AbstractDataMap
 					}
 					return builder.toString();
 				}
+				case NOTES:
+				{
+					return address.getNotes();
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -533,6 +549,10 @@ public class AddressMap extends AbstractDataMap
 						}
 					}
 					return builder.toString();
+				}
+				case NOTES:
+				{
+					return address.getProvince();
 				}
 				default:
 				{

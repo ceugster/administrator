@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
+import ch.eugster.events.addressgroup.report.RecipientListFactory;
 import ch.eugster.events.persistence.model.AddressGroup;
 import ch.eugster.events.persistence.model.AddressGroupCategory;
 import ch.eugster.events.persistence.model.AddressGroupMember;
@@ -38,6 +39,9 @@ public class SendEmailHandlerWithPrint extends PrintEmailRecipientsHandler
 						if (buildRecipientsList(ssel, Filter.ONLY_WITH_EMAILS) > 0)
 						{
 							printRecipientList();
+
+							if (!RecipientListFactory.isEmpty())
+								EmailHelper.getInstance().sendEmail(RecipientListFactory.getEmails());
 						}
 					}
 				}
