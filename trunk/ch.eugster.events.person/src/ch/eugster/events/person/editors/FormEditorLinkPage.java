@@ -1797,7 +1797,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	
 	public void deleteAddressIfNoLinks()
 	{
-		if (this.originalAddress != null && !this.originalAddress.getId().equals(this.getLink().getAddress().getId()))
+		if (this.originalAddress != null && this.originalAddress.getId() != null && !this.originalAddress.getId().equals(this.getLink().getAddress().getId()))
 		{
 			if (!this.originalAddress.isDeleted() && this.originalAddress.getValidLinks().size() == 0)
 			{
@@ -1899,7 +1899,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	public void saveValues()
 	{
-		if (this.originalAddress != null && !this.originalAddress.getId().equals(this.getLink().getAddress().getId()))
+		if (this.originalAddress != null && this.originalAddress.getId() != null && !this.originalAddress.getId().equals(this.getLink().getAddress().getId()))
 		{
 			if (!this.originalAddress.isDeleted() && this.originalAddress.getValidLinks().size() == 1 && this.originalAddress.getValidLinks().get(0).getId().equals(this.getLink().getId()))
 			{
