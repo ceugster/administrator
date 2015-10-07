@@ -66,6 +66,8 @@ public class AddressListDialog extends TitleAreaDialog
 
 	private ComboViewer sortViewer;
 
+	private Button shortList;
+	
 	/**
 	 * @param parentShell
 	 * @param parent
@@ -253,6 +255,14 @@ public class AddressListDialog extends TitleAreaDialog
 		sortViewer.setInput(this.getSortKeys());
 		sortViewer.setSelection(new StructuredSelection(new DataMapKey[] { keys[0] }));
 
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+
+		shortList = new Button(composite, SWT.CHECK);
+		shortList.setText("Kurzliste");
+		shortList.setLayoutData(gridData);
+		shortList.setSelection(settings.getBoolean("short.list"));
+		
 		return parent;
 	}
 
@@ -267,41 +277,62 @@ public class AddressListDialog extends TitleAreaDialog
 	private DataMapKey[] getKeys()
 	{
 		List<DataMapKey> keys = new ArrayList<DataMapKey>();
-		keys.add(AddressGroupMemberMap.Key.TYPE);
-		keys.add(AddressGroupMemberMap.Key.ID);
-		keys.add(PersonMap.Key.SEX);
-		keys.add(PersonMap.Key.FORM);
-		keys.add(AddressGroupMemberMap.Key.SALUTATION);
-		keys.add(PersonMap.Key.TITLE);
-		keys.add(PersonMap.Key.FIRSTNAME);
-		keys.add(PersonMap.Key.LASTNAME);
-		keys.add(AddressMap.Key.NAME);
-		keys.add(AddressGroupMemberMap.Key.ANOTHER_LINE);
-		keys.add(PersonMap.Key.BIRTHDATE);
-		keys.add(PersonMap.Key.PROFESSION);
-		keys.add(LinkMap.Key.FUNCTION);
-		keys.add(LinkMap.Key.PHONE);
-		keys.add(AddressMap.Key.PHONE);
-		keys.add(PersonMap.Key.PHONE);
-		keys.add(AddressMap.Key.FAX);
-		keys.add(PersonMap.Key.EMAIL);
-		keys.add(LinkMap.Key.EMAIL);
-		keys.add(AddressMap.Key.EMAIL);
-		keys.add(PersonMap.Key.WEBSITE);
-		keys.add(AddressMap.Key.WEBSITE);
-		keys.add(AddressMap.Key.ADDRESS);
-		keys.add(AddressMap.Key.POB);
-		keys.add(AddressMap.Key.COUNTRY);
-		keys.add(AddressMap.Key.ZIP);
-		keys.add(AddressMap.Key.CITY);
-		keys.add(AddressMap.Key.COUNTY);
-		keys.add(AddressGroupMemberMap.Key.POLITE);
-		keys.add(AddressGroupMap.Key.NAME);
-		keys.add(LinkMap.Key.MEMBER);
-		keys.add(PersonMap.Key.NOTE);
-		keys.add(AddressMap.Key.NOTES);
-		keys.addAll(PersonMap.getExtendedFieldKeys());
-		keys.addAll(LinkMap.getExtendedFieldKeys());
+		if (shortList.getSelection())
+		{
+			keys.add(LinkMap.Key.FUNCTION);
+			keys.add(PersonMap.Key.LASTNAME);
+			keys.add(PersonMap.Key.FIRSTNAME);
+			keys.add(AddressMap.Key.ADDRESS);
+			keys.add(AddressMap.Key.POB);
+			keys.add(AddressMap.Key.COUNTRY);
+			keys.add(AddressMap.Key.ZIP);
+			keys.add(AddressMap.Key.CITY);
+			keys.add(AddressMap.Key.COUNTY);
+			keys.add(LinkMap.Key.PHONE);
+			keys.add(AddressMap.Key.PHONE);
+			keys.add(PersonMap.Key.PHONE);
+			keys.add(PersonMap.Key.EMAIL);
+			keys.add(LinkMap.Key.EMAIL);
+			keys.add(AddressMap.Key.EMAIL);
+		}
+		else
+		{
+			keys.add(AddressGroupMemberMap.Key.TYPE);
+			keys.add(AddressGroupMemberMap.Key.ID);
+			keys.add(PersonMap.Key.SEX);
+			keys.add(PersonMap.Key.FORM);
+			keys.add(AddressGroupMemberMap.Key.SALUTATION);
+			keys.add(PersonMap.Key.TITLE);
+			keys.add(PersonMap.Key.FIRSTNAME);
+			keys.add(PersonMap.Key.LASTNAME);
+			keys.add(AddressMap.Key.NAME);
+			keys.add(AddressGroupMemberMap.Key.ANOTHER_LINE);
+			keys.add(PersonMap.Key.BIRTHDATE);
+			keys.add(PersonMap.Key.PROFESSION);
+			keys.add(LinkMap.Key.FUNCTION);
+			keys.add(LinkMap.Key.PHONE);
+			keys.add(AddressMap.Key.PHONE);
+			keys.add(PersonMap.Key.PHONE);
+			keys.add(AddressMap.Key.FAX);
+			keys.add(PersonMap.Key.EMAIL);
+			keys.add(LinkMap.Key.EMAIL);
+			keys.add(AddressMap.Key.EMAIL);
+			keys.add(PersonMap.Key.WEBSITE);
+			keys.add(AddressMap.Key.WEBSITE);
+			keys.add(AddressMap.Key.ADDRESS);
+			keys.add(AddressMap.Key.POB);
+			keys.add(AddressMap.Key.COUNTRY);
+			keys.add(AddressMap.Key.ZIP);
+			keys.add(AddressMap.Key.CITY);
+			keys.add(AddressMap.Key.COUNTY);
+			keys.add(AddressGroupMemberMap.Key.POLITE);
+			keys.add(AddressGroupMap.Key.NAME);
+			keys.add(LinkMap.Key.MEMBER);
+			keys.add(PersonMap.Key.NOTE);
+			keys.add(AddressMap.Key.NOTES);
+			keys.addAll(PersonMap.getExtendedFieldKeys());
+			keys.addAll(LinkMap.getExtendedFieldKeys());
+		}
 		return keys.toArray(new DataMapKey[0]);
 	}
 
