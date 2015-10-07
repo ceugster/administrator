@@ -35,7 +35,6 @@ import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.Visit;
-import ch.eugster.events.persistence.model.VisitTheme;
 import ch.eugster.events.persistence.model.VisitVisitor;
 import ch.eugster.events.persistence.queries.VisitQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
@@ -421,32 +420,12 @@ public abstract class AbstractGanttView extends ViewPart implements IViewPart, I
 
 	public abstract class VisitGanttGroup extends GanttGroup
 	{
-		private VisitTheme theme;
-		
-		public VisitGanttGroup(VisitTheme theme, GanttChart parent) 
+		public VisitGanttGroup(GanttChart parent) 
 		{
 			super(parent);
-			this.theme = theme;
 		}
 		
 		public abstract VisitGanttEvent createVisitGanttEvent(Visit visit, GanttChart ganttChart);
-		
-		public VisitTheme getTheme()
-		{
-			return this.theme;
-		}
-		
-		public void update(VisitTheme theme)
-		{
-			@SuppressWarnings("unchecked")
-			List<VisitGanttEvent> events = this.getEventMembers();
-			for (VisitGanttEvent event : events)
-			{
-				event.getVisit().setTheme(theme);
-				event.update(true);
-			}
-			ganttChart.redrawGanttChart();
-		}
 		
 		public VisitGanttEvent addEvent(Visit visit)
 		{

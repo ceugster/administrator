@@ -47,6 +47,14 @@
             name="Zahlungsbedingungen"
             restorable="true">
       </view>
+      <view
+            allowMultiple="false"
+            class="ch.eugster.events.course.views.BasicBookingTypeView"
+            icon="icons/type_16.png"
+            id="ch.eugster.events.course.basicbookingtype.view"
+            name="Buchungsarten Vorschläge"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -114,6 +122,16 @@
                showTitle="true"
                visible="true">
          </view>
+         <view
+               closeable="true"
+               id="ch.eugster.events.course.basicbookingtype.view"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="ch.eugster.events.addresstype.view"
+               showTitle="true"
+               visible="true">
+         </view>
       </perspectiveExtension>
    </extension>
    <extension
@@ -137,6 +155,12 @@
             default="false"
             id="ch.eugster.events.course.paymentterm.editor"
             name="Zahlungsbedingungen">
+      </editor>
+      <editor
+            class="ch.eugster.events.course.editors.BasicBookingTypeEditor"
+            default="false"
+            id="ch.eugster.events.course.editors.basicBookingTypeEditor"
+            name="Buchungsarten Vorschläge">
       </editor>
    </extension>
    <extension
@@ -409,6 +433,31 @@
             defaultHandler="ch.eugster.events.course.handlers.CoursePasteHandler"
             id="ch.eugster.events.course.command.pasteCourse"
             name="Kurs einfügen">
+      </command>
+      <command
+            categoryId="category.course"
+            defaultHandler="ch.eugster.events.course.handlers.ActivateBasicBookingTypeViewHandler"
+            description="Aktivieren der Sicht mit den Buchungsarten"
+            id="ch.eugster.events.course.command.activateBasicBookingTypeView"
+            name="Buchungsarten">
+      </command>
+      <command
+            categoryId="category.course"
+            defaultHandler="ch.eugster.events.course.handlers.AddBasicBookingTypeHandler"
+            id="ch.eugster.events.course.command.addBasicBookingType"
+            name="Buchungsart hinzufügen">
+      </command>
+      <command
+            categoryId="category.course"
+            defaultHandler="ch.eugster.events.course.handlers.EditBasicBookingTypeHandler"
+            id="ch.eugster.events.course.command.editBasicBookingType"
+            name="Buchungsart bearbeiten">
+      </command>
+      <command
+            categoryId="category.course"
+            defaultHandler="ch.eugster.events.course.handlers.DeleteBasicBookingTypeHandler"
+            id="ch.eugster.events.course.command.deleteBasicBookingType"
+            name="Buchungsart entfernen">
       </command>
    </extension>
    <extension
@@ -763,6 +812,16 @@
                   label="Buchungen"
                   style="push"
                   tooltip="Aktivieren der Sicht mit den Buchungen">
+            </command>
+            <command
+                  commandId="ch.eugster.events.course.command.activateBasicBookingTypeView"
+                  disabledIcon="icons/type_16.png"
+                  hoverIcon="icons/type_16.png"
+                  icon="icons/type_16.png"
+                  id="ch.eugster.events.course.command.activateBasicBookingTypeView"
+                  label="Buchungsarten"
+                  style="push"
+                  tooltip="Aktivieren der Sicht mit den Buchungsarten">
             </command>
          </menu>
       </menuContribution>
@@ -1736,6 +1795,36 @@
                hoverIcon="icons/save_16.png"
                icon="icons/save_16.png"
                id="ch.eugster.events.course.paymenttermEditor.save"
+               label="Save"
+               mode="FORCE_TEXT"
+               style="push"
+               toolbarPath="ch.eugster.events.ui.toolbar.editor.actions"
+               tooltip="Speichern der vorgenommenen Änderungen">
+         </action>
+      </editorContribution>
+      <editorContribution
+            id="ch.eugster.events.course.editors.basicBookingTypeEditor"
+            targetID="ch.eugster.events.course.editors.basicBookingTypeEditor">
+         <action
+               class="ch.eugster.events.ui.actions.ResetEditorActionDelegate"
+               definitionId="org.eclipse.ui.file.revert"
+               disabledIcon="icons/reset_grey_16.png"
+               hoverIcon="icons/reset_16.png"
+               icon="icons/reset_16.png"
+               id="ch.eugster.events.course.editors.basicBookingTypeEditor.revert"
+               label="Revert"
+               mode="FORCE_TEXT"
+               style="push"
+               toolbarPath="ch.eugster.events.ui.toolbar.editor.actions"
+               tooltip="Verwerfen der vorgenommemen Änderungen">
+         </action>
+         <action
+               class="ch.eugster.events.ui.actions.SaveEditorActionDelegate"
+               definitionId="org.eclipse.ui.file.save"
+               disabledIcon="icons/save_grey_16.png"
+               hoverIcon="icons/save_16.png"
+               icon="icons/save_16.png"
+               id="ch.eugster.events.course.editors.basicBookingTypeEditor.save"
                label="Save"
                mode="FORCE_TEXT"
                style="push"
