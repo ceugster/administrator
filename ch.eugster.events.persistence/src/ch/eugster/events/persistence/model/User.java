@@ -145,6 +145,22 @@ public class User extends AbstractEntity
 		}
 		UserProperty property = UserProperty.newInstance(this);
 		property.setKey(key);
+		if (key.equals(UserProperty.Property.BOOKING_CONFIRMATION_TEMPLATE_PATH.key()))
+		{
+			property.setValue(System.getProperty("user.home"));
+		}
+		else if (key.equals(UserProperty.Property.PARTICIPATION_CONFIRMATION_TEMPLATE_PATH.key()))
+		{
+			property.setValue(System.getProperty("user.home"));
+		}
+		else if (key.equals(UserProperty.Property.COURSE_INVITATION_TEMPLATE_PATH.key()))
+		{
+			property.setValue(System.getProperty("user.home"));
+		}
+		else if (key.equals(UserProperty.Property.DONATION_CONFIRMATION_TEMPLATE_PATH.key()))
+		{
+			property.setValue(System.getProperty("user.home"));
+		}
 		return property;
 	}
 

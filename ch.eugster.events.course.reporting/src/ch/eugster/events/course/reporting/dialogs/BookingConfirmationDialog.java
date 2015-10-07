@@ -228,12 +228,6 @@ public class BookingConfirmationDialog extends TitleAreaDialog
 		{
 			this.userPropertyTemplatePath = User.getCurrent().getProperty(
 					UserProperty.Property.BOOKING_CONFIRMATION_TEMPLATE_PATH.key());
-			if (this.userPropertyTemplatePath == null)
-			{
-				this.userPropertyTemplatePath = UserProperty.newInstance(User.getCurrent());
-				this.userPropertyTemplatePath.setKey(UserProperty.Property.BOOKING_CONFIRMATION_TEMPLATE_PATH.key());
-				this.userPropertyTemplatePath.setValue(System.getProperty("user.home"));
-			}
 			file = new File(this.userPropertyTemplatePath.getValue());
 		}
 		documentPath = new Text(composite, SWT.BORDER | SWT.SINGLE);

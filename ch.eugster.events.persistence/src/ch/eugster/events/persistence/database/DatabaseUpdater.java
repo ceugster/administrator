@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -172,6 +173,8 @@ public abstract class DatabaseUpdater
 
 	protected abstract String getCharset();
 
+	protected abstract String getCreateTable(String tableName, String[] columnNames, String[] dataTypes, String[] defaults, String primaryKey, String[] foreignKeys, String engine);
+	
 	private void log(final int level, final String message)
 	{
 		Activator.log(level, message);
@@ -1305,8 +1308,72 @@ public abstract class DatabaseUpdater
 							ok = executeSqlQuery(con, builder.toString());
 						}
 					}
+					if (structureVersion == 36)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						String tableName = "events_booking_type_proposition";
+						String[] columnNames = { "booking_type_proposition_id",
+												 "booking_type_proposition_code",
+												 "booking_type_proposition_price",
+												 "booking_type_proposition_deleted",
+												 "booking_type_proposition_version",
+												 "booking_type_proposition_annulation_charges",
+												 "booking_type_proposition_name",
+												 "booking_type_proposition_membership_id",
+												 "booking_type_proposition_max_age",
+												 "booking_type_proposition_user_id",
+												 "booking_type_proposition_updated",
+												 "booking_type_proposition_inserted" };
+						String[] dataTypes = {
+								"int(10)",
+								"varchar(50)",
+								"double(15,5)",
+								"tinyint(1) unsigned",
+								"int(10)",
+								"double(15,5)",
+								"varchar(255)",
+								"int(10)",
+								"int(10)",
+								"int(10)",
+								"datetime",
+								"datetime" };
+						String[] defaults = {
+								"NOT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL" };
+						String primaryKey = "booking_type_proposition_id";
+						String engine = "InnoDB";
+						if (!tableExists(con, tableName))
+						{
+							String sql = getCreateTable(tableName, columnNames, dataTypes, defaults, primaryKey, new String[0], engine);
+							log(LogService.LOG_INFO, sql);
+							System.out.println(sql);
+							executeSqlQuery(con, sql);
 
-
+							PreparedStatement insertStatement = con.prepareStatement("INSERT INTO events_booking_type_proposition ( booking_type_proposition_id, booking_type_proposition_deleted, booking_type_proposition_version, booking_type_proposition_name, booking_type_proposition_inserted) VALUES ( ?, ?, ?, ?, ? )");
+							String[] bookingTypeNames = { "Kinder", "Erwachsene", "(Familien)", "Mitglieder", "Nichtmitglieder", "Fotograf/in" };
+							long id = 0L;
+							for (String bookingTypeName : bookingTypeNames)
+							{
+								insertStatement.setLong(1, ++id);
+								insertStatement.setInt(2, 0);
+								insertStatement.setInt(3, 1);
+								insertStatement.setString(4, bookingTypeName);
+								insertStatement.setDate(5, new java.sql.Date(GregorianCalendar.getInstance().getTimeInMillis()));
+								insertStatement.executeUpdate();
+							}
+							executeSqlQuery(con, "INSERT INTO events_sequence (seq_name, seq_count) VALUES ( 'events_booking_type_proposition_id_seq', " + ++id + ")");
+						}
+					}
 					stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);
 				}
 			}

@@ -12,6 +12,7 @@
         <class>ch.eugster.events.persistence.model.Appliance</class>
 		<class>ch.eugster.events.persistence.model.Booking</class>
 		<class>ch.eugster.events.persistence.model.BookingType</class>
+		<class>ch.eugster.events.persistence.model.BookingTypeProposition</class>
 		<class>ch.eugster.events.persistence.model.Category</class>
 		<class>ch.eugster.events.persistence.model.Compensation</class>
 		<class>ch.eugster.events.persistence.model.CompensationType</class>

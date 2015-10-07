@@ -36,9 +36,12 @@ import ch.eugster.events.course.editors.CourseEditorInput;
 import ch.eugster.events.course.wizards.BookingTypeWizard;
 import ch.eugster.events.course.wizards.CourseDetailWizard;
 import ch.eugster.events.course.wizards.CourseGuideWizard;
+import ch.eugster.events.persistence.events.EntityAdapter;
+import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.formatters.CourseFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
+import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.BookingType;
 import ch.eugster.events.persistence.model.Course;
@@ -54,12 +57,23 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 {
 	private final CourseEditor editor;
 
-	private final ViewerRoot root;
+	private ViewerRoot root;
+	
+	private final EntityAdapter courseListener;
 
 	public CourseEditorContentOutlinePage(final CourseEditor editor)
 	{
 		this.editor = editor;
 		this.root = new ViewerRoot(editor);
+		this.courseListener = new EntityAdapter() 
+		{
+			@Override
+			public void postUpdate(AbstractEntity entity) 
+			{
+				CourseEditorContentOutlinePage.this.getTreeViewer().refresh();
+			}
+		};
+		EntityMediator.addListener(Course.class, courseListener);
 	}
 
 	private IAction createAddBookingTypeAction()
@@ -518,6 +532,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 	@Override
 	public void dispose()
 	{
+		EntityMediator.removeListener(Course.class, courseListener);
 		super.dispose();
 	}
 
