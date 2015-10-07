@@ -437,6 +437,8 @@ ch.eugster.events.course/src/ch/eugster/events/course/dialogs/CommitmentContract
 ch.eugster.events.course/src/ch/eugster/events/course/dialogs/CourseCopyDialog.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/dialogs/InvitationDialog.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/dialogs/SelectBookingTypeDialog.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/editors/BasicBookingTypeEditor.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/editors/BasicBookingTypeEditorInput.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/editors/BookingEditor.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/editors/BookingEditorInput.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/editors/BookingStateLabelProvider.java -text
@@ -458,9 +460,11 @@ ch.eugster.events.course/src/ch/eugster/events/course/editors/StateSorter.java -
 ch.eugster.events.course/src/ch/eugster/events/course/editors/UserContentProvider.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/editors/UserLabelProvider.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/editors/UserSorter.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/handlers/ActivateBasicBookingTypeViewHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/ActivateCourseBookingViewHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/ActivateCourseViewHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/ActivateLinkBookingViewHandler.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/handlers/AddBasicBookingTypeHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/AddBookingHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/AddBookingTypeHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/AddCourseDetailHandler.java -text
@@ -470,6 +474,7 @@ ch.eugster.events.course/src/ch/eugster/events/course/handlers/AddParticipantHan
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/AddPaymentTermHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/CourseCopyHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/CoursePasteHandler.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteBasicBookingTypeHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteBookingHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteBookingTypeHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteCourseDetailHandler.java -text
@@ -477,6 +482,7 @@ ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteCourseGuide
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteCourseHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeleteParticipantHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/DeletePaymentTermHandler.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/handlers/EditBasicBookingTypeHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/EditBookingHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/EditBookingTypeHandler.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/handlers/EditCourseDetailHandler.java -text
@@ -495,6 +501,9 @@ ch.eugster.events.course/src/ch/eugster/events/course/preferences/CoursePreferen
 ch.eugster.events.course/src/ch/eugster/events/course/preferences/FormatPreferencePage.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/preferences/PreferenceInitializer.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/views/AnnulatedCoursesFilter.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/views/BasicBookingTypeContentProvider.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/views/BasicBookingTypeSorter.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/views/BasicBookingTypeView.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/views/BookingEditorContentOutlinePage.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/views/CourseBookingContentProvider.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/views/CourseBookingSorter.java -text
@@ -511,6 +520,7 @@ ch.eugster.events.course/src/ch/eugster/events/course/views/LinkParticipantView.
 ch.eugster.events.course/src/ch/eugster/events/course/views/PaymentTermContentProvider.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/views/PaymentTermView.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/views/SeasonFilter.java -text
+ch.eugster.events.course/src/ch/eugster/events/course/wizards/BookingTypePropositionLabelProvider.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/wizards/BookingTypeSelectorWizardPage.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/wizards/BookingTypeWizard.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/wizards/BookingTypeWizardPage.java -text
@@ -953,6 +963,7 @@ ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/BookingAnn
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/BookingDoneState.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/BookingForthcomingState.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/BookingType.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/BookingTypeProposition.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Category.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Compensation.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/CompensationType.java -text
@@ -1030,6 +1041,7 @@ ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/AddressS
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/AddressTypeQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/ApplianceQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/BookingQuery.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/BookingTypePropositionQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/BookingTypeQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/CategoryQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/CompensationQuery.java -text
@@ -1614,6 +1626,7 @@ ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitTodoFilter.java
 ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitTreeContentProvider.java -text
 ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitView.java -text
 ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitorView.java -text
+ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitorView_old.java -text
 ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitsToDoView.java -text
 ch.eugster.events.zipcode.feature/.project -text
 ch.eugster.events.zipcode.feature/build.properties -text

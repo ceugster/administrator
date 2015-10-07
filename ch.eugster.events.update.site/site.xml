@@ -99,6 +99,30 @@
    <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201507131106.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201507131106">
       <category name="addressgroup"/>
    </feature>
+   <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201509191141.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201509191141">
+      <category name="addressgroup"/>
+   </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201509191141.jar" id="ch.eugster.events.course.feature" version="1.0.0.201509191141">
+      <category name="course"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.feature_1.0.0.201509191141.jar" id="ch.eugster.events.documents.feature" version="1.0.0.201509191141">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201509191141.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201509191141">
+      <category name="persistence"/>
+   </feature>
+   <feature url="features/ch.eugster.events.person.feature_1.0.0.201509191141.jar" id="ch.eugster.events.person.feature" version="1.0.0.201509191141">
+      <category name="person"/>
+   </feature>
+   <feature url="features/ch.eugster.events.person.feature_1.0.0.201509211759.jar" id="ch.eugster.events.person.feature" version="1.0.0.201509211759">
+      <category name="person"/>
+   </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201510051856.jar" id="ch.eugster.events.course.feature" version="1.0.0.201510051856">
+      <category name="course"/>
+   </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201510051856.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201510051856">
+      <category name="persistence"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>
