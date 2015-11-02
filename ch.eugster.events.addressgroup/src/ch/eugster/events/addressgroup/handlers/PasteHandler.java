@@ -304,7 +304,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 		List<AddressGroupMember> targetMembers = target.getAddressGroupMembers();
 		for (AddressGroupMember targetMember : targetMembers)
 		{
-			if (targetMember.getLink() != null)
+			if (!targetMember.isDeleted() && targetMember.getLink() != null)
 			{
 				if (targetMember.getLink().getPerson().getId().equals(link.getPerson().getId()))
 				{
@@ -337,7 +337,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 			if (targetMember.getLink() == null || targetMember.getLink().isDeleted()
 					|| targetMember.getLink().getPerson().isDeleted())
 			{
-				if (targetMember.getAddress().getId().equals(address.getId()))
+				if (!targetMember.isDeleted() && targetMember.getAddress().getId().equals(address.getId()))
 				{
 					found = true;
 					break;
