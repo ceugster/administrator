@@ -110,7 +110,7 @@ public class CourseMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, COST_NOTE, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM, PREREQUISITES, DATE_RANGE, DATE_RANGE_WITH_WEEKDAY_CODE, SUBSTITUTION_DATE_RANGE, SUBSTITUTION_DATE_RANGE_WITH_WEEKDAY_CODE, ALL_LOCATIONS, GUIDE_WITH_PROFESSION, ALL_BOOKING_TYPES;
+		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, COST_NOTE, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM, PREREQUISITES, DATE_RANGE, DATE_RANGE_WITH_WEEKDAY_CODE, SUBSTITUTION_DATE_RANGE, SUBSTITUTION_DATE_RANGE_WITH_WEEKDAY_CODE, ALL_LOCATIONS, GUIDE_WITH_PROFESSION, ALL_BOOKING_TYPES, ADVANCE_NOTICE_DATE, ADVANCE_NOTICE_DONE_DATE;
 
 		@Override
 		public String getDescription()
@@ -173,6 +173,7 @@ public class CourseMap extends AbstractDataMap
 			{
 				return "Informationen";
 			}
+			
 			case INVITATION_DATE:
 			{
 				return "Datum Kurseinladung";
@@ -180,6 +181,14 @@ public class CourseMap extends AbstractDataMap
 			case INVITATION_DONE_DATE:
 			{
 				return "Datum erfolgte Kurseinladung";
+			}
+			case ADVANCE_NOTICE_DATE:
+			{
+				return "Datum Voranzeige";
+			}
+			case ADVANCE_NOTICE_DONE_DATE:
+			{
+				return "Datum erfolgte Voranzeige";
 			}
 			case LAST_ANNULATION_DATE:
 			{
@@ -332,6 +341,14 @@ public class CourseMap extends AbstractDataMap
 			case INVITATION_DONE_DATE:
 			{
 				return "course_invitation_done_date";
+			}
+			case ADVANCE_NOTICE_DATE:
+			{
+				return "course_advance_notice_date";
+			}
+			case ADVANCE_NOTICE_DONE_DATE:
+			{
+				return "course_advance_notice_done_date";
 			}
 			case LAST_ANNULATION_DATE:
 			{
@@ -500,6 +517,14 @@ public class CourseMap extends AbstractDataMap
 			case INVITATION_DONE_DATE:
 			{
 				return "Kurseinladung";
+			}
+			case ADVANCE_NOTICE_DATE:
+			{
+				return "Voranzeige";
+			}
+			case ADVANCE_NOTICE_DONE_DATE:
+			{
+				return "Voranzeige";
 			}
 			case LAST_ANNULATION_DATE:
 			{
@@ -714,6 +739,16 @@ public class CourseMap extends AbstractDataMap
 			case INVITATION_DONE_DATE:
 			{
 				Calendar calendar = course.getInvitationDoneDate();
+				return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+			}
+			case ADVANCE_NOTICE_DATE:
+			{
+				Calendar calendar = course.getAdvanceNoticeDate();
+				return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+			}
+			case ADVANCE_NOTICE_DONE_DATE:
+			{
+				Calendar calendar = course.getAdvanceNoticeDoneDate();
 				return calendar == null ? "" : dateFormatter.format(calendar.getTime());
 			}
 			case LAST_ANNULATION_DATE:
