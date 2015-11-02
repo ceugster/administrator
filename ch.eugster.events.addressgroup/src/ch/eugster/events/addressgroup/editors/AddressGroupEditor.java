@@ -93,6 +93,7 @@ public class AddressGroupEditor extends AbstractEntityEditor<AddressGroup>
 		{
 			public void modifyText(ModifyEvent e)
 			{
+				AddressGroupEditor.this.setDirty(true);
 				String name = AddressGroupEditor.this.name.getText();
 				String code = AddressGroupEditor.this.code.getText();
 				int min = Math.min(name.length(), code.length());
