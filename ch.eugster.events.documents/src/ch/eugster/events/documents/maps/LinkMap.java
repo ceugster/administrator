@@ -3,16 +3,24 @@ package ch.eugster.events.documents.maps;
 import java.io.Writer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.documents.Activator;
 import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
+import ch.eugster.events.persistence.model.BookingDoneState;
+import ch.eugster.events.persistence.model.BookingForthcomingState;
+import ch.eugster.events.persistence.model.Course;
+import ch.eugster.events.persistence.model.CourseDetail;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.Donation;
 import ch.eugster.events.persistence.model.DonationPurpose;
@@ -21,6 +29,7 @@ import ch.eugster.events.persistence.model.FieldExtensionTarget;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.LinkPersonAddressExtendedField;
 import ch.eugster.events.persistence.model.Member;
+import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.PersonExtendedField;
 import ch.eugster.events.persistence.queries.FieldExtensionQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
@@ -136,7 +145,7 @@ public class LinkMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		PHONE, EMAIL, FUNCTION, MAILING_ADDRESS, TOTAL_DONATIONS, MEMBER;
+		PHONE, EMAIL, FUNCTION, MAILING_ADDRESS, TOTAL_DONATIONS, MEMBER, COURSE_VISITS;
 
 		@Override
 		public String getDescription()
@@ -166,6 +175,10 @@ public class LinkMap extends AbstractDataMap
 				case MEMBER:
 				{
 					return "Mitglied";
+				}
+				case COURSE_VISITS:
+				{
+					return "Kursbesuche";
 				}
 				default:
 				{
@@ -203,6 +216,10 @@ public class LinkMap extends AbstractDataMap
 				{
 					return "member";
 				}
+				case COURSE_VISITS:
+				{
+					return "course_visits";
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -238,6 +255,10 @@ public class LinkMap extends AbstractDataMap
 				case MEMBER:
 				{
 					return "Mitglied";
+				}
+				case COURSE_VISITS:
+				{
+					return "Kursbesuche";
 				}
 				default:
 				{
@@ -294,6 +315,43 @@ public class LinkMap extends AbstractDataMap
 					}
 					return builder.toString();
 				}
+				case COURSE_VISITS:
+				{
+					List<Participant> participants = link.getParticipants();
+					Map<Long, String> courses = new HashMap<Long, String>();
+					for (Participant participant: participants)
+					{
+						if (!participant.isDeleted() && !participant.getBooking().isDeleted() && !participant.getBooking().getCourse().isDeleted())
+						{
+							if (participant.getBooking().getBookingState(participant.getBooking().getCourse().getState()).equals(BookingForthcomingState.BOOKED))
+							{
+								Course course = participant.getBooking().getCourse();
+								List<CourseDetail> details = course.getCourseDetails();
+								Calendar start = details.isEmpty() ? null : details.get(0).getStart();
+								String title = course.getTitle();
+								String date = start == null ? "ohne Datum" : SimpleDateFormat.getInstance().format(start.getTime());
+								courses.put(participant.getLink().getId(), title + " (" + date + ", angemelded)\n");
+							}
+							else if (participant.getBooking().getBookingState(participant.getBooking().getCourse().getState()).equals(BookingDoneState.PARTICIPATED))
+							{
+								Course course = participant.getBooking().getCourse();
+								List<CourseDetail> details = course.getCourseDetails();
+								Calendar start = details.isEmpty() ? null : details.get(0).getStart();
+								String title = course.getTitle();
+								String date = start == null ? "ohne Datum" : SimpleDateFormat.getInstance().format(start.getTime());
+								courses.put(participant.getLink().getId(), title + " (" + date + ", teilgenommen)\n");
+							}
+						}
+					}
+					Collection<String> values = courses.values();
+					StringBuilder builder = new StringBuilder();
+					for (String value : values)
+					{
+						builder = builder.append(value);
+					}
+					String visits = builder.toString();
+					return visits.substring(0, visits.isEmpty() ? 0 : visits.length()  - 2);
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -349,6 +407,42 @@ public class LinkMap extends AbstractDataMap
 						{
 							builder = builder.append(", ");
 						}
+					}
+					return builder.toString();
+				}
+				case COURSE_VISITS:
+				{
+					List<Participant> participants = link.getParticipants();
+					Map<Long, String> courses = new HashMap<Long, String>();
+					for (Participant participant: participants)
+					{
+						if (!participant.isDeleted() && !participant.getBooking().isDeleted() && !participant.getBooking().getCourse().isDeleted())
+						{
+							if (participant.getBooking().getBookingState(participant.getBooking().getCourse().getState()).equals(BookingForthcomingState.BOOKED))
+							{
+								Course course = participant.getBooking().getCourse();
+								List<CourseDetail> details = course.getCourseDetails();
+								Calendar start = details.isEmpty() ? null : details.get(0).getStart();
+								String title = course.getTitle();
+								String date = start == null ? "ohne Datum" : SimpleDateFormat.getInstance().format(start.getTime());
+								courses.put(participant.getLink().getId(), title + " (" + date + ", angemelded)\n");
+							}
+							else if (participant.getBooking().getBookingState(participant.getBooking().getCourse().getState()).equals(BookingDoneState.PARTICIPATED))
+							{
+								Course course = participant.getBooking().getCourse();
+								List<CourseDetail> details = course.getCourseDetails();
+								Calendar start = details.isEmpty() ? null : details.get(0).getStart();
+								String title = course.getTitle();
+								String date = start == null ? "ohne Datum" : SimpleDateFormat.getInstance().format(start.getTime());
+								courses.put(participant.getLink().getId(), title + " (" + date + ", teilgenommen)\n");
+							}
+						}
+					}
+					Collection<String> values = courses.values();
+					StringBuilder builder = new StringBuilder();
+					for (String value : values)
+					{
+						builder = builder.append(value);
 					}
 					return builder.toString();
 				}

@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -67,6 +69,8 @@ public class AddressListDialog extends TitleAreaDialog
 	private ComboViewer sortViewer;
 
 	private Button shortList;
+	
+	private Button courseVisits;
 	
 	/**
 	 * @param parentShell
@@ -132,12 +136,6 @@ public class AddressListDialog extends TitleAreaDialog
 			{
 				computeAddressGroupMember(map, member);
 			}
-			// List<AddressGroupLink> children =
-			// addressGroup.getChildren();
-			// for (AddressGroupLink child : children)
-			// {
-			// computeAddressGroup(map, child.getChild());
-			// }
 		}
 	}
 
@@ -195,11 +193,6 @@ public class AddressListDialog extends TitleAreaDialog
 				AddressGroup addressGroup = (AddressGroup) element;
 				computeAddressGroup(maps, addressGroup);
 			}
-			// else if (element instanceof AddressGroupLink)
-			// {
-			// AddressGroupLink addressGroupLink = (AddressGroupLink) element;
-			// computeAddressGroup(maps, addressGroupLink.getChild());
-			// }
 			else if (element instanceof AddressGroupMember)
 			{
 				AddressGroupMember member = (AddressGroupMember) element;
@@ -257,12 +250,48 @@ public class AddressListDialog extends TitleAreaDialog
 
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
-
-		shortList = new Button(composite, SWT.CHECK);
-		shortList.setText("Kurzliste");
-		shortList.setLayoutData(gridData);
-		shortList.setSelection(settings.getBoolean("short.list"));
 		
+		shortList = new Button(composite, SWT.CHECK);
+		shortList.setLayoutData(gridData);
+		shortList.setText("Kurzliste");
+		shortList.setSelection(settings.getBoolean("short.list.selected"));
+		shortList.addSelectionListener(new SelectionListener() 
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e) 
+			{
+				settings.put("short.list.selected", shortList.getSelection());
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) 
+			{
+				widgetSelected(e);
+			}
+		});
+		
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		
+		courseVisits = new Button(composite, SWT.CHECK);
+		courseVisits.setLayoutData(gridData);
+		courseVisits.setText("mit Kursteilnahmen");
+		courseVisits.setSelection(settings.getBoolean("course.visits.selected"));
+		courseVisits.addSelectionListener(new SelectionListener() 
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e) 
+			{
+				settings.put("course.visits.selected", courseVisits.getSelection());
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) 
+			{
+				widgetSelected(e);
+			}
+		});
+
 		return parent;
 	}
 
@@ -294,6 +323,10 @@ public class AddressListDialog extends TitleAreaDialog
 			keys.add(PersonMap.Key.EMAIL);
 			keys.add(LinkMap.Key.EMAIL);
 			keys.add(AddressMap.Key.EMAIL);
+			if (courseVisits.getSelection())
+			{
+				keys.add(LinkMap.Key.COURSE_VISITS);
+			}
 		}
 		else
 		{
@@ -332,6 +365,10 @@ public class AddressListDialog extends TitleAreaDialog
 			keys.add(AddressMap.Key.NOTES);
 			keys.addAll(PersonMap.getExtendedFieldKeys());
 			keys.addAll(LinkMap.getExtendedFieldKeys());
+			if (courseVisits.getSelection())
+			{
+				keys.add(LinkMap.Key.COURSE_VISITS);
+			}
 		}
 		return keys.toArray(new DataMapKey[0]);
 	}
@@ -445,5 +482,4 @@ public class AddressListDialog extends TitleAreaDialog
 	{
 		super.setTitle("Adressliste generieren");
 	}
-
 }
