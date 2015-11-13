@@ -126,6 +126,18 @@
    <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201510071057.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201510071057">
       <category name="addressgroup"/>
    </feature>
+   <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201511021720.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201511021720">
+      <category name="addressgroup"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.feature_1.0.0.201511021734.jar" id="ch.eugster.events.documents.feature" version="1.0.0.201511021734">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201511130939.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201511130939">
+      <category name="addressgroup"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.feature_1.0.0.201511130939.jar" id="ch.eugster.events.documents.feature" version="1.0.0.201511130939">
+      <category name="documents"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>
