@@ -582,6 +582,7 @@ ch.eugster.events.documents.odfdom/lib/simple-odf-0.8.1-incubating.jar -text
 ch.eugster.events.documents.odfdom/lib/xercesImpl.jar -text
 ch.eugster.events.documents.odfdom/lib/xml-apis.jar -text
 ch.eugster.events.documents.odfdom/lib/xslt-runner-1.2.3-incubating.jar -text
+ch.eugster.events.documents.odfdom/lib/xslt-runner-task-1.2.3-incubating.jar -text
 ch.eugster.events.documents.odfdom/plugin.xml -text
 ch.eugster.events.documents.odfdom/src/ch/eugster/events/documents/odfdom/internal/Activator.java -text
 ch.eugster.events.documents.odfdom/src/ch/eugster/events/documents/odfdom/internal/preferences/LabelFieldEditor.java -text
