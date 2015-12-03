@@ -571,6 +571,7 @@ ch.eugster.events.documents.odfdom/OSGI-INF/document-builder-service.xml -text
 ch.eugster.events.documents.odfdom/OSGI-INF/service.xml -text
 ch.eugster.events.documents.odfdom/build.properties -text
 ch.eugster.events.documents.odfdom/lib/commons-validator-1.5.0.jar -text
+ch.eugster.events.documents.odfdom/lib/java-rdfa-0.4.2.jar -text
 ch.eugster.events.documents.odfdom/lib/odfdom.jar -text
 ch.eugster.events.documents.odfdom/lib/resolver.jar -text
 ch.eugster.events.documents.odfdom/lib/serializer.jar -text
