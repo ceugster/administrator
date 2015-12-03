@@ -578,6 +578,7 @@ ch.eugster.events.documents.odfdom/lib/odfdom-java-0.8.10-incubating.jar -text
 ch.eugster.events.documents.odfdom/lib/odfdom.jar -text
 ch.eugster.events.documents.odfdom/lib/resolver.jar -text
 ch.eugster.events.documents.odfdom/lib/serializer.jar -text
+ch.eugster.events.documents.odfdom/lib/simple-odf-0.8.1-incubating.jar -text
 ch.eugster.events.documents.odfdom/lib/xercesImpl.jar -text
 ch.eugster.events.documents.odfdom/lib/xml-apis.jar -text
 ch.eugster.events.documents.odfdom/plugin.xml -text
