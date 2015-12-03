@@ -7,7 +7,14 @@ Bundle-Activator: ch.eugster.events.documents.odfdom.internal.Activator
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: lib/odfdom.jar,
+Bundle-ClassPath: lib/simple-odf-0.8.1-incubating.jar,
+ lib/odfdom-java-0.8.10-incubating.jar,
+ lib/xslt-runner-1.2.3-incubating.jar,
+ lib/xslt-runner-task-1.2.3-incubating.jar,
+ lib/java-rdfa-0.4.2.jar,
+ lib/jena.jar,
+ lib/jena-iri-0.9.6.jar,
+ lib/commons-validator-1.5.0.jar,
  lib/resolver.jar,
  lib/serializer.jar,
  lib/xercesImpl.jar,
