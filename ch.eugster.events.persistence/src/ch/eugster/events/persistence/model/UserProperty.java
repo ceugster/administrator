@@ -107,7 +107,7 @@ public class UserProperty extends AbstractEntity
 
 	public enum Property
 	{
-		BOOKING_CONFIRMATION_TEMPLATE_PATH, PARTICIPATION_CONFIRMATION_TEMPLATE_PATH, COURSE_INVITATION_TEMPLATE_PATH, DONATION_CONFIRMATION_TEMPLATE_PATH;
+		BOOKING_CONFIRMATION_TEMPLATE_PATH, PARTICIPATION_CONFIRMATION_TEMPLATE_PATH, COURSE_INVITATION_TEMPLATE_PATH, DONATION_CONFIRMATION_TEMPLATE_PATH, COMMITMENT_CONTRACT_TEMPLATE_PATH;
 
 		public String key()
 		{
@@ -128,6 +128,10 @@ public class UserProperty extends AbstractEntity
 				case DONATION_CONFIRMATION_TEMPLATE_PATH:
 				{
 					return "donation.confirmation.template.path";
+				}
+				case COMMITMENT_CONTRACT_TEMPLATE_PATH:
+				{
+					return "commitment.contract.template.path";
 				}
 				default:
 				{
