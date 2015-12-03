@@ -12,23 +12,22 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
-import org.odftoolkit.odfdom.OdfElement;
-import org.odftoolkit.odfdom.OdfFileDom;
-import org.odftoolkit.odfdom.doc.OdfDocument;
-import org.odftoolkit.odfdom.doc.OdfTextDocument;
-import org.odftoolkit.odfdom.doc.office.OdfOfficeAutomaticStyles;
-import org.odftoolkit.odfdom.doc.office.OdfOfficeBody;
-import org.odftoolkit.odfdom.doc.office.OdfOfficeText;
-import org.odftoolkit.odfdom.doc.style.OdfStyle;
-import org.odftoolkit.odfdom.doc.style.OdfStyleParagraphProperties;
-import org.odftoolkit.odfdom.doc.table.OdfTable;
-import org.odftoolkit.odfdom.doc.table.OdfTableRow;
-import org.odftoolkit.odfdom.doc.text.OdfConditionalText;
-import org.odftoolkit.odfdom.doc.text.OdfTextInput;
-import org.odftoolkit.odfdom.doc.text.OdfTextSpan;
-import org.odftoolkit.odfdom.dom.OdfAttributeNames;
+import org.odftoolkit.odfdom.dom.OdfContentDom;
 import org.odftoolkit.odfdom.dom.element.OdfStylableElement;
+import org.odftoolkit.odfdom.dom.element.office.OfficeBodyElement;
+import org.odftoolkit.odfdom.dom.element.office.OfficeTextElement;
+import org.odftoolkit.odfdom.dom.element.style.StyleParagraphPropertiesElement;
+import org.odftoolkit.odfdom.dom.element.table.TableTableElement;
+import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
+import org.odftoolkit.odfdom.dom.element.text.TextConditionalTextElement;
+import org.odftoolkit.odfdom.dom.element.text.TextSpanElement;
+import org.odftoolkit.odfdom.dom.element.text.TextTextInputElement;
 import org.odftoolkit.odfdom.dom.style.OdfStyleFamily;
+import org.odftoolkit.odfdom.incubator.doc.office.OdfOfficeAutomaticStyles;
+import org.odftoolkit.odfdom.incubator.doc.style.OdfStyle;
+import org.odftoolkit.odfdom.pkg.OdfElement;
+import org.odftoolkit.odfdom.pkg.OdfFileDom;
+import org.odftoolkit.simple.TextDocument;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -99,24 +98,24 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		{
 			monitor.beginTask("Dokumente werden erstellt...", maps.length);
 			String styleName = "break-before";
-			OdfDocument document = OdfTextDocument.loadDocument(template);
-			OdfFileDom fileDom = document.getContentDom();
-			OdfOfficeAutomaticStyles styles = fileDom.getAutomaticStyles();
+			TextDocument document = TextDocument.loadDocument(template);
+			OdfContentDom contentDom = document.getContentDom();
+			OdfOfficeAutomaticStyles styles = contentDom.getAutomaticStyles();
 			OdfStyle style = styles.getStyle(styleName, OdfStyleFamily.Paragraph);
 			if (style == null)
 			{
-				style = new OdfStyle(fileDom);
+				style = new OdfStyle(contentDom);
 				style.setStyleFamilyAttribute(OdfStyleFamily.Paragraph.getName());
 				style.setStyleNameAttribute(styleName);
-				style.setProperty(OdfStyleParagraphProperties.BreakBefore, "page");
+				style.setProperty(StyleParagraphPropertiesElement.BreakBefore, "page");
 				styles.appendChild(style);
 			}
 
-			OdfOfficeBody body = document.getOfficeBody();
-			OdfOfficeText text = OdfElement.findFirstChildNode(OdfOfficeText.class, body);
+			OfficeBodyElement body = (OfficeBodyElement) document.getContentRoot().getParentNode();
+			OfficeTextElement text = OdfElement.findFirstChildNode(OfficeTextElement.class, body);
 			if (text != null)
 			{
-				OdfOfficeText textCopy = (OdfOfficeText) text.cloneNode(true);
+				OfficeTextElement textCopy = (OfficeTextElement) text.cloneNode(true);
 				OdfStylableElement stylableElement = OdfElement.findFirstChildNode(OdfStylableElement.class, text);
 				while (stylableElement != null)
 				{
@@ -135,7 +134,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 					while (stylableElement != null)
 					{
 						OdfStylableElement clonedStylableElement = (OdfStylableElement) stylableElement.cloneNode(true);
-						this.replaceContent(fileDom, clonedStylableElement, maps[i]);
+						this.replaceContent(contentDom, clonedStylableElement, maps[i]);
 						text.appendChild(clonedStylableElement);
 						stylableElement = OdfElement.findNextChildNode(OdfStylableElement.class, stylableElement);
 					}
@@ -158,37 +157,37 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		return status;
 	}
 
-	private OdfTableRow[] collectTableRows(final OdfTable table)
+	private TableTableRowElement[] collectTableRows(final TableTableElement table)
 	{
-		List<OdfTableRow> rows = new ArrayList<OdfTableRow>();
+		List<TableTableRowElement> rows = new ArrayList<TableTableRowElement>();
 		NodeList list = table.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++)
 		{
-			if (list.item(i) instanceof OdfTableRow)
-				rows.add((OdfTableRow) list.item(i));
+			if (list.item(i) instanceof TableTableRowElement)
+				rows.add((TableTableRowElement) list.item(i));
 		}
 		if (rows.size() < 1)
-			return new OdfTableRow[0];
+			return new TableTableRowElement[0];
 		if (rows.size() > 3)
-			return new OdfTableRow[0];
+			return new TableTableRowElement[0];
 
-		OdfTableRow[] tableRows = rows.toArray(new OdfTableRow[0]);
-		rows = new ArrayList<OdfTableRow>();
+		TableTableRowElement[] tableRows = rows.toArray(new TableTableRowElement[0]);
+		rows = new ArrayList<TableTableRowElement>();
 		for (int i = 0; i < tableRows.length; i++)
 			rows.add(tableRows[i]);
 
-		return rows.toArray(new OdfTableRow[0]);
+		return rows.toArray(new TableTableRowElement[0]);
 	}
 
 	private Node fillDummyRow(final OdfFileDom fileDom, final Node node, final DataMap map)
 	{
-		if (node instanceof OdfTextInput)
+		if (node instanceof TextTextInputElement)
 		{
-			this.replaceOdfTextInputWithOdfTextSpan(fileDom, (OdfTextInput) node, map);
+			this.replaceOdfTextInputWithOdfTextSpan(fileDom, (TextTextInputElement) node, map);
 		}
-		else if (node instanceof OdfConditionalText)
+		else if (node instanceof TextConditionalTextElement)
 		{
-			this.replaceConditionalTextWithCurrentValue((OdfConditionalText) node, map);
+			this.replaceConditionalTextWithCurrentValue((TextConditionalTextElement) node, map);
 		}
 		else
 		{
@@ -201,27 +200,26 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		return node;
 	}
 
-	private void fillTable(final OdfFileDom fileDom, final OdfTable table, final DataMap map)
+	private void fillTable(final OdfFileDom fileDom, final TableTableElement table, final DataMap map)
 	{
-		String name = table.getOdfAttributeValue(OdfAttributeNames.TABLENAME.getOdfName());
+		String name = table.getTableNameAttribute();
 		DataMap[] maps = map.getTableMaps(name).toArray(new DataMap[0]);
+		TableTableRowElement[] rows = this.collectTableRows(table);
+		TableTableRowElement totalRow = null;
 
-		OdfTableRow[] rows = this.collectTableRows(table);
-		OdfTableRow totalRow = null;
-
-		OdfTableRow templateRow = null;
-		OdfTableRow inputRow = null;
+		TableTableRowElement templateRow = null;
+		TableTableRowElement inputRow = null;
 		int startingRow = 0;
 		if (rows.length == 1)
 		{
 			inputRow = rows[0];
-			templateRow = (OdfTableRow) rows[0].cloneNode(true);
+			templateRow = (TableTableRowElement) rows[0].cloneNode(true);
 			startingRow = 0;
 		}
 		else
 		{
 			inputRow = rows[1];
-			templateRow = (OdfTableRow) rows[1].cloneNode(true);
+			templateRow = (TableTableRowElement) rows[1].cloneNode(true);
 			startingRow = 1;
 		}
 
@@ -240,23 +238,23 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 			this.fillTableRow(fileDom, rows[startingRow], maps[0]);
 			for (int i = 1; i < maps.length; i++)
 			{
-				table.appendRow(this.fillTableRow(fileDom, (OdfTableRow) templateRow.cloneNode(true), maps[i]));
+				table.appendChild(this.fillTableRow(fileDom, (TableTableRowElement) templateRow.cloneNode(true), maps[i]));
 			}
 			if (totalRow != null)
 			{
-				table.appendRow(this.fillTableRow(fileDom, totalRow, map));
+				table.appendChild(this.fillTableRow(fileDom, totalRow, map));
 			}
 		}
 	}
 
-	private OdfTableRow fillTableRow(final OdfFileDom fileDom, final OdfTableRow row, final DataMap map)
+	private TableTableRowElement fillTableRow(final OdfFileDom fileDom, final TableTableRowElement row, final DataMap map)
 	{
-		return (OdfTableRow) this.replaceTableContent(fileDom, row, map);
+		return (TableTableRowElement) this.replaceTableContent(fileDom, row, map);
 	}
 
-	private void replaceConditionalTextWithCurrentValue(final OdfConditionalText element, final DataMap map)
+	private void replaceConditionalTextWithCurrentValue(final TextConditionalTextElement element, final DataMap map)
 	{
-		OdfConditionalText conditionalText = element;
+		TextConditionalTextElement conditionalText = element;
 		String condition = conditionalText.getTextConditionAttribute();
 		if (condition.contains("person_form"))
 		{
@@ -316,17 +314,17 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 
 	private void replaceContent(final OdfFileDom fileDom, final Node node, final DataMap map)
 	{
-		if (node instanceof OdfTextInput)
+		if (node instanceof TextTextInputElement)
 		{
-			this.replaceOdfTextInputWithOdfTextSpan(fileDom, (OdfTextInput) node, map);
+			this.replaceOdfTextInputWithOdfTextSpan(fileDom, (TextTextInputElement) node, map);
 		}
-		else if (node instanceof OdfConditionalText)
+		else if (node instanceof TextConditionalTextElement)
 		{
-			this.replaceConditionalTextWithCurrentValue((OdfConditionalText) node, map);
+			this.replaceConditionalTextWithCurrentValue((TextConditionalTextElement) node, map);
 		}
-		else if (node instanceof OdfTable)
+		else if (node instanceof TableTableElement)
 		{
-			this.fillTable(fileDom, (OdfTable) node, map);
+			this.fillTable(fileDom, (TableTableElement) node, map);
 		}
 		else
 		{
@@ -338,28 +336,41 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		}
 	}
 
-	private void replaceOdfTextInputWithOdfTextSpan(final OdfFileDom fileDom, final OdfTextInput element,
+	private void replaceOdfTextInputWithOdfTextSpan(final OdfFileDom fileDom, final TextTextInputElement element,
 			final DataMap map)
 	{
-		OdfTextInput input = element;
+		TextTextInputElement input = element;
 		String desc = input.getTextDescriptionAttribute();
-		String value = map.getProperty(desc, "");
-		// if (value.isEmpty()) value = "<Keine Angaben>";
-		OdfTextSpan span = fileDom.newOdfElement(OdfTextSpan.class);
-		span = span.addContentWhitespace(value);
+		String property = map.getProperty(desc, "");
+		TextSpanElement span = fileDom.newOdfElement(TextSpanElement.class);
+		String[] values = property.split("\n");
+		if (values.length == 1)
+		{
+			span.setTextContent(values[0]);
+		}
+		else
+		{
+			for (String value : values)
+			{
+				TextSpanElement child = span.newTextSpanElement();
+				child.setTextContent(value);
+				span.appendChild(child);
+				span.appendChild(span.newTextLineBreakElement());
+			}
+		}
 		OdfElement parent = (OdfElement) input.getParentNode();
 		parent.replaceChild(span, input);
 	}
 
 	private Node replaceTableContent(final OdfFileDom fileDom, final Node node, final DataMap map)
 	{
-		if (node instanceof OdfTextInput)
+		if (node instanceof TextTextInputElement)
 		{
-			this.replaceOdfTextInputWithOdfTextSpan(fileDom, (OdfTextInput) node, map);
+			this.replaceOdfTextInputWithOdfTextSpan(fileDom, (TextTextInputElement) node, map);
 		}
-		else if (node instanceof OdfConditionalText)
+		else if (node instanceof TextConditionalTextElement)
 		{
-			this.replaceConditionalTextWithCurrentValue((OdfConditionalText) node, map);
+			this.replaceConditionalTextWithCurrentValue((TextConditionalTextElement) node, map);
 		}
 		else
 		{
@@ -372,7 +383,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		return node;
 	}
 
-	private IStatus showDocument(final OdfDocument document) throws Exception
+	private IStatus showDocument(final TextDocument document) throws Exception
 	{
 		IPreferenceStore store = new ScopedPreferenceStore(new InstanceScope(), Activator.getDefault().getBundle()
 				.getSymbolicName());
