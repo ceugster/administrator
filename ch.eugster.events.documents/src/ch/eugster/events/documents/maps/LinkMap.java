@@ -330,7 +330,7 @@ public class LinkMap extends AbstractDataMap
 								Calendar start = details.isEmpty() ? null : details.get(0).getStart();
 								String title = course.getTitle();
 								String date = start == null ? "ohne Datum" : SimpleDateFormat.getInstance().format(start.getTime());
-								courses.put(participant.getLink().getId(), title + " (" + date + ", angemelded)\n");
+								courses.put(participant.getBooking().getCourse().getId(), title + " (" + date + ", angemelded)\n");
 							}
 							else if (participant.getBooking().getBookingState(participant.getBooking().getCourse().getState()).equals(BookingDoneState.PARTICIPATED))
 							{
@@ -339,7 +339,7 @@ public class LinkMap extends AbstractDataMap
 								Calendar start = details.isEmpty() ? null : details.get(0).getStart();
 								String title = course.getTitle();
 								String date = start == null ? "ohne Datum" : SimpleDateFormat.getInstance().format(start.getTime());
-								courses.put(participant.getLink().getId(), title + " (" + date + ", teilgenommen)\n");
+								courses.put(participant.getBooking().getCourse().getId(), title + " (" + date + ", teilgenommen)\n");
 							}
 						}
 					}
