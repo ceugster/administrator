@@ -574,6 +574,7 @@ ch.eugster.events.documents.odfdom/lib/commons-validator-1.5.0.jar -text
 ch.eugster.events.documents.odfdom/lib/java-rdfa-0.4.2.jar -text
 ch.eugster.events.documents.odfdom/lib/jena-iri-0.9.6.jar -text
 ch.eugster.events.documents.odfdom/lib/jena.jar -text
+ch.eugster.events.documents.odfdom/lib/odfdom-java-0.8.10-incubating.jar -text
 ch.eugster.events.documents.odfdom/lib/odfdom.jar -text
 ch.eugster.events.documents.odfdom/lib/resolver.jar -text
 ch.eugster.events.documents.odfdom/lib/serializer.jar -text
