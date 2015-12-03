@@ -13,8 +13,16 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -22,12 +30,12 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -44,11 +52,13 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class CommitmentContractDialog extends TitleAreaDialog
 {
-	private Text documentPath;
+	private ComboViewer documentPath;
 
 	private Button documentSelector;
 
 	private final StructuredSelection selection;
+
+	private String templatePath;
 
 	private UserProperty userPropertyTemplatePath;
 
@@ -106,7 +116,7 @@ public class CommitmentContractDialog extends TitleAreaDialog
 												.getService(reference);
 										DocumentBuilderService builderService = service;
 										IStatus status = builderService.buildDocument(new SubProgressMonitor(monitor,
-												maps.length), new File(userPropertyTemplatePath.getValue()), maps);
+												maps.length), new File(templatePath), maps);
 										if (status.isOK())
 										{
 											break;
@@ -147,8 +157,7 @@ public class CommitmentContractDialog extends TitleAreaDialog
 	{
 		this.createButton(parent, IDialogConstants.OK_ID, OK_BUTTON_TEXT, true);
 		this.createButton(parent, IDialogConstants.CANCEL_ID, CANCEL_BUTTON_TEXT, false);
-		File file = new File(documentPath.getText());
-		this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
+		this.getButton(IDialogConstants.OK_ID).setEnabled(!documentPath.getSelection().isEmpty());
 	}
 
 	private List<DataMap> createDataMaps()
@@ -189,34 +198,51 @@ public class CommitmentContractDialog extends TitleAreaDialog
 		label.setLayoutData(new GridData());
 		label.setText("Vorlage");
 
-		File file = null;
-		if (User.getCurrent() != null)
-		{
-			this.userPropertyTemplatePath = User.getCurrent().getProperty(
-					UserProperty.Property.COURSE_INVITATION_TEMPLATE_PATH.key());
-			if (this.userPropertyTemplatePath == null)
-			{
-				this.userPropertyTemplatePath = UserProperty.newInstance(User.getCurrent());
-				this.userPropertyTemplatePath.setKey(UserProperty.Property.COURSE_INVITATION_TEMPLATE_PATH.key());
-				this.userPropertyTemplatePath.setValue(System.getProperty("user.home"));
-			}
-			file = new File(this.userPropertyTemplatePath.getValue());
-		}
-		documentPath = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		documentPath.setText(file.getAbsolutePath());
-		documentPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		documentPath.addModifyListener(new ModifyListener()
+		Combo combo = new Combo(composite, SWT.DROP_DOWN);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		combo.setText("TEST");
+		combo.addModifyListener(new ModifyListener()
 		{
 			@Override
-			public void modifyText(final ModifyEvent e)
+			public void modifyText(ModifyEvent e) 
 			{
-				File file = new File(documentPath.getText());
+				File file = new File(((Combo)e.getSource()).getText());
+				if (CommitmentContractDialog.this.getButton(IDialogConstants.OK_ID) != null)
+					CommitmentContractDialog.this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
+			}
+		});
+		combo.addFocusListener(new FocusAdapter() 
+		{
+			@Override
+			public void focusLost(FocusEvent e) 
+			{
+				File file = new File(((Combo)e.getSource()).getText());
 				if (file.exists())
 				{
-					userPropertyTemplatePath.setValue(file.getAbsolutePath());
+					updatePathList(file.getAbsolutePath());
 				}
 			}
 		});
+		documentPath = new ComboViewer(combo);
+		documentPath.setContentProvider(new ArrayContentProvider());
+		documentPath.setLabelProvider(new LabelProvider());
+		documentPath.addSelectionChangedListener(new ISelectionChangedListener() 
+		{
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) 
+			{
+				if (!event.getSelection().isEmpty())
+				{
+					String path = ((IStructuredSelection) event.getSelection()).getFirstElement().toString();
+					updatePathList(path);
+				}
+				if (CommitmentContractDialog.this.getButton(IDialogConstants.OK_ID) != null)
+					CommitmentContractDialog.this.getButton(IDialogConstants.OK_ID).setEnabled(!documentPath.getSelection().isEmpty());
+			}
+		});
+		documentPath.setInput(getPathList());
+		documentPath.setSelection(new StructuredSelection(new String[] { getPathList()[0] }));
+		templatePath = getPathList()[0];
 
 		documentSelector = new Button(composite, SWT.PUSH);
 		documentSelector.setText("...");
@@ -226,7 +252,12 @@ public class CommitmentContractDialog extends TitleAreaDialog
 			@Override
 			public void widgetSelected(final SelectionEvent e)
 			{
-				String path = CommitmentContractDialog.this.documentPath.getText();
+				String path = null;
+				IStructuredSelection ssel = (IStructuredSelection) CommitmentContractDialog.this.documentPath.getSelection();
+				if (!ssel.isEmpty())
+				{
+					path = ssel.getFirstElement().toString();
+				}
 				FileDialog dialog = new FileDialog(CommitmentContractDialog.this.getShell());
 				dialog.setFilterPath(path);
 				dialog.setFilterExtensions(new String[] { "*.odt" });
@@ -234,15 +265,13 @@ public class CommitmentContractDialog extends TitleAreaDialog
 				path = dialog.open();
 				if (path != null)
 				{
-					CommitmentContractDialog.this.documentPath.setText(path);
-
+					File file = new File(path);
+					if (file.isFile())
+					{
+						updatePathList(path);
+					}
 				}
-				File file = new File(CommitmentContractDialog.this.documentPath.getText());
-				if (file.exists())
-				{
-					userPropertyTemplatePath.setValue(file.getAbsolutePath());
-				}
-				CommitmentContractDialog.this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
+				CommitmentContractDialog.this.getButton(IDialogConstants.OK_ID).setEnabled(!documentPath.getSelection().isEmpty());
 			}
 		});
 
@@ -257,7 +286,7 @@ public class CommitmentContractDialog extends TitleAreaDialog
 	@Override
 	protected void okPressed()
 	{
-		setUserPath();
+		savePathList();
 		super.okPressed();
 		buildDocument();
 	}
@@ -282,27 +311,82 @@ public class CommitmentContractDialog extends TitleAreaDialog
 		if (this.getButton(IDialogConstants.OK_ID) != null)
 			this.getButton(IDialogConstants.OK_ID).setEnabled(this.isPageComplete);
 	}
-
-	private void setUserPath()
+	
+	private String[] getPathList()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		try
+		if (this.userPropertyTemplatePath == null)
 		{
-			tracker.open();
-			Object service = tracker.getService();
-			if (service instanceof ConnectionService)
+			this.userPropertyTemplatePath = User.getCurrent() == null 
+						? null 
+						: User.getCurrent().getProperty(UserProperty.Property.COMMITMENT_CONTRACT_TEMPLATE_PATH.key());
+			if (this.userPropertyTemplatePath == null)
 			{
-				this.userPropertyTemplatePath.setUser(User.getCurrent());
-				ConnectionService connectionService = (ConnectionService) service;
-				User.getCurrent().setProperty(this.userPropertyTemplatePath);
-				UserQuery query = (UserQuery) connectionService.getQuery(User.class);
-				User.setCurrent(query.merge(User.getCurrent()));
+				this.userPropertyTemplatePath = UserProperty.newInstance(User.getCurrent());
+				this.userPropertyTemplatePath.setKey(UserProperty.Property.COMMITMENT_CONTRACT_TEMPLATE_PATH.key());
+				this.userPropertyTemplatePath.setValue(System.getProperty("user.home") + "|");
 			}
 		}
-		finally
+		return this.userPropertyTemplatePath.getValue().split("[|]");
+	}
+
+	private void updatePathList(String path)
+	{
+		int size = getPathList().length;
+		String paths = this.userPropertyTemplatePath.getValue();
+		while (paths.contains(path + "|"))
 		{
-			tracker.close();
+			paths = paths.replace(path + "|", "");
+		}
+		paths = path + "|" + paths;
+		String[] pathList = getPathList();
+		for (String pathInList : pathList)
+		{
+			if (!new File(pathInList).isFile())
+			{
+				paths = paths.replace(pathInList + "|", "");
+			}
+		}
+		userPropertyTemplatePath.setValue(paths);
+		pathList = getPathList();
+		if (pathList.length > 4)
+		{
+			for (int i = 4; i < pathList.length; i++)
+			{
+				paths = paths.replace(pathList[i] + "|", "");
+			}
+		}
+		userPropertyTemplatePath.setValue(paths);
+		templatePath = path;
+		if (size != pathList.length)
+		{
+			documentPath.setInput(getPathList());
+			documentPath.setSelection(new StructuredSelection(new String[] { templatePath }));
+		}
+	}
+	
+	private void savePathList()
+	{
+		if (User.getCurrent() != null)
+		{
+			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class.getName(), null);
+			try
+			{
+				tracker.open();
+				Object service = tracker.getService();
+				if (service instanceof ConnectionService)
+				{
+					this.userPropertyTemplatePath.setUser(User.getCurrent());
+					ConnectionService connectionService = (ConnectionService) service;
+					User.getCurrent().setProperty(this.userPropertyTemplatePath);
+					UserQuery query = (UserQuery) connectionService.getQuery(User.class);
+					User.setCurrent(query.merge(User.getCurrent()));
+				}
+			}
+			finally
+			{
+				tracker.close();
+			}
 		}
 	}
 }
