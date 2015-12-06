@@ -1431,6 +1431,9 @@ ch.eugster.events.season/src/ch/eugster/events/season/handlers/ToggleActiveSeaso
 ch.eugster.events.season/src/ch/eugster/events/season/views/SeasonContentProvider.java -text
 ch.eugster.events.season/src/ch/eugster/events/season/views/SeasonSorter.java -text
 ch.eugster.events.season/src/ch/eugster/events/season/views/SeasonView.java -text
+ch.eugster.events.todo.feature/.project -text
+ch.eugster.events.todo.feature/build.properties -text
+ch.eugster.events.todo.feature/feature.xml -text
 ch.eugster.events.todo/.classpath -text
 ch.eugster.events.todo/.project -text
 ch.eugster.events.todo/.settings/org.eclipse.jdt.core.prefs -text
