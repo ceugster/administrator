@@ -1026,6 +1026,7 @@ ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Season.jav
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/SelectedEmail.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/SelectedPhone.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Teacher.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/TodoEntry.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/User.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/UserProperty.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Version.java -text

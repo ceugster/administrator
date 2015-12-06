@@ -135,6 +135,16 @@ public abstract class AbstractEntity implements IEntity
 	{
 		this.propertyChangeSupport.firePropertyChange("version", this.version, this.version = version);
 	}
+	
+	public String getEntityName()
+	{
+		return this.getClass().getName();
+	}
+	
+	public String getInstanceName()
+	{
+		return this.getClass().getName();
+	}
 
 	protected static AbstractEntity newInstance(final AbstractEntity entity)
 	{
