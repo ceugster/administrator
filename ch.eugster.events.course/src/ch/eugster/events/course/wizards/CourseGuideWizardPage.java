@@ -201,8 +201,8 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 		label.setLayoutData(gridData);
 		label.setText("Bemerkungen");
 
-		this.note = new Text(composite, SWT.MULTI | SWT.WRAP | SWT.VERTICAL);
-		this.note.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.note = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.VERTICAL);
+		this.note.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		this.setValues();
 
