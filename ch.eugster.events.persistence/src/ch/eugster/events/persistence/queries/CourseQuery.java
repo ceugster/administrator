@@ -1,5 +1,7 @@
 package ch.eugster.events.persistence.queries;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;
@@ -14,6 +16,30 @@ public class CourseQuery extends AbstractEntityQuery<Course>
 	public CourseQuery(ConnectionService connectionService)
 	{
 		super(connectionService);
+	}
+	
+	public List<Course> selectByAdvanceNoticeDate(long start, long end)
+	{
+		Calendar startDate = GregorianCalendar.getInstance();
+		startDate.setTimeInMillis(start);
+		Calendar endDate = GregorianCalendar.getInstance();
+		endDate.setTimeInMillis(end);
+		Expression expression = new ExpressionBuilder(Course.class).get("advanceNoticeDate").between(startDate, endDate);
+		expression = expression.and(new ExpressionBuilder().get("advanceNoticeDoneDate").isNull());
+		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
+		return select(Course.class, expression);
+	}
+
+	public List<Course> selectByInvitationDate(long start, long end)
+	{
+		Calendar startDate = GregorianCalendar.getInstance();
+		startDate.setTimeInMillis(start);
+		Calendar endDate = GregorianCalendar.getInstance();
+		endDate.setTimeInMillis(end);
+		Expression expression = new ExpressionBuilder(Course.class).get("invitationDate").between(startDate, endDate);
+		expression = expression.and(new ExpressionBuilder().get("invitationDoneDate").isNull());
+		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
+		return select(Course.class, expression);
 	}
 
 	public boolean isCodeUnique(String code, Long id)
