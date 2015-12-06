@@ -662,6 +662,7 @@ ch.eugster.events.documents/src/ch/eugster/events/documents/maps/ParticipantMap.
 ch.eugster.events.documents/src/ch/eugster/events/documents/maps/PersonMap.java -text
 ch.eugster.events.documents/src/ch/eugster/events/documents/maps/RubricMap.java -text
 ch.eugster.events.documents/src/ch/eugster/events/documents/maps/SeasonMap.java -text
+ch.eugster.events.documents/src/ch/eugster/events/documents/maps/TodoMap.java -text
 ch.eugster.events.documents/src/ch/eugster/events/documents/preferences/DocumentPreferencePage.java -text
 ch.eugster.events.documents/src/ch/eugster/events/documents/preferences/ExtendedFileFieldEditor.java -text
 ch.eugster.events.documents/src/ch/eugster/events/documents/preferences/FilePathEditor.java -text
