@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="todo"
+            class="ch.eugster.events.todo.views.TodoView"
+            id="ch.eugster.events.todo.views.TodoView"
+            name="Pendenzen"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="ch.eugster.events.course.perspective">
+         <view
+               closeable="true"
+               id="ch.eugster.events.todo.views.TodoView"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="org.eclipse.ui.views.ContentOutline"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:ch.eugster.events.ui.menu.views?after=additions">
+         <menu
+               id="ch.eugster.events.todo.menu.views"
+               label="Pendenzen"
+               tooltip="Sichten des Pendenzenbereichs">
+            <command
+                  commandId="ch.eugster.events.todo.command.activateTodoView"
+                  label="Pendenzenliste"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.eugster.events.todo.views.TodoView">
+         <command
+               commandId="ch.eugster.events.todo.reload.list"
+               icon="icons/reload_16.png"
+               label="Pendenzenliste aktualisieren"
+               style="push"
+               tooltip="Pendenzenliste mit den aktuellen Kriterien laden">
+         </command>
+         <command
+               commandId="ch.eugster.events.todo.generate.list"
+               icon="icons/work_16.png"
+               label="Pendenzenliste generieren"
+               style="push"
+               tooltip="Pendenzenliste genrieren">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="category.todo"
+            name="Pendenzen">
+      </category>
+      <command
+            categoryId="category.todo"
+            defaultHandler="ch.eugster.events.todo.handlers.ActivateTodoViewHandler"
+            description="Aktivieren der Pendenzenliste"
+            id="ch.eugster.events.todo.command.activateTodoView"
+            name="Pendenzenliste aktivieren">
+      </command>
+      <command
+            categoryId="category.todo"
+            defaultHandler="ch.eugster.events.todo.handlers.ReloadTodoListHandler"
+            id="ch.eugster.events.todo.reload.list"
+            name="Pendenzenliste laden">
+      </command>
+      <command
+            categoryId="category.todo"
+            defaultHandler="ch.eugster.events.todo.handlers.GenerateTodoListHandler"
+            id="ch.eugster.events.todo.generate.list"
+            name="Pendenzenliste generieren">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            id="ch.eugster.events.todo.context"
+            name="Pendenzenkontext"
+            parentId="org.eclipse.ui.contexts.window">
+      </context>
+   </extension>
+
+</plugin>
