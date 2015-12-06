@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.eugster.events.todo.feature"
+      label="Feature"
+      version="1.0.0.qualifier"
+      provider-name="Christian Eugster">
+
+   <description>
+      Todo Module. Simple module that collects information about things that are to do.
+   </description>
+
+   <copyright>
+      Copyright by Christian Eugster
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <url>
+      <update url="http://www.eugster-informatik.ch/administrator/updates"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi.services" version="3.2.100" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.course"/>
+      <import plugin="ch.eugster.events.documents"/>
+      <import plugin="ch.eugster.events.persistence"/>
+      <import plugin="ch.eugster.events.ui"/>
+      <import plugin="org.eclipse.nebula.cwt"/>
+      <import plugin="org.eclipse.nebula.widgets.cdatetime"/>
+   </requires>
+
+   <plugin
+         id="ch.eugster.events.todo"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
