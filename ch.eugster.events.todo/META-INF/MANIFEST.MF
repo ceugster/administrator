@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Todo Bundle
+Bundle-SymbolicName: ch.eugster.events.todo;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: ch.eugster.events.todo.Activator
+Bundle-Vendor: Christian Eugster
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.expressions;bundle-version="3.4.200",
+ org.eclipse.osgi.services;bundle-version="3.2.100"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Import-Package: ch.eugster.events.course.editors,
+ ch.eugster.events.documents.maps,
+ ch.eugster.events.documents.services,
+ ch.eugster.events.persistence.events,
+ ch.eugster.events.persistence.exceptions,
+ ch.eugster.events.persistence.filters,
+ ch.eugster.events.persistence.model,
+ ch.eugster.events.persistence.queries,
+ ch.eugster.events.persistence.service,
+ ch.eugster.events.ui.views,
+ org.eclipse.nebula.cwt.base,
+ org.eclipse.nebula.widgets.cdatetime
+Service-Component: OSGI-INF/service-component.xml
