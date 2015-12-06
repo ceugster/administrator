@@ -23,6 +23,8 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import ch.eugster.events.persistence.formatters.CourseFormatter;
+
 @Entity
 @Table(name = "events_course")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "course_user_id")) })
@@ -1139,7 +1141,17 @@ public class Course extends AbstractEntity
 	{
 		return advanceNoticeDoneDate;
 	}
+	
+	public String getEntityName()
+	{
+		return "Kurs";
+	}
 
+	public String getInstanceName()
+	{
+		return CourseFormatter.getInstance().formatComboEntry(this);
+	}
+	
 	public static Course newInstance(final Season season)
 	{
 		return (Course) AbstractEntity.newInstance(new Course(season));
