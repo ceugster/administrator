@@ -547,6 +547,7 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 	
 	public IStatus generateTodoList()
 	{
+		TodoMap.Key.clearGuideTypes();
 		TableItem[] items = this.viewer.getTable().getItems();
 		final DataMap[] dataMaps = new DataMap[items.length];
 		for (int i = 0; i < items.length; i++)
@@ -572,7 +573,7 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 						{
 
 							DocumentBuilderService builderService = (DocumentBuilderService) service;
-							status = builderService.buildDocument(monitor, TodoMap.Key.values(), dataMaps);
+							status = builderService.buildDocument(monitor, TodoMap.Key.getKeys(), dataMaps);
 						}
 					}
 				}
