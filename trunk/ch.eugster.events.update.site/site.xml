@@ -177,6 +177,21 @@
    <feature url="features/ch.eugster.events.todo.feature_1.0.0.201512071256.jar" id="ch.eugster.events.todo.feature" version="1.0.0.201512071256">
       <category name="todo"/>
    </feature>
+   <feature url="features/ch.eugster.events.documents.feature_1.0.0.201512101152.jar" id="ch.eugster.events.documents.feature" version="1.0.0.201512101152">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.todo.feature_1.0.0.201512101152.jar" id="ch.eugster.events.todo.feature" version="1.0.0.201512101152">
+      <category name="todo"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.feature_1.0.0.201512101252.jar" id="ch.eugster.events.documents.feature" version="1.0.0.201512101252">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.poi.feature_1.0.0.201512101252.jar" id="ch.eugster.events.documents.poi.feature" version="1.0.0.201512101252">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.todo.feature_1.0.0.201512101252.jar" id="ch.eugster.events.todo.feature" version="1.0.0.201512101252">
+      <category name="todo"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>
