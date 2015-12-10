@@ -166,6 +166,8 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 		RichTextString string = new XSSFRichTextString(value);
 		string.applyFont(font);
 		Cell cell = row.createCell(col);
+		if (value.contains("\n"))
+			style.setWrapText(true);
 		cell.setCellStyle(style);
 		cell.setCellValue(string);
 	}
