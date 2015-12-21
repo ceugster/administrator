@@ -173,7 +173,7 @@ public abstract class DatabaseUpdater
 
 	protected abstract String getCharset();
 
-	protected abstract String getCreateTable(String tableName, String[] columnNames, String[] dataTypes, String[] defaults, String primaryKey, String[] foreignKeys, String engine);
+	protected abstract String getCreateTable(String tableName, String[] columnNames, String[] dataTypes, String[] defaults, String primaryKey, String[] foreignKeys);
 	
 	private void log(final int level, final String message)
 	{
@@ -1351,13 +1351,12 @@ public abstract class DatabaseUpdater
 								"DEFAULT NULL",
 								"DEFAULT NULL" };
 						String primaryKey = "booking_type_proposition_id";
-						String engine = "InnoDB";
 						if (!tableExists(con, tableName))
 						{
-							String sql = getCreateTable(tableName, columnNames, dataTypes, defaults, primaryKey, new String[0], engine);
+							String sql = getCreateTable(tableName, columnNames, dataTypes, defaults, primaryKey, new String[0]);
 							log(LogService.LOG_INFO, sql);
 							System.out.println(sql);
-							executeSqlQuery(con, sql);
+							ok = executeSqlQuery(con, sql);
 
 							PreparedStatement insertStatement = con.prepareStatement("INSERT INTO events_booking_type_proposition ( booking_type_proposition_id, booking_type_proposition_deleted, booking_type_proposition_version, booking_type_proposition_name, booking_type_proposition_inserted) VALUES ( ?, ?, ?, ?, ? )");
 							String[] bookingTypeNames = { "Kinder", "Erwachsene", "(Familien)", "Mitglieder", "Nichtmitglieder", "Fotograf/in" };
@@ -1371,10 +1370,147 @@ public abstract class DatabaseUpdater
 								insertStatement.setDate(5, new java.sql.Date(GregorianCalendar.getInstance().getTimeInMillis()));
 								insertStatement.executeUpdate();
 							}
-							executeSqlQuery(con, "INSERT INTO events_sequence (seq_name, seq_count) VALUES ( 'events_booking_type_proposition_id_seq', " + ++id + ")");
+							ok = executeSqlQuery(con, "INSERT INTO events_sequence (seq_name, seq_count) VALUES ( 'events_booking_type_proposition_id_seq', " + ++id + ")");
 						}
 					}
-					stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);
+					if (structureVersion == 37)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						String tableName = "events_bank";
+						String[] columnNames = { "bank_id",
+												 "bank_country_id",
+												 "bank_zip_code_id",
+												 "bank_bc_nr",
+												 "bank_filial_id",
+												 "bank_head_office",
+												 "bank_bc_type",
+												 "bank_valid_from",
+												 "bank_language",
+												 "bank_short_name",
+												 "bank_institute",
+												 "bank_domicile",
+												 "bank_post_address",
+												 "bank_zip",
+												 "bank_city",
+												 "bank_phone",
+												 "bank_fax",
+												 "bank_post_account",
+												 "bank_swift",
+												 "bank_deleted",
+												 "bank_version",
+												 "bank_user_id",
+												 "bank_updated",
+												 "bank_inserted" };
+						String[] dataTypes = {
+								"int(10)",
+								"int(10)",
+								"int(10)",
+								"varchar(5)",
+								"varchar(4)",
+								"varchar(5)",
+								"varchar(1)",
+								"varchar(8)",
+								"varchar(1)",
+								"varchar(15)",
+								"varchar(60)",
+								"varchar(35)",
+								"varchar(35)",
+								"varchar(10)",
+								"varchar(35)",
+								"varchar(18)",
+								"varchar(18)",
+								"varchar(12)",
+								"varchar(14)",
+								"tinyint(1)",
+								"int(10)",
+								"int(10)",
+								"int(10)",
+								"datetime",
+								"datetime" };
+						String[] defaults = {
+								"NOT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL" };
+						String primaryKey = "bank_id";
+						if (!tableExists(con, tableName))
+						{
+							String sql = getCreateTable(tableName, columnNames, dataTypes, defaults, primaryKey, new String[0]);
+							log(LogService.LOG_INFO, sql);
+							System.out.println(sql);
+							ok = executeSqlQuery(con, sql);
+						}
+						tableName = "events_bank_account";
+						columnNames = new String[] { "bank_account_id",
+												 "bank_account_bank_id",
+												 "bank_account_person_id",
+												 "bank_account_address_id",
+												 "bank_account_number",
+												 "bank_account_iban",
+												 "bank_account_deleted",
+												 "bank_account_version",
+												 "bank_account_user_id",
+												 "bank_account_updated",
+												 "bank_account_inserted" };
+						dataTypes = new String[] {
+								"int(10)",
+								"int(10)",
+								"int(10)",
+								"int(10)",
+								"varchar(255)",
+								"varchar(255)",
+								"tinyint(1)",
+								"int(10)",
+								"int(10)",
+								"datetime",
+								"datetime" };
+						defaults = new String[] {
+								"NOT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL" };
+						primaryKey = "bank_account_id";
+						if (!tableExists(con, tableName))
+						{
+							String sql = getCreateTable(tableName, columnNames, dataTypes, defaults, primaryKey, new String[0]);
+							log(LogService.LOG_INFO, sql);
+							System.out.println(sql);
+							ok = executeSqlQuery(con, sql);
+						}
+						updateSequenceTable(con);
+					}
+					if (ok)
+					{
+						stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);
+					}
 				}
 			}
 		}

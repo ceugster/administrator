@@ -8,7 +8,6 @@ import org.eclipse.persistence.expressions.ExpressionBuilder;
 import org.eclipse.persistence.jpa.JpaHelper;
 import org.eclipse.persistence.queries.ReadAllQuery;
 
-import ch.eugster.events.persistence.model.PersonSex;
 import ch.eugster.events.persistence.model.PersonTitle;
 import ch.eugster.events.persistence.service.ConnectionService;
 

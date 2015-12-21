@@ -7,7 +7,6 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -25,11 +24,15 @@ import javax.persistence.TableGenerator;
 public class Bank extends AbstractEntity
 {
 	/*
-	 * References
+	 * id = bcNr + filialId
 	 */
 	@ManyToOne
 	@JoinColumn(name = "bank_country_id", referencedColumnName = "country_id")
 	private Country country;
+
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "bank_zip_code_id", referencedColumnName = "zip_code_id")
+	private ZipCode zipCode;
 
 	/*
 	 * Data
@@ -37,36 +40,56 @@ public class Bank extends AbstractEntity
 	@Id
 	@Column(name = "bank_id")
 	@GeneratedValue(generator = "events_bank_id_seq")
-	@TableGenerator(name = "events_bank_id_seq", table = "events_sequence")
+	@TableGenerator(name = "events_bank_id_seq", table = "events_sequence", initialValue = 1, allocationSize = 5)
 	private Long id;
 
-	/**
-	 * bc_clearing + "|" + filial_id: unique key
-	 */
 	@Basic
-	@Column(name = "bank_external_id")
-	private String externalId;
+	@Column(name = "bank_bc_nr")
+	private String bcNr;
 
 	@Basic
-	@Column(name = "bank_code")
-	private String code;
+	@Column(name = "bank_filial_id")
+	private String filialId;
 
 	@Basic
-	@Column(name = "bank_name")
-	@Enumerated
-	private String name;
+	@Column(name = "bank_head_office")
+	private String headOffice;
 
 	@Basic
-	@Column(name = "bank_address")
-	private String address;
+	@Column(name = "bank_bc_type")
+	private String bcType;
 
 	@Basic
-	@Column(name = "bank_pob")
-	private String pob;
+	@Column(name = "bank_valid_from")
+	private String validFrom;
+
+	@Basic
+	@Column(name = "bank_language")
+	private String language;
+
+	@Basic
+	@Column(name = "bank_short_name")
+	private String shortname;
+
+	@Basic
+	@Column(name = "bank_institute")
+	private String institute;
+
+	@Basic
+	@Column(name = "bank_domicile")
+	private String domicile;
+
+	@Basic
+	@Column(name = "bank_post_address")
+	private String postAddress;
 
 	@Basic
 	@Column(name = "bank_zip")
-	private ZipCode zip;
+	private String zip;
+
+	@Basic
+	@Column(name = "bank_city")
+	private String city;
 
 	@Basic
 	@Column(name = "bank_phone")
@@ -77,16 +100,12 @@ public class Bank extends AbstractEntity
 	private String fax;
 
 	@Basic
-	@Column(name = "bank_pc_account")
-	private String pcAccount;
+	@Column(name = "bank_post_account")
+	private String postAccount;
 
 	@Basic
 	@Column(name = "bank_swift")
 	private String swift;
-
-	@Basic
-	@Column(name = "bank_bc_number")
-	private String clearingNumber;
 
 	/*
 	 * Constructor
@@ -96,137 +115,170 @@ public class Bank extends AbstractEntity
 		super();
 	}
 
+	public static Bank newInstance()
+	{
+		return (Bank) AbstractEntity.newInstance(new Bank());
+	}
+
 	@Override
+	public void setId(Long id) 
+	{
+		this.id = id;
+	}
+	
 	public Long getId()
 	{
-		return this.id;
+		return id;
 	}
 
-	@Override
-	public void setId(Long id)
-	{
-		this.propertyChangeSupport.firePropertyChange("id", this.id, this.id = id);
+	public void setCountry(Country country) {
+		this.country = country;
 	}
 
-	public Country getCountry()
-	{
+	public Country getCountry() {
 		return country;
 	}
 
-	public void setCountry(Country country)
-	{
-		this.propertyChangeSupport.firePropertyChange("country", this.country, this.country = country);
+	public void setZipCode(ZipCode zipCode) {
+		this.zipCode = zipCode;
+		if (zipCode != null)
+			this.zip = zipCode.getZip();
 	}
 
-	public String getCode()
-	{
-		return code;
+	public ZipCode getZipCode() {
+		return zipCode;
 	}
 
-	public void setCode(String code)
-	{
-		this.propertyChangeSupport.firePropertyChange("code", this.code, this.code = code);
+	public void setBcNr(String bcNr) {
+		this.bcNr = bcNr;
 	}
 
-	public String getName()
-	{
-		return name;
+	public String getBcNr() {
+		return AbstractEntity.stringValueOf(bcNr);
 	}
 
-	public void setName(String name)
-	{
-		this.propertyChangeSupport.firePropertyChange("name", this.name, this.name = name);
+	public void setFilialId(String filialId) {
+		this.filialId = filialId;
 	}
 
-	public String getAddress()
-	{
-		return address;
+	public String getFilialId() {
+		return AbstractEntity.stringValueOf(filialId);
 	}
 
-	public void setAddress(String address)
-	{
-		this.propertyChangeSupport.firePropertyChange("address", this.address, this.address = address);
+	public void setHeadOffice(String headOffice) {
+		this.headOffice = headOffice;
 	}
 
-	public String getPob()
-	{
-		return pob;
+	public String getHeadOffice() {
+		return AbstractEntity.stringValueOf(headOffice);
 	}
 
-	public void setPob(String pob)
-	{
-		this.propertyChangeSupport.firePropertyChange("pob", this.pob, this.pob = pob);
+	public void setBcType(String bcType) {
+		this.bcType = bcType;
 	}
 
-	public ZipCode getZip()
-	{
-		return zip;
+	public String getBcType() {
+		return AbstractEntity.stringValueOf(bcType);
 	}
 
-	public void setZip(ZipCode zip)
-	{
-		this.propertyChangeSupport.firePropertyChange("zip", this.zip, this.zip = zip);
+	public void setValidFrom(String validFrom) {
+		this.validFrom = validFrom;
 	}
 
-	public String getPhone()
-	{
-		return phone;
+	public String getValidFrom() {
+		return validFrom;
 	}
 
-	public void setPhone(String phone)
-	{
-		this.propertyChangeSupport.firePropertyChange("phone", this.phone, this.phone = phone);
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
-	public String getFax()
-	{
-		return fax;
+	public String getLanguage() {
+		return AbstractEntity.stringValueOf(language);
 	}
 
-	public void setFax(String fax)
-	{
-		this.propertyChangeSupport.firePropertyChange("fax", this.fax, this.fax = fax);
+	public void setShortname(String shortname) {
+		this.shortname = shortname;
 	}
 
-	public String getPcAccount()
-	{
-		return pcAccount;
+	public String getShortname() {
+		return AbstractEntity.stringValueOf(shortname);
 	}
 
-	public void setPcAccount(String pcAccount)
-	{
-		this.propertyChangeSupport.firePropertyChange("pcAccount", this.pcAccount, this.pcAccount = pcAccount);
+	public void setInstitute(String institute) {
+		this.institute = institute;
 	}
 
-	public String getSwift()
-	{
-		return swift;
+	public String getInstitute() {
+		return AbstractEntity.stringValueOf(institute);
 	}
 
-	public void setSwift(String swift)
-	{
-		this.propertyChangeSupport.firePropertyChange("swift", this.swift, this.swift = swift);
+	public void setDomicile(String domicile) {
+		this.domicile = domicile;
 	}
 
-	public String getClearingNumber()
-	{
-		return clearingNumber;
+	public String getDomicile() {
+		return AbstractEntity.stringValueOf(domicile);
 	}
 
-	public void setClearingNumber(String clearingNumber)
-	{
-		this.propertyChangeSupport.firePropertyChange("clearingNumber", this.clearingNumber,
-				this.clearingNumber = clearingNumber);
+	public void setPostAddress(String postAddress) {
+		this.postAddress = postAddress;
 	}
 
-	public void setExternalId(String externalId)
-	{
-		this.propertyChangeSupport.firePropertyChange("externalId", this.externalId, this.externalId = externalId);
+	public String getPostAddress() {
+		return AbstractEntity.stringValueOf(postAddress);
 	}
 
-	public String getExternalId()
-	{
-		return externalId;
+	public void setZip(String zip) {
+		this.zip = zip;
 	}
 
+	public String getZip() {
+		return AbstractEntity.stringValueOf(zip);
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getCity() {
+		return AbstractEntity.stringValueOf(city);
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getPhone() {
+		return AbstractEntity.stringValueOf(phone);
+	}
+
+	public void setFax(String fax) {
+		this.fax = fax;
+	}
+
+	public String getFax() {
+		return AbstractEntity.stringValueOf(fax);
+	}
+
+	public void setPostAccount(String postAccount) {
+		this.postAccount = postAccount;
+	}
+
+	public String getPostAccount() {
+		return AbstractEntity.stringValueOf(postAccount);
+	}
+
+	public void setSwift(String swift) {
+		this.swift = swift;
+	}
+
+	public String getSwift() {
+		return AbstractEntity.stringValueOf(swift);
+	}
+	
+	public String toString()
+	{
+		return getInstitute() + " " + getDomicile() + " " + getZip() + " " + getCity() + " " + getSwift();
+	}
 }

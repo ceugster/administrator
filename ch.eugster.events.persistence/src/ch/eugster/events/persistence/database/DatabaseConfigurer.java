@@ -6,13 +6,11 @@
  */
 package ch.eugster.events.persistence.database;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.GregorianCalendar;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;

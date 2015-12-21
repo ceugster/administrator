@@ -125,6 +125,9 @@ public class Address extends AbstractEntity implements Donator
 	@OneToMany(cascade = ALL, mappedBy = "address")
 	private List<AddressGroupMember> addressGroupMembers = new Vector<AddressGroupMember>();
 
+	@OneToMany(cascade = ALL, mappedBy = "address")
+	private List<BankAccount> bankAccounts = new Vector<BankAccount>();
+
 	/*
 	 * Constructor
 	 */
@@ -515,6 +518,24 @@ public class Address extends AbstractEntity implements Donator
 	public String getNotes() 
 	{
 		return stringValueOf(notes);
+	}
+
+	public void addBankAccount(final BankAccount bankAccount)
+	{
+		this.propertyChangeSupport.firePropertyChange("bankAccounts", this.bankAccounts,
+				this.bankAccounts.add(bankAccount));
+	}
+
+	public List<BankAccount> getBankAccounts() {
+		List<BankAccount> accounts = new ArrayList<BankAccount>();
+		for (BankAccount account : this.bankAccounts)
+		{
+			if (!account.isDeleted())
+			{
+				accounts.add(account);
+			}
+		}
+		return accounts;
 	}
 
 	public static Address newInstance()

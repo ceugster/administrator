@@ -6,7 +6,6 @@ import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
 
 import ch.eugster.events.persistence.model.BookingTypeProposition;
-import ch.eugster.events.persistence.model.BookingType;
 import ch.eugster.events.persistence.service.ConnectionService;
 
 public class BookingTypePropositionQuery extends AbstractEntityQuery<BookingTypeProposition>

@@ -24,7 +24,7 @@ public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddres
 	private Expression createCriteriaExpression(final Map<String, String> criteria,
 			final Map<String, FieldExtension> extensions, Expression expression)
 	{
-		Expression lastname = null, firstname = null, organization = null, street = null, city = null, phone = null, email = null, extended = null;
+		Expression extended = null;
 		Set<Entry<String, String>> entries = criteria.entrySet();
 		for (Entry<String, String> entry : entries)
 		{
@@ -76,104 +76,6 @@ public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddres
 				}
 			}
 		}
-		// Expression name = null, address = null, contacts = null;
-		// if (lastname != null)
-		// {
-		// if (firstname != null)
-		// {
-		// name = lastname.and(firstname);
-		// }
-		// else
-		// {
-		// name = lastname;
-		// }
-		// }
-		// else if (firstname != null)
-		// {
-		// name = firstname;
-		// }
-		//
-		// if (street != null)
-		// {
-		// if (city != null)
-		// {
-		// address = street.and(city);
-		// }
-		// else
-		// {
-		// address = street;
-		// }
-		// }
-		// else if (city != null)
-		// {
-		// address = city;
-		// }
-		//
-		// if (phone != null)
-		// {
-		// if (email != null)
-		// {
-		// contacts = phone.and(email);
-		// }
-		// else
-		// {
-		// contacts = phone;
-		// }
-		// }
-		// else if (email != null)
-		// {
-		// contacts = email;
-		// }
-		//
-		// Expression complex = null;
-		// if (name != null)
-		// {
-		// if (address != null)
-		// {
-		// complex = name.and(address);
-		// }
-		// else
-		// {
-		// complex = name;
-		// }
-		// }
-		// else if (address != null)
-		// {
-		// complex = address;
-		// }
-		//
-		// if (contacts != null)
-		// {
-		// if (complex != null)
-		// {
-		// expression = contacts.and(complex);
-		// }
-		// else
-		// {
-		// expression = contacts;
-		// }
-		// }
-		//
-		// if (contacts != null)
-		// {
-		// if (complex != null)
-		// {
-		// expression = contacts.and(complex);
-		// }
-		// else
-		// {
-		// expression = contacts;
-		// }
-		// }
-		// else if (complex != null)
-		// {
-		// expression = complex;
-		// }
-		//
-		// if (extended != null)
-		// {
-		// expression = expression.and(extended);
-		// }
 		return expression;
 	}
 
