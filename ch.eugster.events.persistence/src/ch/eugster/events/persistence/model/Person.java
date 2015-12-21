@@ -111,6 +111,9 @@ public class Person extends AbstractEntity
 	@OneToMany(cascade = ALL, mappedBy = "person")
 	private List<PersonExtendedField> extendedFields = new Vector<PersonExtendedField>();
 
+	@OneToMany(cascade = ALL, mappedBy = "person")
+	private List<BankAccount> bankAccounts = new Vector<BankAccount>();
+
 	/*
 	 * AddressLinks
 	 */
@@ -556,6 +559,35 @@ public class Person extends AbstractEntity
 		this.propertyChangeSupport.firePropertyChange("website", this.website, this.website = website);
 	}
 	
+	public void setBankAccounts(List<BankAccount> bankAccounts) {
+		this.propertyChangeSupport.firePropertyChange("bankAccounts", this.bankAccounts, this.bankAccounts = bankAccounts);
+	}
+
+	public void addBankAccount(BankAccount bankAccount) {
+		this.propertyChangeSupport.firePropertyChange("bankAccounts", this.bankAccounts, this.bankAccounts.add(bankAccount));
+	}
+
+	public List<BankAccount> getBankAccounts() {
+		return bankAccounts;
+	}
+	
+	public void removeBankAccount(BankAccount account)
+	{
+		this.bankAccounts.remove(account);
+	}
+
+	public List<BankAccount> getValidBankAccounts() {
+		List<BankAccount> accounts = new ArrayList<BankAccount>();
+		for (BankAccount account : this.bankAccounts)
+		{
+			if (!account.isDeleted())
+			{
+				accounts.add(account);
+			}
+		}
+		return accounts;
+	}
+
 	public static Person newInstance()
 	{
 		return (Person) AbstractEntity.newInstance(new Person());

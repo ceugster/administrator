@@ -594,6 +594,12 @@
             id="ch.eugster.events.person.command.refresh"
             name="Refresh">
       </command>
+      <command
+            categoryId="category.person"
+            defaultHandler="ch.eugster.events.person.handlers.UpdateBankHandler"
+            id="ch.eugster.events.person.updatebanks"
+            name="Banken aktualisieren">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -1581,6 +1587,15 @@
                   </iterate>
                </with>
             </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:file?after=additions">
+         <command
+               commandId="ch.eugster.events.person.updatebanks"
+               label="Banken aktualisieren..."
+               style="push">
          </command>
       </menuContribution>
    </extension>

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -25,17 +26,22 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
+import ch.eugster.events.persistence.events.EntityAdapter;
+import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.BookingParticipantFilter;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
+import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.AddressGroup;
 import ch.eugster.events.persistence.model.AddressGroupMember;
+import ch.eugster.events.persistence.model.BankAccount;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseDetail;
@@ -45,6 +51,7 @@ import ch.eugster.events.persistence.model.Member;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.person.Activator;
+import ch.eugster.events.person.dialogs.BankAccountDialog;
 import ch.eugster.events.person.editors.FormEditorLinkPage;
 import ch.eugster.events.person.editors.FormEditorPersonPage;
 import ch.eugster.events.person.editors.PersonEditorInput;
@@ -60,10 +67,45 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 
 	private FormPage currentPage;
 
+	private final EntityAdapter bankAccountListener;
+
 	public PersonFormEditorContentOutlinePage(final FormPage page)
 	{
 		this.currentPage = page;
 		this.currentPage.getEditor().addPageChangedListener(this);
+		this.bankAccountListener = new EntityAdapter() 
+		{
+			@Override
+			public void postUpdate(AbstractEntity entity) 
+			{
+				if (entity instanceof BankAccount)
+				{
+					BankAccount bankAccount = (BankAccount) entity;
+					List<BankAccount> accounts = bankAccount.getPerson().getValidBankAccounts();
+					for (BankAccount account : accounts)
+					{
+						if (account.getId().equals(bankAccount.getId()))
+						{
+							account.getPerson().removeBankAccount(account);
+							account.getPerson().addBankAccount(bankAccount);
+						}
+					}
+					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
+				}
+			}
+
+			@Override
+			public void postPersist(AbstractEntity entity) 
+			{
+				if (entity instanceof BankAccount)
+				{
+					BankAccount account = (BankAccount) entity;
+					account.getPerson().addBankAccount(account);
+					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
+				}
+			}
+		};
+		EntityMediator.addListener(BankAccount.class, bankAccountListener);
 	}
 
 	protected void createContextMenu()
@@ -78,9 +120,17 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				StructuredSelection ssel = (StructuredSelection) PersonFormEditorContentOutlinePage.this
 						.getTreeViewer().getSelection();
 				Object object = ssel.getFirstElement();
-				if (object instanceof LinkPersonAddress)
+				if (object instanceof BankAccountRoot)
 				{
-					PersonFormEditorContentOutlinePage.this.createEditLinkAction(manager, (LinkPersonAddress) object);
+					manager.add(PersonFormEditorContentOutlinePage.this.createAddBankAccountAction((BankAccountRoot) object));
+				}
+				else if (object instanceof BankAccount)
+				{
+					manager.add(PersonFormEditorContentOutlinePage.this.createEditBankAccountAction((BankAccount) object));
+				}
+				else if (object instanceof LinkPersonAddress)
+				{
+					manager.add(PersonFormEditorContentOutlinePage.this.createEditLinkAction((LinkPersonAddress) object));
 				}
 			}
 		});
@@ -90,7 +140,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 
 		this.getSite().registerContextMenu(ContentOutline.PREFIX, menuManager, this.getTreeViewer());
 	}
-
+	
 	@Override
 	public void createControl(final Composite parent)
 	{
@@ -135,7 +185,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		this.setInput(this.currentPage);
 	}
 
-	private void createEditLinkAction(final IMenuManager manager, final LinkPersonAddress link)
+	private Action createEditLinkAction(final LinkPersonAddress link)
 	{
 		Action action = new Action()
 		{
@@ -149,12 +199,62 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 
 		action.setText("Bearbeiten");
 		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("EDIT"));
-		manager.add(action);
+		return action;
+	}
+
+	private IAction createAddBankAccountAction(BankAccountRoot root)
+	{
+		IAction action = new Action()
+		{
+			@Override
+			public void run()
+			{
+				Person person = null;
+				if (currentPage instanceof FormEditorPersonPage)
+				{
+					person = ((FormEditorPersonPage) currentPage).getPerson();
+				}
+				else if (currentPage instanceof FormEditorLinkPage)
+				{
+					person = ((FormEditorLinkPage) currentPage).getLink().getPerson();
+				}
+				if (person != null)
+				{
+					BankAccount account = BankAccount.newInstance(person);
+//					account.getPropertyChangeSupport().addPropertyChangeListener(PersonFormEditorContentOutlinePage.this);
+					Shell shell = PersonFormEditorContentOutlinePage.this.getSite().getShell();
+					BankAccountDialog dialog = new BankAccountDialog(shell, account);
+					dialog.open();
+//					account.getPropertyChangeSupport().removePropertyChangeListener(PersonFormEditorContentOutlinePage.this);
+				}
+			}
+		};
+		action.setText("Hinzufügen");
+		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("ADD"));
+		return action;
+	}
+
+	private IAction createEditBankAccountAction(final BankAccount account)
+	{
+		IAction action = new Action()
+		{
+			@Override
+			public void run()
+			{
+				Shell shell = PersonFormEditorContentOutlinePage.this.getSite().getShell();
+				BankAccountDialog dialog = new BankAccountDialog(shell, account);
+				dialog.open();
+			}
+		};
+		action.setText("Barbeiten");
+		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("ADD"));
+		return action;
 	}
 
 	@Override
 	public void dispose()
 	{
+		EntityMediator.removeListener(BankAccount.class, bankAccountListener);
 		if (this.currentPage != null)
 		{
 			this.currentPage.getEditor().removePageChangedListener(this);
@@ -301,6 +401,10 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			{
 				return Activator.getDefault().getImageRegistry().get(Activator.KEY_PERSON_BLUE);
 			}
+			else if (element instanceof BankAccount)
+			{
+				return Activator.getDefault().getImageRegistry().get(Activator.KEY_BANK_CARD);
+			}
 			return null;
 		}
 
@@ -351,6 +455,11 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 					date = sdf.format(courseDetails[0].getStart().getTime());
 				}
 				return course.getCode() + " " + course.getTitle() + (date == null ? "" : date);
+			}
+			else if (element instanceof BankAccount)
+			{
+				BankAccount account = (BankAccount) element;
+				return account.getIban() + " (" + account.getAccountNumber() + ")";
 			}
 			return "";
 		}
@@ -572,7 +681,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 
 	public enum Order
 	{
-		PERSONS, COURSES, DONATION, MEMBER, ADDRESS_GROUPS;
+		PERSONS, BANK_ACCOUNT, COURSES, DONATION, MEMBER, ADDRESS_GROUPS;
 	}
 
 	private class OutlineContentProvider implements ITreeContentProvider
@@ -591,12 +700,12 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				 * Es wurde der PersonenEditor ausgwählt
 				 */
 				FormEditorPersonPage page = (FormEditorPersonPage) parentElement;
-				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
 				List<Root> roots = new ArrayList<Root>();
 				roots.add(new MemberRoot(page));
 				roots.add(new ParticipantRoot(page));
 				roots.add(new DonationRoot(page));
 				roots.add(new AddressGroupMemberRoot(page));
+				roots.add(new BankAccountRoot(page));
 				return roots.toArray(new Root[0]);
 			}
 			else if (parentElement instanceof FormEditorLinkPage)
@@ -611,6 +720,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				roots.add(new ParticipantRoot(page));
 				roots.add(new DonationRoot(page));
 				roots.add(new AddressGroupMemberRoot(page));
+				roots.add(new BankAccountRoot(page));
 				return roots.toArray(new Root[0]);
 			}
 			else if (parentElement instanceof Root)
@@ -731,6 +841,68 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		public boolean hasChildren()
 		{
 			return getParticipants().size() > 0;
+		}
+	}
+
+	private class BankAccountRoot implements Root
+	{
+		private final FormPage currentPage;
+
+		public BankAccountRoot(final FormPage page)
+		{
+			this.currentPage = page;
+		}
+
+		@Override
+		public Object[] getChildren()
+		{
+			return getBankAccounts().toArray(new BankAccount[0]);
+		}
+
+		@Override
+		public FormPage getFormPage()
+		{
+			return currentPage;
+		}
+
+		@Override
+		public Image getImage()
+		{
+			return Activator.getDefault().getImageRegistry().get(Activator.KEY_BANK_CARD);
+		}
+
+		@Override
+		public String getName()
+		{
+			return "Bankverbindungen (" + getBankAccounts().size() + ")";
+		}
+
+		@Override
+		public Integer getOrder()
+		{
+			return Integer.valueOf(Order.BANK_ACCOUNT.ordinal());
+		}
+
+		private List<BankAccount> getBankAccounts()
+		{
+			if (this.currentPage instanceof FormEditorPersonPage)
+			{
+				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
+				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				return person.getValidBankAccounts();
+			}
+			else if (this.currentPage instanceof FormEditorLinkPage)
+			{
+				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
+				return page.getLink().getPerson().getValidBankAccounts();
+			}
+			return new ArrayList<BankAccount>();
+		}
+
+		@Override
+		public boolean hasChildren()
+		{
+			return getBankAccounts().size() > 0;
 		}
 	}
 

@@ -1,6 +1,5 @@
 package ch.eugster.events.persistence.queries;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.persistence.expressions.Expression;

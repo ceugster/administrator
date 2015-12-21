@@ -10,6 +10,8 @@
         <class>ch.eugster.events.persistence.model.AddressSalutation</class>
         <class>ch.eugster.events.persistence.model.AddressType</class>
         <class>ch.eugster.events.persistence.model.Appliance</class>
+		<class>ch.eugster.events.persistence.model.Bank</class>
+		<class>ch.eugster.events.persistence.model.BankAccount</class>
 		<class>ch.eugster.events.persistence.model.Booking</class>
 		<class>ch.eugster.events.persistence.model.BookingType</class>
 		<class>ch.eugster.events.persistence.model.BookingTypeProposition</class>

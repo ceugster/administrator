@@ -32,6 +32,7 @@ import ch.eugster.events.persistence.filters.BookingParticipantFilter;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AddressGroupMember;
+import ch.eugster.events.persistence.model.BankAccount;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseDetail;
@@ -179,8 +180,6 @@ public class PersonEditorOutlinePage extends ContentOutlinePage implements IEnti
 	@Override
 	public void update()
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	private class AddressGroupMemberRoot implements Root
@@ -309,6 +308,11 @@ public class PersonEditorOutlinePage extends ContentOutlinePage implements IEnti
 				}
 				return course.getCode() + " " + course.getTitle() + (date == null ? "" : date);
 			}
+			else if (element instanceof BankAccount)
+			{
+				BankAccount account = (BankAccount) element;
+				return account.getIban();
+			}
 			return "";
 		}
 	}
@@ -403,7 +407,7 @@ public class PersonEditorOutlinePage extends ContentOutlinePage implements IEnti
 
 	public enum Order
 	{
-		PERSONS, ADDRESS_GROUPS, COURSES, DONATION, MEMBER;
+		PERSONS, ADDRESS_GROUPS, COURSES, DONATION, MEMBER, BANK_ACCOUNTS;
 	}
 
 	private class OutlineContentProvider implements ITreeContentProvider
@@ -437,6 +441,10 @@ public class PersonEditorOutlinePage extends ContentOutlinePage implements IEnti
 				if (link.getAddressGroupMembers().size() > 0)
 				{
 					roots.add(new AddressGroupMemberRoot(editor));
+				}
+				if (link.getPerson().getValidBankAccounts().size() > 0)
+				{
+					roots.add(new BankAccountRoot(editor));
 				}
 				return roots.toArray(new Root[0]);
 			}
@@ -539,6 +547,50 @@ public class PersonEditorOutlinePage extends ContentOutlinePage implements IEnti
 			LinkPersonAddressEditorInput input = (LinkPersonAddressEditorInput) personEditor.getEditorInput();
 			LinkPersonAddress link = input.getEntity();
 			return link.getParticipants().toArray(new Participant[0]).length > 0;
+		}
+	}
+
+	private class BankAccountRoot implements Root
+	{
+		private final PersonEditor personEditor;
+
+		public BankAccountRoot(final PersonEditor personEditor)
+		{
+			this.personEditor = personEditor;
+		}
+
+		@Override
+		public Object[] getChildren()
+		{
+			LinkPersonAddressEditorInput input = (LinkPersonAddressEditorInput) personEditor.getEditorInput();
+			LinkPersonAddress link = input.getEntity();
+			return link.getPerson().getValidBankAccounts().toArray(new BankAccount[0]);
+		}
+
+		@Override
+		public Image getImage()
+		{
+			return Activator.getDefault().getImageRegistry().get(Activator.KEY_BANK_CARD);
+		}
+
+		@Override
+		public String getName()
+		{
+			return "Bankverbindungen";
+		}
+
+		@Override
+		public Integer getOrder()
+		{
+			return Integer.valueOf(Order.BANK_ACCOUNTS.ordinal());
+		}
+
+		@Override
+		public boolean hasChildren()
+		{
+			LinkPersonAddressEditorInput input = (LinkPersonAddressEditorInput) personEditor.getEditorInput();
+			LinkPersonAddress link = input.getEntity();
+			return link.getPerson().getValidBankAccounts().toArray(new BankAccount[0]).length > 0;
 		}
 	}
 

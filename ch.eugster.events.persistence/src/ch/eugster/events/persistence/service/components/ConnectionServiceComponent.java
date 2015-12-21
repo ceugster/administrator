@@ -31,9 +31,11 @@ import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.AddressSalutation;
 import ch.eugster.events.persistence.model.AddressType;
 import ch.eugster.events.persistence.model.Appliance;
-import ch.eugster.events.persistence.model.BookingTypeProposition;
+import ch.eugster.events.persistence.model.Bank;
+import ch.eugster.events.persistence.model.BankAccount;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.BookingType;
+import ch.eugster.events.persistence.model.BookingTypeProposition;
 import ch.eugster.events.persistence.model.Category;
 import ch.eugster.events.persistence.model.Compensation;
 import ch.eugster.events.persistence.model.CompensationType;
@@ -78,8 +80,10 @@ import ch.eugster.events.persistence.queries.AddressQuery;
 import ch.eugster.events.persistence.queries.AddressSalutationQuery;
 import ch.eugster.events.persistence.queries.AddressTypeQuery;
 import ch.eugster.events.persistence.queries.ApplianceQuery;
-import ch.eugster.events.persistence.queries.BookingTypePropositionQuery;
+import ch.eugster.events.persistence.queries.BankAccountQuery;
+import ch.eugster.events.persistence.queries.BankQuery;
 import ch.eugster.events.persistence.queries.BookingQuery;
+import ch.eugster.events.persistence.queries.BookingTypePropositionQuery;
 import ch.eugster.events.persistence.queries.BookingTypeQuery;
 import ch.eugster.events.persistence.queries.CategoryQuery;
 import ch.eugster.events.persistence.queries.CompensationQuery;
@@ -264,6 +268,16 @@ public class ConnectionServiceComponent implements ConnectionService
 			else if (clazz.equals(Appliance.class))
 			{
 				query = new ApplianceQuery(this);
+				queries.put(clazz, query);
+			}
+			else if (clazz.equals(Bank.class))
+			{
+				query = new BankQuery(this);
+				queries.put(clazz, query);
+			}
+			else if (clazz.equals(BankAccount.class))
+			{
+				query = new BankAccountQuery(this);
 				queries.put(clazz, query);
 			}
 			else if (clazz.equals(BookingTypeProposition.class))

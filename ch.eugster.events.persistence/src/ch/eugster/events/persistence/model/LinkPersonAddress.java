@@ -3,7 +3,6 @@ package ch.eugster.events.persistence.model;
 import static javax.persistence.CascadeType.ALL;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
