@@ -5,6 +5,7 @@ import javax.persistence.AssociationOverrides;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,15 +27,21 @@ public class BankAccount extends AbstractEntity
 	/*
 	 * References
 	 */
-	@ManyToOne
+	@ManyToOne(optional=true, cascade=CascadeType.ALL)
 	@JoinColumn(name = "bank_account_bank_id", referencedColumnName = "bank_id")
 	private Bank bank;
 
-	@ManyToOne
-	@JoinColumn(name = "bank_account_pa_link_id", referencedColumnName = "pa_link_id")
-	private LinkPersonAddress link;
+	/*
+	 * if person is account owner, use following reference
+	 */
+	@ManyToOne(optional=true, cascade=CascadeType.ALL)
+	@JoinColumn(name = "bank_account_person_id", referencedColumnName = "person_id")
+	private Person person;
 
-	@ManyToOne
+	/*
+	 * if not a person but an address use following reference
+	 */
+	@ManyToOne(optional=true, cascade=CascadeType.ALL)
 	@JoinColumn(name = "bank_account_address_id", referencedColumnName = "address_id")
 	private Address address;
 
@@ -66,36 +73,35 @@ public class BankAccount extends AbstractEntity
 		this.setAddress(address);
 	}
 
-	private BankAccount(final LinkPersonAddress link)
+	private BankAccount(final Person person)
 	{
 		super();
-		this.setLink(link);
-		this.setAddress(address);
+		this.setPerson(person);
 	}
 
 	public BankAccount copy()
 	{
-		BankAccount copy = BankAccount.newInstance(this.getLink());
+		BankAccount copy = BankAccount.newInstance();
+		copy.setPerson(this.getPerson());
 		copy.setAddress(this.getAddress());
 		copy.setAccountNumber(this.getAccountNumber());
 		copy.setBank(this.getBank());
 		copy.setIban(this.getIban());
-		copy.setLink(this.getLink());
 		return copy;
 	}
 
 	public String getAccountNumber()
 	{
-		return accountNumber;
+		return AbstractEntity.stringValueOf(accountNumber);
 	}
 
 	public Address getAddress()
 	{
-		if (this.link == null || (this.link.isDeleted() || this.link.getPerson().isDeleted()))
+		if (this.person == null || (this.person.isDeleted()))
 		{
 			return this.address;
 		}
-		return this.link.getAddress();
+		return null;
 	}
 
 	public Bank getBank()
@@ -105,7 +111,7 @@ public class BankAccount extends AbstractEntity
 
 	public String getIban()
 	{
-		return iban;
+		return AbstractEntity.stringValueOf(iban);
 	}
 
 	@Override
@@ -114,14 +120,18 @@ public class BankAccount extends AbstractEntity
 		return this.id;
 	}
 
-	public LinkPersonAddress getLink()
+	public Person getPerson()
 	{
-		return this.link;
+		if (this.address == null || (this.address.isDeleted()))
+		{
+			return this.person;
+		}
+		return null;
 	}
 
 	public void setAccountNumber(final String accountNumber)
 	{
-		this.accountNumber = accountNumber;
+		this.propertyChangeSupport.firePropertyChange("accountNumber", this.accountNumber, this.accountNumber = accountNumber);
 	}
 
 	public void setAddress(final Address address)
@@ -131,12 +141,12 @@ public class BankAccount extends AbstractEntity
 
 	public void setBank(final Bank bank)
 	{
-		this.bank = bank;
+		this.propertyChangeSupport.firePropertyChange("bank", this.bank, this.bank = bank);
 	}
 
 	public void setIban(final String iban)
 	{
-		this.iban = iban;
+		this.propertyChangeSupport.firePropertyChange("iban", this.iban, this.iban = iban);
 	}
 
 	@Override
@@ -145,10 +155,9 @@ public class BankAccount extends AbstractEntity
 		this.propertyChangeSupport.firePropertyChange("id", this.id, this.id = id);
 	}
 
-	public void setLink(final LinkPersonAddress link)
+	public void setPerson(final Person person)
 	{
-		this.propertyChangeSupport.firePropertyChange("link", this.link, this.link = link);
-		this.setAddress(link.getAddress());
+		this.propertyChangeSupport.firePropertyChange("person", this.person, this.person = person);
 	}
 
 	public static BankAccount newInstance()
@@ -161,9 +170,9 @@ public class BankAccount extends AbstractEntity
 		return (BankAccount) AbstractEntity.newInstance(new BankAccount(address));
 	}
 
-	public static BankAccount newInstance(final LinkPersonAddress link)
+	public static BankAccount newInstance(final Person person)
 	{
-		return (BankAccount) AbstractEntity.newInstance(new BankAccount(link));
+		return (BankAccount) AbstractEntity.newInstance(new BankAccount(person));
 	}
 
 }

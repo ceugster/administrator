@@ -59,6 +59,12 @@ public class Activator extends AbstractUIPlugin
 
 	public static final String KEY_OFF = "bulp.off";
 
+	public static final String KEY_BANK_CARD = "bank.card";
+	
+	public static final String KEY_WARN = "warn";
+
+	public static final String KEY_OK = "ok";
+	
 	// The shared instance
 	private static Activator plugin;
 
@@ -124,6 +130,10 @@ public class Activator extends AbstractUIPlugin
 				ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/home_grey_16.png")));
 		imageRegistry.put(KEY_CHANGE_ADDRESS,
 				ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/change_16.png")));
+		imageRegistry.put(KEY_BANK_CARD, ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/bank-cards-16.png")));
+		imageRegistry.put(KEY_WARN,
+				ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/warn_16.gif")));
+		imageRegistry.put(KEY_OK, ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/ok_16.gif")));
 	}
 
 	/*

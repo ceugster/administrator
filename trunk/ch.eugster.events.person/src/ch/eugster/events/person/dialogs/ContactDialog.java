@@ -40,11 +40,7 @@ public class ContactDialog extends TitleAreaDialog
 
 	private Composite currentTypeComposite;
 
-	private ComboViewer countryViewer;
-
 	private Text name;
-
-	private FormattedText value;
 
 	public ContactDialog(Shell shell, ContactType[] contactTypes, Contact contact)
 	{
@@ -182,7 +178,7 @@ public class ContactDialog extends TitleAreaDialog
 		label.setText("Adresse");
 
 		Text text = new Text(currentTypeComposite, SWT.BORDER);
-		value = new FormattedText(text);
+		new FormattedText(text);
 		// value.setFormatter(new DefaultFormatter() {});
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 

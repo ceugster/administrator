@@ -1143,7 +1143,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 		return builder.toString();
 	}
 
-	private Person getPerson()
+	public Person getPerson()
 	{
 		PersonEditorInput input = (PersonEditorInput) this.getEditor().getEditorInput();
 		return input.getEntity();
