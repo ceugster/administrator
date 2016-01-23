@@ -50,6 +50,15 @@
             name="Zusatzfelder"
             restorable="true">
       </view>
+      <view
+            allowMultiple="false"
+            category="ch.eugster.events.person.category"
+            class="ch.eugster.events.person.views.PersonBankAccountView"
+            icon="icons/bank-cards-16.png"
+            id="ch.eugster.events.bank.account.personView"
+            name="Bankverbindungen"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -64,6 +73,17 @@
                relationship="top"
                relative="ch.eugster.events.addressgroup.person.view"
                showTitle="true"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="ch.eugster.events.bank.account.personView"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="ch.eugster.events.donation.linkView"
+               showTitle="true"
+               standalone="false"
                visible="true">
          </view>
       </perspectiveExtension>
@@ -599,6 +619,24 @@
             defaultHandler="ch.eugster.events.person.handlers.UpdateBankHandler"
             id="ch.eugster.events.person.updatebanks"
             name="Banken aktualisieren">
+      </command>
+      <command
+            categoryId="category.person"
+            defaultHandler="ch.eugster.events.person.handlers.AddBankAccountHandler"
+            id="ch.eugster.events.person.bank.account.add"
+            name="Bankverbindung hinzufügen">
+      </command>
+      <command
+            categoryId="category.person"
+            defaultHandler="ch.eugster.events.person.handlers.DeleteBankAccountHandler"
+            id="ch.eugster.events.person.bank.account.delete"
+            name="Bankverbindung entfernen">
+      </command>
+      <command
+            categoryId="category.person"
+            defaultHandler="ch.eugster.events.person.handlers.EditBankAccountHandler"
+            id="ch.eugster.events.person.bank.account.edit"
+            name="Bankverbindung bearbeiten">
       </command>
    </extension>
    <extension
@@ -1284,6 +1322,16 @@
                      value="ch.eugster.events.person.field.extension.view">
                </parameter>
             </command>
+            <command
+                  commandId="org.eclipse.ui.views.showView"
+                  id="org.eclipse.ui.views.showView"
+                  label="Bankverbindungen"
+                  style="push">
+               <parameter
+                     name="org.eclipse.ui.views.showView.viewId"
+                     value="ch.eugster.events.bank.account.personView">
+               </parameter>
+            </command>
          </menu>
       </menuContribution>
       <menuContribution
@@ -1596,6 +1644,33 @@
                commandId="ch.eugster.events.person.updatebanks"
                label="Banken aktualisieren..."
                style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:ch.eugster.events.bank.account.personView?after=additions">
+         <command
+               commandId="ch.eugster.events.person.bank.account.add"
+               disabledIcon="icons/add_grey_16.gif"
+               icon="icons/add_16.gif"
+               label="Bankverbindung hinzufügen"
+               style="push"
+               tooltip="Hinzufügen einer neuen Bankverbindung">
+         </command>
+         <command
+               commandId="ch.eugster.events.person.bank.account.edit"
+               disabledIcon="icons/edit_grey_16.gif"
+               icon="icons/edit_16.png"
+               label="Bankverbindung bearbeiten"
+               style="push"
+               tooltip="Bearbeiten der ausgewählten Bankverbindung">
+         </command>
+         <command
+               commandId="ch.eugster.events.person.bank.account.delete"
+               disabledIcon="icons/delete_grey_16.png"
+               icon="icons/delete_16.png"
+               label="Bankverbindung entfernen"
+               style="push"
+               tooltip="Entfernen der ausgewählten Bankverbindung">
          </command>
       </menuContribution>
    </extension>

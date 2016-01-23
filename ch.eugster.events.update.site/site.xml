@@ -192,6 +192,33 @@
    <feature url="features/ch.eugster.events.todo.feature_1.0.0.201512101252.jar" id="ch.eugster.events.todo.feature" version="1.0.0.201512101252">
       <category name="todo"/>
    </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201512212056.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201512212056">
+      <category name="persistence"/>
+   </feature>
+   <feature url="features/ch.eugster.events.person.feature_1.0.0.201512212056.jar" id="ch.eugster.events.person.feature" version="1.0.0.201512212056">
+      <category name="person"/>
+   </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201512221011.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201512221011">
+      <category name="persistence"/>
+   </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201512221029.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201512221029">
+      <category name="persistence"/>
+   </feature>
+   <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201601231120.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201601231120">
+      <category name="addressgroup"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.feature_1.0.0.201601231121.jar" id="ch.eugster.events.documents.feature" version="1.0.0.201601231121">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201601231121.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201601231121">
+      <category name="persistence"/>
+   </feature>
+   <feature url="features/ch.eugster.events.person.feature_1.0.0.201601231121.jar" id="ch.eugster.events.person.feature" version="1.0.0.201601231121">
+      <category name="person"/>
+   </feature>
+   <feature url="features/ch.eugster.events.ui.feature_1.0.0.201601231122.jar" id="ch.eugster.events.ui.feature" version="1.0.0.201601231122">
+      <category name="core"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>
@@ -202,5 +229,5 @@
    <category-def name="person" label="Personen"/>
    <category-def name="utilities" label="Hilfsmodule"/>
    <category-def name="documents" label="Dokumente"/>
-   <category-def name="todo" label="todo"/>
+   <category-def name="todo" label="Pendenzen"/>
 </site>

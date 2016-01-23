@@ -57,7 +57,14 @@ public class BankAccountDialog extends TitleAreaDialog
 	@Override
 	protected Control createDialogArea(Composite parent)
 	{
-		this.setTitle(PersonFormatter.getInstance().formatLastnameFirstname(account.getPerson()));
+		if (account.getPerson() == null || account.getPerson().isDeleted())
+		{
+			this.setTitle(account.getAddress().getName());
+		}
+		else
+		{
+			this.setTitle(PersonFormatter.getInstance().formatLastnameFirstname(account.getPerson()));
+		}
 		this.setMessage("Erfassen oder bearbeiten Sie die Bankverbindung.");
 		
 		final Composite composite = new Composite(parent, SWT.NONE);
@@ -86,7 +93,10 @@ public class BankAccountDialog extends TitleAreaDialog
 					IbanUtil.validate(iban.getText());
 					status.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_OK));
 					Iban i = Iban.valueOf(iban.getText());
-					code.setText(i.getAccountNumber());
+					if (code.getText().isEmpty() || !iban.getText().contains(removeNonAlphanumericCharacters(code.getText())))
+					{
+						code.setText(i.getAccountNumber());
+					}
 					String bcNr = Long.valueOf(i.getBankCode()).toString();
 					
 					ConnectionService service = (ConnectionService) tracker.getService();
@@ -153,6 +163,19 @@ public class BankAccountDialog extends TitleAreaDialog
 		iban.setText(account.getIban());
 
 		return composite;
+	}
+	
+	private String removeNonAlphanumericCharacters(String value)
+	{
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < value.length(); i++)
+		{
+			if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".contains(value.substring(i, i + 1)))
+			{
+				builder.append(value.substring(i, i + 1));
+			}
+		}
+		return builder.toString();
 	}
 
 	private Bank[] getInput()
