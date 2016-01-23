@@ -24,7 +24,6 @@ Export-Package: ch.eugster.events.persistence.events,
 Bundle-ActivationPolicy: lazy
 JPA-PersistenceUnits: ch.eugster.events.persistence
 Meta-Persistence: META-INF/persistence.xml
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/service-component.xml, OSGI-INF/provider-component.xml
 Require-Bundle: org.eclipse.persistence.antlr;bundle-version="2.1.3",
  org.eclipse.persistence.asm;bundle-version="2.1.3",

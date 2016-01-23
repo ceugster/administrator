@@ -212,7 +212,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 					{
 						if (member.getAddress().getValidLinks().size() == 1)
 						{
-							return member.getAddress().getValidLinks().iterator().next().getPerson().getId().toString();
+							return member.getAddress().getValidLinks().iterator().next().getId().toString();
 						}
 						else
 						{
@@ -227,7 +227,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 						}
 						else
 						{
-							return member.getLink().getPerson().getId().toString();
+							return member.getLink().getId().toString();
 						}
 					}
 				}

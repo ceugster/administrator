@@ -1,7 +1,6 @@
 package ch.eugster.events.addressgroup.handlers;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;

@@ -138,7 +138,6 @@ ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/AddressG
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/AddressGroupMemberView.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/AddressGroupSorter.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/AddressGroupView.java -text
-ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/ICommandInfo.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/PersonAddressGroupMemberSorter.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/PersonAddressGroupMemberTreeContentProvider.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/PersonAddressGroupMemberTreeLabelProvider.java -text
@@ -247,7 +246,6 @@ ch.eugster.events.core/p2.inf -text
 ch.eugster.events.core/plugin.xml -text
 ch.eugster.events.core/plugin_customization.ini -text
 ch.eugster.events.core/splash.bmp -text
-ch.eugster.events.core/splash_orig.bmp -text
 ch.eugster.events.core/splash_titled.bmp -text
 ch.eugster.events.core/src/ch/eugster/events/core/Activator.java -text
 ch.eugster.events.core/src/ch/eugster/events/core/Application.java -text
@@ -1184,16 +1182,19 @@ ch.eugster.events.person/src/ch/eugster/events/person/editors/TitleComboViewerLa
 ch.eugster.events.person/src/ch/eugster/events/person/editors/TitleComboViewerSorter.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/ActivatePersonViewHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/AddAddressHandler.java -text
+ch.eugster.events.person/src/ch/eugster/events/person/handlers/AddBankAccountHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/AddFieldExtensionHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/AddPersonHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/AddSalutationHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/AddTitleHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/ClearSearchFields.java -text
+ch.eugster.events.person/src/ch/eugster/events/person/handlers/DeleteBankAccountHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/DeleteFieldExtensionHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/DeleteHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/DeleteSalutationHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/DeleteSexHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/DeleteTitleHandler.java -text
+ch.eugster.events.person/src/ch/eugster/events/person/handlers/EditBankAccountHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/EditFieldExtensionHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/EditHandler.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/handlers/EditSalutationHandler.java -text
@@ -1223,6 +1224,9 @@ ch.eugster.events.person/src/ch/eugster/events/person/views/FieldExtensionSorter
 ch.eugster.events.person/src/ch/eugster/events/person/views/FieldExtensionView.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/views/ICriteriaChangedListener.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/views/LinkSearcher.java -text
+ch.eugster.events.person/src/ch/eugster/events/person/views/PersonBankAccountContentProvider.java -text
+ch.eugster.events.person/src/ch/eugster/events/person/views/PersonBankAccountSorter.java -text
+ch.eugster.events.person/src/ch/eugster/events/person/views/PersonBankAccountView.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/views/PersonContentProvider.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/views/PersonEditorOutlinePage.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/views/PersonFormEditorContentOutlinePage.java -text
@@ -1484,6 +1488,7 @@ ch.eugster.events.ui/src/ch/eugster/events/ui/editors/AbstractEntityEditorInput.
 ch.eugster.events.ui/src/ch/eugster/events/ui/editors/AbstractEntityFormEditor.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/editors/ColorManager.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/handlers/ActivateOutlineViewHandler.java -text
+ch.eugster.events.ui/src/ch/eugster/events/ui/handlers/ConnectionServiceDependentAbstractHandler.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/helpers/BrowseHelper.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/helpers/ClipboardHelper.java -text
 ch.eugster.events.ui/src/ch/eugster/events/ui/helpers/EmailHelper.java -text
