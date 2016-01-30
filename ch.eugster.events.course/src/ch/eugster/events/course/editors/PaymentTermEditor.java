@@ -112,21 +112,27 @@ public class PaymentTermEditor extends AbstractEntityEditor<PaymentTerm>
 		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
-
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			PaymentTermEditorInput input = (PaymentTermEditorInput) this.getEditorInput();
-			PaymentTerm paymentTerm = (PaymentTerm) input.getAdapter(PaymentTerm.class);
-			String code = this.text.getText();
-			PaymentTermQuery query = (PaymentTermQuery) service.getQuery(PaymentTerm.class);
-			if (!query.isTextUnique(code, paymentTerm.getId()))
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				msg.setMessage("Die gewählte Zahlungsbedingung existiert bereits.");
-				return msg;
+				PaymentTermEditorInput input = (PaymentTermEditorInput) this.getEditorInput();
+				PaymentTerm paymentTerm = (PaymentTerm) input.getAdapter(PaymentTerm.class);
+				String code = this.text.getText();
+				PaymentTermQuery query = (PaymentTermQuery) service.getQuery(PaymentTerm.class);
+				if (!query.isTextUnique(code, paymentTerm.getId()))
+				{
+					msg = new Message();
+					msg.setMessage("Die gewählte Zahlungsbedingung existiert bereits.");
+					return msg;
+				}
 			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 
 		return msg;
 	}

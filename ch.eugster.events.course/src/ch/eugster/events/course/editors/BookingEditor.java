@@ -430,6 +430,14 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 
 		this.payAmount = new FormattedText(text);
 		this.payAmount.setFormatter(new NumberFormatter("#,###,##0.00", Locale.getDefault()));
+		this.payAmount.getControl().addModifyListener(new ModifyListener()
+		{
+			@Override
+			public void modifyText(ModifyEvent e) 
+			{
+				BookingEditor.this.setDirty(true);
+			}
+		});
 
 		label = this.formToolkit.createLabel(composite, "Datum Rückzahlung", SWT.NONE);
 		label.setLayoutData(new GridData());
@@ -458,6 +466,14 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 
 		this.payBackAmount = new FormattedText(text);
 		this.payBackAmount.setFormatter(new NumberFormatter("#,###,##0.00", Locale.getDefault()));
+		this.payBackAmount.getControl().addModifyListener(new ModifyListener()
+		{
+			@Override
+			public void modifyText(ModifyEvent e) 
+			{
+				BookingEditor.this.setDirty(true);
+			}
+		});
 
 		this.formToolkit.paintBordersFor(composite);
 
@@ -586,7 +602,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 			}
 			this.payBackDate.setSelection(date);
 
-			this.payBackAmount.setValue(Double.valueOf(booking.getPayAmount()));
+			this.payBackAmount.setValue(Double.valueOf(booking.getPayBackAmount()));
 
 		}
 		this.setDirty(false);
@@ -710,6 +726,17 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		this.setDirty(true);
 	}
 
+	private Calendar getCalendar(Date date)
+	{
+		Calendar calendar = null;
+		if (date != null)
+		{
+			calendar = GregorianCalendar.getInstance();
+			calendar.setTime(date);
+		}
+		return calendar;
+	}
+	
 	@Override
 	protected void saveValues()
 	{
@@ -717,16 +744,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		Booking booking = input.getEntity();
 		if (booking != null)
 		{
-			Calendar calendar = GregorianCalendar.getInstance();
-			if (date.getSelection() != null)
-			{
-				calendar.setTime(date.getSelection());
-				booking.setDate(calendar);
-			}
-			else
-			{
-				booking.setDate(null);
-			}
+			booking.setDate(getCalendar(date.getSelection()));
 
 			IStructuredSelection ssel = (IStructuredSelection) this.stateViewer.getSelection();
 			if (ssel.getFirstElement() instanceof BookingForthcomingState)
@@ -746,45 +764,13 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 
 			booking.setNote(this.note.getText());
 
-			if (this.bookingConfirmationSentDate.getSelection() == null)
-			{
-				calendar = null;
-			}
-			else
-			{
-				calendar.setTime(this.bookingConfirmationSentDate.getSelection());
-			}
-			booking.setBookingConfirmationSentDate(calendar);
+			booking.setBookingConfirmationSentDate(getCalendar(this.bookingConfirmationSentDate.getSelection()));
 
-			if (this.invitationSentDate.getSelection() == null)
-			{
-				calendar = null;
-			}
-			else
-			{
-				calendar.setTime(this.invitationSentDate.getSelection());
-			}
-			booking.setInvitationSentDate(calendar);
+			booking.setInvitationSentDate(getCalendar(this.invitationSentDate.getSelection()));
 
-			if (this.participationConfirmationSentDate.getSelection() == null)
-			{
-				calendar = null;
-			}
-			else
-			{
-				calendar.setTime(this.participationConfirmationSentDate.getSelection());
-			}
-			booking.setParticipationConfirmationSentDate(calendar);
+			booking.setParticipationConfirmationSentDate(getCalendar(this.participationConfirmationSentDate.getSelection()));
 
-			if (this.payDate.getSelection() == null)
-			{
-				calendar = null;
-			}
-			else
-			{
-				calendar.setTime(this.payDate.getSelection());
-			}
-			booking.setPayDate(calendar);
+			booking.setPayDate(getCalendar(this.payDate.getSelection()));
 
 			try
 			{
@@ -796,15 +782,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 				booking.setPayAmount(0d);
 			}
 
-			if (this.payBackDate.getSelection() == null)
-			{
-				calendar = null;
-			}
-			else
-			{
-				calendar.setTime(this.payBackDate.getSelection());
-			}
-			booking.setPayBackDate(calendar);
+			booking.setPayBackDate(getCalendar(this.payBackDate.getSelection()));
 
 			try
 			{
