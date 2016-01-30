@@ -193,11 +193,11 @@ public class CommitmentContractDialog extends TitleAreaDialog
 		if (User.getCurrent() != null)
 		{
 			this.userPropertyTemplatePath = User.getCurrent().getProperty(
-					UserProperty.Property.COURSE_INVITATION_TEMPLATE_PATH.key());
+					UserProperty.Property.COMMITMENT_CONTRACT_TEMPLATE_PATH.key());
 			if (this.userPropertyTemplatePath == null)
 			{
 				this.userPropertyTemplatePath = UserProperty.newInstance(User.getCurrent());
-				this.userPropertyTemplatePath.setKey(UserProperty.Property.COURSE_INVITATION_TEMPLATE_PATH.key());
+				this.userPropertyTemplatePath.setKey(UserProperty.Property.COMMITMENT_CONTRACT_TEMPLATE_PATH.key());
 				this.userPropertyTemplatePath.setValue(System.getProperty("user.home"));
 			}
 			file = new File(this.userPropertyTemplatePath.getValue());
