@@ -367,21 +367,21 @@ public class BookingEditorContentOutlinePage extends ContentOutlinePage implemen
 		this.getTreeViewer().refresh(event.getSource());
 	}
 
-	private void refresh(final Object object)
-	{
-		UIJob job = new UIJob("Aktualisiere Outline...")
-		{
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor)
-			{
-				BookingEditorContentOutlinePage.this.getTreeViewer().refresh(object);
-				return Status.OK_STATUS;
-			}
-
-		};
-		job.setUser(true);
-		job.schedule();
-	}
+//	private void refresh(final Object object)
+//	{
+//		UIJob job = new UIJob("Aktualisiere Outline...")
+//		{
+//			@Override
+//			public IStatus runInUIThread(final IProgressMonitor monitor)
+//			{
+//				BookingEditorContentOutlinePage.this.getTreeViewer().refresh(object);
+//				return Status.OK_STATUS;
+//			}
+//
+//		};
+//		job.setUser(true);
+//		job.schedule();
+//	}
 
 	@Override
 	public void update()
