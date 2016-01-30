@@ -77,7 +77,7 @@ public class PaymentTermView extends AbstractEntityView implements IDoubleClickL
 				if (object instanceof PaymentTerm)
 				{
 					PaymentTerm paymentTerm = (PaymentTerm) object;
-					cell.setText(((PaymentTerm) object).getText());
+					cell.setText(paymentTerm.getText());
 				}
 			}
 		});
