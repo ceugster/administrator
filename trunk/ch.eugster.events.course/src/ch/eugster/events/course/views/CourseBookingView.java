@@ -349,23 +349,11 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 	{
 		if (booking.getState() instanceof BookingForthcomingState)
 		{
-			if (booking.getState().equals(BookingForthcomingState.BOOKED))
-				return Activator.getDefault().getImageRegistry().get("BOOKING_GREEN");
-			else if (booking.getState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
-				return Activator.getDefault().getImageRegistry().get("BOOKING_BLUE");
-			else if (booking.getState().equals(BookingForthcomingState.WAITING_LIST))
-				return Activator.getDefault().getImageRegistry().get("BOOKING_RED");
-			else if (booking.getState().equals(BookingForthcomingState.BOOKING_CANCELED))
-				return Activator.getDefault().getImageRegistry().get("BOOKING_GREY");
+			return getForthcomingStateImage(booking);
 		}
 		else if (booking.getState() instanceof BookingDoneState)
 		{
-			if (booking.getState().equals(BookingDoneState.PARTICIPATED))
-				return Activator.getDefault().getImageRegistry().get("BOOKING_GREEN");
-			else if (booking.getState().equals(BookingDoneState.PARTICIPATION_BROKE_OFF))
-				return Activator.getDefault().getImageRegistry().get("BOOKING_BLUE");
-			else if (booking.getState().equals(BookingDoneState.NOT_PARTICIPATED))
-				return Activator.getDefault().getImageRegistry().get("BOOKING_RED");
+			return getDoneStateImage(booking);
 		}
 		else if (booking.getState() instanceof BookingAnnulatedState)
 		{
@@ -375,6 +363,41 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 				return Activator.getDefault().getImageRegistry().get("BOOKING_RED");
 		}
 		return null;
+	}
+	
+	private Image getForthcomingStateImage(Booking booking)
+	{
+		if (booking.getState().equals(BookingForthcomingState.BOOKED))
+			return selectImageForPayedOrUnpayed(booking, "BOOKING_GREEN", "BOOKING_GREEN_EXCLAMATION");
+		else if (booking.getState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
+			return Activator.getDefault().getImageRegistry().get("BOOKING_BLUE");
+		else if (booking.getState().equals(BookingForthcomingState.WAITING_LIST))
+			return Activator.getDefault().getImageRegistry().get("BOOKING_RED");
+		else if (booking.getState().equals(BookingForthcomingState.BOOKING_CANCELED))
+			return Activator.getDefault().getImageRegistry().get("BOOKING_GREY");
+		else return null;
+	}
+	
+	private Image getDoneStateImage(Booking booking)
+	{
+		if (booking.getState().equals(BookingForthcomingState.BOOKED))
+			return selectImageForPayedOrUnpayed(booking, "BOOKING_GREEN", "BOOKING_GREEN_EXCLAMATION");
+		else if (booking.getState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
+			return Activator.getDefault().getImageRegistry().get("BOOKING_BLUE");
+		else if (booking.getState().equals(BookingForthcomingState.WAITING_LIST))
+			return Activator.getDefault().getImageRegistry().get("BOOKING_RED");
+		else if (booking.getState().equals(BookingForthcomingState.BOOKING_CANCELED))
+			return Activator.getDefault().getImageRegistry().get("BOOKING_GREY");
+		else return null;
+	}
+	
+	private Image selectImageForPayedOrUnpayed(Booking booking, String keyPayed, String keyUnpayed)
+	{
+		if (booking.getAmount() <= (booking.getPayAmount() - booking.getPayBackAmount()))
+		{
+			return Activator.getDefault().getImageRegistry().get(keyPayed);
+		}
+		return Activator.getDefault().getImageRegistry().get(keyUnpayed);
 	}
 
 	// private IMenuManager createGeneratorSubmenu(IMenuManager menuManager,
