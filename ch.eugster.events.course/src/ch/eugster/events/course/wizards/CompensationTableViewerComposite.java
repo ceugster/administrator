@@ -245,14 +245,14 @@ public class CompensationTableViewerComposite extends Composite
 				listener.addWrapper(wrapper);
 		}
 
-		public void removeWrapper(final CWrapper wrapper)
-		{
-			this.wrappers.remove(wrapper);
-			for (Listener listener : this.listeners)
-			{
-				listener.removeWrapper(wrapper);
-			}
-		}
+//		public void removeWrapper(final CWrapper wrapper)
+//		{
+//			this.wrappers.remove(wrapper);
+//			for (Listener listener : this.listeners)
+//			{
+//				listener.removeWrapper(wrapper);
+//			}
+//		}
 
 		public List<Compensation> getCompensations()
 		{
