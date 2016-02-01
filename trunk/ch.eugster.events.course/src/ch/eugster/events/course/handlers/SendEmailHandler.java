@@ -12,6 +12,7 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 
+import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.Participant;
@@ -108,13 +109,31 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 
 	private void extract(Participant participant)
 	{
-		if (!participant.getLink().isDeleted() && !participant.getLink().getPerson().isDeleted())
+		if (!participant.isDeleted())
 		{
-			String email = participant.getEmail();
-			if (!email.isEmpty() && !this.addresses.contains(email))
+			if (!participant.getLink().isDeleted() && !participant.getLink().getPerson().isDeleted() && !participant.getLink().getAddress().isDeleted())
 			{
-				this.addresses.add(email);
+				if (EmailHelper.getInstance().isValidAddress(participant.getLink().getPerson().getEmail()))
+				{
+					addEmail(participant.getLink().getPerson().getEmail());
+				}
+				else if (EmailHelper.getInstance().isValidAddress(participant.getLink().getEmail()))
+				{
+					addEmail(participant.getLink().getEmail());
+				}
+				else if (EmailHelper.getInstance().isValidAddress(participant.getLink().getAddress().getEmail()))
+				{
+					addEmail(participant.getLink().getAddress().getEmail());
+				}
 			}
+		}
+	}
+
+	private void addEmail(String email)
+	{
+		if (!email.isEmpty() && !this.addresses.contains(email))
+		{
+			this.addresses.add(email);
 		}
 	}
 }
