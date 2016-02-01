@@ -111,11 +111,24 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 	{
 		if (!member.isDeleted())
 		{
-			addAddress(member.getAddress().getEmail());
-			if (member.getLink() != null && !member.getLink().isDeleted())
+			if (member.getLink() == null && !member.getAddress().isDeleted())
 			{
-				addAddress(member.getLink().getPerson().getEmail());
-				addAddress(member.getLink().getEmail());
+				addAddress(member.getAddress().getEmail());
+			}
+			else if (!member.getLink().isDeleted() && !member.getLink().getPerson().isDeleted())
+			{
+				if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
+				{
+					addAddress(member.getLink().getPerson().getEmail());
+				}
+				else if (EmailHelper.getInstance().isValidAddress(member.getLink().getEmail()))
+				{
+					addAddress(member.getLink().getEmail());
+				}
+				else if (EmailHelper.getInstance().isValidAddress(member.getAddress().getEmail()))
+				{
+					addAddress(member.getAddress().getEmail());
+				}
 			}
 		}
 	}
