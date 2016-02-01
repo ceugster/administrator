@@ -76,22 +76,26 @@ public class SendEmailHandlerWithPrint extends PrintEmailRecipientsHandler
 
 	private boolean hasValidEmailAddress(final AddressGroupMember member)
 	{
-		if (member.getLink() == null)
+		if (!member.isDeleted())
 		{
-			if (EmailHelper.getInstance().isValidAddress(member.getAddress().getEmail()))
+			if (member.getLink() == null && !member.getAddress().isDeleted())
 			{
-				return true;
+				return EmailHelper.getInstance().isValidAddress(member.getAddress().getEmail());
 			}
-		}
-		else
-		{
-			if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
+			else if (!member.getLink().isDeleted() && !member.getLink().getPerson().isDeleted())
 			{
-				return true;
-			}
-			if (EmailHelper.getInstance().isValidAddress(member.getLink().getEmail()))
-			{
-				return true;
+				if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
+				{
+					return true;
+				}
+				else if (EmailHelper.getInstance().isValidAddress(member.getLink().getEmail()))
+				{
+					return true;
+				}
+				else if (EmailHelper.getInstance().isValidAddress(member.getAddress().getEmail()))
+				{
+					return true;
+				}
 			}
 		}
 		return false;
