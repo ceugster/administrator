@@ -4,7 +4,7 @@ Bundle-Name: Poi Provider for OSGi
 Bundle-SymbolicName: ch.eugster.poi
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Christian Eugster
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: lib/commons-codec-1.9.jar,
  lib/commons-logging-1.1.3.jar,
  lib/junit-4.12.jar,
