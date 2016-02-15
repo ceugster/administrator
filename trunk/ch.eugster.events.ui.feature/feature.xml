@@ -213,21 +213,12 @@ litigation.
    </license>
 
    <requires>
+      <import plugin="org.eclipse.core.runtime" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.6.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views" version="3.5.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.forms" version="3.5.2" match="greaterOrEqual"/>
       <import plugin="ch.eugster.events.persistence" version="1.0.0" match="compatible"/>
-      <import plugin="org.eclipse.core.expressions" version="3.4.200" match="compatible"/>
-      <import plugin="org.eclipse.core.resources" version="3.6.0" match="compatible"/>
-      <import plugin="org.eclipse.core.runtime" version="3.6.0" match="compatible"/>
-      <import plugin="org.eclipse.jface" version="3.5.0" match="compatible"/>
-      <import plugin="org.eclipse.nebula.widgets.formattedtext" version="1.0.0" match="compatible"/>
-      <import plugin="org.eclipse.swt" version="3.5.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.ide" version="3.5.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.forms" version="3.5.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.workbench" version="3.5.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.views" version="3.5.0" match="compatible"/>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.core.commands"/>
-      <import plugin="org.eclipse.core.jobs"/>
-      <import plugin="org.eclipse.equinox.preferences"/>
    </requires>
 
    <plugin
