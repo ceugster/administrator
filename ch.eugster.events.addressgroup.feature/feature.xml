@@ -217,17 +217,36 @@ litigation.
    </url>
 
    <requires>
-      <import plugin="ch.eugster.events.documents" version="1.0.0" match="compatible"/>
-      <import plugin="ch.eugster.events.domain" version="1.0.0" match="compatible"/>
-      <import plugin="ch.eugster.events.persistence" version="1.0.0" match="compatible"/>
-      <import plugin="ch.eugster.events.person" version="1.0.0" match="compatible"/>
-      <import plugin="ch.eugster.events.ui" version="1.0.0" match="compatible"/>
-      <import plugin="org.eclipse.nebula.widgets.formattedtext"/>
-      <import plugin="ch.eugster.events.report"/>
       <import plugin="org.eclipse.ui" version="3.6.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.6.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.forms" version="3.5.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.expressions" version="3.4.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.nebula.widgets.formattedtext" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.nebula.cwt" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.nebula.jface.cdatetime" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.nebula.widgets.cdatetime" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.nebula.widgets.radiogroup" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.documents"/>
+      <import plugin="ch.eugster.events.domain"/>
+      <import plugin="ch.eugster.events.persistence"/>
+      <import plugin="ch.eugster.events.person"/>
+      <import plugin="ch.eugster.events.ui"/>
+      <import plugin="org.eclipse.osgi.services" version="3.2.100" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.report"/>
+      <import plugin="org.eclipse.jface"/>
+      <import plugin="org.eclipse.core.databinding"/>
+      <import plugin="org.eclipse.jface.databinding"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.eclipse.core.runtime" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.databinding" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.common" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.swt" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.databinding" version="1.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.databinding.property" version="1.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.databinding" version="1.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.forms" version="3.4.0" match="compatible"/>
    </requires>
 
    <plugin
@@ -242,5 +261,40 @@ litigation.
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.formattedtext"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.cwt"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.jface.cdatetime"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.cdatetime"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.radiogroup"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

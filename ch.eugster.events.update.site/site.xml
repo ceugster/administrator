@@ -219,6 +219,84 @@
    <feature url="features/ch.eugster.events.ui.feature_1.0.0.201601231122.jar" id="ch.eugster.events.ui.feature" version="1.0.0.201601231122">
       <category name="core"/>
    </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201601301447.jar" id="ch.eugster.events.course.feature" version="1.0.0.201601301447">
+      <category name="course"/>
+   </feature>
+   <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201602011847.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201602011847">
+      <category name="addressgroup"/>
+   </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201602011847.jar" id="ch.eugster.events.course.feature" version="1.0.0.201602011847">
+      <category name="course"/>
+   </feature>
+   <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201602110934.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201602110934">
+      <category name="addressgroup"/>
+   </feature>
+   <feature url="features/ch.eugster.poi.feature_1.0.0.201602110934.jar" id="ch.eugster.poi.feature" version="1.0.0.201602110934">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201602111003.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201602111003">
+      <category name="addressgroup"/>
+   </feature>
+   <feature url="features/ch.eugster.events.addresstype.feature_1.0.0.201602111003.jar" id="ch.eugster.events.addresstype.feature" version="1.0.0.201602111003">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201602111003.jar" id="ch.eugster.events.course.feature" version="1.0.0.201602111003">
+      <category name="course"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.feature_1.0.0.201602111003.jar" id="ch.eugster.events.documents.feature" version="1.0.0.201602111003">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.documents.xml.feature_1.0.0.201602111003.jar" id="ch.eugster.events.documents.xml.feature" version="1.0.0.201602111003">
+      <category name="documents"/>
+   </feature>
+   <feature url="features/ch.eugster.events.domain.feature_1.0.1.201602111003.jar" id="ch.eugster.events.domain.feature" version="1.0.1.201602111003">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.donation.feature_1.0.1.201602111003.jar" id="ch.eugster.events.donation.feature" version="1.0.1.201602111003">
+      <category name="donation"/>
+   </feature>
+   <feature url="features/ch.eugster.events.member.feature_1.0.0.201602111003.jar" id="ch.eugster.events.member.feature" version="1.0.0.201602111003">
+      <category name="member"/>
+   </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201602111003.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201602111003">
+      <category name="persistence"/>
+   </feature>
+   <feature url="features/ch.eugster.events.person.feature_1.0.0.201602111003.jar" id="ch.eugster.events.person.feature" version="1.0.0.201602111003">
+      <category name="person"/>
+   </feature>
+   <feature url="features/ch.eugster.events.report.feature_1.0.0.201602111003.jar" id="ch.eugster.events.report.feature" version="1.0.0.201602111003">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.ui.feature_1.0.0.201602111040.jar" id="ch.eugster.events.ui.feature" version="1.0.0.201602111040">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.ui.feature_1.0.0.201602111042.jar" id="ch.eugster.events.ui.feature" version="1.0.0.201602111042">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201602111111.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201602111111">
+      <category name="addressgroup"/>
+   </feature>
+   <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201602111117.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201602111117">
+      <category name="addressgroup"/>
+   </feature>
+   <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201602111119.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201602111119">
+      <category name="addressgroup"/>
+   </feature>
+   <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201602111120.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201602111120">
+      <category name="addressgroup"/>
+   </feature>
+   <feature url="features/ch.eugster.events.addresstype.feature_1.0.0.201602111120.jar" id="ch.eugster.events.addresstype.feature" version="1.0.0.201602111120">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.addressgroup.feature_1.0.0.201602111131.jar" id="ch.eugster.events.addressgroup.feature" version="1.0.0.201602111131">
+      <category name="addressgroup"/>
+   </feature>
+   <feature url="features/ch.eugster.poi.feature_1.0.0.201602111139.jar" id="ch.eugster.poi.feature" version="1.0.0.201602111139">
+      <category name="core"/>
+   </feature>
+   <feature url="features/ch.eugster.events.importer.feature_1.0.0.201602111139.jar" id="ch.eugster.events.importer.feature" version="1.0.0.201602111139">
+      <category name="member"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>
