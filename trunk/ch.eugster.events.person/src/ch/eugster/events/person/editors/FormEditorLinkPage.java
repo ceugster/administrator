@@ -970,7 +970,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		for (final AddressType addressType : addressTypes)
 		{
 			LinkPersonAddress link = getLink();
-			if (link != null && link.getAddressType().getId().equals(addressType.getId()))
+			if (link != null && !link.getAddressType().getId().equals(addressType.getId()))
 			{
 				if (addressType.getImage() == null)
 				{

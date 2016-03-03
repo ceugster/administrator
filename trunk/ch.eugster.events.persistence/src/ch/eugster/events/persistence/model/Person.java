@@ -188,10 +188,7 @@ public class Person extends AbstractEntity
 		List<LinkPersonAddress> links = this.getActiveLinks();
 		for (LinkPersonAddress link : links)
 		{
-			if (!link.isDeleted())
-			{
-				members.addAll(link.getAddressGroupMembers());
-			}
+			members.addAll(link.getValidAddressGroupMembers());
 		}
 		return members;
 	}
@@ -266,7 +263,7 @@ public class Person extends AbstractEntity
 			List<LinkPersonAddress> links = this.getActiveLinks();
 			for (LinkPersonAddress link : links)
 			{
-				donations.addAll(link.getDonations());
+				donations.addAll(link.getValidDonations());
 			}
 		}
 		catch (Exception e)
@@ -351,7 +348,10 @@ public class Person extends AbstractEntity
 		List<Member> members = new Vector<Member>();
 		for (LinkPersonAddress link : links)
 		{
-			members.addAll(link.getMembers());
+			if (!link.isDeleted())
+			{
+				members.addAll(link.getValidMembers());
+			}
 		}
 		return members;
 	}
@@ -369,7 +369,7 @@ public class Person extends AbstractEntity
 		{
 			if (!link.isDeleted())
 			{
-				participants.addAll(link.getParticipants());
+				participants.addAll(link.getValidParticipants());
 			}
 		}
 		return participants;

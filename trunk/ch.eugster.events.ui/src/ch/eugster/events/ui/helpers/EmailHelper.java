@@ -83,15 +83,27 @@ public class EmailHelper
 			List<String> emails = new ArrayList<String>();
 			for (String address : addresses)
 			{
-				if (!emails.contains(address))
-					emails.add(address);
+				String email = address.trim();
+				if (!email.isEmpty())
+				{
+					if (!emails.contains(email))
+					{
+						emails.add(email);
+					}
+				}
 			}
 			StringBuilder s = new StringBuilder();
 			for (String email : emails)
+			{
 				if (s.length() == 0)
+				{
 					s = s.append("mailto:" + email);
+				}
 				else
-					s = s.append(";" + email);
+				{
+					s = s.append("," + "mailto:" + email);
+				}
+			}
 			URI uri = new URI(s.toString());
 			Desktop.getDesktop().mail(uri);
 		}

@@ -322,7 +322,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			{
 				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
 				LinkPersonAddress link = page.getLink();
-				return link.getAddressGroupMembers().toArray(new AddressGroupMember[0]);
+				return link.getValidAddressGroupMembers().toArray(new AddressGroupMember[0]);
 			}
 			return new AddressGroupMember[0];
 		}
@@ -561,7 +561,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			{
 				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
 				LinkPersonAddress link = page.getLink();
-				return link.getDonations().toArray(new Donation[0]);
+				return link.getValidDonations().toArray(new Donation[0]);
 			}
 			return new Donation[0];
 		}
@@ -631,7 +631,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			{
 				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
 				LinkPersonAddress link = page.getLink();
-				return link.getMembers().toArray(new Member[0]);
+				return link.getValidMembers().toArray(new Member[0]);
 			}
 			return new Member[0];
 		}
@@ -832,7 +832,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			{
 				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
 				LinkPersonAddress link = page.getLink();
-				return link.getParticipants();
+				return link.getValidParticipants();
 			}
 			return new ArrayList<Participant>();
 		}
