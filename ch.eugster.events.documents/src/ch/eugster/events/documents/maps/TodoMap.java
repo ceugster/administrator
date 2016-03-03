@@ -238,7 +238,7 @@ public class TodoMap extends AbstractDataMap {
 			}
 			case TODO_TYPE:
 			{
-				return entry.getDueType();
+				return entry.getDueTypeName();
 			}
 			case TITLE:
 			{

@@ -4,7 +4,9 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Dictionary;
 import java.util.GregorianCalendar;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -50,6 +52,10 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.Activator;
@@ -81,7 +87,7 @@ import ch.eugster.events.ui.dialogs.Message;
 import ch.eugster.events.ui.editors.AbstractEntityEditor;
 import ch.eugster.events.ui.editors.AbstractEntityEditorInput;
 
-public class CourseEditor extends AbstractEntityEditor<Course> implements PropertyChangeListener
+public class CourseEditor extends AbstractEntityEditor<Course> implements PropertyChangeListener, EventHandler
 {
 	private static final int widthHint = 180;
 
@@ -185,6 +191,17 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 
 	private IDialogSettings dialogSettings;
 
+	private ServiceRegistration eventHandlerRegistration;
+	
+	public CourseEditor()
+	{
+		super();
+		Dictionary<String, String> properties = new Hashtable<String, String>();
+		properties.put(EventConstants.EVENT_TOPIC, "ch/eugster/events/persistence/merge");		
+		eventHandlerRegistration = Activator.getDefault().getBundle().getBundleContext().registerService(EventHandler.class.getName(), this, properties);
+
+	}
+	
 	private void createClassificationSection(final ScrolledForm parent)
 	{
 		ColumnLayoutData layoutData = new ColumnLayoutData();
@@ -360,6 +377,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 	@Override
 	public void dispose()
 	{
+		eventHandlerRegistration.unregister();
 		EntityMediator.removeListener(Course.class, this);
 		super.dispose();
 	}
@@ -1785,6 +1803,31 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 	protected boolean validateType(final AbstractEntityEditorInput<Course> input)
 	{
 		return input.getEntity() instanceof Course;
+	}
+
+	@Override
+	public void handleEvent(Event event) 
+	{
+		CourseEditorInput input = (CourseEditorInput) this.getEditorInput();
+		Course course = (Course) input.getAdapter(Course.class);
+		if (course.getId() == null)
+		{
+			return;
+		}
+		if (event.getTopic().equals("ch/eugster/events/persistence/merge"))
+		{
+			Object entity = event.getProperty("entity");
+			if (entity instanceof Course)
+			{
+
+				Course updatedCourse = (Course) entity;
+				if (course.getId().equals(updatedCourse.getId()))
+				{
+					input.setEntity(updatedCourse);
+					loadValues();
+				}
+			}
+		}
 	}
 
 }

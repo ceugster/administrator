@@ -2,7 +2,9 @@ package ch.eugster.events.persistence.queries;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -14,7 +16,10 @@ import org.eclipse.persistence.jpa.JpaEntityManager;
 import org.eclipse.persistence.jpa.JpaHelper;
 import org.eclipse.persistence.queries.ReadAllQuery;
 import org.eclipse.persistence.queries.ReportQuery;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventAdmin;
 import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.User;
@@ -131,6 +136,23 @@ public abstract class AbstractEntityQuery<T extends AbstractEntity>
 				if (em.getTransaction().isActive())
 				{
 					em.getTransaction().rollback();
+				}
+				else
+				{
+					ServiceTracker tracker = new ServiceTracker(ch.eugster.events.persistence.Activator.getDefault().getBundle().getBundleContext(), EventAdmin.class.getName(), null);
+					tracker.open();
+					try
+					{
+						Map<String, Object> properties = new HashMap<String, Object>();
+						properties.put("entity", entity);
+						Event event = new Event("ch/eugster/events/persistence/merge", properties);
+						EventAdmin eventAdmin = (EventAdmin) tracker.getService();
+						eventAdmin.sendEvent(event);
+					}
+					finally
+					{
+						tracker.close();
+					}
 				}
 			}
 		}
