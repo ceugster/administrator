@@ -3,6 +3,8 @@ package ch.eugster.events.course.reporting.dialogs;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,6 +30,9 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -43,6 +48,7 @@ import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.model.UserProperty;
+import ch.eugster.events.persistence.queries.CourseQuery;
 import ch.eugster.events.persistence.queries.UserQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
@@ -52,6 +58,8 @@ public class CourseInvitationDialog extends TitleAreaDialog
 
 	private Button documentSelector;
 
+	private Button updateCourse;
+	
 	private final StructuredSelection selection;
 
 	private UserProperty userPropertyTemplatePath;
@@ -129,6 +137,35 @@ public class CourseInvitationDialog extends TitleAreaDialog
 					}
 				}
 			});
+			if (updateCourse != null && updateCourse.getSelection())
+			{
+				ServiceTracker connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
+				connectionServiceTracker.open();
+				try
+				{
+					ConnectionService connectionService = (ConnectionService) connectionServiceTracker.getService();
+					if (connectionService != null)
+					{
+						CourseQuery query = (CourseQuery) connectionService.getQuery(Course.class);
+						@SuppressWarnings("rawtypes")
+						Iterator iterator = this.selection.iterator();
+						while (iterator.hasNext())
+						{
+							Object object = iterator.next();
+							if (object instanceof Course)
+							{
+								Course course = (Course) object;
+								course.setInvitationDoneDate(Calendar.getInstance());
+								course = query.merge(course);
+							}
+						}
+					}
+				}
+				finally
+				{
+					connectionServiceTracker.close();
+				}
+			}
 		}
 		catch (InvocationTargetException e)
 		{
@@ -263,8 +300,40 @@ public class CourseInvitationDialog extends TitleAreaDialog
 		label = new Label(composite, SWT.None);
 		label.setText(DIALOG_MSG);
 		label.setLayoutData(gridData);
-		
+
+		if (!noDirtyCourses())
+		{
+			gridData = new GridData(GridData.FILL_HORIZONTAL);
+			gridData.horizontalSpan = 3;
+			
+			updateCourse = new Button(composite, SWT.CHECK);
+			updateCourse.setLayoutData(gridData);
+			updateCourse.setText("Kurs aktualisieren (Datum 'Einladung verschickt' setzen)");
+		}
 		return parent;
+	}
+
+	private boolean noDirtyCourses()
+	{
+		@SuppressWarnings("rawtypes")
+		Iterator iterator = this.selection.iterator();
+		while (iterator.hasNext())
+		{
+			Object object = iterator.next();
+			if (object instanceof Course)
+			{
+				IEditorReference[] references = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getEditorReferences();
+				for (IEditorReference reference : references)
+				{
+					IEditorPart part = reference.getEditor(false);
+					if (part != null && part.getEditorInput().getAdapter(Course.class) != null)
+					{
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	public boolean isPageComplete()
@@ -277,7 +346,6 @@ public class CourseInvitationDialog extends TitleAreaDialog
 	{
 		setUserPath();
 		DataMap[] dataMaps = createDataMaps().toArray(new DataMap[0]);
-		super.okPressed();
 		if (dataMaps.length == 0)
 		{
 			MessageDialog.openConfirm(this.getShell(), MSG_TITLE_NO_COURSES, MSG_TITLE_NO_COURSES);
@@ -286,6 +354,7 @@ public class CourseInvitationDialog extends TitleAreaDialog
 		{
 			buildDocument(dataMaps);
 		}
+		super.okPressed();
 	}
 
 	@Override
