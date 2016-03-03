@@ -111,6 +111,10 @@ public abstract class AbstractEntity implements IEntity
 
 	public void setDeleted(final boolean deleted)
 	{
+		if (this instanceof AddressGroupMember && deleted)
+		{
+			System.out.println();
+		}
 		this.propertyChangeSupport.firePropertyChange("deleted", this.deleted, this.deleted = deleted);
 	}
 

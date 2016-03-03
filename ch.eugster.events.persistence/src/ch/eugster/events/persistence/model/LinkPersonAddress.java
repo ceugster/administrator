@@ -2,6 +2,7 @@ package ch.eugster.events.persistence.model;
 
 import static javax.persistence.CascadeType.ALL;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Vector;
@@ -196,6 +197,19 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		return this.addressGroupMembers;
 	}
 
+	public List<AddressGroupMember> getValidAddressGroupMembers()
+	{
+		List<AddressGroupMember> members = new ArrayList<AddressGroupMember>();
+		for (AddressGroupMember member : this.addressGroupMembers)
+		{
+			if (!member.isDeleted() && !member.getAddressGroup().isDeleted())
+			{
+				members.add(member);
+			}
+		}
+		return members;
+	}
+
 	public AddressType getAddressType()
 	{
 		return addressType;
@@ -224,6 +238,19 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		return this.donations;
 	}
 
+	public List<Donation> getValidDonations()
+	{
+		List<Donation> donations = new ArrayList<Donation>();
+		for (Donation donation : this.donations)
+		{
+			if (!donation.isDeleted())
+			{
+				donations.add(donation);
+			}
+		}
+		return donations;
+	}
+	
 	public String getEmail()
 	{
 		return stringValueOf(this.email);
@@ -315,9 +342,35 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		return this.members;
 	}
 
+	public List<Member> getValidMembers()
+	{
+		List<Member> members = new ArrayList<Member>();
+		for (Member member : this.members)
+		{
+			if (!member.isDeleted())
+			{
+				members.add(member);
+			}
+		}
+		return members;
+	}
+
 	public List<Participant> getParticipants()
 	{
 		return this.participants;
+	}
+
+	public List<Participant> getValidParticipants()
+	{
+		List<Participant> participants = new ArrayList<Participant>();
+		for (Participant participant : this.participants)
+		{
+			if (!participant.isDeleted())
+			{
+				participants.add(participant);
+			}
+		}
+		return participants;
 	}
 
 	/**

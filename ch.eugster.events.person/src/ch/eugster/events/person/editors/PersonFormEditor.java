@@ -1,6 +1,8 @@
 package ch.eugster.events.person.editors;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.ui.IEditorInput;
@@ -9,21 +11,41 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
+import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.formatters.PersonFormatter;
+import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
+import ch.eugster.events.persistence.service.ConnectionService;
+import ch.eugster.events.person.Activator;
 import ch.eugster.events.person.views.PersonFormEditorContentOutlinePage;
 import ch.eugster.events.ui.editors.AbstractEntityFormEditor;
 
-public class PersonFormEditor extends AbstractEntityFormEditor<Person>
+public class PersonFormEditor extends AbstractEntityFormEditor<Person> implements EventHandler
 {
 	public static final String ID = "ch.eugster.events.person.editors.personFormEditor";
 
-	private IContentOutlinePage contentOutlinePage;
+	private PersonFormEditorContentOutlinePage contentOutlinePage;
 
+	private ServiceRegistration eventHandlerRegistration;
+	
 	public PersonFormEditor()
 	{
+		Dictionary<String, String> properties = new Hashtable<String, String>();
+		properties.put(EventConstants.EVENT_TOPIC, "ch/eugster/events/persistence/merge");		
+		eventHandlerRegistration = Activator.getDefault().getBundle().getBundleContext().registerService(EventHandler.class.getName(), this, properties);
+	}
+
+	@Override
+	public void close(boolean save)
+	{
+		eventHandlerRegistration.unregister();
+		super.close(save);
 	}
 
 	@Override
@@ -251,6 +273,58 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person>
 			}
 		}
 		return valid;
+	}
+
+	@Override
+	public void handleEvent(Event event) 
+	{
+		PersonEditorInput input = (PersonEditorInput) this.getEditorInput();
+		Person person = (Person) input.getAdapter(Person.class);
+		if (person.getId() == null)
+		{
+			return;
+		}
+		if (event.getTopic().equals("ch/eugster/events/persistence/merge"))
+		{
+			Object entity = event.getProperty("entity");
+			if (entity instanceof Person)
+			{
+				Person updatedPerson = (Person) entity;
+				if (person.getId().equals(updatedPerson.getId()))
+				{
+					input.setEntity(updatedPerson);
+					reset();
+				}
+			}
+			else if (entity instanceof AddressGroupMember)
+			{
+				AddressGroupMember member = (AddressGroupMember) entity;
+				if (member.getLink() != null)
+				{
+					Person p = member.getLink().getPerson();
+					if (person.getId().equals(p.getId()))
+					{
+						ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
+						tracker.open();
+						try
+						{
+							ConnectionService service = (ConnectionService) tracker.getService();
+							if (service != null)
+							{
+								service.refresh(p);
+								input.setEntity(p);
+								this.reset();
+								this.setActivePage(this.getCurrentPage());
+							}
+						}
+						finally
+						{
+							tracker.close();
+						}
+					}
+				}
+			}
+		}
 	}
 
 }
