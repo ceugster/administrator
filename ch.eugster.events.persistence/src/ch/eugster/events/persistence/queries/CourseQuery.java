@@ -1,5 +1,6 @@
 package ch.eugster.events.persistence.queries;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -18,26 +19,54 @@ public class CourseQuery extends AbstractEntityQuery<Course>
 		super(connectionService);
 	}
 	
-	public List<Course> selectByAdvanceNoticeDate(long start, long end)
+	public List<Course> selectByAdvanceNoticeDate(long start, long end, boolean open, boolean done)
 	{
 		Calendar startDate = GregorianCalendar.getInstance();
 		startDate.setTimeInMillis(start);
 		Calendar endDate = GregorianCalendar.getInstance();
 		endDate.setTimeInMillis(end);
 		Expression expression = new ExpressionBuilder(Course.class).get("advanceNoticeDate").between(startDate, endDate);
-		expression = expression.and(new ExpressionBuilder().get("advanceNoticeDoneDate").isNull());
+		if (open && done)
+		{
+		}
+		else if (open)
+		{
+			expression = expression.and(new ExpressionBuilder().get("advanceNoticeDoneDate").isNull());
+		}
+		else if (done)
+		{
+			expression = expression.and(new ExpressionBuilder().get("advanceNoticeDoneDate").notNull());
+		}
+		else
+		{
+			return new ArrayList<Course>();
+		}
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
 		return select(Course.class, expression);
 	}
 
-	public List<Course> selectByInvitationDate(long start, long end)
+	public List<Course> selectByInvitationDate(long start, long end, boolean open, boolean done)
 	{
 		Calendar startDate = GregorianCalendar.getInstance();
 		startDate.setTimeInMillis(start);
 		Calendar endDate = GregorianCalendar.getInstance();
 		endDate.setTimeInMillis(end);
 		Expression expression = new ExpressionBuilder(Course.class).get("invitationDate").between(startDate, endDate);
-		expression = expression.and(new ExpressionBuilder().get("invitationDoneDate").isNull());
+		if (open && done)
+		{
+		}
+		else if (open)
+		{
+			expression = expression.and(new ExpressionBuilder().get("advanceNoticeDoneDate").isNull());
+		}
+		else if (done)
+		{
+			expression = expression.and(new ExpressionBuilder().get("advanceNoticeDoneDate").notNull());
+		}
+		else
+		{
+			return new ArrayList<Course>();
+		}
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
 		return select(Course.class, expression);
 	}

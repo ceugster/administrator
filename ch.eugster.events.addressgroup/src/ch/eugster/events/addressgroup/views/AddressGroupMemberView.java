@@ -16,7 +16,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
@@ -70,15 +69,13 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 {
 	public static final String ID = "ch.eugster.events.addressgroup.view.memberView";
 
-	private Label countLabel;
+	private Text expressionFilter;
 
-	private Label selectedLabel;
+	private Button clearExpressionFilter;
 
 	private TableViewer viewer;
 
-	private Text filter;
-
-	private Button clear;
+	private Label countLabel;
 
 	private IDialogSettings dialogSettings;
 
@@ -114,50 +111,34 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 		IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
 		ctxActivation = ctxService.activateContext("ch.eugster.events.addressgroup.context");
 
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.marginBottom = 0;
-		gridLayout.marginHeight = 0;
-		gridLayout.marginLeft = 0;
-		gridLayout.marginTop = 0;
-		gridLayout.marginWidth = 0;
+		parent.setLayout(new GridLayout(3, false));
 
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(gridLayout);
-
-		Composite topComposite = new Composite(composite, SWT.NONE);
-		topComposite.setLayout(new GridLayout(2, true));
-		topComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		Composite filterComposite = new Composite(topComposite, SWT.NONE);
-		filterComposite.setLayout(new GridLayout(3, false));
-		filterComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		Label label = new Label(filterComposite, SWT.NONE);
+		Label label = new Label(parent, SWT.NONE);
 		label.setLayoutData(new GridData());
 		label.setText("Filter");
 
 		final AddressGroupMemberFilter memberFilter = new AddressGroupMemberFilter();
 		memberFilter.setFilter(this.dialogSettings.get("member.filter"));
 
-		this.filter = new Text(filterComposite, SWT.BORDER);
-		this.filter.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		this.filter.setText(this.dialogSettings.get("member.filter"));
-		this.filter.addModifyListener(new ModifyListener()
+		this.expressionFilter = new Text(parent, SWT.BORDER);
+		this.expressionFilter.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.expressionFilter.setText(this.dialogSettings.get("member.filter"));
+		this.expressionFilter.addModifyListener(new ModifyListener()
 		{
 			@Override
 			public void modifyText(final ModifyEvent event)
 			{
-				String value = AddressGroupMemberView.this.filter.getText();
+				String value = AddressGroupMemberView.this.expressionFilter.getText();
 				AddressGroupMemberView.this.dialogSettings.put("member.filter", value);
 				memberFilter.setFilter(value);
 				internalRefresh();
 			}
 		});
 
-		this.clear = new Button(filterComposite, SWT.PUSH);
-		this.clear.setLayoutData(new GridData());
-		this.clear.setImage(Activator.getDefault().getImageRegistry().get("CLEAR"));
-		this.clear.addSelectionListener(new SelectionListener()
+		this.clearExpressionFilter = new Button(parent, SWT.PUSH);
+		this.clearExpressionFilter.setLayoutData(new GridData());
+		this.clearExpressionFilter.setImage(Activator.getDefault().getImageRegistry().get("CLEAR"));
+		this.clearExpressionFilter.addSelectionListener(new SelectionListener()
 		{
 			@Override
 			public void widgetDefaultSelected(final SelectionEvent e)
@@ -168,15 +149,15 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			@Override
 			public void widgetSelected(final SelectionEvent e)
 			{
-				clearClearField();
+				clearExpressionFilter();
 			}
 		});
 
-		TableLayout layout = new TableLayout();
-
-		Table table = new Table(composite, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		table.setLayout(layout);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.horizontalSpan = 3;
+		
+		Table table = new Table(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		table.setLayoutData(gridData);
 		table.setHeaderVisible(true);
 
 		final ViewerFilter deletedFilter = new DeletedEntityFilter();
@@ -195,8 +176,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
-				int selected = ((StructuredSelection) AddressGroupMemberView.this.getViewer().getSelection()).size();
-				AddressGroupMemberView.this.selectedLabel.setText("Ausgewählt: " + selected);
+				AddressGroupMemberView.this.updateCountLabel();
 			}
 		});
 
@@ -466,17 +446,11 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 		int ops = DND.DROP_COPY;
 		this.viewer.addDropSupport(ops, transfers, new AddressGroupViewerDropAdapter(this.viewer));
 
-		this.createContextMenu();
-
-		Composite bottomComposite = new Composite(composite, SWT.NONE);
-		bottomComposite.setLayout(new GridLayout(2, true));
-		bottomComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		this.countLabel = new Label(bottomComposite, SWT.NONE);
-		this.countLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		this.selectedLabel = new Label(bottomComposite, SWT.NONE);
-		this.selectedLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 3;
+		
+		this.countLabel = new Label(parent, SWT.NONE);
+		this.countLabel.setLayoutData(gridData);
 
 		this.getSite().setSelectionProvider(this.viewer);
 		this.getSite().getPage().addSelectionListener(AddressGroupView.ID, this);
@@ -485,6 +459,8 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 		EntityMediator.addListener(LinkPersonAddress.class, this);
 		EntityMediator.addListener(Address.class, this);
 		EntityMediator.addListener(Person.class, this);
+
+		this.createContextMenu();
 	}
 
 	@Override
@@ -571,11 +547,6 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 	public Label getCountLabel()
 	{
 		return this.countLabel;
-	}
-
-	public Label getSelectedLabel()
-	{
-		return this.selectedLabel;
 	}
 
 	public TableViewer getViewer()
@@ -665,7 +636,8 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 	{
 		if (countLabel != null && !countLabel.isDisposed())
 		{
-			countLabel.setText("Adressen: " + viewer.getTable().getItemCount());
+			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+			countLabel.setText("Adressen: " + viewer.getTable().getItemCount() + " :: Selektiert: " + ssel.size());
 		}
 	}
 
@@ -814,7 +786,6 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			if (ssel.getFirstElement() instanceof AddressGroup)
 			{
 				addressGroup = (AddressGroup) ssel.getFirstElement();
-				clearClearField();
 			}
 			updateViewer(addressGroup);
 		}
@@ -868,8 +839,8 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 		}
 	}
 
-	public void clearClearField()
+	private void clearExpressionFilter()
 	{
-		filter.setText("");
+		expressionFilter.setText("");
 	}
 }
