@@ -1441,7 +1441,9 @@ ch.eugster.events.todo/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.todo/META-INF/MANIFEST.MF -text
 ch.eugster.events.todo/OSGI-INF/service-component.xml -text
 ch.eugster.events.todo/build.properties -text
-ch.eugster.events.todo/icons/flag_green_16.png -text
+ch.eugster.events.todo/icons/flag_blue_16.png -text
+ch.eugster.events.todo/icons/flag_gray_16.png -text
+ch.eugster.events.todo/icons/flag_orange_16.png -text
 ch.eugster.events.todo/icons/reload_16.png -text
 ch.eugster.events.todo/icons/work_16.png -text
 ch.eugster.events.todo/plugin.xml -text
@@ -1449,6 +1451,8 @@ ch.eugster.events.todo/src/ch/eugster/events/todo/Activator.java -text
 ch.eugster.events.todo/src/ch/eugster/events/todo/handlers/ActivateTodoViewHandler.java -text
 ch.eugster.events.todo/src/ch/eugster/events/todo/handlers/GenerateTodoListHandler.java -text
 ch.eugster.events.todo/src/ch/eugster/events/todo/handlers/ReloadTodoListHandler.java -text
+ch.eugster.events.todo/src/ch/eugster/events/todo/handlers/ShowDoneTodosHandler.java -text
+ch.eugster.events.todo/src/ch/eugster/events/todo/handlers/ShowOpenTodosHandler.java -text
 ch.eugster.events.todo/src/ch/eugster/events/todo/service/TodoCollectorService.java -text
 ch.eugster.events.todo/src/ch/eugster/events/todo/views/TodoView.java -text
 ch.eugster.events.ui.feature/.project -text

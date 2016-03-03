@@ -33,16 +33,16 @@ public class TodoCollectorService
 		this.connectionService = null;
 	}
 	
-	public List<Course> collectCoursesWithDueAdvanceNoticeDates(long start, long end)
+	public List<Course> collectCoursesWithDueAdvanceNoticeDates(long start, long end, boolean open, boolean done)
 	{
 		CourseQuery query = (CourseQuery)connectionService.getQuery(Course.class);
-		return query.selectByAdvanceNoticeDate(start, end);
+		return query.selectByAdvanceNoticeDate(start, end, open, done);
 	}
 	
-	public List<Course> collectCoursesWithDueInvitationDates(long start, long end)
+	public List<Course> collectCoursesWithDueInvitationDates(long start, long end, boolean open, boolean done)
 	{
 		CourseQuery query = (CourseQuery)connectionService.getQuery(Course.class);
-		return query.selectByInvitationDate(start, end);
+		return query.selectByInvitationDate(start, end, open, done);
 	}
 	
 	public AbstractEntity updateEntity(Class<AbstractEntity> clazz, AbstractEntity entity)
