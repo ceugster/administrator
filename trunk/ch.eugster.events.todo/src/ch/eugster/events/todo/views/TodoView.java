@@ -4,9 +4,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Dictionary;
 import java.util.GregorianCalendar;
+import java.util.Hashtable;
 import java.util.List;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IStateListener;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -19,13 +24,14 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
@@ -33,22 +39,31 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.progress.UIJob;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.editors.CourseEditor;
@@ -56,7 +71,6 @@ import ch.eugster.events.course.editors.CourseEditorInput;
 import ch.eugster.events.documents.maps.DataMap;
 import ch.eugster.events.documents.maps.TodoMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
-import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.TodoEntry;
@@ -65,7 +79,7 @@ import ch.eugster.events.todo.Activator;
 import ch.eugster.events.todo.service.TodoCollectorService;
 import ch.eugster.events.ui.views.AbstractEntityView;
 
-public class TodoView extends AbstractEntityView implements IDoubleClickListener
+public class TodoView extends AbstractEntityView implements EventHandler
 {
 	public static final String ID = "ch.eugster.events.todo.views.TodoView";
 
@@ -73,18 +87,41 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 
 	public static final String SETTINGS_KEY_UNTIL_DATE = "todo.until.date";
 
+	public static final String SETTINGS_KEY_SHOW_OPEN = "todo.show.open";
+
+	public static final String SETTINGS_KEY_SHOW_DONE = "todo.show.done";
+
 	private CDateTime start;
 
 	private CDateTime end;
 
 	private Label countLabel;
 
-	private TableViewer viewer;
+	private CheckboxTableViewer viewer;
 
 	private IDialogSettings dialogSettings;
 
 	private IContextActivation ctxActivation;
 
+	private ServiceRegistration eventHandlerRegistration;
+	
+	private boolean showTodoDone;
+	
+	private boolean showTodoOpen;
+	
+	
+	public void setTodoDone(boolean done)
+	{
+		this.showTodoDone = done;
+		dialogSettings.put(SETTINGS_KEY_SHOW_DONE, done);
+	}
+	
+	public void setTodoOpen(boolean open)
+	{
+		this.showTodoOpen = open;
+		dialogSettings.put(SETTINGS_KEY_SHOW_OPEN, open);
+	}
+	
 	private void createContextMenu()
 	{
 		MenuManager menuManager = new MenuManager();
@@ -110,6 +147,9 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 	@Override
 	public void createPartControl(final Composite parent)
 	{
+		showTodoDone = dialogSettings.getBoolean(SETTINGS_KEY_SHOW_DONE);
+		showTodoOpen = dialogSettings.getBoolean(SETTINGS_KEY_SHOW_OPEN);
+		
 		IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
 		ctxActivation = ctxService.activateContext("ch.eugster.events.todo.context");
 
@@ -138,24 +178,40 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 		GridData gridData = new GridData();
 		gridData.widthHint = 112;
 
+		long now = GregorianCalendar.getInstance().getTimeInMillis();
+		long difference = dialogSettings.getLong(SETTINGS_KEY_FROM_DATE);
 		Calendar startCalendar = GregorianCalendar.getInstance();
-		Calendar endCalendar = GregorianCalendar.getInstance();
-		startCalendar.add(Calendar.DATE, dialogSettings.getInt(SETTINGS_KEY_FROM_DATE));
-		endCalendar.add(Calendar.DATE, dialogSettings.getInt(SETTINGS_KEY_UNTIL_DATE));
+		startCalendar.setTimeInMillis(now + difference);
 
 		this.start = new CDateTime(startComposite, CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM);
 		this.start.setSelection(startCalendar.getTime());
 		this.start.setLayoutData(gridData);
 		this.start.setNullText("");
-		this.start.addSelectionListener(new SelectionAdapter()
+		for (Control control : this.start.getChildren())
 		{
-			@Override
-			public void widgetSelected(final SelectionEvent event)
+			if (control instanceof Text)
 			{
-				if (event.data != null)
-					dialogSettings.put(SETTINGS_KEY_FROM_DATE, ((Date)event.data).compareTo(GregorianCalendar.getInstance().getTime()));
+				((Text)control).addModifyListener(new ModifyListener()
+				{
+					@Override
+					public void modifyText(final ModifyEvent event)
+					{
+						Date date = start.getSelection();
+						if (date == null)
+						{
+							dialogSettings.put(SETTINGS_KEY_FROM_DATE, -14L);
+						}
+						else
+						{
+							Calendar calendar = GregorianCalendar.getInstance();
+							calendar.setTime(date);
+							long difference = calendar.getTimeInMillis() - GregorianCalendar.getInstance().getTimeInMillis();
+							dialogSettings.put(SETTINGS_KEY_FROM_DATE, difference);
+						}
+					}
+				});
 			}
-		});
+		}
 		
 		Composite endComposite = new Composite(topComposite, SWT.NONE);
 		endComposite.setLayout(new GridLayout(2, false));
@@ -168,41 +224,99 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 		gridData = new GridData();
 		gridData.widthHint = 112;
 
+		Calendar endCalendar = GregorianCalendar.getInstance();
+		difference = dialogSettings.getLong(SETTINGS_KEY_UNTIL_DATE);
+		endCalendar.setTimeInMillis(now + difference);
+
 		this.end = new CDateTime(endComposite, CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM);
 		this.end.setSelection(endCalendar.getTime());
 		this.end.setLayoutData(gridData);
 		this.end.setNullText("");
-		this.end.addSelectionListener(new SelectionAdapter()
+		for (Control control : this.end.getChildren())
 		{
-			@Override
-			public void widgetSelected(final SelectionEvent event)
+			if (control instanceof Text)
 			{
-				if (event.data != null)
-					dialogSettings.put(SETTINGS_KEY_UNTIL_DATE, ((Date)event.data).compareTo(GregorianCalendar.getInstance().getTime()));
+				((Text)control).addModifyListener(new ModifyListener()
+				{
+					@Override
+					public void modifyText(final ModifyEvent event)
+					{
+						Date date = end.getSelection();
+						if (date == null)
+						{
+							dialogSettings.put(SETTINGS_KEY_UNTIL_DATE, 14);
+						}
+						else
+						{
+							Calendar calendar = GregorianCalendar.getInstance();
+							calendar.setTime(date);
+							long difference = calendar.getTimeInMillis() - GregorianCalendar.getInstance().getTimeInMillis();
+							dialogSettings.put(SETTINGS_KEY_UNTIL_DATE, difference);
+						}
+					}
+				});
 			}
-		});
-
+		}
+		
 		TableLayout layout = new TableLayout();
 
-		Table table = new Table(composite, SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		Table table = new Table(composite, SWT.CHECK | SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setLayout(layout);
 		table.setHeaderVisible(true);
 
 		this.viewer = new CheckboxTableViewer(table);
-		this.viewer.setContentProvider(new ArrayContentProvider());
+		this.viewer.setContentProvider(new TodoEntryContentProvider());
 		this.viewer.setSorter(new ViewerSorter() 
 		{
 			public int compare(Viewer viewer, Object o1, Object o2)
 			{
 				TodoEntry entry1 = (TodoEntry) o1;
+				if (entry1.getDueDate() == null)
+				{
+					return 0;
+				}
 				TodoEntry entry2 = (TodoEntry) o2;
-				return entry1.getDueDate().compareTo(entry2.getDueDate());
+				if (entry2.getDueDate() == null)
+				{
+					return 0;
+				}
+				return entry1.getDueDate().getTime().compareTo(entry2.getDueDate().getTime());
 			}
 			
 		});
-		this.viewer.addDoubleClickListener(this);
-
+		this.viewer.addDoubleClickListener(new IDoubleClickListener() 
+		{
+			@Override
+			public void doubleClick(DoubleClickEvent event) 
+			{
+				ISelection selection = event.getSelection();
+				Object object = ((IStructuredSelection) selection).getFirstElement();
+				if (object instanceof TodoEntry)
+				{
+					TodoEntry entry = (TodoEntry) object;
+					AbstractEntity entity = entry.getEntity();
+					if (entity instanceof Course)
+					{
+						TodoView.this.editCourse((Course) entity);
+					}
+				}
+			}
+		});
+		this.viewer.addCheckStateListener(new ICheckStateListener() 
+		{
+			@Override
+			public void checkStateChanged(CheckStateChangedEvent event) 
+			{
+				TodoEntry entry = (TodoEntry) event.getElement();
+				if (event.getChecked() != entry.isDone())
+				{
+					AbstractEntity entity = entry.getEntity();
+					entry.setEntity(entry.getDueType().update(entity, event.getChecked()));
+				}
+			}
+		});
+		
 		TableViewerColumn tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
@@ -211,39 +325,12 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 			{
 				TodoEntry entry = (TodoEntry) cell.getElement();
 				cell.setText(entry.getEntityName());
+				cell.setImage(Activator.getDefault().getImageRegistry().get(entry.isDone() ? Activator.Image.TODO_DONE.key() : Activator.Image.TODO_OPEN.key()));
 			}
 		});
 		TableColumn tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
 		tableColumn.setText("Typ");
-
-		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
-		tableViewerColumn.setLabelProvider(new CellLabelProvider()
-		{
-			@Override
-			public void update(final ViewerCell cell)
-			{
-				TodoEntry entry = (TodoEntry) cell.getElement();
-				cell.setText(entry.getInstanceName());
-			}
-		});
-		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setResizable(true);
-		tableColumn.setText("Bezeichnung");
-
-		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
-		tableViewerColumn.setLabelProvider(new CellLabelProvider()
-		{
-			@Override
-			public void update(final ViewerCell cell)
-			{
-				TodoEntry entry = (TodoEntry) cell.getElement();
-				cell.setText(entry.getDueType());
-			}
-		});
-		tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setResizable(true);
-		tableColumn.setText("Aufgabe");
 
 		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
@@ -258,6 +345,34 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
 		tableColumn.setText("Fällig");
+
+		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
+		tableViewerColumn.setLabelProvider(new CellLabelProvider()
+		{
+			@Override
+			public void update(final ViewerCell cell)
+			{
+				TodoEntry entry = (TodoEntry) cell.getElement();
+				cell.setText(entry.getDueType().getDueTypeName());
+			}
+		});
+		tableColumn = tableViewerColumn.getColumn();
+		tableColumn.setResizable(true);
+		tableColumn.setText("Aufgabe");
+
+		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
+		tableViewerColumn.setLabelProvider(new CellLabelProvider()
+		{
+			@Override
+			public void update(final ViewerCell cell)
+			{
+				TodoEntry entry = (TodoEntry) cell.getElement();
+				cell.setText(entry.getInstanceName());
+			}
+		});
+		tableColumn = tableViewerColumn.getColumn();
+		tableColumn.setResizable(true);
+		tableColumn.setText("Bezeichnung");
 
 		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
@@ -284,34 +399,44 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 
 		this.getSite().setSelectionProvider(this.viewer);
 
-		EntityMediator.addListener(Course.class, this);
+		ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+
+		Command command = service.getCommand("ch.eugster.events.todo.showOpenTodos");
+		command.getState("org.eclipse.ui.commands.toggleState").addListener(new IStateListener()
+		{
+			@Override
+			public void handleStateChange(State state, Object oldValue)
+			{
+				TodoView.this.showTodoOpen = (Boolean) state.getValue();
+				TodoView.this.reloadTodoList();
+			}
+		});
+
+		command = service.getCommand("ch.eugster.events.todo.showDoneTodos");
+		command.getState("org.eclipse.ui.commands.toggleState").addListener(new IStateListener()
+		{
+			@Override
+			public void handleStateChange(State state, Object oldValue)
+			{
+				TodoView.this.showTodoDone = (Boolean) state.getValue();
+				TodoView.this.reloadTodoList();
+			}
+		});
 		
+		Dictionary<String, String> properties = new Hashtable<String, String>();
+		properties.put(EventConstants.EVENT_TOPIC, "ch/eugster/events/persistence/merge");		
+		eventHandlerRegistration = Activator.getDefault().getBundle().getBundleContext().registerService(EventHandler.class.getName(), this, properties);
+
 		this.reloadTodoList();
 	}
 
 	@Override
 	public void dispose()
 	{
-		EntityMediator.removeListener(Course.class, this);
+		eventHandlerRegistration.unregister();
 		IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
 		ctxService.deactivateContext(ctxActivation);
 		super.dispose();
-	}
-
-	@Override
-	public void doubleClick(final DoubleClickEvent event)
-	{
-		ISelection selection = event.getSelection();
-		Object object = ((IStructuredSelection) selection).getFirstElement();
-		if (object instanceof TodoEntry)
-		{
-			TodoEntry entry = (TodoEntry) object;
-			AbstractEntity entity = entry.getEntity();
-			if (entity instanceof Course)
-			{
-				this.editCourse((Course) entity);
-			}
-		}
 	}
 
 	private void editCourse(final Course course)
@@ -332,7 +457,7 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 		return this.countLabel;
 	}
 
-	public TableViewer getViewer()
+	public CheckboxTableViewer getViewer()
 	{
 		return this.viewer;
 	}
@@ -349,11 +474,19 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 		}
 		if (this.dialogSettings.get(SETTINGS_KEY_FROM_DATE) == null)
 		{
-			this.dialogSettings.put(SETTINGS_KEY_FROM_DATE, 0);
+			this.dialogSettings.put(SETTINGS_KEY_FROM_DATE, -14L);
 		}
 		if (this.dialogSettings.get(SETTINGS_KEY_UNTIL_DATE) == null)
 		{
-			this.dialogSettings.put(SETTINGS_KEY_UNTIL_DATE, 7);
+			this.dialogSettings.put(SETTINGS_KEY_UNTIL_DATE, 14L);
+		}
+		if (this.dialogSettings.get(SETTINGS_KEY_SHOW_OPEN) == null)
+		{
+			this.dialogSettings.put(SETTINGS_KEY_SHOW_OPEN, true);
+		}
+		if (this.dialogSettings.get(SETTINGS_KEY_SHOW_DONE) == null)
+		{
+			this.dialogSettings.put(SETTINGS_KEY_SHOW_DONE, false);
 		}
 	}
 
@@ -387,33 +520,6 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 					tableColumn.pack();
 				}
 			}
-		}
-	}
-
-	@Override
-	public void postDelete(final AbstractEntity entity)
-	{
-		if (doUpdate(entity))
-		{
-			reloadTodoList();
-		}
-	}
-
-	@Override
-	public void postPersist(final AbstractEntity entity)
-	{
-		if (doUpdate(entity))
-		{
-			reloadTodoList();
-		}
-	}
-
-	@Override
-	public void postUpdate(final AbstractEntity entity)
-	{
-		if (doUpdate(entity))
-		{
-			reloadTodoList();
 		}
 	}
 
@@ -454,25 +560,6 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 		return endDate;
 	}
 
-	private boolean doUpdate(AbstractEntity entity)
-	{
-		if (entity instanceof Course)
-		{
-			Calendar startDate = getStart();
-			Calendar endDate = getEnd();
-			Course course = (Course) entity;
-			if (course.getAdvanceNoticeDate().after(startDate) && course.getAdvanceNoticeDate().before(endDate))
-			{
-				return true;
-			}
-			if (course.getInvitationDate().after(startDate) && course.getInvitationDate().before(endDate))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
@@ -494,6 +581,15 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 					TodoView.this.getViewer().getTable().setEnabled(false);
 					TodoView.this.showBusy(true);
 					TodoView.this.setInput(entries);
+					List<TodoEntry> checkedEntries = new ArrayList<TodoEntry>();
+					for (TodoEntry entry : entries)
+					{
+						if (entry.isDone())
+						{
+							checkedEntries.add(entry);
+						}
+					}
+					TodoView.this.getViewer().setCheckedElements(checkedEntries.toArray(new TodoEntry[0]));
 					TodoView.this.internalRefresh();
 					TodoView.this.showBusy(false);
 					TodoView.this.getViewer().getTable().setEnabled(true);
@@ -526,12 +622,12 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 			TodoCollectorService service = (TodoCollectorService) tracker.getService();
 			if (service != null)
 			{
-				List<Course> courses = service.collectCoursesWithDueAdvanceNoticeDates(startDate.getTimeInMillis(), endDate.getTimeInMillis());
+				List<Course> courses = service.collectCoursesWithDueAdvanceNoticeDates(startDate.getTimeInMillis(), endDate.getTimeInMillis(), showTodoOpen, showTodoDone);
 				for (Course course : courses)
 				{
 					entries.add(new TodoEntry(course, DueType.COURSE_ADVANCE_NOTICE_DATE));
 				}
-				courses = service.collectCoursesWithDueInvitationDates(startDate.getTimeInMillis(), endDate.getTimeInMillis());
+				courses = service.collectCoursesWithDueInvitationDates(startDate.getTimeInMillis(), endDate.getTimeInMillis(), showTodoOpen, showTodoDone);
 				for (Course course : courses)
 				{
 					entries.add(new TodoEntry(course, DueType.COURSE_INVITATION_DATE));
@@ -601,4 +697,25 @@ public class TodoView extends AbstractEntityView implements IDoubleClickListener
 		return status;
 	}
 
+	@Override
+	public void handleEvent(Event event) 
+	{
+		if (event.getTopic().equals("ch/eugster/events/persistence/merge"))
+		{
+			Object entity = event.getProperty("entity");
+			if (entity instanceof Course)
+			{
+				reloadTodoList();
+			}
+		}
+	}
+
+	private class TodoEntryContentProvider extends ArrayContentProvider
+	{
+	}
+
+	private long calculateDifference(long timeInMillis1, long timeInMillis2)
+	{
+		return timeInMillis1 - timeInMillis2;
+	}
 }

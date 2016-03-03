@@ -48,6 +48,22 @@
             allPopups="false"
             locationURI="toolbar:ch.eugster.events.todo.views.TodoView">
          <command
+               commandId="ch.eugster.events.todo.showOpenTodos"
+               hoverIcon="icons/flag_orange_16.png"
+               icon="icons/flag_orange_16.png"
+               label="Pendente Aufgaben zeigen"
+               style="toggle"
+               tooltip="Pendente Aufgaben anzeigen">
+         </command>
+         <command
+               commandId="ch.eugster.events.todo.showDoneTodos"
+               hoverIcon="icons/flag_green_16.png"
+               icon="icons/flag_green_16.png"
+               label="Erledigte Aufgaben zeigen"
+               style="toggle"
+               tooltip="Erledigte Aufgaben anzeigen">
+         </command>
+         <command
                commandId="ch.eugster.events.todo.reload.list"
                icon="icons/reload_16.png"
                label="Pendenzenliste aktualisieren"
@@ -87,6 +103,26 @@
             defaultHandler="ch.eugster.events.todo.handlers.GenerateTodoListHandler"
             id="ch.eugster.events.todo.generate.list"
             name="Pendenzenliste generieren">
+      </command>
+      <command
+            categoryId="category.todo"
+            defaultHandler="ch.eugster.events.todo.handlers.ShowOpenTodosHandler"
+            id="ch.eugster.events.todo.showOpenTodos"
+            name="Pendente Aufgaben zeigen">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
+      <command
+            categoryId="category.todo"
+            defaultHandler="ch.eugster.events.todo.handlers.ShowDoneTodosHandler"
+            id="ch.eugster.events.todo.showDoneTodos"
+            name="Erledigte Aufgaben zeigen">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
       </command>
    </extension>
    <extension

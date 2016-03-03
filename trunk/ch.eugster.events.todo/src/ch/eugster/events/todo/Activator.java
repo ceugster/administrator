@@ -5,9 +5,6 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import ch.eugster.events.persistence.model.CourseState;
-import ch.eugster.events.persistence.model.Season;
-
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -65,19 +62,27 @@ public class Activator extends AbstractUIPlugin
 
 	public enum Image
 	{
-		IMAGE_COURSE, IMAGE_RELOAD;
+		COURSE, RELOAD, TODO_DONE, TODO_OPEN;
 		
 		public String key()
 		{
 			switch (this)
 			{
-			case IMAGE_COURSE:
+			case COURSE:
 			{
 				return "image.course";
 			}
-			case IMAGE_RELOAD:
+			case RELOAD:
 			{
 				return "image.reload";
+			}
+			case TODO_DONE:
+			{
+				return "image.todo.done";
+			}
+			case TODO_OPEN:
+			{
+				return "image.todo.open";
 			}
 			default:
 			{
@@ -90,13 +95,21 @@ public class Activator extends AbstractUIPlugin
 		{
 			switch (this)
 			{
-			case IMAGE_COURSE:
+			case COURSE:
 			{
 				return "/icons/flag_green_16.png";
 			}
-			case IMAGE_RELOAD:
+			case RELOAD:
 			{
 				return "/icons/reload_16.png";
+			}
+			case TODO_DONE:
+			{
+				return "/icons/flag_green_16.png";
+			}
+			case TODO_OPEN:
+			{
+				return "/icons/flag_orange_16.png";
 			}
 			default:
 			{
