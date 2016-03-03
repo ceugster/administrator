@@ -1443,6 +1443,7 @@ ch.eugster.events.todo/OSGI-INF/service-component.xml -text
 ch.eugster.events.todo/build.properties -text
 ch.eugster.events.todo/icons/flag_blue_16.png -text
 ch.eugster.events.todo/icons/flag_gray_16.png -text
+ch.eugster.events.todo/icons/flag_green_16.png -text
 ch.eugster.events.todo/icons/flag_orange_16.png -text
 ch.eugster.events.todo/icons/reload_16.png -text
 ch.eugster.events.todo/icons/work_16.png -text
