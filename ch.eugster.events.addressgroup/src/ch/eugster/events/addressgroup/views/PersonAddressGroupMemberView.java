@@ -75,9 +75,6 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 
 	private final Map<Long, AddressGroupMember> current = new HashMap<Long, AddressGroupMember>();
 
-	// private final String message =
-	// "Selektieren oder Deselektieren Sie die Adressgruppen und speichern Sie die Änderungen.\nSie können die Änderungen jederzeit mit 'Abbrechen' widerrufen.";
-
 	private ServiceTracker connectionServiceTracker;
 
 	private boolean dirty;
@@ -136,86 +133,10 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		else if (object instanceof AddressGroup)
 		{
 			AddressGroup addressGroup = (AddressGroup) object;
-			// if (event.getChecked())
-			// {
-			// for (AddressGroupMember member :
-			// addressGroup.getAddressGroupMembers())
-			// {
-			// Class<?> clazz = parent.getClass();
-			// if (clazz.equals(Address.class))
-			// {
-			// if (member.getAddress().getId().equals(parent.getId()))
-			// {
-			// this.current.put(addressGroup.getId(), member);
-			// break;
-			// }
-			// }
-			// else if (clazz.equals(LinkPersonAddress.class))
-			// {
-			// if (member.getLink() != null &&
-			// member.getLink().getId().equals(parent.getId()))
-			// {
-			// this.current.put(addressGroup.getId(), member);
-			// break;
-			// }
-			// }
-			// }
-			// }
-			// if (event.getChecked())
-			// {
-			// updateCurrent(addressGroup);
-			// }
 			this.updateMonitor(addressGroup, event.getChecked());
 		}
 		setDirty(true);
 	}
-
-	// private void updateCurrent(AddressGroup addressGroup)
-	// {
-	// ConnectionService service = (ConnectionService)
-	// connectionServiceTracker.getService();
-	// if (service != null)
-	// {
-	// List<AddressGroupMember> members = new
-	// ArrayList<AddressGroupMember>();
-	// if (this.parent instanceof Address)
-	// {
-	// Address address = (Address) this.parent;
-	// AddressGroupMemberQuery query = (AddressGroupMemberQuery)
-	// service.getQuery(AddressGroupMember.class);
-	// members = query.selectByAddressAndAddressGroup(address, addressGroup);
-	// }
-	// else if (this.parent instanceof LinkPersonAddress)
-	// {
-	// LinkPersonAddress link = (LinkPersonAddress) this.parent;
-	// AddressGroupMemberQuery query = (AddressGroupMemberQuery)
-	// service.getQuery(AddressGroupMember.class);
-	// members = query.selectByLinkPersonAddressAndAddressGroup(link,
-	// addressGroup);
-	// }
-	// for (AddressGroupMember member : members)
-	// {
-	// Class<?> clazz = parent.getClass();
-	// if (clazz.equals(Address.class))
-	// {
-	// if (member.getAddress().getId().equals(parent.getId()))
-	// {
-	// this.current.put(addressGroup.getId(), member);
-	// break;
-	// }
-	// }
-	// else if (clazz.equals(LinkPersonAddress.class))
-	// {
-	// if (member.getLink() != null &&
-	// member.getLink().getId().equals(parent.getId()))
-	// {
-	// this.current.put(addressGroup.getId(), member);
-	// break;
-	// }
-	// }
-	// }
-	// }
-	// }
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -697,47 +618,6 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		}
 		monitor.checked = checked;
 	}
-
-	// private class AddressGroupContainerCheckedTreeViewer extends
-	// ContainerCheckedTreeViewer
-	// {
-	//
-	// public AddressGroupContainerCheckedTreeViewer(final Tree tree)
-	// {
-	// super(tree);
-	// }
-	//
-	// /*
-	// * (non-Javadoc) Method declared on StructuredViewer.
-	// */
-	// @Override
-	// protected void handleSelect(final SelectionEvent event)
-	// {
-	// if (event.detail == SWT.CHECK)
-	// {
-	// TreeItem item = (TreeItem) event.item;
-	// Object data = item.getData();
-	// if (data instanceof AddressGroup)
-	// {
-	// super.handleSelect(event);
-	// if (data != null)
-	// {
-	// fireCheckStateChanged(new CheckStateChangedEvent(this, data,
-	// item.getChecked()));
-	// }
-	// }
-	// else
-	// {
-	// event.doit = false;
-	// }
-	// }
-	// else
-	// {
-	// super.handleSelect(event);
-	// }
-	// }
-	//
-	// }
 
 	private class Monitor
 	{
