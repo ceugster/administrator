@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.eugster.events.utilities.console.feature"
+      label="Modul Konsole"
+      version="1.0.0.qualifier"
+      provider-name="Christian. Eugster">
+
+   <description>
+      Modul Konsole
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import plugin="ch.eugster.events.persistence" version="1.0.0" match="compatible"/>
+      <import plugin="org.eclipse.osgi"/>
+   </requires>
+
+   <plugin
+         id="ch.eugster.events.utilities.console"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
