@@ -1323,6 +1323,9 @@ ch.eugster.events.report/icons/zoomplus.gif -text
 ch.eugster.events.report/icons/zoomplusd.gif -text
 ch.eugster.events.report/labels/Avery[!!-~]Zweckform[!!-~]3422[!!-~]3x8.jrxml -text
 ch.eugster.events.report/labels/Endisch[!!-~]A4[!!-~]3x11.jrxml -text
+ch.eugster.events.report/lib/jasperreports-4.8.0.jar -text
+ch.eugster.events.report/lib/jdt-compiler-3.1.1-LICENSE.html -text svneol=unset#text/plain
+ch.eugster.events.report/lib/jdt-compiler-3.1.1.jar -text
 ch.eugster.events.report/src/ch/eugster/events/report/Activator.java -text
 ch.eugster.events.report/src/ch/eugster/events/report/dialogs/LabelSelectionDialog.java -text
 ch.eugster.events.report/src/ch/eugster/events/report/engine/ReportService.java -text
