@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Documents Test Bundle
+Bundle-SymbolicName: ch.eugster.events.documents.test
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Christian Eugster
+Fragment-Host: ch.eugster.events.documents;bundle-version="1.0.2"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

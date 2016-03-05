@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: UI Plugin
+Bundle-SymbolicName: ch.eugster.events.ui;singleton:=true
+Bundle-Version: 1.0.3.qualifier
+Bundle-Activator: ch.eugster.events.ui.Activator
+Bundle-Vendor: Christian Eugster
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: ch.eugster.events.ui,
+ ch.eugster.events.ui.actions,
+ ch.eugster.events.ui.dialogs,
+ ch.eugster.events.ui.dnd,
+ ch.eugster.events.ui.editors,
+ ch.eugster.events.ui.handlers,
+ ch.eugster.events.ui.helpers,
+ ch.eugster.events.ui.sorters,
+ ch.eugster.events.ui.views,
+ ch.eugster.events.ui.wizards
+Bundle-ClassPath: .
+Import-Package: ch.eugster.events.persistence.events,
+ ch.eugster.events.persistence.exceptions,
+ ch.eugster.events.persistence.model,
+ ch.eugster.events.persistence.queries,
+ ch.eugster.events.persistence.service
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
+ org.eclipse.ui;bundle-version="3.6.2",
+ org.eclipse.core.expressions;bundle-version="3.4.200",
+ org.eclipse.ui.views;bundle-version="3.5.1",
+ org.eclipse.ui.forms;bundle-version="3.5.2"

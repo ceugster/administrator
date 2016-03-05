@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Course Reporting Plugin
+Bundle-SymbolicName: ch.eugster.events.course.reporting;singleton:=true
+Bundle-Version: 1.0.8.qualifier
+Bundle-Activator: ch.eugster.events.course.reporting.Activator
+Bundle-Vendor: Christian Eugster
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Import-Package: ch.eugster.events.documents.maps,
+ ch.eugster.events.documents.services,
+ ch.eugster.events.persistence.formatters,
+ ch.eugster.events.persistence.model,
+ ch.eugster.events.persistence.queries,
+ ch.eugster.events.persistence.service,
+ ch.eugster.events.person.editors,
+ ch.eugster.events.report.engine,
+ ch.eugster.events.report.entries,
+ ch.eugster.events.ui.actions,
+ ch.eugster.events.ui.dialogs,
+ ch.eugster.events.ui.dnd,
+ ch.eugster.events.ui.editors,
+ ch.eugster.events.ui.helpers,
+ ch.eugster.events.ui.sorters,
+ ch.eugster.events.ui.views,
+ ch.eugster.events.ui.wizards
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
+ org.eclipse.ui;bundle-version="3.6.2",
+ org.eclipse.core.expressions;bundle-version="3.4.200"
