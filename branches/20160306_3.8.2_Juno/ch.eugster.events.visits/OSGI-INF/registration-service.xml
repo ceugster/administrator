@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="ch.eugster.events.visits.registration">
+   <implementation class="ch.eugster.events.visits.RegistrationServiceComponent"/>
+   <service>
+      <provide interface="ch.eugster.events.visits.service.RegistrationService"/>
+   </service>
+   <reference bind="setConnectionService" cardinality="1..1" interface="ch.eugster.events.persistence.service.ConnectionService" name="ConnectionService" policy="static" unbind="unsetConnectionService"/>
+</scr:component>
