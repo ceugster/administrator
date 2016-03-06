@@ -35,8 +35,6 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 //
 //	private int brokeOff;
 
-	private int notParticipated;
-
 	private double amount;
 
 	private double payed;
@@ -187,7 +185,6 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 				else if (booking.getBookingState(CourseState.FORTHCOMING).equals(
 						BookingForthcomingState.BOOKING_CANCELED))
 				{
-					notParticipated += booking.getParticipantCount();
 				}
 			}
 			else if (course.getState().equals(CourseState.ANNULATED))

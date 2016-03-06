@@ -12,7 +12,6 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 
-import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.Participant;

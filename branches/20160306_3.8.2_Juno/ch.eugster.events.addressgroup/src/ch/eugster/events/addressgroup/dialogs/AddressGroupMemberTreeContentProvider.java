@@ -16,12 +16,12 @@ public class AddressGroupMemberTreeContentProvider implements ITreeContentProvid
 {
 	private ConnectionService connectionService;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	public AddressGroupMemberTreeContentProvider()
 	{
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		connectionServiceTracker.open();
 		connectionService = (ConnectionService) connectionServiceTracker.getService();
 	}

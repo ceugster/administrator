@@ -104,11 +104,11 @@ public class AddressListDialog extends TitleAreaDialog
 	private IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap[] dataMaps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
-		final ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				DocumentBuilderService.class.getName(), null);
+		final ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
+				DocumentBuilderService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			Object[] services = tracker.getServices();
 			for (Object service : services)
 			{
@@ -445,16 +445,22 @@ public class AddressListDialog extends TitleAreaDialog
 
 	private void setCurrentUser()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			UserQuery query = (UserQuery) service.getQuery(User.class);
-			User.setCurrent(query.merge(User.getCurrent()));
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				UserQuery query = (UserQuery) service.getQuery(User.class);
+				User.setCurrent(query.merge(User.getCurrent()));
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 	}
 
 	@Override
