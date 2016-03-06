@@ -5,7 +5,7 @@ Bundle-SymbolicName: ch.eugster.events.documents.odfdom;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: ch.eugster.events.documents.odfdom.internal.Activator
 Bundle-Vendor: Christian Eugster
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/simple-odf-0.8.1-incubating.jar,
  lib/odfdom-java-0.8.10-incubating.jar,

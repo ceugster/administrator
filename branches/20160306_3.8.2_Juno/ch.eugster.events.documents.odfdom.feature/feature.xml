@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ch.eugster.events.documents.odfdom.feature"
-      label="Open Document Module"
+      label="Modul Open Document Format (ODF)"
       version="1.0.0.qualifier"
       provider-name="Christian Eugster">
 

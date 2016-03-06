@@ -238,7 +238,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 	{
 		IStatus status = Status.OK_STATUS;
 
-		IPreferenceStore store = new ScopedPreferenceStore(new InstanceScope(), Activator.getDefault().getBundle()
+		IPreferenceStore store = new ScopedPreferenceStore(InstanceScope.INSTANCE, Activator.getDefault().getBundle()
 				.getSymbolicName());
 		String path = store.getString(PreferenceConstants.KEY_SPREADSHEET_PATH);
 
