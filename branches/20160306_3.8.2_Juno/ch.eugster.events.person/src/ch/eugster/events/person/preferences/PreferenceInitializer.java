@@ -47,7 +47,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 	@Override
 	public void initializeDefaultPreferences()
 	{
-		IEclipsePreferences prefs = new InstanceScope().getNode(Activator.PLUGIN_ID);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 		prefs.put(KEY_ID_FORMAT, PersonSettings.getInstance().getIdFormat());
 		String label = PersonSettings.getInstance().getPersonLabelFormat();
 		label = label.isEmpty() ? PersonFormatter.getInstance().createVisiblePersonLabel() : PersonFormatter

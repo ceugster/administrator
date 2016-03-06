@@ -20,7 +20,6 @@ package ch.eugster.events.report.internal.viewer.actions;
 
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.custom.BusyIndicator;
 
 import ch.eugster.events.report.internal.viewer.IReportViewer;
@@ -46,7 +45,6 @@ public abstract class AbstractReportViewerAction extends Action implements
 	 *            the report viewer
 	 */
 	public AbstractReportViewerAction(IReportViewer viewer) {
-		Assert.isNotNull(viewer);
 		this.reportViewer = viewer;
 		viewer.addReportViewerListener(this);
 		setEnabled(calculateEnabled());
@@ -65,7 +63,6 @@ public abstract class AbstractReportViewerAction extends Action implements
 	 */
 	public AbstractReportViewerAction(IReportViewer viewer, int style) {
 		super(null, style);
-		Assert.isNotNull(viewer);
 		this.reportViewer = viewer;
 		viewer.addReportViewerListener(this);
 		setEnabled(calculateEnabled());

@@ -186,8 +186,8 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 
 	private void addExtendedFields(final Composite parent, FormToolkit toolkit, int numColumns)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
 		try
 		{
@@ -636,8 +636,8 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 		createIdentitySectionPart(managedForm, "Identität", "", 2);
 		createContactsSectionPart(managedForm, "Kontakt", "", 3);
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
 		try
 		{
@@ -774,12 +774,18 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 				}
 			});
 
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
 			tracker.open();
-			ConnectionService service = (ConnectionService) tracker.getService();
-			this.domainViewer.setInput(service);
-			tracker.close();
+			try
+			{
+				ConnectionService service = (ConnectionService) tracker.getService();
+				this.domainViewer.setInput(service);
+			}
+			finally
+			{
+				tracker.close();
+			}
 		}
 
 		toolkit.paintBordersFor(client);
@@ -813,17 +819,23 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 		this.sexRadioGroupViewer.setContentProvider(new ArrayContentProvider());
 		this.sexRadioGroupViewer.setLabelProvider(new PersonSexLabelProvider());
 		this.sexRadioGroupViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			PersonSexQuery query = (PersonSexQuery) service.getQuery(PersonSex.class);
-			List<PersonSex> sexes = query.selectAll();
-			this.sexRadioGroupViewer.setInput(sexes.toArray(new PersonSex[0]));
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				PersonSexQuery query = (PersonSexQuery) service.getQuery(PersonSex.class);
+				List<PersonSex> sexes = query.selectAll();
+				this.sexRadioGroupViewer.setInput(sexes.toArray(new PersonSex[0]));
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		Control[] controls = this.sexRadioGroupViewer.getRadioGroup().getChildren();
 		for (Control control : controls)
 		{
@@ -1063,16 +1075,22 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 	private AddressType[] getAddressTypes()
 	{
 		List<AddressType> addressTypes = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
-			addressTypes = query.selectAll(false);
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
+				addressTypes = query.selectAll(false);
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return addressTypes == null ? new AddressType[0] : addressTypes.toArray(new AddressType[0]);
 	}
 
@@ -1448,50 +1466,67 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 	private Domain[] selectDomains()
 	{
 		List<Domain> domains = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
-			domains = query.selectAll();
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
+				domains = query.selectAll();
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return domains == null ? new Domain[0] : domains.toArray(new Domain[0]);
 	}
 
 	private PersonTitle[] selectPersonTitles()
 	{
 		List<PersonTitle> titles = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			PersonTitleQuery query = (PersonTitleQuery) service.getQuery(PersonTitle.class);
-			titles = query.selectAll(false);
-			titles.add(PersonTitle.newInstance());
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				PersonTitleQuery query = (PersonTitleQuery) service.getQuery(PersonTitle.class);
+				titles = query.selectAll(false);
+				titles.add(PersonTitle.newInstance());
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return titles == null ? new PersonTitle[0] : titles.toArray(new PersonTitle[0]);
 	}
 
 	private Country[] selectPrefixes()
 	{
 		List<Country> prefixes = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			CountryQuery query = (CountryQuery) service.getQuery(Country.class);
-			prefixes = query.selectPrefixes();
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				CountryQuery query = (CountryQuery) service.getQuery(Country.class);
+				prefixes = query.selectPrefixes();
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return prefixes == null ? new Country[0] : prefixes.toArray(new Country[0]);
 	}
 

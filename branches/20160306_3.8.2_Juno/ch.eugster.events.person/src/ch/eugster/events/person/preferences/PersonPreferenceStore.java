@@ -17,7 +17,7 @@ public class PersonPreferenceStore extends ScopedPreferenceStore
 
 	private PersonPreferenceStore()
 	{
-		super(new InstanceScope(), Activator.PLUGIN_ID);
+		super(InstanceScope.INSTANCE, Activator.PLUGIN_ID);
 		this.setValue(PreferenceInitializer.KEY_ID_FORMAT, PersonSettings.getInstance().getIdFormat());
 		this.setValue(PreferenceInitializer.KEY_PERSON_LABEL_FORMAT, PersonFormatter.getInstance()
 				.convertPersonLabelToVisible(PersonSettings.getInstance().getPersonLabelFormat()));
@@ -57,17 +57,24 @@ public class PersonPreferenceStore extends ScopedPreferenceStore
 					this.getBoolean(PreferenceInitializer.KEY_EDITOR_ADD_BLANK_AFTER_DOT_IN_CITY));
 			try
 			{
-				ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-						ConnectionService.class.getName(), null);
+				ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+						ConnectionService.class, null);
 				tracker.open();
-				ConnectionService service = (ConnectionService) tracker.getService();
-				if (service != null)
+				try
 				{
-					PersonSettingsQuery query = (PersonSettingsQuery) service.getQuery(PersonSettings.class);
-					PersonSettings.setInstance(query.merge(PersonSettings.getInstance()));
+					ConnectionService service = (ConnectionService) tracker.getService();
+					if (service != null)
+					{
+						PersonSettingsQuery query = (PersonSettingsQuery) service.getQuery(PersonSettings.class);
+						PersonSettings.setInstance(query.merge(PersonSettings.getInstance()));
+					}
+	
+					super.save();
 				}
-
-				super.save();
+				finally
+				{
+					tracker.close();
+				}
 			}
 			catch (Exception e)
 			{

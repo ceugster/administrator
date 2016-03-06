@@ -2,59 +2,20 @@ package ch.eugster.events.person.handlers;
 
 import java.util.Iterator;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.model.AddressSalutation;
 import ch.eugster.events.persistence.model.FieldExtension;
 import ch.eugster.events.persistence.queries.FieldExtensionQuery;
-import ch.eugster.events.persistence.service.ConnectionService;
-import ch.eugster.events.person.Activator;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 
-public class DeleteFieldExtensionHandler extends AbstractHandler implements IHandler
+public class DeleteFieldExtensionHandler extends ConnectionServiceDependentAbstractHandler
 {
-	private ServiceTracker connectionServiceTracker;
-
-	private ConnectionService connectionService;
-
-	public DeleteFieldExtensionHandler()
-	{
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
-		{
-			@Override
-			public Object addingService(final ServiceReference reference)
-			{
-				connectionService = (ConnectionService) super.addingService(reference);
-				setBaseEnabled(connectionService != null);
-				return connectionService;
-			}
-
-			@Override
-			public void removedService(final ServiceReference reference, final Object service)
-			{
-				connectionService = null;
-				setBaseEnabled(false);
-				super.removedService(reference, service);
-			}
-		};
-		connectionServiceTracker.open();
-	}
-
-	@Override
-	public void dispose()
-	{
-		connectionServiceTracker.close();
-	}
-
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{

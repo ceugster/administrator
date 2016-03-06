@@ -42,7 +42,7 @@ public class FieldExtensionView extends AbstractEntityView implements IDoubleCli
 {
 	private TableViewer viewer;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private IContextActivation ctxActivation;
 
@@ -132,11 +132,11 @@ public class FieldExtensionView extends AbstractEntityView implements IDoubleCli
 
 		getSite().setSelectionProvider(viewer);
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
 		{
 			@Override
-			public Object addingService(final ServiceReference reference)
+			public ConnectionService addingService(final ServiceReference<ConnectionService> reference)
 			{
 				final ConnectionService connectionService = (ConnectionService) super.addingService(reference);
 				Display display = Display.getCurrent();
@@ -157,7 +157,7 @@ public class FieldExtensionView extends AbstractEntityView implements IDoubleCli
 			}
 
 			@Override
-			public void removedService(final ServiceReference reference, final Object service)
+			public void removedService(final ServiceReference<ConnectionService> reference, final ConnectionService service)
 			{
 				Display display = Display.getCurrent();
 				if (display == null)

@@ -77,8 +77,8 @@ public class SelectPersonDialog extends TitleAreaDialog implements ISelectionCha
 
 	private boolean isPageComplete = false;
 
-	private ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-			ConnectionService.class.getName(), null);
+	private ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+			ConnectionService.class, null);
 
 	private ConnectionService connectionService;
 	
@@ -89,7 +89,7 @@ public class SelectPersonDialog extends TitleAreaDialog implements ISelectionCha
 		this.importValues = importValues;
 		this.membership = membership;
 
-		tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
+		tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class, null);
 		tracker.open();
 		connectionService = (ConnectionService) tracker.getService();
 		
