@@ -596,7 +596,6 @@ ch.eugster.events.documents.xml/src/ch/eugster/events/documents/xml/internal/Act
 ch.eugster.events.documents.xml/src/ch/eugster/events/documents/xml/internal/services/XmlDocumentBuilderService.java -text
 ch.eugster.events.documents/.classpath -text
 ch.eugster.events.documents/.project -text
-ch.eugster.events.documents/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.documents/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.documents/META-INF/MANIFEST.MF -text
 ch.eugster.events.documents/build.properties -text

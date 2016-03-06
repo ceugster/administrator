@@ -48,21 +48,27 @@ public class PersonMap extends AbstractDataMap
 	public static List<DataMapKey> getExtendedFieldKeys()
 	{
 		List<DataMapKey> keys = new ArrayList<DataMapKey>();
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		Object service = tracker.getService();
-		if (service instanceof ConnectionService)
+		try
 		{
-			ConnectionService connectionService = (ConnectionService) service;
-			FieldExtensionQuery query = (FieldExtensionQuery) connectionService.getQuery(FieldExtension.class);
-			List<FieldExtension> fieldExtensions = query.selectByTarget(FieldExtensionTarget.PERSON, false);
-			for (FieldExtension fieldExtension : fieldExtensions)
+			Object service = tracker.getService();
+			if (service instanceof ConnectionService)
 			{
-				keys.add(new ExtendedFieldKey(fieldExtension));
+				ConnectionService connectionService = (ConnectionService) service;
+				FieldExtensionQuery query = (FieldExtensionQuery) connectionService.getQuery(FieldExtension.class);
+				List<FieldExtension> fieldExtensions = query.selectByTarget(FieldExtensionTarget.PERSON, false);
+				for (FieldExtension fieldExtension : fieldExtensions)
+				{
+					keys.add(new ExtendedFieldKey(fieldExtension));
+				}
 			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return keys;
 	}
 
