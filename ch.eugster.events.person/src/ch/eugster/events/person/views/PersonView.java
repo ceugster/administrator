@@ -900,18 +900,18 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 	{
 		IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
 		ctxService.deactivateContext(ctxActivation);
-		deletedColor.dispose();
-		searcher.dispose();
+		if (deletedColor != null) deletedColor.dispose();
+		if (searcher != null) searcher.dispose();
 		super.dispose();
 	}
 
 	private Address refreshEntity(Address address)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ConnectionService service = (ConnectionService) tracker.getService();
 			address = (Address) service.refresh(address);
 		}
@@ -924,11 +924,11 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 
 	private LinkPersonAddress refreshEntity(LinkPersonAddress link)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ConnectionService service = (ConnectionService) tracker.getService();
 			link = (LinkPersonAddress) service.refresh(link);
 		}

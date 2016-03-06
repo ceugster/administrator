@@ -91,8 +91,6 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 	
 	private Button generateList;
 
-	private Button buildList;
-
 	private ComboViewer purposeViewer;
 
 	private ComboViewer domainViewer;
@@ -109,7 +107,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 
 	private static NumberFormat nf;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private ConnectionService connectionService;
 
@@ -492,11 +490,11 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 
 		this.getSite().setSelectionProvider(donationViewer);
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
 		{
 			@Override
-			public Object addingService(final ServiceReference reference)
+			public ConnectionService addingService(final ServiceReference<ConnectionService> reference)
 			{
 				connectionService = (ConnectionService) super.addingService(reference);
 				UIJob job = new UIJob("")
@@ -542,7 +540,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 			}
 
 			@Override
-			public void removedService(final ServiceReference reference, final Object service)
+			public void removedService(final ServiceReference<ConnectionService> reference, final ConnectionService service)
 			{
 				connectionService = null;
 				Display display = Display.getCurrent();

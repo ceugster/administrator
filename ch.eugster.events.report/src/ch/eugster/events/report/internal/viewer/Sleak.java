@@ -105,6 +105,7 @@ public void open () {
 	shell.open ();
 }
 
+@SuppressWarnings("unused")
 void refreshLabel () {
 	int colors = 0, cursors = 0, fonts = 0, gcs = 0, images = 0, regions = 0;
 	for (int i=0; i<objects.length; i++) {
@@ -170,8 +171,10 @@ void refreshDifference () {
 	layout ();
 }
 
+@SuppressWarnings("unchecked")
 private Object[] findObjects(DeviceData info) {
-    java.util.List objects = new ArrayList();
+    @SuppressWarnings("rawtypes")
+	java.util.List objects = new ArrayList();
     for (int i = 0; i < info.objects.length; i++) {
         objects.add(info.objects[i]);
     }
@@ -182,7 +185,8 @@ private Object[] findObjects(DeviceData info) {
     return objects.toArray();
 }
 
-private void findWidgets(java.util.List objects, Widget widget) {
+@SuppressWarnings("unchecked")
+private void findWidgets(@SuppressWarnings("rawtypes") java.util.List objects, Widget widget) {
     objects.add(widget);
     if(widget instanceof Composite) {
         Composite comp = (Composite) widget;
@@ -303,7 +307,6 @@ void refreshAll () {
 
 void layout () {
 	Rectangle rect = shell.getClientArea ();
-	String [] strings = new String [objects.length];
 	int width = 0;
 	String [] items = list.getItems ();
 	GC gc = new GC (list);

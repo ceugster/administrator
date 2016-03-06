@@ -1047,16 +1047,22 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	private ZipCode findZipCode(final Country country, final String zip)
 	{
 		List<ZipCode> zipCodes = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
-			zipCodes = query.selectByCountryAndZipCode(country, zip);
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
+				zipCodes = query.selectByCountryAndZipCode(country, zip);
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		if (zipCodes.iterator().hasNext())
 		{
 			return zipCodes.iterator().next();
@@ -1357,48 +1363,66 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	private Country[] selectCountries()
 	{
 		List<Country> countries = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			CountryQuery query = (CountryQuery) service.getQuery(Country.class);
-			countries = query.selectVisibles();
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				CountryQuery query = (CountryQuery) service.getQuery(Country.class);
+				countries = query.selectVisibles();
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return countries == null ? new Country[0] : countries.toArray(new Country[0]);
 	}
 
 	private String[] selectProvinceCodes(final Country country)
 	{
 		List<String> states = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
-			states = query.selectStates(country);
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
+				states = query.selectStates(country);
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return states == null ? new String[0] : states.toArray(new String[0]);
 	}
 
 	private AddressSalutation[] selectSalutations()
 	{
 		List<AddressSalutation> salutations = new ArrayList<AddressSalutation>();
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			AddressSalutationQuery query = (AddressSalutationQuery) service.getQuery(AddressSalutation.class);
-			salutations = query.selectAll();
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				AddressSalutationQuery query = (AddressSalutationQuery) service.getQuery(AddressSalutation.class);
+				salutations = query.selectAll();
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return salutations == null ? new AddressSalutation[0] : salutations.toArray(new AddressSalutation[0]);
 	}
 

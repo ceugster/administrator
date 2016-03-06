@@ -41,8 +41,6 @@ import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -103,7 +101,7 @@ public class TodoView extends AbstractEntityView implements EventHandler
 
 	private IContextActivation ctxActivation;
 
-	private ServiceRegistration eventHandlerRegistration;
+	private ServiceRegistration<EventHandler> eventHandlerRegistration;
 	
 	private boolean showTodoDone;
 	
@@ -266,7 +264,7 @@ public class TodoView extends AbstractEntityView implements EventHandler
 		table.setHeaderVisible(true);
 
 		this.viewer = new CheckboxTableViewer(table);
-		this.viewer.setContentProvider(new TodoEntryContentProvider());
+		this.viewer.setContentProvider(new ArrayContentProvider());
 		this.viewer.setSorter(new ViewerSorter() 
 		{
 			public int compare(Viewer viewer, Object o1, Object o2)
@@ -425,7 +423,7 @@ public class TodoView extends AbstractEntityView implements EventHandler
 		
 		Dictionary<String, String> properties = new Hashtable<String, String>();
 		properties.put(EventConstants.EVENT_TOPIC, "ch/eugster/events/persistence/merge");		
-		eventHandlerRegistration = Activator.getDefault().getBundle().getBundleContext().registerService(EventHandler.class.getName(), this, properties);
+		eventHandlerRegistration = Activator.getDefault().getBundle().getBundleContext().registerService(EventHandler.class, this, properties);
 
 		this.reloadTodoList();
 	}
@@ -615,7 +613,7 @@ public class TodoView extends AbstractEntityView implements EventHandler
 		List<TodoEntry> entries = new ArrayList<TodoEntry>(); 
 		Calendar startDate = getStart();
 		Calendar endDate = getEnd();
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), TodoCollectorService.class.getName(), null);
+		ServiceTracker<TodoCollectorService, TodoCollectorService> tracker = new ServiceTracker<TodoCollectorService, TodoCollectorService>(Activator.getDefault().getBundle().getBundleContext(), TodoCollectorService.class, null);
 		tracker.open();
 		try
 		{
@@ -657,8 +655,8 @@ public class TodoView extends AbstractEntityView implements EventHandler
 			public IStatus runInUIThread(final IProgressMonitor monitor)
 			{
 				IStatus status = Status.OK_STATUS;
-				final ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-						DocumentBuilderService.class.getName(), null);
+				final ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
+						DocumentBuilderService.class, null);
 				try
 				{
 					tracker.open();
@@ -708,14 +706,5 @@ public class TodoView extends AbstractEntityView implements EventHandler
 				reloadTodoList();
 			}
 		}
-	}
-
-	private class TodoEntryContentProvider extends ArrayContentProvider
-	{
-	}
-
-	private long calculateDifference(long timeInMillis1, long timeInMillis2)
-	{
-		return timeInMillis1 - timeInMillis2;
 	}
 }

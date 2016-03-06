@@ -1,16 +1,12 @@
 package ch.eugster.events.merge.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.TableItem;
-import org.osgi.util.tracker.ServiceTracker;
 
-import ch.eugster.events.merge.Activator;
 import ch.eugster.events.merge.views.PersonView;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressGroupMember;
@@ -20,11 +16,10 @@ import ch.eugster.events.persistence.model.Member;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.queries.AddressQuery;
 import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
-import ch.eugster.events.persistence.service.ConnectionService;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 
-public class SetToAddressHandler extends AbstractHandler implements IHandler
+public class SetToAddressHandler extends ConnectionServiceDependentAbstractHandler
 {
-
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
@@ -39,19 +34,6 @@ public class SetToAddressHandler extends AbstractHandler implements IHandler
 		}
 		return null;
 	}
-
-//	private boolean exists(final LinkPersonAddress selectedLink, final AddressGroupMember member)
-//	{
-//		LinkPersonAddress[] links = selectedLink.getPerson().getLinks().toArray(new LinkPersonAddress[0]);
-//		for (LinkPersonAddress link : links)
-//		{
-//			if (link.getAddressGroupMembers().contains(member))
-//			{
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
 
 	@Override
 	public boolean isEnabled()
@@ -104,13 +86,9 @@ public class SetToAddressHandler extends AbstractHandler implements IHandler
 						participant.setDeleted(true);
 					}
 
-					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-							ConnectionService.class.getName(), null);
-					tracker.open();
-					ConnectionService service = (ConnectionService) tracker.getService();
-					if (service != null)
+					if (connectionService != null)
 					{
-						LinkPersonAddressQuery query = (LinkPersonAddressQuery) service
+						LinkPersonAddressQuery query = (LinkPersonAddressQuery) connectionService
 								.getQuery(LinkPersonAddress.class);
 						if (selectedLink.getPerson().getValidLinks().size() == 1)
 						{
@@ -120,10 +98,9 @@ public class SetToAddressHandler extends AbstractHandler implements IHandler
 						selectedLink.getAddress().setDeleted(false);
 						selectedLink.getAddress().removeLink(selectedLink);
 						selectedLink = query.merge(selectedLink);
-						AddressQuery addressQuery = (AddressQuery) service.getQuery(Address.class);
+						AddressQuery addressQuery = (AddressQuery) connectionService.getQuery(Address.class);
 						addressQuery.merge(selectedLink.getAddress());
 					}
-					tracker.close();
 				}
 
 			}

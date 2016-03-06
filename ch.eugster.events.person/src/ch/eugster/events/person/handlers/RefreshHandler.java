@@ -2,14 +2,11 @@ package ch.eugster.events.person.handlers;
 
 import java.util.Iterator;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
@@ -18,31 +15,11 @@ import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.queries.AddressQuery;
 import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
 import ch.eugster.events.persistence.queries.PersonQuery;
-import ch.eugster.events.persistence.service.ConnectionService;
-import ch.eugster.events.person.Activator;
 import ch.eugster.events.person.views.PersonView;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 
-public class RefreshHandler extends AbstractHandler implements IHandler
+public class RefreshHandler extends ConnectionServiceDependentAbstractHandler
 {
-	private ServiceTracker tracker;
-
-	private ConnectionService connectionService;
-
-	@Override
-	public void dispose()
-	{
-		tracker.close();
-		super.dispose();
-	}
-
-	public RefreshHandler()
-	{
-		tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		connectionService = (ConnectionService) tracker.getService();
-	}
-
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException
 	{
@@ -94,71 +71,56 @@ public class RefreshHandler extends AbstractHandler implements IHandler
 
 	private Person refresh(Person person)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		try
+		if (connectionService != null)
 		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			PersonQuery query = (PersonQuery) service.getQuery(Person.class);
-			return (Person) query.refresh(person);
+			try
+			{
+				PersonQuery query = (PersonQuery) connectionService.getQuery(Person.class);
+				return (Person) query.refresh(person);
+			}
+			catch (Exception e)
+			{
+				PersonQuery query = (PersonQuery) connectionService.getQuery(Person.class);
+				return query.find(Person.class, person.getId());
+			}
 		}
-		catch (Exception e)
-		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			PersonQuery query = (PersonQuery) service.getQuery(Person.class);
-			return query.find(Person.class, person.getId());
-		}
-		finally
-		{
-			tracker.close();
-		}
+		return null;
 	}
 
 	private Address refresh(Address address)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		try
+		if (connectionService != null)
 		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			AddressQuery query = (AddressQuery) service.getQuery(Address.class);
-			return (Address) query.refresh(address);
+			try
+			{
+				AddressQuery query = (AddressQuery) connectionService.getQuery(Address.class);
+				return (Address) query.refresh(address);
+			}
+			catch (Exception e)
+			{
+				AddressQuery query = (AddressQuery) connectionService.getQuery(Address.class);
+				return query.find(Address.class, address.getId());
+			}
 		}
-		catch (Exception e)
-		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			AddressQuery query = (AddressQuery) service.getQuery(Address.class);
-			return query.find(Address.class, address.getId());
-		}
-		finally
-		{
-			tracker.close();
-		}
+		return null;
 	}
 
 	private LinkPersonAddress refresh(LinkPersonAddress link)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		try
+		if (connectionService != null)
 		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			LinkPersonAddressQuery query = (LinkPersonAddressQuery) service.getQuery(LinkPersonAddress.class);
-			return (LinkPersonAddress) query.refresh(link);
+			try
+			{
+				LinkPersonAddressQuery query = (LinkPersonAddressQuery) connectionService.getQuery(LinkPersonAddress.class);
+				return (LinkPersonAddress) query.refresh(link);
+			}
+			catch (Exception e)
+			{
+				LinkPersonAddressQuery query = (LinkPersonAddressQuery) connectionService.getQuery(LinkPersonAddress.class);
+				return query.find(LinkPersonAddress.class, link.getId());
+			}
 		}
-		catch (Exception e)
-		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			LinkPersonAddressQuery query = (LinkPersonAddressQuery) service.getQuery(LinkPersonAddress.class);
-			return query.find(LinkPersonAddress.class, link.getId());
-		}
-		finally
-		{
-			tracker.close();
-		}
+		return null;
 	}
 
 }

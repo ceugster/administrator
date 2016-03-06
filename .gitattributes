@@ -674,7 +674,6 @@ ch.eugster.events.donation.feature/build.properties -text
 ch.eugster.events.donation.feature/feature.xml -text
 ch.eugster.events.donation/.classpath -text
 ch.eugster.events.donation/.project -text
-ch.eugster.events.donation/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.donation/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.donation/META-INF/MANIFEST.MF -text
 ch.eugster.events.donation/build.properties -text
@@ -775,7 +774,6 @@ ch.eugster.events.import.feature/build.properties -text
 ch.eugster.events.import.feature/feature.xml -text
 ch.eugster.events.import/.classpath -text
 ch.eugster.events.import/.project -text
-ch.eugster.events.import/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.import/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.import/META-INF/MANIFEST.MF -text
 ch.eugster.events.import/build.properties -text
@@ -795,7 +793,6 @@ ch.eugster.events.member.feature/build.properties -text
 ch.eugster.events.member.feature/feature.xml -text
 ch.eugster.events.member/.classpath -text
 ch.eugster.events.member/.project -text
-ch.eugster.events.member/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.member/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.member/META-INF/MANIFEST.MF -text
 ch.eugster.events.member/build.properties -text
@@ -838,7 +835,6 @@ ch.eugster.events.merge.feature/build.properties -text
 ch.eugster.events.merge.feature/feature.xml -text
 ch.eugster.events.merge/.classpath -text
 ch.eugster.events.merge/.project -text
-ch.eugster.events.merge/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.merge/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.merge/META-INF/MANIFEST.MF -text
 ch.eugster.events.merge/build.properties -text
@@ -868,7 +864,6 @@ ch.eugster.events.persistence.feature/build.properties -text
 ch.eugster.events.persistence.feature/feature.xml -text
 ch.eugster.events.persistence/.classpath -text
 ch.eugster.events.persistence/.project -text
-ch.eugster.events.persistence/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.persistence/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.persistence/META-INF/MANIFEST.MF -text
 ch.eugster.events.persistence/META-INF/persistence.xml -text
@@ -1063,7 +1058,6 @@ ch.eugster.events.person.feature/build.properties -text
 ch.eugster.events.person.feature/feature.xml -text
 ch.eugster.events.person/.classpath -text
 ch.eugster.events.person/.project -text
-ch.eugster.events.person/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.person/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.person/META-INF/MANIFEST.MF -text
 ch.eugster.events.person/build.properties -text
@@ -1253,7 +1247,6 @@ ch.eugster.events.person/src/org/iban4j/bban/package-info.java -text
 ch.eugster.events.person/src/org/iban4j/package-info.java -text
 ch.eugster.events.report.commons/.classpath -text
 ch.eugster.events.report.commons/.project -text
-ch.eugster.events.report.commons/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.report.commons/META-INF/MANIFEST.MF -text
 ch.eugster.events.report.commons/build.properties -text
 ch.eugster.events.report.commons/lib/commons-LICENSE.txt -text
@@ -1269,7 +1262,6 @@ ch.eugster.events.report.feature/build.properties -text
 ch.eugster.events.report.feature/feature.xml -text
 ch.eugster.events.report.pdf/.classpath -text
 ch.eugster.events.report.pdf/.project -text
-ch.eugster.events.report.pdf/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.report.pdf/META-INF/MANIFEST.MF -text
 ch.eugster.events.report.pdf/build.properties -text
 ch.eugster.events.report.pdf/lib/iText-2.1.7-LICENSE.txt -text
@@ -1277,7 +1269,6 @@ ch.eugster.events.report.pdf/lib/iText-2.1.7.js1.jar -text
 ch.eugster.events.report.pdf/src/ch/eugster/colibri/report/pdf/Activator.java -text
 ch.eugster.events.report.rhino/.classpath -text
 ch.eugster.events.report.rhino/.project -text
-ch.eugster.events.report.rhino/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.report.rhino/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.report.rhino/META-INF/MANIFEST.MF -text
 ch.eugster.events.report.rhino/build.properties -text
@@ -1287,7 +1278,6 @@ ch.eugster.events.report.rhino/src/ch/eugster/events/report/rhino/Activator.java
 ch.eugster.events.report/.classpath -text
 ch.eugster.events.report/.project -text
 ch.eugster.events.report/.settings/org.eclipse.core.resources.prefs -text
-ch.eugster.events.report/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.report/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.report/META-INF/MANIFEST.MF -text
 ch.eugster.events.report/build.properties -text
@@ -1434,7 +1424,6 @@ ch.eugster.events.todo.feature/build.properties -text
 ch.eugster.events.todo.feature/feature.xml -text
 ch.eugster.events.todo/.classpath -text
 ch.eugster.events.todo/.project -text
-ch.eugster.events.todo/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.todo/META-INF/MANIFEST.MF -text
 ch.eugster.events.todo/OSGI-INF/service-component.xml -text
 ch.eugster.events.todo/build.properties -text
@@ -1544,11 +1533,11 @@ ch.eugster.events.utilities.console.feature/build.properties -text
 ch.eugster.events.utilities.console.feature/feature.xml -text
 ch.eugster.events.utilities.console/.classpath -text
 ch.eugster.events.utilities.console/.project -text
-ch.eugster.events.utilities.console/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.utilities.console/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.utilities.console/META-INF/MANIFEST.MF -text
 ch.eugster.events.utilities.console/build.properties -text
 ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/Activator.java -text
+ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/database/manipulator/CopyAllTeachersToNewAddressGroup.java -text svneol=unset#text/plain
 ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/database/manipulator/DoubleAddressGroupMemberEntriesDeleter.java -text
 ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/database/manipulator/LawFolderUpdater.java -text
 ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/database/manipulator/PersonWithoutChildrenRemover.java -text

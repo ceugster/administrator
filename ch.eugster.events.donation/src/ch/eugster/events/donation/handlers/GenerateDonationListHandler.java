@@ -39,11 +39,11 @@ public class GenerateDonationListHandler extends AbstractHandler implements IHan
 	public void setEnabled(final Object object)
 	{
 		boolean enabled = false;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				DocumentBuilderService.class.getName(), null);
+		ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
+				DocumentBuilderService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			enabled = tracker.getServiceReferences().length > 0;
 			if (enabled)
 			{

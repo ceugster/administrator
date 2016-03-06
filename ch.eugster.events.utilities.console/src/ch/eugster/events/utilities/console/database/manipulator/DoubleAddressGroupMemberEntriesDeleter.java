@@ -1,7 +1,6 @@
 package ch.eugster.events.utilities.console.database.manipulator;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +28,7 @@ public class DoubleAddressGroupMemberEntriesDeleter implements CommandProvider
 
 	public void _deletedoubleaddressgroupmemberentries(final CommandInterpreter commandInterpreter)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getContext(), ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getContext(), ConnectionService.class, null);
 		tracker.open();
 		try
 		{

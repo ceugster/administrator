@@ -16,8 +16,6 @@ public class LabelEntry implements Comparable<LabelEntry>
 
 	private Person person;
 
-	private String label;
-
 	public LabelEntry()
 	{
 		super();
@@ -80,7 +78,6 @@ public class LabelEntry implements Comparable<LabelEntry>
 	private void loadData(final Address address)
 	{
 		this.address = address;
-		this.label = AddressFormatter.getInstance().createVisibleAddressLabel();
 
 	}
 
@@ -94,7 +91,6 @@ public class LabelEntry implements Comparable<LabelEntry>
 	{
 		this.link = link;
 		this.address = link.getAddress();
-		this.label = LinkPersonAddressFormatter.getInstance().getLabel(link);
 	}
 
 	private void loadData(final LinkPersonAddress link, final Person person)

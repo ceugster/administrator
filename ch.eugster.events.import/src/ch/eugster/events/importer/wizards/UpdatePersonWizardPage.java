@@ -13,7 +13,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IPageChangedListener;
-import org.eclipse.jface.dialogs.IconAndMessageDialog;
 import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
@@ -22,27 +21,21 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.Text;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.importer.Activator;
@@ -134,7 +127,7 @@ public class UpdatePersonWizardPage extends WizardPage implements IPageChangedLi
 		{
 			updateExisting = selectPage.isUpdateExisting();
 		}
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
 		tracker.open();
 		try
 		{
@@ -426,47 +419,47 @@ public class UpdatePersonWizardPage extends WizardPage implements IPageChangedLi
 		return MappingNames.getCellValue(cell).trim();
 	}
 	
-	private class ErrorMessageDialog extends IconAndMessageDialog
-	{
-		private String message;
-		
-		private Wizard wizard;
-		
-		public ErrorMessageDialog(Shell parentShell, String message, Wizard wizard) 
-		{
-			super(parentShell);
-			this.message = message;
-			this.wizard = wizard;
-		}
-
-		@Override
-		protected Image getImage()
-		{
-			return null;
-		}
-
-		@Override
-		protected Control createDialogArea(Composite parent) 
-		{
-			Composite composite = new Composite(parent, SWT.NONE);
-			composite.setLayout(new FillLayout());
-			composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-			
-			GridData gridData = new GridData(GridData.FILL_BOTH);
-			gridData.widthHint = 300;
-			gridData.heightHint = 150;
-
-			Text text = new Text(composite, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY | SWT.V_SCROLL);
-			text.setText(message);
-			return composite;
-		}
-
-		@Override
-		protected void buttonPressed(int buttonId) 
-		{
-			super.cancelPressed();
-			((WizardDialog) wizard.getContainer()).close();
-		}
-
-	}
+//	private class ErrorMessageDialog extends IconAndMessageDialog
+//	{
+//		private String message;
+//		
+//		private Wizard wizard;
+//		
+//		public ErrorMessageDialog(Shell parentShell, String message, Wizard wizard) 
+//		{
+//			super(parentShell);
+//			this.message = message;
+//			this.wizard = wizard;
+//		}
+//
+//		@Override
+//		protected Image getImage()
+//		{
+//			return null;
+//		}
+//
+//		@Override
+//		protected Control createDialogArea(Composite parent) 
+//		{
+//			Composite composite = new Composite(parent, SWT.NONE);
+//			composite.setLayout(new FillLayout());
+//			composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+//			
+//			GridData gridData = new GridData(GridData.FILL_BOTH);
+//			gridData.widthHint = 300;
+//			gridData.heightHint = 150;
+//
+//			Text text = new Text(composite, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY | SWT.V_SCROLL);
+//			text.setText(message);
+//			return composite;
+//		}
+//
+//		@Override
+//		protected void buttonPressed(int buttonId) 
+//		{
+//			super.cancelPressed();
+//			((WizardDialog) wizard.getContainer()).close();
+//		}
+//
+//	}
 }

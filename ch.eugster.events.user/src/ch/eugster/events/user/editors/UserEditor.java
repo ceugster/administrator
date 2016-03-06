@@ -182,20 +182,24 @@ public class UserEditor extends AbstractEntityEditor<User>
 			}
 		});
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
-			List<Domain> domains = query.selectAll();
-			domains.add(Domain.newInstance());
-			this.domainViewer.setInput(domains.toArray(new Domain[0]));
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
+				List<Domain> domains = query.selectAll();
+				domains.add(Domain.newInstance());
+				this.domainViewer.setInput(domains.toArray(new Domain[0]));
+			}
 		}
-
-		tracker.close();
-
+		finally
+		{
+			tracker.close();
+		}
 		label = this.formToolkit.createLabel(parent, "Mindestzahl Spalten im Editor");
 		label.setLayoutData(new GridData());
 
@@ -273,26 +277,30 @@ public class UserEditor extends AbstractEntityEditor<User>
 	{
 		Message msg = null;
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			UserEditorInput input = (UserEditorInput) this.getEditorInput();
-			User user = (User) input.getAdapter(User.class);
-			String code = this.username.getText();
-			UserQuery query = (UserQuery) service.getQuery(User.class);
-			if (!query.isUsernameUnique(code, user.getId()))
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				msg = new Message(this.username, "Ungültiger Benutzername");
-				msg.setMessage("Der gewählte Benutzername wird bereits verwendet.");
-				return msg;
+				UserEditorInput input = (UserEditorInput) this.getEditorInput();
+				User user = (User) input.getAdapter(User.class);
+				String code = this.username.getText();
+				UserQuery query = (UserQuery) service.getQuery(User.class);
+				if (!query.isUsernameUnique(code, user.getId()))
+				{
+					msg = new Message(this.username, "Ungültiger Benutzername");
+					msg.setMessage("Der gewählte Benutzername wird bereits verwendet.");
+					return msg;
+				}
 			}
 		}
-		tracker.close();
-
+		finally
+		{
+			tracker.close();
+		}
 		return msg;
 	}
 

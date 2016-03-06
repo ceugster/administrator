@@ -70,7 +70,7 @@ public class Activator extends AbstractUIPlugin
 
 	private FormColors formColors;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	/**
 	 * The constructor
@@ -81,7 +81,7 @@ public class Activator extends AbstractUIPlugin
 
 	public ConnectionService getConnectionService()
 	{
-		return (ConnectionService) connectionServiceTracker.getService();
+		return connectionServiceTracker.getService();
 	}
 
 	public FormColors getFormColors(final Display display)
@@ -149,8 +149,8 @@ public class Activator extends AbstractUIPlugin
 		super.start(context);
 		Activator.plugin = this;
 
-		this.connectionServiceTracker = new ServiceTracker(this.getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		this.connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(this.getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		this.connectionServiceTracker.open();
 
 	}

@@ -172,44 +172,50 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 		this.purposeViewer.setLabelProvider(new DonationPurposeLabelProvider());
 		this.purposeViewer.setSorter(new DonationPurposeSorter());
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		this.purposeViewer.setInput(service);
-		this.purposeViewer.addSelectionChangedListener(new ISelectionChangedListener()
+		try
 		{
-			@Override
-			public void selectionChanged(final SelectionChangedEvent event)
+			ConnectionService service = (ConnectionService) tracker.getService();
+			this.purposeViewer.setInput(service);
+			this.purposeViewer.addSelectionChangedListener(new ISelectionChangedListener()
 			{
-				DonationEditor.this.setDirty(true);
-			}
-		});
-
-		label = this.formToolkit.createLabel(composite, "Domäne");
-		label.setLayoutData(new GridData());
-
-		combo = new CCombo(composite, SWT.FLAT | SWT.READ_ONLY);
-		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		combo.addModifyListener(new ModifyListener()
+				@Override
+				public void selectionChanged(final SelectionChangedEvent event)
+				{
+					DonationEditor.this.setDirty(true);
+				}
+			});
+	
+			label = this.formToolkit.createLabel(composite, "Domäne");
+			label.setLayoutData(new GridData());
+	
+			combo = new CCombo(composite, SWT.FLAT | SWT.READ_ONLY);
+			combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+			combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			combo.addModifyListener(new ModifyListener()
+			{
+				@Override
+				public void modifyText(final ModifyEvent e)
+				{
+					DonationEditor.this.setDirty(true);
+				}
+	
+			});
+			this.formToolkit.adapt(combo);
+	
+			this.domainViewer = new ComboViewer(combo);
+			this.domainViewer.setContentProvider(new DonationDomainContentProvider());
+			this.domainViewer.setLabelProvider(new DonationDomainLabelProvider());
+			this.domainViewer.setSorter(new DonationDomainSorter());
+			this.domainViewer.setInput(service);
+		}
+		finally
 		{
-			@Override
-			public void modifyText(final ModifyEvent e)
-			{
-				DonationEditor.this.setDirty(true);
-			}
-
-		});
-		this.formToolkit.adapt(combo);
-
-		this.domainViewer = new ComboViewer(combo);
-		this.domainViewer.setContentProvider(new DonationDomainContentProvider());
-		this.domainViewer.setLabelProvider(new DonationDomainLabelProvider());
-		this.domainViewer.setSorter(new DonationDomainSorter());
-		this.domainViewer.setInput(service);
-		tracker.close();
-
+			tracker.close();
+		}
+		
 		this.purposeViewer.addSelectionChangedListener(new ISelectionChangedListener()
 		{
 			@Override

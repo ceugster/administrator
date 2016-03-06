@@ -37,14 +37,21 @@ public class DonationYear implements IEntity
 
 	public List<Donation> getDonations()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			DonationQuery query = (DonationQuery) service.getQuery(Donation.class);
-			return query.selectByYear(Integer.valueOf(year));
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				DonationQuery query = (DonationQuery) service.getQuery(Donation.class);
+				return query.selectByYear(Integer.valueOf(year));
+			}
+		}
+		finally
+		{
+			tracker.close();
 		}
 		return new ArrayList<Donation>();
 	}

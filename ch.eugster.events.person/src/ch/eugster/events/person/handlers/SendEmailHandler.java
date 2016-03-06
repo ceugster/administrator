@@ -37,43 +37,44 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 					if (element instanceof Person)
 					{
 						Person person = (Person) element;
-						if (!addresses.contains(person.getEmail()))
+						if (addEmail(addresses, person.getEmail()))
 						{
-							addresses.add(person.getEmail());
+							continue;
 						}
 						LinkPersonAddress[] links = person.getLinks().toArray(new LinkPersonAddress[0]);
 						for (LinkPersonAddress link : links)
 						{
-							if (!link.getEmail().isEmpty())
+							if (addEmail(addresses, link.getEmail()))
 							{
-								if (!addresses.contains(link.getEmail()))
-								{
-									addresses.add(link.getEmail());
-								}
+								continue;
 							}
 						}
-					}
-					if (element instanceof Address)
-					{
-						Address address = (Address) element;
-						if (!address.getEmail().isEmpty())
+						for (LinkPersonAddress link : links)
 						{
-							if (!addresses.contains(address.getEmail()))
-								addresses.add(address.getEmail());
+							if (addEmail(addresses, link.getAddress().getEmail()))
+							{
+								continue;
+							}
 						}
 					}
 					if (element instanceof LinkPersonAddress)
 					{
 						LinkPersonAddress link = (LinkPersonAddress) element;
-						if (!link.getPerson().getEmail().isEmpty())
+						if (addEmail(addresses, link.getEmail()))
 						{
-							if (!addresses.contains(link.getPerson().getEmail()))
-								addresses.add(link.getPerson().getEmail());
+							continue;
 						}
-						if (!link.getEmail().isEmpty())
+						if (addEmail(addresses, link.getAddress().getEmail()))
 						{
-							if (!addresses.contains(link.getEmail()))
-								addresses.add(link.getEmail());
+							continue;
+						}
+					}
+					if (element instanceof Address)
+					{
+						Address address = (Address) element;
+						if (addEmail(addresses, address.getEmail()))
+						{
+							continue;
 						}
 					}
 				}
@@ -90,4 +91,16 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 		return null;
 	}
 
+	private boolean addEmail(List<String> emails, String email)
+	{
+		if (EmailHelper.getInstance().isValidAddress(email))
+		{
+			if (!emails.contains(email))
+			{
+				emails.add(email);
+				return true;
+			}
+		}
+		return false;
+	}
 }

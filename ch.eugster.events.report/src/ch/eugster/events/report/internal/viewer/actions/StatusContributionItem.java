@@ -21,7 +21,6 @@ package ch.eugster.events.report.internal.viewer.actions;
 import java.text.MessageFormat;
 
 import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
@@ -58,7 +57,6 @@ public class StatusContributionItem extends ContributionItem implements IReportV
 	 */
 	public StatusContributionItem(final IReportViewer viewer)
 	{
-		Assert.isNotNull(viewer);
 		this.viewer = viewer;
 		this.viewer.addReportViewerListener(this);
 		refresh();
@@ -101,7 +99,6 @@ public class StatusContributionItem extends ContributionItem implements IReportV
 	@Override
 	public final void fill(final Menu parent, final int index)
 	{
-		Assert.isTrue(false, "Seitennummer kann nicht zu Menu hinzugefügt werden"); //$NON-NLS-1$
 	}
 
 	/**

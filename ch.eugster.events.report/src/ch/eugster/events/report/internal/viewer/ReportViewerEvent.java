@@ -29,6 +29,11 @@ import java.util.EventObject;
 public class ReportViewerEvent extends EventObject {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6373797967618152067L;
+
+	/**
 	 * Constructs the event with the specified event source
 	 * 
 	 * @param source

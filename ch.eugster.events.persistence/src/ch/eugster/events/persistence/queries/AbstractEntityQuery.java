@@ -139,7 +139,7 @@ public abstract class AbstractEntityQuery<T extends AbstractEntity>
 				}
 				else
 				{
-					ServiceTracker tracker = new ServiceTracker(ch.eugster.events.persistence.Activator.getDefault().getBundle().getBundleContext(), EventAdmin.class.getName(), null);
+					ServiceTracker<EventAdmin, EventAdmin> tracker = new ServiceTracker<EventAdmin, EventAdmin>(ch.eugster.events.persistence.Activator.getDefault().getBundle().getBundleContext(), EventAdmin.class, null);
 					tracker.open();
 					try
 					{

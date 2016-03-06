@@ -186,16 +186,23 @@ public class ContactDialog extends TitleAreaDialog
 
 	private Country[] getAvailableCountries()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service == null)
+		try
 		{
-			return new Country[0];
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service == null)
+			{
+				return new Country[0];
+			}
+			CountryQuery query = (CountryQuery) service.getQuery(Country.class);
+			return query.selectVisibles().toArray(new Country[0]);
 		}
-		CountryQuery query = (CountryQuery) service.getQuery(Country.class);
-		return query.selectVisibles().toArray(new Country[0]);
+		finally
+		{
+			tracker.close();
+		}
 	}
 
 	@Override

@@ -65,11 +65,11 @@ public class DonationListDialog extends TitleAreaDialog
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 				{
-					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-							DocumentBuilderService.class.getName(), null);
+					ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
+							DocumentBuilderService.class, null);
+					tracker.open();
 					try
 					{
-						tracker.open();
 						Object[] services = tracker.getServices();
 						if (services != null)
 						{
@@ -246,16 +246,22 @@ public class DonationListDialog extends TitleAreaDialog
 
 	private void setCurrentUser()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			UserQuery query = (UserQuery) service.getQuery(User.class);
-			User.setCurrent(query.merge(User.getCurrent()));
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				UserQuery query = (UserQuery) service.getQuery(User.class);
+				User.setCurrent(query.merge(User.getCurrent()));
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 	}
 
 	@Override

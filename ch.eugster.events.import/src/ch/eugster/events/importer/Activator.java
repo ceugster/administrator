@@ -15,7 +15,7 @@ public class Activator extends AbstractUIPlugin {
 
 	private static Activator instance;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 	
 	public ConnectionService getConnectionService()
 	{
@@ -35,7 +35,7 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		
-		connectionServiceTracker = new ServiceTracker(context, ConnectionService.class.getName(), null);
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(context, ConnectionService.class.getName(), null);
 		connectionServiceTracker.open();
 		instance = this;
 	}

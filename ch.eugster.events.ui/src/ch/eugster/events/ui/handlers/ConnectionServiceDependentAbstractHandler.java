@@ -10,17 +10,17 @@ import ch.eugster.events.ui.Activator;
 
 public abstract class ConnectionServiceDependentAbstractHandler extends AbstractHandler implements IHandler
 {
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	protected ConnectionService connectionService;
 
 	public ConnectionServiceDependentAbstractHandler()
 	{
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null)
 		{
 			@Override
-			public Object addingService(final ServiceReference reference)
+			public ConnectionService addingService(final ServiceReference<ConnectionService> reference)
 			{
 				connectionService = (ConnectionService) super.addingService(reference);
 				setBaseEnabled(connectionService != null);
@@ -28,7 +28,7 @@ public abstract class ConnectionServiceDependentAbstractHandler extends Abstract
 			}
 
 			@Override
-			public void removedService(final ServiceReference reference, final Object service)
+			public void removedService(final ServiceReference<ConnectionService> reference, final ConnectionService service)
 			{
 				connectionService = null;
 				setBaseEnabled(false);

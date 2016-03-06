@@ -74,7 +74,7 @@ public class LinkSearcher extends Composite
 
 	private final List<ICriteriaChangedListener> listeners = new Vector<ICriteriaChangedListener>();
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private ConnectionService connectionService;
 
@@ -296,6 +296,18 @@ public class LinkSearcher extends Composite
 		});
 		this.widgets.put(EMAIL, widget);
 
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
+		{
+			@Override
+			public ConnectionService addingService(final ServiceReference<ConnectionService> reference)
+			{
+				connectionService = (ConnectionService) super.addingService(reference);
+				return connectionService;
+			}
+		};
+		connectionServiceTracker.open();
+
 		addExtendedWidgets();
 
 		label = new Label(this, SWT.NONE);
@@ -328,17 +340,6 @@ public class LinkSearcher extends Composite
 
 		this.startListening();
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
-		{
-			@Override
-			public Object addingService(final ServiceReference reference)
-			{
-				connectionService = (ConnectionService) super.addingService(reference);
-				return connectionService;
-			}
-		};
-		connectionServiceTracker.open();
 	}
 
 	public void addCriteriaChangedListener(final ICriteriaChangedListener listener)
@@ -349,60 +350,47 @@ public class LinkSearcher extends Composite
 
 	private void addExtendedWidgets()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		try
+		ConnectionService service = (ConnectionService) connectionServiceTracker.getService();
+		if (service != null)
 		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
+			FieldExtensionQuery extensionQuery = (FieldExtensionQuery) service.getQuery(FieldExtension.class);
+			List<FieldExtension> extensions = extensionQuery.selectSearchables(false);
+			for (final FieldExtension extension : extensions)
 			{
-				FieldExtensionQuery extensionQuery = (FieldExtensionQuery) service.getQuery(FieldExtension.class);
-				List<FieldExtension> extensions = extensionQuery.selectSearchables(false);
-				for (final FieldExtension extension : extensions)
-				{
-					Label label = new Label(this, SWT.NONE);
-					label.setText(extension.getLabel());
-					label.setLayoutData(new GridData());
+				Label label = new Label(this, SWT.NONE);
+				label.setText(extension.getLabel());
+				label.setLayoutData(new GridData());
 
-					Text widget = new Text(this, SWT.BORDER | SWT.SINGLE);
-					String value = dialogSettings.get(extension.getId().toString() + ".text");
-					if (value != null)
-					{
-						widget.setText(value);
-					}
-					widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-					widget.setData("dialog.setting", extension.getId().toString() + ".text");
-					widget.addModifyListener(new ModifyListener()
-					{
-						@Override
-						public void modifyText(final ModifyEvent event)
-						{
-							Text widget = (Text) LinkSearcher.this.widgets.get(ID);
-							LinkSearcher.this.dialogSettings.put(extension.getId().toString() + ".text",
-									widget.getText());
-							LinkSearcher.this.modifyText();
-						}
-					});
-					widget.addFocusListener(new FocusAdapter()
-					{
-						@Override
-						public void focusGained(final FocusEvent e)
-						{
-							((Text) e.widget).selectAll();
-						}
-					});
-					this.widgets.put(extension.getId().toString(), widget);
-					this.extensions.put(extension.getId().toString(), extension);
+				Text widget = new Text(this, SWT.BORDER | SWT.SINGLE);
+				String value = dialogSettings.get(extension.getId().toString() + ".text");
+				if (value != null)
+				{
+					widget.setText(value);
 				}
+				widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				widget.setData("dialog.setting", extension.getId().toString() + ".text");
+				widget.addModifyListener(new ModifyListener()
+				{
+					@Override
+					public void modifyText(final ModifyEvent event)
+					{
+						Text widget = (Text) LinkSearcher.this.widgets.get(ID);
+						LinkSearcher.this.dialogSettings.put(extension.getId().toString() + ".text",
+								widget.getText());
+						LinkSearcher.this.modifyText();
+					}
+				});
+				widget.addFocusListener(new FocusAdapter()
+				{
+					@Override
+					public void focusGained(final FocusEvent e)
+					{
+						((Text) e.widget).selectAll();
+					}
+				});
+				this.widgets.put(extension.getId().toString(), widget);
+				this.extensions.put(extension.getId().toString(), extension);
 			}
-		}
-		catch (NumberFormatException e)
-		{
-		}
-		finally
-		{
-			tracker.close();
 		}
 	}
 
@@ -734,7 +722,6 @@ public class LinkSearcher extends Composite
 
 		Person person = null;
 		Address address = null;
-		LinkPersonAddress link = null;
 
 		try
 		{
@@ -745,8 +732,6 @@ public class LinkSearcher extends Composite
 				person = personQuery.find(Person.class, id);
 				AddressQuery addressQuery = (AddressQuery) connectionService.getQuery(Address.class);
 				address = addressQuery.find(Address.class, id);
-//				LinkPersonAddressQuery linkQuery = (LinkPersonAddressQuery) connectionService.getQuery(LinkPersonAddress.class);
-//				link = linkQuery.find(LinkPersonAddress.class, id);
 			}
 		}
 		catch (NumberFormatException e)
@@ -812,7 +797,7 @@ public class LinkSearcher extends Composite
 					List<AbstractEntity> selected = new ArrayList<AbstractEntity>();
 					LinkPersonAddressQuery linkQuery = (LinkPersonAddressQuery) connectionService
 							.getQuery(LinkPersonAddress.class);
-					int maxRows = new InstanceScope().getNode(Activator.PLUGIN_ID).getInt(
+					int maxRows = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID).getInt(
 							PreferenceInitializer.KEY_MAX_RECORDS, 0);
 					selected.addAll(getPersons(linkQuery.selectByCriteria(criteria, extensions, maxRows)));
 

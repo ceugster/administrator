@@ -82,19 +82,25 @@ public class MergeAddressesHandler extends AbstractHandler implements IHandler
 							link.getAddress().setDeleted(false);
 						}
 
-						ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle()
-								.getBundleContext(), ConnectionService.class.getName(), null);
+						ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle()
+								.getBundleContext(), ConnectionService.class, null);
 						tracker.open();
-						ConnectionService service = (ConnectionService) tracker.getService();
-						if (service != null)
+						try
 						{
-							LinkPersonAddressQuery linkQuery = (LinkPersonAddressQuery) service
-									.getQuery(LinkPersonAddress.class);
-							link = linkQuery.merge(link);
-							AddressQuery addressQuery = (AddressQuery) service.getQuery(Address.class);
-							oldAddress = addressQuery.merge(oldAddress);
+							ConnectionService service = (ConnectionService) tracker.getService();
+							if (service != null)
+							{
+								LinkPersonAddressQuery linkQuery = (LinkPersonAddressQuery) service
+										.getQuery(LinkPersonAddress.class);
+								link = linkQuery.merge(link);
+								AddressQuery addressQuery = (AddressQuery) service.getQuery(Address.class);
+								oldAddress = addressQuery.merge(oldAddress);
+							}
 						}
-						tracker.close();
+						finally
+						{
+							tracker.close();
+						}
 					}
 				}
 			}

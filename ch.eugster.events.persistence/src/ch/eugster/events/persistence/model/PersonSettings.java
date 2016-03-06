@@ -191,16 +191,22 @@ public class PersonSettings extends AbstractEntity
 	{
 		if (PersonSettings.instance == null)
 		{
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
 			tracker.open();
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
+			try
 			{
-				PersonSettingsQuery query = (PersonSettingsQuery) service.getQuery(PersonSettings.class);
-				PersonSettings.instance = query.find(PersonSettings.class, Long.valueOf(1L));
+				ConnectionService service = (ConnectionService) tracker.getService();
+				if (service != null)
+				{
+					PersonSettingsQuery query = (PersonSettingsQuery) service.getQuery(PersonSettings.class);
+					PersonSettings.instance = query.find(PersonSettings.class, Long.valueOf(1L));
+				}
 			}
-			tracker.close();
+			finally
+			{
+				tracker.close();
+			}
 		}
 		return PersonSettings.instance;
 	}
