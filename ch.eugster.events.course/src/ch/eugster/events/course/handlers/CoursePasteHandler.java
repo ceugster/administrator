@@ -3,10 +3,8 @@ package ch.eugster.events.course.handlers;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -19,9 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.osgi.util.tracker.ServiceTracker;
 
-import ch.eugster.events.course.Activator;
 import ch.eugster.events.course.dialogs.CourseCopyDialog;
 import ch.eugster.events.course.views.CourseView;
 import ch.eugster.events.persistence.model.BookingType;
@@ -32,11 +28,11 @@ import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.Season;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.queries.SeasonQuery;
-import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.dnd.CourseTransfer;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 import ch.eugster.events.ui.helpers.ClipboardHelper;
 
-public class CoursePasteHandler extends AbstractHandler implements IHandler
+public class CoursePasteHandler extends ConnectionServiceDependentAbstractHandler
 {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
@@ -103,21 +99,10 @@ public class CoursePasteHandler extends AbstractHandler implements IHandler
 
 	private void updateSeason(Season season)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		try
+		if (connectionService != null)
 		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
-			{
-				SeasonQuery query = (SeasonQuery) service.getQuery(Season.class);
-				season = query.merge(season);
-			}
-		}
-		finally
-		{
-			tracker.close();
+			SeasonQuery query = (SeasonQuery) connectionService.getQuery(Season.class);
+			season = query.merge(season);
 		}
 	}
 

@@ -153,16 +153,22 @@ public class BookingListReportDialog extends TitleAreaDialog
 
 	private void setCurrentUser()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			UserQuery query = (UserQuery) service.getQuery(User.class);
-			User.setCurrent(query.merge(User.getCurrent()));
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				UserQuery query = (UserQuery) service.getQuery(User.class);
+				User.setCurrent(query.merge(User.getCurrent()));
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 	}
 
 	@Override
@@ -193,11 +199,11 @@ public class BookingListReportDialog extends TitleAreaDialog
 
 	private boolean export(final BookingListFactory factory, final Format format, final File file)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{
@@ -220,11 +226,11 @@ public class BookingListReportDialog extends TitleAreaDialog
 
 	private boolean preview(final BookingListFactory factory)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{
@@ -247,11 +253,11 @@ public class BookingListReportDialog extends TitleAreaDialog
 
 	private boolean print(final BookingListFactory factory, final boolean showPrintDialog)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{
@@ -274,7 +280,7 @@ public class BookingListReportDialog extends TitleAreaDialog
 
 	private boolean printBookingListReport(final BookingListFactory factory)
 	{
-		IEclipsePreferences prefs = new InstanceScope().getNode(Activator.PLUGIN_ID);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 		int dest = prefs.getInt(PreferenceConstants.P_DESTINATION, 0);
 		Destination destination = Destination.values()[dest];
 		destination = Destination.PREVIEW;

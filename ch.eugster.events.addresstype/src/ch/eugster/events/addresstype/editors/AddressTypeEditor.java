@@ -187,26 +187,30 @@ public class AddressTypeEditor extends AbstractEntityEditor<AddressType>
 	{
 		Message msg = null;
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			AddressTypeEditorInput input = (AddressTypeEditorInput) this.getEditorInput();
-			AddressType addressType = (AddressType) input.getAdapter(AddressType.class);
-			String name = this.name.getText();
-			AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
-			if (!query.isNameUnique(name, addressType.getId()))
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				msg = new Message(this.name, "Ungültige Bezeichnung");
-				msg.setMessage("Die gewählte Bezeichnung wird bereits verwendet.");
-				return msg;
+				AddressTypeEditorInput input = (AddressTypeEditorInput) this.getEditorInput();
+				AddressType addressType = (AddressType) input.getAdapter(AddressType.class);
+				String name = this.name.getText();
+				AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
+				if (!query.isNameUnique(name, addressType.getId()))
+				{
+					msg = new Message(this.name, "Ungültige Bezeichnung");
+					msg.setMessage("Die gewählte Bezeichnung wird bereits verwendet.");
+					return msg;
+				}
 			}
 		}
-		tracker.close();
-
+		finally
+		{
+			tracker.close();
+		}
 		return msg;
 	}
 

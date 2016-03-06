@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.reporting.Activator;
@@ -57,33 +58,30 @@ public class ParticipantListDialog extends TitleAreaDialog
 	private void buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap[] dataMaps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				DocumentBuilderService.class.getName(), null);
+		ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
+				DocumentBuilderService.class, null);
 		try
 		{
 			tracker.open();
-			Object[] services = tracker.getServices();
-			if (services != null)
+			ServiceReference<DocumentBuilderService>[] serviceReferences = tracker.getServiceReferences();
+			if (serviceReferences != null)
 			{
 				try
 				{
-					monitor.beginTask("Dokument wird erstellt...", services.length);
-					for (Object service : services)
+					monitor.beginTask("Dokument wird erstellt...", serviceReferences.length);
+					for (ServiceReference<DocumentBuilderService> service : serviceReferences)
 					{
 						if (status.isOK())
 						{
 							monitor.worked(1);
 							return;
 						}
-						if (service instanceof DocumentBuilderService)
+						DocumentBuilderService builderService = (DocumentBuilderService) service;
+						status = builderService.buildDocument(new SubProgressMonitor(monitor, dataMaps.length),
+								keys, dataMaps);
+						if (status.isOK())
 						{
-							DocumentBuilderService builderService = (DocumentBuilderService) service;
-							status = builderService.buildDocument(new SubProgressMonitor(monitor, dataMaps.length),
-									keys, dataMaps);
-							if (status.isOK())
-							{
-								break;
-							}
+							break;
 						}
 						monitor.worked(1);
 					}
@@ -276,16 +274,22 @@ public class ParticipantListDialog extends TitleAreaDialog
 
 	private void setCurrentUser()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			UserQuery query = (UserQuery) service.getQuery(User.class);
-			User.setCurrent(query.merge(User.getCurrent()));
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				UserQuery query = (UserQuery) service.getQuery(User.class);
+				User.setCurrent(query.merge(User.getCurrent()));
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 	}
 
 	@Override

@@ -217,29 +217,29 @@ litigation.
    </license>
 
    <requires>
-      <import plugin="ch.eugster.events.persistence" version="1.0.0" match="compatible"/>
-      <import plugin="ch.eugster.events.ui" version="1.0.0" match="compatible"/>
+      <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.8.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.400" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.forms" version="3.5.200" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.persistence"/>
+      <import plugin="ch.eugster.events.ui"/>
+      <import plugin="org.eclipse.ui.views" version="3.6.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi.services" version="3.3.100" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.documents"/>
+      <import plugin="ch.eugster.events.domain"/>
+      <import plugin="ch.eugster.events.person"/>
+      <import plugin="org.eclipse.nebula.cwt"/>
+      <import plugin="org.eclipse.nebula.widgets.radiogroup"/>
+      <import plugin="org.eclipse.nebula.widgets.cdatetime"/>
+      <import plugin="org.eclipse.nebula.widgets.formattedtext"/>
+      <import plugin="ch.eugster.events.report"/>
       <import plugin="org.eclipse.core.commands"/>
-      <import plugin="org.eclipse.core.expressions" version="3.4.200" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.jobs"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.workbench"/>
-      <import plugin="org.eclipse.ui.forms" version="3.5.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.ui" version="3.6.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.views" version="3.5.1" match="greaterOrEqual"/>
-      <import plugin="ch.eugster.events.documents"/>
-      <import plugin="ch.eugster.events.domain" version="1.0.0" match="compatible"/>
-      <import plugin="ch.eugster.events.person" version="1.0.0" match="compatible"/>
-      <import plugin="org.eclipse.nebula.cwt"/>
-      <import plugin="org.eclipse.nebula.widgets.radiogroup"/>
-      <import plugin="org.eclipse.nebula.widgets.cdatetime" version="0.14.0" match="compatible"/>
-      <import plugin="org.eclipse.nebula.widgets.formattedtext"/>
-      <import plugin="ch.eugster.events.report"/>
-      <import plugin="org.eclipse.core.jobs"/>
-      <import plugin="org.eclipse.osgi.services" version="3.2.100" match="greaterOrEqual"/>
    </requires>
 
    <plugin

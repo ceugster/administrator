@@ -5,10 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -16,9 +14,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.ui.IWorkbenchPart;
-import org.osgi.util.tracker.ServiceTracker;
 
-import ch.eugster.events.addressgroup.Activator;
 import ch.eugster.events.addressgroup.dnd.AddressGroupMemberTransfer;
 import ch.eugster.events.addressgroup.dnd.AddressGroupTransfer;
 import ch.eugster.events.addressgroup.views.AddressGroupMemberView;
@@ -34,12 +30,12 @@ import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Season;
 import ch.eugster.events.persistence.queries.AddressGroupCategoryQuery;
-import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.dnd.CourseTransfer;
 import ch.eugster.events.ui.dnd.DonationTransfer;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 import ch.eugster.events.ui.helpers.ClipboardHelper;
 
-public class PasteHandler extends AbstractHandler implements IHandler
+public class PasteHandler extends ConnectionServiceDependentAbstractHandler
 {
 	private void execute(final AddressGroupMemberView view)
 	{
@@ -795,25 +791,10 @@ public class PasteHandler extends AbstractHandler implements IHandler
 
 	private void updateCategories(final AddressGroupCategory[] categories)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		try
+		AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) connectionService.getQuery(AddressGroupCategory.class);
+		for (AddressGroupCategory category : categories)
 		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
-			{
-				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) service
-						.getQuery(AddressGroupCategory.class);
-				for (AddressGroupCategory category : categories)
-				{
-					category = query.merge(category);
-				}
-			}
-		}
-		finally
-		{
-			tracker.close();
+			category = query.merge(category);
 		}
 	}
 
