@@ -7,10 +7,8 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.GregorianCalendar;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -21,7 +19,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
-import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.model.Country;
@@ -30,43 +27,34 @@ import ch.eugster.events.persistence.model.ZipCode;
 import ch.eugster.events.persistence.queries.CountryQuery;
 import ch.eugster.events.persistence.queries.ZipCodeQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 import ch.eugster.events.zipcode.Activator;
 import ch.eugster.events.zipcode.views.ZipCodeView;
 
-public class UpdateZipCodeHandler extends AbstractHandler implements IHandler {
-
+public class UpdateZipCodeHandler extends ConnectionServiceDependentAbstractHandler
+{
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException 
 	{
 		EvaluationContext ctx = (EvaluationContext) event.getApplicationContext();
 		Shell shell = (Shell) ctx.getVariable("activeShell");
 		IWorkbenchPart part = (IWorkbenchPart)ctx.getVariable("activePart");
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
-		try
+		if (connectionService != null)
 		{
-			tracker.open();
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
+			String path = getPath(shell);
+			if (path != null)
 			{
-				String path = getPath(shell);
-				if (path != null)
+				File file = new File(path);
+				if (file.isFile())
 				{
-					File file = new File(path);
-					if (file.isFile())
+					ZipCodeView view = null;
+					if (part instanceof ZipCodeView)
 					{
-						ZipCodeView view = null;
-						if (part instanceof ZipCodeView)
-						{
-							view = (ZipCodeView) part;
-						}
-						readFile(file, service, view, shell);
+						view = (ZipCodeView) part;
 					}
+					readFile(file, connectionService, view, shell);
 				}
 			}
-		}
-		finally
-		{
-			tracker.close();
 		}
 		return Status.OK_STATUS;
 	}

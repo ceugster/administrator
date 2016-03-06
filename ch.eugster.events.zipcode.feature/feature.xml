@@ -18,14 +18,14 @@
    </license>
 
    <requires>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="ch.eugster.events.persistence" version="1.0.10" match="greaterOrEqual"/>
-      <import plugin="ch.eugster.events.ui" version="1.0.3" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.expressions" version="3.4.200" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.osgi.services" version="3.2.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.forms" version="3.5.2" match="greaterOrEqual"/>
       <import plugin="ch.eugster.events.country" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.persistence" version="1.0.10" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.ui" version="1.0.3" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.400" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi.services" version="3.3.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.8.2" match="greaterOrEqual"/>
    </requires>
 
    <plugin
