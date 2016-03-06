@@ -528,11 +528,9 @@ ch.eugster.events.documents.odfdom.feature/build.properties -text
 ch.eugster.events.documents.odfdom.feature/feature.xml -text
 ch.eugster.events.documents.odfdom/.classpath -text
 ch.eugster.events.documents.odfdom/.project -text
-ch.eugster.events.documents.odfdom/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.documents.odfdom/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.documents.odfdom/META-INF/MANIFEST.MF -text
 ch.eugster.events.documents.odfdom/OSGI-INF/document-builder-service.xml -text
-ch.eugster.events.documents.odfdom/OSGI-INF/service.xml -text
 ch.eugster.events.documents.odfdom/build.properties -text
 ch.eugster.events.documents.odfdom/lib/commons-validator-1.5.0.jar -text
 ch.eugster.events.documents.odfdom/lib/java-rdfa-0.4.2.jar -text
@@ -563,7 +561,6 @@ ch.eugster.events.documents.poi.feature/build.properties -text
 ch.eugster.events.documents.poi.feature/feature.xml -text
 ch.eugster.events.documents.poi/.classpath -text
 ch.eugster.events.documents.poi/.project -text
-ch.eugster.events.documents.poi/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.documents.poi/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.documents.poi/META-INF/MANIFEST.MF -text
 ch.eugster.events.documents.poi/OSGI-INF/addresslist-spreadsheet-builder-service.xml -text
@@ -578,7 +575,7 @@ ch.eugster.events.documents.poi/src/ch/eugster/events/documents/poi/internal/ser
 ch.eugster.events.documents.poi/src/ch/eugster/events/documents/poi/internal/services/SpreadsheetBuilderService.java -text
 ch.eugster.events.documents.test/.classpath -text
 ch.eugster.events.documents.test/.project -text
-ch.eugster.events.documents.test/.settings/org.eclipse.jdt.core.prefs -text
+ch.eugster.events.documents.test/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.documents.test/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.documents.test/META-INF/MANIFEST.MF -text
 ch.eugster.events.documents.test/build.properties -text

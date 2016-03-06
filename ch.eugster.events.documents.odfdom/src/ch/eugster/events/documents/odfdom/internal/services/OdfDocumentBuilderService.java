@@ -385,7 +385,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 
 	private IStatus showDocument(final TextDocument document) throws Exception
 	{
-		IPreferenceStore store = new ScopedPreferenceStore(new InstanceScope(), Activator.getDefault().getBundle()
+		IPreferenceStore store = new ScopedPreferenceStore(InstanceScope.INSTANCE, Activator.getDefault().getBundle()
 				.getSymbolicName());
 		// String office =
 		// store.getString(PreferenceInitializer.KEY_OFFICE_PACKAGE);
