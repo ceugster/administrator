@@ -15,9 +15,9 @@ public class Activator extends AbstractUIPlugin
 {
 	private static Activator activator;
 
-	private ServiceRegistration reportServiceRegistration;
+	private ServiceRegistration<ReportService> reportServiceRegistration;
 	
-	public ServiceRegistration getReportServiceRegistration()
+	public ServiceRegistration<ReportService> getReportServiceRegistration()
 	{
 		return reportServiceRegistration;
 	}
@@ -67,7 +67,7 @@ public class Activator extends AbstractUIPlugin
 	{
 		super.start(bundleContext);
 		Activator.activator = this;
-		reportServiceRegistration = bundleContext.registerService(ReportService.class.getName(), new ReportServiceComponent(),
+		reportServiceRegistration = bundleContext.registerService(ReportService.class, new ReportServiceComponent(),
 				new Hashtable<String, Object>());
 	}
 

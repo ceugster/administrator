@@ -116,7 +116,7 @@ public class LabelSelectionDialog extends TitleAreaDialog
 			}
 		});
 		
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), Activator.getDefault().getReportServiceRegistration().getReference(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(), Activator.getDefault().getReportServiceRegistration().getReference(), null);
 		try
 		{
 			tracker.open();

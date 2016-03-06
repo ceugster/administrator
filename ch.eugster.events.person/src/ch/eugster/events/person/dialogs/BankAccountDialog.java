@@ -36,7 +36,7 @@ import ch.eugster.events.person.Activator;
 
 public class BankAccountDialog extends TitleAreaDialog
 {
-	private ServiceTracker tracker;
+	private ServiceTracker<ConnectionService, ConnectionService> tracker;
 	
 	private BankAccount account;
 
@@ -154,14 +154,17 @@ public class BankAccountDialog extends TitleAreaDialog
 			}
 		});
 
-		tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
+		tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
 		tracker.open();
-
-		bankViewer.setInput(getInput());
-//		bankViewer.setSelection(account.getBank() == null ? new StructuredSelection() : new StructuredSelection(new Bank[] { account.getBank() }));
-		
-		iban.setText(account.getIban());
-
+		try
+		{
+			bankViewer.setInput(getInput());
+			iban.setText(account.getIban());
+		}
+		finally
+		{
+			tracker.close();
+		}
 		return composite;
 	}
 	

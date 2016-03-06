@@ -32,13 +32,13 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person> implement
 
 	private PersonFormEditorContentOutlinePage contentOutlinePage;
 
-	private ServiceRegistration eventHandlerRegistration;
+	private ServiceRegistration<EventHandler> eventHandlerRegistration;
 	
 	public PersonFormEditor()
 	{
 		Dictionary<String, String> properties = new Hashtable<String, String>();
 		properties.put(EventConstants.EVENT_TOPIC, "ch/eugster/events/persistence/merge");		
-		eventHandlerRegistration = Activator.getDefault().getBundle().getBundleContext().registerService(EventHandler.class.getName(), this, properties);
+		eventHandlerRegistration = Activator.getDefault().getBundle().getBundleContext().registerService(EventHandler.class, this, properties);
 	}
 
 	@Override
@@ -304,7 +304,7 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person> implement
 					Person p = member.getLink().getPerson();
 					if (person.getId().equals(p.getId()))
 					{
-						ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
+						ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class, null);
 						tracker.open();
 						try
 						{

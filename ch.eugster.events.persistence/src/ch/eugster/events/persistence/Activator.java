@@ -38,7 +38,7 @@ public class Activator extends AbstractUIPlugin
 
 	private static Activator activator;
 
-	private ServiceTracker logTracker;
+	private ServiceTracker<LogService, LogService> logTracker;
 
 	public Activator()
 	{
@@ -248,7 +248,7 @@ public class Activator extends AbstractUIPlugin
 		super.start(context);
 		Activator.activator = this;
 
-		logTracker = new ServiceTracker(context, LogService.class.getName(), null);
+		logTracker = new ServiceTracker<LogService, LogService>(context, LogService.class, null);
 		logTracker.open();
 		log = (LogService) logTracker.getService();
 

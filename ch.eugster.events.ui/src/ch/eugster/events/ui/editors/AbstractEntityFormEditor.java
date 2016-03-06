@@ -47,11 +47,11 @@ public abstract class AbstractEntityFormEditor<T extends AbstractEntity> extends
 			AbstractEntityEditorInput<T> input = (AbstractEntityEditorInput<T>) this.getEditorInput();
 			T entity = input.getEntity();
 
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
+			tracker.open();
 			try
 			{
-				tracker.open();
 				ConnectionService service = (ConnectionService) tracker.getService();
 				if (service != null)
 				{

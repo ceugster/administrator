@@ -141,6 +141,7 @@ public class ReportServiceComponent implements ReportService
 								ReportServiceComponent.this.print(report, beanArray, parameters, false);
 								break;
 							}
+							default:
 						}
 					}
 					else

@@ -197,18 +197,23 @@ public class DonationDialog extends TitleAreaDialog
 		this.purpose.setLabelProvider(new DonationPurposeLabelProvider());
 		this.purpose.setSorter(new DonationPurposeSorter());
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			DonationPurposeQuery query = (DonationPurposeQuery) service.getQuery(DonationPurpose.class);
-			List<DonationPurpose> purposes = query.selectAll();
-			this.purpose.setInput(purposes.toArray(new DonationPurpose[0]));
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				DonationPurposeQuery query = (DonationPurposeQuery) service.getQuery(DonationPurpose.class);
+				List<DonationPurpose> purposes = query.selectAll();
+				this.purpose.setInput(purposes.toArray(new DonationPurpose[0]));
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 	}
 
 	public void getFieldValues()
