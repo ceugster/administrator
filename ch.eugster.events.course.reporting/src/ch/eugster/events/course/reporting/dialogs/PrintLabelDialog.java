@@ -139,8 +139,8 @@ public class PrintLabelDialog extends TitleAreaDialog
 				}
 				else
 				{
-					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-							ReportService.class.getName(), null);
+					ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+							ReportService.class, null);
 					try
 					{
 						tracker.open();

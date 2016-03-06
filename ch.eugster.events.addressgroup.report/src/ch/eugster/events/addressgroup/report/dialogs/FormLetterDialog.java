@@ -83,11 +83,11 @@ public class FormLetterDialog extends TitleAreaDialog
 	private IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap[] dataMaps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				DocumentBuilderService.class.getName(), null);
+		ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
+				DocumentBuilderService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			Object[] services = tracker.getServices();
 			for (Object service : services)
 			{
@@ -318,11 +318,11 @@ public class FormLetterDialog extends TitleAreaDialog
 
 	private void setCurrentUser()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			Object service = tracker.getService();
 			if (service instanceof ConnectionService)
 			{

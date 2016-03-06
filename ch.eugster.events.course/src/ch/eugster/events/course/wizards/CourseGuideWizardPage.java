@@ -103,54 +103,58 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 		this.guideViewer.setSorter(new GuideComboSorter());
 		this.guideViewer.setFilters(new ViewerFilter[] { new GuideComboFilter(wizard) });
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			GuideQuery query = (GuideQuery) service.getQuery(Guide.class);
-			List<Guide> guides = query.selectAll();
-			this.guideViewer.setInput(guides.toArray(new Guide[0]));
-		}
-
-		this.guideViewer.addSelectionChangedListener(new ISelectionChangedListener()
-		{
-			@Override
-			public void selectionChanged(final SelectionChangedEvent event)
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				StructuredSelection ssel = (StructuredSelection) event.getSelection();
-				if (!ssel.isEmpty())
-				{
-					CourseGuideWizardPage.this.setPageComplete(true);
-				}
+				GuideQuery query = (GuideQuery) service.getQuery(Guide.class);
+				List<Guide> guides = query.selectAll();
+				this.guideViewer.setInput(guides.toArray(new Guide[0]));
 			}
-		});
-		gridData = new GridData();
-		gridData.horizontalAlignment = GridData.END;
-		gridData.grabExcessHorizontalSpace = false;
-
-		label = new Label(composite, SWT.NONE);
-		label.setLayoutData(gridData);
-		label.setText("Leitungsfunktion");
-
-		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		this.guideTypeViewer = new ComboViewer(combo);
-		this.guideTypeViewer.setContentProvider(new GuideTypeComboContentProvider());
-		this.guideTypeViewer.setLabelProvider(new GuideTypeComboLabelProvider());
-		this.guideTypeViewer.setSorter(new GuideTypeComboSorter());
-
-		if (service != null)
-		{
-			GuideTypeQuery query = (GuideTypeQuery) service.getQuery(GuideType.class);
-			List<GuideType> guideTypes = query.selectAll();
-			this.guideTypeViewer.setInput(guideTypes);
+	
+			this.guideViewer.addSelectionChangedListener(new ISelectionChangedListener()
+			{
+				@Override
+				public void selectionChanged(final SelectionChangedEvent event)
+				{
+					StructuredSelection ssel = (StructuredSelection) event.getSelection();
+					if (!ssel.isEmpty())
+					{
+						CourseGuideWizardPage.this.setPageComplete(true);
+					}
+				}
+			});
+			gridData = new GridData();
+			gridData.horizontalAlignment = GridData.END;
+			gridData.grabExcessHorizontalSpace = false;
+	
+			label = new Label(composite, SWT.NONE);
+			label.setLayoutData(gridData);
+			label.setText("Leitungsfunktion");
+	
+			combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
+			combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	
+			this.guideTypeViewer = new ComboViewer(combo);
+			this.guideTypeViewer.setContentProvider(new GuideTypeComboContentProvider());
+			this.guideTypeViewer.setLabelProvider(new GuideTypeComboLabelProvider());
+			this.guideTypeViewer.setSorter(new GuideTypeComboSorter());
+	
+			if (service != null)
+			{
+				GuideTypeQuery query = (GuideTypeQuery) service.getQuery(GuideType.class);
+				List<GuideType> guideTypes = query.selectAll();
+				this.guideTypeViewer.setInput(guideTypes);
+			}
 		}
-
-		tracker.close();
-
+		finally
+		{
+			tracker.close();
+		}
 		this.guideTypeViewer.addSelectionChangedListener(new ISelectionChangedListener()
 		{
 			@Override

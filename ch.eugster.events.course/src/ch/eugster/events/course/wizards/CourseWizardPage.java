@@ -81,7 +81,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 
 	private final List<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	public CourseWizardPage(final String name, final IBookingWizard wizard)
 	{
@@ -354,11 +354,11 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		this.filterButton.setSelection(this.dialogSettings
 				.getBoolean(Constants.DIALOG_SETTINGS_KEY_COURSE_FILTER_BUTTON_SELECTED_ID));
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
 		{
 			@Override
-			public Object addingService(final ServiceReference reference)
+			public ConnectionService addingService(final ServiceReference<ConnectionService> reference)
 			{
 				final ConnectionService connectionService = (ConnectionService) super.addingService(reference);
 				Display display = Display.getCurrent();
@@ -386,7 +386,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 			}
 
 			@Override
-			public void removedService(final ServiceReference reference, final Object service)
+			public void removedService(final ServiceReference<ConnectionService> reference, final ConnectionService service)
 			{
 				Display display = Display.getCurrent();
 				if (display == null)

@@ -162,8 +162,8 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		this.setTitle();
 		this.setMessage();
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
 		ConnectionService service = (ConnectionService) tracker.getService();
 		if (service != null)
@@ -382,8 +382,8 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		Long[] addressGroupIds = this.monitors.keySet().toArray(new Long[0]);
 		for (Long addressGroupId : addressGroupIds)
 		{
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
 			tracker.open();
 			ConnectionService service = (ConnectionService) tracker.getService();
 			if (service != null)

@@ -137,11 +137,11 @@ public class BookingTypeWizardPage extends WizardPage implements Listener, Selec
 		List<BookingTypeProposition> propositions = new ArrayList<BookingTypeProposition>();
 		List<Membership> memberships = new ArrayList<Membership>();
 		
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ConnectionService service = (ConnectionService) tracker.getService();
 			if (service != null)
 			{

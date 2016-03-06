@@ -126,10 +126,10 @@ public class LabelDialog extends TitleAreaDialog
 			}
 		});
 		
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(), ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService service = (ReportService) tracker.getService();
 			if (service != null)
 			{

@@ -6,14 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.Status;
-import org.osgi.util.tracker.ServiceTracker;
 
-import ch.eugster.events.addressgroup.Activator;
 import ch.eugster.events.persistence.model.AddressGroup;
 import ch.eugster.events.persistence.model.AddressGroupCategory;
 import ch.eugster.events.persistence.model.AddressGroupMember;
@@ -22,32 +18,22 @@ import ch.eugster.events.persistence.queries.AddressGroupCategoryQuery;
 import ch.eugster.events.persistence.queries.AddressGroupMemberQuery;
 import ch.eugster.events.persistence.queries.DomainQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 
-public class DeleteDoubleMembersHandler extends AbstractHandler implements IHandler
+public class DeleteDoubleMembersHandler extends ConnectionServiceDependentAbstractHandler
 {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		try
+		if (connectionService != null)
 		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
+			DomainQuery domainQuery = (DomainQuery) connectionService.getQuery(Domain.class);
+			List<Domain> domains = domainQuery.selectAll();
+			for (Domain domain : domains)
 			{
-				DomainQuery domainQuery = (DomainQuery) service.getQuery(Domain.class);
-				List<Domain> domains = domainQuery.selectAll();
-				for (Domain domain : domains)
-				{
-					compute(service, domain);
-				}
+				compute(connectionService, domain);
 			}
-		}
-		finally
-		{
-			tracker.close();
 		}
 		return Status.OK_STATUS;
 	}

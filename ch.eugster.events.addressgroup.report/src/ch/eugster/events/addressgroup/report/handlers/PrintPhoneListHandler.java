@@ -107,11 +107,11 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 
 	private boolean export(final Format format, final File file)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{
@@ -223,11 +223,11 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 
 	private boolean preview()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{
@@ -250,11 +250,11 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 
 	private boolean print(final boolean showPrintDialog)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{

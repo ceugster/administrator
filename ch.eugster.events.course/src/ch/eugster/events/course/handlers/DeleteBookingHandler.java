@@ -1,23 +1,18 @@
 package ch.eugster.events.course.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.osgi.util.tracker.ServiceTracker;
 
-import ch.eugster.events.course.Activator;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.queries.BookingQuery;
-import ch.eugster.events.persistence.service.ConnectionService;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 
-public class DeleteBookingHandler extends AbstractHandler implements IHandler
+public class DeleteBookingHandler extends ConnectionServiceDependentAbstractHandler
 {
-
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
@@ -33,16 +28,11 @@ public class DeleteBookingHandler extends AbstractHandler implements IHandler
 			{
 				Booking booking = (Booking) ssel.getFirstElement();
 
-				ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-						ConnectionService.class.getName(), null);
-				tracker.open();
-				ConnectionService service = (ConnectionService) tracker.getService();
-				if (service != null)
+				if (connectionService != null)
 				{
-					BookingQuery query = (BookingQuery) service.getQuery(Booking.class);
+					BookingQuery query = (BookingQuery) connectionService.getQuery(Booking.class);
 					booking = query.delete(booking);
 				}
-				tracker.close();
 			}
 		}
 		return null;
