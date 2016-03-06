@@ -1695,6 +1695,9 @@ ch.eugster.events.zipcode/src/ch/eugster/events/zipcode/views/ZipCodeContentProv
 ch.eugster.events.zipcode/src/ch/eugster/events/zipcode/views/ZipCodeLabelProvider.java -text
 ch.eugster.events.zipcode/src/ch/eugster/events/zipcode/views/ZipCodeSorter.java -text
 ch.eugster.events.zipcode/src/ch/eugster/events/zipcode/views/ZipCodeView.java -text
+ch.eugster.poi.feature/.project -text svneol=unset#text/plain
+ch.eugster.poi.feature/build.properties -text svneol=unset#text/plain
+ch.eugster.poi.feature/feature.xml -text svneol=unset#text/plain
 ch.eugster.poi/.classpath -text
 ch.eugster.poi/.project -text
 ch.eugster.poi/.settings/org.eclipse.jdt.core.prefs -text
