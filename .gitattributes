@@ -536,6 +536,7 @@ ch.eugster.events.documents.odfdom.feature/build.properties -text
 ch.eugster.events.documents.odfdom.feature/feature.xml -text
 ch.eugster.events.documents.odfdom/.classpath -text
 ch.eugster.events.documents.odfdom/.project -text
+ch.eugster.events.documents.odfdom/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.documents.odfdom/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.documents.odfdom/META-INF/MANIFEST.MF -text
 ch.eugster.events.documents.odfdom/OSGI-INF/document-builder-service.xml -text
@@ -569,6 +570,7 @@ ch.eugster.events.documents.poi.feature/build.properties -text
 ch.eugster.events.documents.poi.feature/feature.xml -text
 ch.eugster.events.documents.poi/.classpath -text
 ch.eugster.events.documents.poi/.project -text
+ch.eugster.events.documents.poi/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.documents.poi/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.documents.poi/META-INF/MANIFEST.MF -text
 ch.eugster.events.documents.poi/OSGI-INF/addresslist-spreadsheet-builder-service.xml -text
@@ -601,6 +603,7 @@ ch.eugster.events.documents.xml/src/ch/eugster/events/documents/xml/internal/Act
 ch.eugster.events.documents.xml/src/ch/eugster/events/documents/xml/internal/services/XmlDocumentBuilderService.java -text
 ch.eugster.events.documents/.classpath -text
 ch.eugster.events.documents/.project -text
+ch.eugster.events.documents/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.documents/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.documents/META-INF/MANIFEST.MF -text
 ch.eugster.events.documents/build.properties -text
