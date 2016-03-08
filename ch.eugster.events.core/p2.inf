@@ -1,6 +1,6 @@
 instructions.configure=\
     addRepository(type:0,location:http${#58}//www.eugster-informatik.ch/administrator/repository/);
     addRepository(type:1,location:http${#58}//www.eugster-informatik.ch/administrator/repository/);
-    addRepository(type:0,location:http${#58}//www.eugster-informatik.ch/administrator/updates/);
-    addRepository(type:1,location:http${#58}//www.eugster-informatik.ch/administrator/updates/);
+    addRepository(type:0,location:http${#58}//www.eugster-informatik.ch/administrator/updates/3.8.2/);
+    addRepository(type:1,location:http${#58}//www.eugster-informatik.ch/administrator/updates/3.8.2/);
     

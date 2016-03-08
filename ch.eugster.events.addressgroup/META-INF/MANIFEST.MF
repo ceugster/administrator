@@ -5,7 +5,7 @@ Bundle-SymbolicName: ch.eugster.events.addressgroup;singleton:=true
 Bundle-Version: 1.0.8.qualifier
 Bundle-Activator: ch.eugster.events.addressgroup.Activator
 Bundle-Vendor: Christian Eugster
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.eugster.events.documents.maps,
  ch.eugster.events.documents.services,
