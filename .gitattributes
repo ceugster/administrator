@@ -647,6 +647,7 @@ ch.eugster.events.domain.feature/build.properties -text
 ch.eugster.events.domain.feature/feature.xml -text
 ch.eugster.events.domain/.classpath -text
 ch.eugster.events.domain/.project -text
+ch.eugster.events.domain/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.domain/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.domain/META-INF/MANIFEST.MF -text
 ch.eugster.events.domain/build.properties -text
@@ -685,6 +686,7 @@ ch.eugster.events.donation.feature/build.properties -text
 ch.eugster.events.donation.feature/feature.xml -text
 ch.eugster.events.donation/.classpath -text
 ch.eugster.events.donation/.project -text
+ch.eugster.events.donation/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.donation/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.donation/META-INF/MANIFEST.MF -text
 ch.eugster.events.donation/build.properties -text
@@ -743,6 +745,7 @@ ch.eugster.events.donation/src/ch/eugster/events/donation/views/LinkDonationSort
 ch.eugster.events.donation/src/ch/eugster/events/donation/views/LinkDonationView.java -text
 ch.eugster.events.guide/.classpath -text
 ch.eugster.events.guide/.project -text
+ch.eugster.events.guide/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.guide/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.guide/META-INF/MANIFEST.MF -text
 ch.eugster.events.guide/build.properties -text
@@ -785,6 +788,7 @@ ch.eugster.events.import.feature/build.properties -text
 ch.eugster.events.import.feature/feature.xml -text
 ch.eugster.events.import/.classpath -text
 ch.eugster.events.import/.project -text
+ch.eugster.events.import/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.import/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.import/META-INF/MANIFEST.MF -text
 ch.eugster.events.import/build.properties -text
@@ -804,6 +808,7 @@ ch.eugster.events.member.feature/build.properties -text
 ch.eugster.events.member.feature/feature.xml -text
 ch.eugster.events.member/.classpath -text
 ch.eugster.events.member/.project -text
+ch.eugster.events.member/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.member/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.member/META-INF/MANIFEST.MF -text
 ch.eugster.events.member/build.properties -text
@@ -846,6 +851,7 @@ ch.eugster.events.merge.feature/build.properties -text
 ch.eugster.events.merge.feature/feature.xml -text
 ch.eugster.events.merge/.classpath -text
 ch.eugster.events.merge/.project -text
+ch.eugster.events.merge/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.merge/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.merge/META-INF/MANIFEST.MF -text
 ch.eugster.events.merge/build.properties -text
@@ -875,6 +881,7 @@ ch.eugster.events.persistence.feature/build.properties -text
 ch.eugster.events.persistence.feature/feature.xml -text
 ch.eugster.events.persistence/.classpath -text
 ch.eugster.events.persistence/.project -text
+ch.eugster.events.persistence/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.persistence/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.persistence/META-INF/MANIFEST.MF -text
 ch.eugster.events.persistence/META-INF/persistence.xml -text
@@ -1069,6 +1076,7 @@ ch.eugster.events.person.feature/build.properties -text
 ch.eugster.events.person.feature/feature.xml -text
 ch.eugster.events.person/.classpath -text
 ch.eugster.events.person/.project -text
+ch.eugster.events.person/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.person/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.person/META-INF/MANIFEST.MF -text
 ch.eugster.events.person/build.properties -text
@@ -1258,6 +1266,7 @@ ch.eugster.events.person/src/org/iban4j/bban/package-info.java -text
 ch.eugster.events.person/src/org/iban4j/package-info.java -text
 ch.eugster.events.report.commons/.classpath -text
 ch.eugster.events.report.commons/.project -text
+ch.eugster.events.report.commons/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.report.commons/META-INF/MANIFEST.MF -text
 ch.eugster.events.report.commons/build.properties -text
 ch.eugster.events.report.commons/lib/commons-LICENSE.txt -text
@@ -1273,6 +1282,7 @@ ch.eugster.events.report.feature/build.properties -text
 ch.eugster.events.report.feature/feature.xml -text
 ch.eugster.events.report.pdf/.classpath -text
 ch.eugster.events.report.pdf/.project -text
+ch.eugster.events.report.pdf/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.report.pdf/META-INF/MANIFEST.MF -text
 ch.eugster.events.report.pdf/build.properties -text
 ch.eugster.events.report.pdf/lib/iText-2.1.7-LICENSE.txt -text
@@ -1280,6 +1290,7 @@ ch.eugster.events.report.pdf/lib/iText-2.1.7.js1.jar -text
 ch.eugster.events.report.pdf/src/ch/eugster/colibri/report/pdf/Activator.java -text
 ch.eugster.events.report.rhino/.classpath -text
 ch.eugster.events.report.rhino/.project -text
+ch.eugster.events.report.rhino/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.report.rhino/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.report.rhino/META-INF/MANIFEST.MF -text
 ch.eugster.events.report.rhino/build.properties -text
@@ -1289,6 +1300,7 @@ ch.eugster.events.report.rhino/src/ch/eugster/events/report/rhino/Activator.java
 ch.eugster.events.report/.classpath -text
 ch.eugster.events.report/.project -text
 ch.eugster.events.report/.settings/org.eclipse.core.resources.prefs -text
+ch.eugster.events.report/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.report/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.report/META-INF/MANIFEST.MF -text
 ch.eugster.events.report/build.properties -text
@@ -1369,6 +1381,7 @@ ch.eugster.events.report/src/ch/eugster/events/report/internal/viewer/util/Brows
 ch.eugster.events.report/src/ch/eugster/events/report/internal/viewer/util/Compatibility.java -text
 ch.eugster.events.rubric/.classpath -text
 ch.eugster.events.rubric/.project -text
+ch.eugster.events.rubric/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.rubric/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.rubric/META-INF/MANIFEST.MF -text
 ch.eugster.events.rubric/build.properties -text
@@ -1399,6 +1412,7 @@ ch.eugster.events.rubric/src/ch/eugster/events/rubric/views/RubricSorter.java -t
 ch.eugster.events.rubric/src/ch/eugster/events/rubric/views/RubricView.java -text
 ch.eugster.events.season/.classpath -text
 ch.eugster.events.season/.project -text
+ch.eugster.events.season/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.season/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.season/META-INF/MANIFEST.MF -text
 ch.eugster.events.season/build.properties -text
@@ -1458,6 +1472,7 @@ ch.eugster.events.ui.feature/build.properties -text
 ch.eugster.events.ui.feature/feature.xml -text
 ch.eugster.events.ui/.classpath -text
 ch.eugster.events.ui/.project -text
+ch.eugster.events.ui/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.ui/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.ui/META-INF/MANIFEST.MF -text
 ch.eugster.events.ui/build.properties -text
@@ -1506,6 +1521,7 @@ ch.eugster.events.user.feature/build.properties -text
 ch.eugster.events.user.feature/feature.xml -text
 ch.eugster.events.user/.classpath -text
 ch.eugster.events.user/.project -text
+ch.eugster.events.user/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.user/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.user/META-INF/MANIFEST.MF -text
 ch.eugster.events.user/build.properties -text
@@ -1544,6 +1560,7 @@ ch.eugster.events.utilities.console.feature/build.properties -text
 ch.eugster.events.utilities.console.feature/feature.xml -text
 ch.eugster.events.utilities.console/.classpath -text
 ch.eugster.events.utilities.console/.project -text
+ch.eugster.events.utilities.console/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.utilities.console/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.utilities.console/META-INF/MANIFEST.MF -text
 ch.eugster.events.utilities.console/build.properties -text
