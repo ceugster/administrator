@@ -5,7 +5,7 @@ Bundle-SymbolicName: ch.eugster.events.course;singleton:=true
 Bundle-Version: 1.0.6.qualifier
 Bundle-Activator: ch.eugster.events.course.Activator
 Bundle-Vendor: Christian Eugster
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/dom4j-1.6.1.jar,
  lib/geronimo-stax-api_1.0_spec-1.0.jar,
