@@ -5,7 +5,7 @@ Bundle-SymbolicName: ch.eugster.events.member;singleton:=true
 Bundle-Version: 1.0.2.qualifier
 Bundle-Activator: ch.eugster.events.member.Activator
 Bundle-Vendor: Christian Eugster
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.eugster.events.persistence.events,
  ch.eugster.events.persistence.exceptions,
