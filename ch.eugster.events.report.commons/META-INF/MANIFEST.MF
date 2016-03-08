@@ -20,4 +20,4 @@ Export-Package: org.apache.commons.beanutils,
  org.apache.commons.javaflow,
  org.apache.commons.javaflow.bytecode,
  org.apache.commons.logging
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
