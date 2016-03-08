@@ -5,7 +5,7 @@ Bundle-SymbolicName: ch.eugster.events.season;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: ch.eugster.events.season.Activator
 Bundle-Vendor: Christian Eugster
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: ch.eugster.events.season.editors,
  ch.eugster.events.season.handlers
