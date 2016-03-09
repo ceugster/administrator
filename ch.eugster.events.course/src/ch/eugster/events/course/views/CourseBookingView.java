@@ -141,7 +141,7 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 					if (data instanceof Booking)
 					{
 						Booking booking = (Booking) data;
-						booking.setPayAmount(booking.getAmount());
+						booking.setPayAmount(item.getChecked() ? booking.getAmount() : 0D);
 						ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class, null);
 						tracker.open();
 						try
