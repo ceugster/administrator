@@ -225,21 +225,15 @@ litigation.
       <import plugin="ch.eugster.events.ui"/>
       <import plugin="org.eclipse.ui.views" version="3.6.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi.services" version="3.3.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.nebula.jface.cdatetime" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.nebula.widgets.cdatetime" version="0.14.0" match="greaterOrEqual"/>
       <import plugin="ch.eugster.events.documents"/>
       <import plugin="ch.eugster.events.domain"/>
       <import plugin="ch.eugster.events.person"/>
-      <import plugin="org.eclipse.nebula.cwt"/>
-      <import plugin="org.eclipse.nebula.widgets.radiogroup"/>
-      <import plugin="org.eclipse.nebula.widgets.cdatetime"/>
-      <import plugin="org.eclipse.nebula.widgets.formattedtext"/>
       <import plugin="ch.eugster.events.report"/>
-      <import plugin="org.eclipse.core.commands"/>
-      <import plugin="org.eclipse.core.jobs"/>
-      <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.swt"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.workbench"/>
-      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.nebula.cwt" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.nebula.widgets.formattedtext" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.nebula.widgets.radiogroup" version="0.1.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
