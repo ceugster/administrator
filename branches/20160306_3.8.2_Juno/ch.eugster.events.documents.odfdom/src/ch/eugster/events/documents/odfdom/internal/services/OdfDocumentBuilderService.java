@@ -122,7 +122,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 					text.removeChild(stylableElement);
 					stylableElement = OdfElement.findFirstChildNode(OdfStylableElement.class, text);
 				}
-
+				document.addPageBreak();
 				for (int i = 0; i < maps.length; i++)
 				{
 					stylableElement = OdfElement.findFirstChildNode(OdfStylableElement.class, textCopy);
@@ -138,6 +138,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 						text.appendChild(clonedStylableElement);
 						stylableElement = OdfElement.findNextChildNode(OdfStylableElement.class, stylableElement);
 					}
+					document.addPageBreak();
 					monitor.worked(1);
 				}
 
