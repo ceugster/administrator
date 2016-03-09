@@ -4,7 +4,9 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Dictionary;
 import java.util.GregorianCalendar;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,10 +46,13 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.progress.UIJob;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.Activator;
-import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.exceptions.PersistenceException;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
@@ -65,7 +70,7 @@ import ch.eugster.events.ui.dialogs.Message;
 import ch.eugster.events.ui.editors.AbstractEntityEditor;
 import ch.eugster.events.ui.editors.AbstractEntityEditorInput;
 
-public class BookingEditor extends AbstractEntityEditor<Booking> implements PropertyChangeListener
+public class BookingEditor extends AbstractEntityEditor<Booking> implements PropertyChangeListener, EventHandler
 {
 	public static final String ID = "ch.eugster.events.course.editors.bookingEditor";
 
@@ -109,6 +114,16 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 
 	private IDialogSettings dialogSettings;
 
+	private ServiceRegistration<EventHandler> eventHandlerRegistration;
+	
+	public BookingEditor()
+	{
+		super();
+		Dictionary<String, String> properties = new Hashtable<String, String>();
+		properties.put(EventConstants.EVENT_TOPIC, "ch/eugster/events/persistence/merge");		
+		eventHandlerRegistration = Activator.getDefault().getBundle().getBundleContext().registerService(EventHandler.class, this, properties);
+	}
+	
 	private void createDateSection(final ScrolledForm parent)
 	{
 		ColumnLayoutData layoutData = new ColumnLayoutData();
@@ -198,8 +213,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 	@Override
 	public void dispose()
 	{
-		EntityMediator.removeListener(Course.class, this);
-		EntityMediator.removeListener(Booking.class, this);
+		eventHandlerRegistration.unregister();
 		super.dispose();
 	}
 
@@ -525,9 +539,6 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		Long id = ((BookingEditorInput) this.getEditorInput()).getEntity().getId();
 		this.initializeDialogSettings(id == null ? BookingEditor.BOOKING_EDITOR : BookingEditor.BOOKING_EDITOR + "."
 				+ id);
-
-		EntityMediator.addListener(Course.class, this);
-		EntityMediator.addListener(Booking.class, this);
 	}
 
 	private void initializeDialogSettings(final String section)
@@ -718,6 +729,74 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 			}
 		};
 		job.schedule();
+	}
+
+	@Override
+	public void handleEvent(Event event) 
+	{
+		BookingEditorInput input = (BookingEditorInput) this.getEditorInput();
+		Booking booking = (Booking) input.getAdapter(Booking.class);
+		if (booking.getId() == null)
+		{
+			return;
+		}
+		if (event.getTopic().equals("ch/eugster/events/persistence/merge"))
+		{
+			Object entity = event.getProperty("entity");
+			if (entity instanceof Booking)
+			{
+
+				Booking updatedBooking = (Booking) entity;
+				if (booking.getId().equals(updatedBooking.getId()))
+				{
+					if (booking.isDeleted())
+					{
+						this.getEditorSite().getPage().closeEditor(this, false);
+					}
+					else
+					{
+						input.setEntity(updatedBooking);
+						loadValues();
+					}
+				}
+			}
+			if (entity instanceof Course)
+			{
+				Course course = (Course) entity;
+				booking = ((BookingEditorInput) getEditorInput()).getEntity();
+				if (course.equals(booking.getCourse()))
+				{
+					if (course.isDeleted())
+					{
+						this.getEditorSite().getPage().closeEditor(this, false);
+					}
+					else if (course.getState().equals(CourseState.FORTHCOMING))
+					{
+						if (!(stateViewer.getInput() instanceof BookingForthcomingState[]))
+						{
+							stateViewer.setInput(BookingForthcomingState.values());
+							stateViewer.setSelection(new StructuredSelection(booking.getForthcomingState()));
+						}
+					}
+					else if (course.getState().equals(CourseState.DONE))
+					{
+						if (!(stateViewer.getInput() instanceof BookingDoneState[]))
+						{
+							stateViewer.setInput(BookingDoneState.values());
+							stateViewer.setSelection(new StructuredSelection(booking.getDoneState()));
+						}
+					}
+					else if (course.getState().equals(CourseState.ANNULATED))
+					{
+						if (!(stateViewer.getInput() instanceof BookingAnnulatedState[]))
+						{
+							stateViewer.setInput(BookingAnnulatedState.values());
+							stateViewer.setSelection(new StructuredSelection(booking.getAnnulatedState()));
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Override

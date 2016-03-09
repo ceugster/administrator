@@ -114,7 +114,7 @@ public class CourseInvitationDialog extends TitleAreaDialog
 									DocumentBuilderService builderService = service;
 									IStatus status = builderService.buildDocument(new SubProgressMonitor(monitor,
 											dataMaps.length), new File(userPropertyTemplatePath.getValue()), dataMaps);
-									if (status.isOK())
+									if (status.isOK() || status.getSeverity() == IStatus.ERROR)
 									{
 										break;
 									}
@@ -274,18 +274,22 @@ public class CourseInvitationDialog extends TitleAreaDialog
 			@Override
 			public void widgetSelected(final SelectionEvent e)
 			{
-				String path = CourseInvitationDialog.this.documentPath.getText();
+				File file = new File(CourseInvitationDialog.this.documentPath.getText());
+				while (!file.exists())
+				{
+					file = file.getParentFile();
+				}
 				FileDialog dialog = new FileDialog(CourseInvitationDialog.this.getShell());
-				dialog.setFilterPath(path);
+				dialog.setFilterPath(file.getAbsolutePath());
 				dialog.setFilterExtensions(new String[] { "*.odt" });
 				dialog.setText(DIALOG_TITLE);
-				path = dialog.open();
+				String path = dialog.open();
 				if (path != null)
 				{
 					CourseInvitationDialog.this.documentPath.setText(path);
 
 				}
-				File file = new File(CourseInvitationDialog.this.documentPath.getText());
+				file = new File(CourseInvitationDialog.this.documentPath.getText());
 				if (file.exists())
 				{
 					userPropertyTemplatePath.setValue(file.getAbsolutePath());

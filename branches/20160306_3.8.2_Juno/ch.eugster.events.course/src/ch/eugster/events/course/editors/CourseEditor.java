@@ -193,15 +193,6 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 
 	private ServiceRegistration<EventHandler> eventHandlerRegistration;
 	
-	public CourseEditor()
-	{
-		super();
-		Dictionary<String, String> properties = new Hashtable<String, String>();
-		properties.put(EventConstants.EVENT_TOPIC, "ch/eugster/events/persistence/merge");		
-		eventHandlerRegistration = Activator.getDefault().getBundle().getBundleContext().registerService(EventHandler.class, this, properties);
-
-	}
-	
 	private void createClassificationSection(final ScrolledForm parent)
 	{
 		ColumnLayoutData layoutData = new ColumnLayoutData();
@@ -378,7 +369,6 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 	public void dispose()
 	{
 		eventHandlerRegistration.unregister();
-		EntityMediator.removeListener(Course.class, this);
 		super.dispose();
 	}
 
@@ -1370,8 +1360,9 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 	{
 		Long id = ((CourseEditorInput) this.getEditorInput()).getEntity().getId();
 		this.initializeDialogSettings(id == null ? CourseEditor.COURSE_EDITOR : CourseEditor.COURSE_EDITOR + "." + id);
-
-		EntityMediator.addListener(Course.class, this);
+		Dictionary<String, String> properties = new Hashtable<String, String>();
+		properties.put(EventConstants.EVENT_TOPIC, "ch/eugster/events/persistence/merge");		
+		eventHandlerRegistration = Activator.getDefault().getBundle().getBundleContext().registerService(EventHandler.class, this, properties);
 	}
 
 	private void initializeDialogSettings(final String section)
@@ -1507,33 +1498,6 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			}
 		}
 		this.setDirty(false);
-	}
-
-	@Override
-	public void postDelete(final AbstractEntity entity)
-	{
-		UIJob job = new UIJob("")
-		{
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor)
-			{
-				if (entity instanceof Course)
-				{
-					CourseEditorInput input = (CourseEditorInput) getEditorInput();
-					if (input.getEntity().getId().equals(entity.getId()))
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-								.closeEditor(CourseEditor.this, false);
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
-
-	@Override
-	public void postUpdate(final AbstractEntity entity)
-	{
-
 	}
 
 	@Override
@@ -1830,8 +1794,15 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 				Course updatedCourse = (Course) entity;
 				if (course.getId().equals(updatedCourse.getId()))
 				{
-					input.setEntity(updatedCourse);
-					loadValues();
+					if (course.isDeleted())
+					{
+						this.getSite().getPage().closeEditor(this, false);
+					}
+					else
+					{
+						input.setEntity(updatedCourse);
+						loadValues();
+					}
 				}
 			}
 		}
