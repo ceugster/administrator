@@ -91,7 +91,6 @@ class ViewerCanvas extends Canvas
 
 	private JRPrintPage page;
 
-	@SuppressWarnings("rawtypes")
 	private List hyperlinkElements = new ArrayList();
 
 	private Image reportImage;
@@ -280,7 +279,6 @@ class ViewerCanvas extends Canvas
 		return hyperlink;
 	}
 
-	@SuppressWarnings("incomplete-switch")
 	private String getLinkToolTip(final JRPrintHyperlink link)
 	{
 		String toolTip = null;
@@ -378,7 +376,6 @@ class ViewerCanvas extends Canvas
 		}
 		else if (link.getHyperlinkTypeValue() == HyperlinkTypeEnum.LOCAL_ANCHOR)
 		{
-			@SuppressWarnings("rawtypes")
 			Map anchorIndexes = viewer.getDocument().getAnchorIndexes();
 			JRPrintAnchorIndex anchorIndex = (JRPrintAnchorIndex) anchorIndexes.get(currentLink.getHyperlinkAnchor());
 			if (anchorIndex != null)
@@ -424,7 +421,6 @@ class ViewerCanvas extends Canvas
 
 		if (page != null)
 		{
-			@SuppressWarnings("rawtypes")
 			List elements = page.getElements();
 			try
 			{
@@ -437,19 +433,16 @@ class ViewerCanvas extends Canvas
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private void initializeHyperlinks(final int originX, final int originY, @SuppressWarnings("rawtypes") final List elements) throws JRException
+	private void initializeHyperlinks(final int originX, final int originY, final List elements) throws JRException
 	{
 		if (elements != null)
 		{
-			for (@SuppressWarnings("rawtypes")
-			Iterator it = elements.iterator(); it.hasNext();)
+			for (Iterator it = elements.iterator(); it.hasNext();)
 			{
 				JRPrintElement element = (JRPrintElement) it.next();
 
 				if (getImageMapRenderer(element) != null)
 				{
-					@SuppressWarnings("rawtypes")
 					List hyperlinks = getImageMapRenderer(element).getImageAreaHyperlinks(
 							new java.awt.Rectangle(0, 0, element.getWidth(), element.getHeight()));
 					if (hyperlinks != null)
@@ -1076,10 +1069,9 @@ class ViewerCanvas extends Canvas
 
 		private final int originY;
 
-		@SuppressWarnings("rawtypes")
 		private final List imageAreaHyperlinks;
 
-		public ImageAreaHyperlink(final int originX, final int originY, @SuppressWarnings("rawtypes") final List imageAreaHyperlinks)
+		public ImageAreaHyperlink(final int originX, final int originY, final List imageAreaHyperlinks)
 		{
 			this.originX = originX;
 			this.originY = originY;
@@ -1092,8 +1084,7 @@ class ViewerCanvas extends Canvas
 			final int x = point.x - originX;
 			final int y = point.y - originY;
 
-			for (@SuppressWarnings("rawtypes")
-			Iterator it = imageAreaHyperlinks.iterator(); it.hasNext();)
+			for (Iterator it = imageAreaHyperlinks.iterator(); it.hasNext();)
 			{
 				JRPrintImageAreaHyperlink areaHyperlink = (JRPrintImageAreaHyperlink) it.next();
 

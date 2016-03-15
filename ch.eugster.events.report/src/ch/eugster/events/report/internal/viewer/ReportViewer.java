@@ -18,7 +18,6 @@
  */
 package ch.eugster.events.report.internal.viewer;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +29,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.xml.JRPrintXmlLoader;
 import net.sf.jasperreports.view.JRHyperlinkListener;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -67,7 +67,6 @@ public class ReportViewer implements IReportViewer
 
 	private ViewerCanvas viewerComposite;
 
-	@SuppressWarnings("rawtypes")
 	private List hyperlinkListeners;
 
 	/**
@@ -95,7 +94,6 @@ public class ReportViewer implements IReportViewer
 	/**
 	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#addHyperlinkListener(net.sf.jasperreports.view.JRHyperlinkListener)
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void addHyperlinkListener(final JRHyperlinkListener listener)
 	{
@@ -280,7 +278,6 @@ public class ReportViewer implements IReportViewer
 	/**
 	 * @see ch.eugster.events.report.internal.viewer.IReportViewer#getHyperlinkListeners()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public JRHyperlinkListener[] getHyperlinkListeners()
 	{
@@ -437,7 +434,7 @@ public class ReportViewer implements IReportViewer
 		}
 		else
 		{
-			jasperPrint = (JasperPrint) JRLoader.loadObject(new File(fileName));
+			jasperPrint = (JasperPrint) JRLoader.loadObject(fileName);
 		}
 
 		return jasperPrint;
@@ -504,6 +501,10 @@ public class ReportViewer implements IReportViewer
 	@Override
 	public void setDocument(final JasperPrint document)
 	{
+		Assert.isNotNull(document, "ReportViewer.documentNotNull"); //$NON-NLS-1$
+		Assert.isNotNull(document.getPages(), "ReportViewer.documentNotEmpty"); //$NON-NLS-1$
+		Assert.isTrue(!document.getPages().isEmpty(), "ReportViewer.documentNotEmpty"); //$NON-NLS-1$
+
 		this.document = document;
 		this.reason = null;
 		this.pageIndex = Math.min(Math.max(0, pageIndex), getPageCount() - 1);
@@ -558,6 +559,8 @@ public class ReportViewer implements IReportViewer
 	@Override
 	public void setZoomLevels(final double[] levels)
 	{
+		Assert.isNotNull(levels);
+		Assert.isTrue(levels.length > 0);
 		this.zoomLevels = levels;
 	}
 
