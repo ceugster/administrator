@@ -1307,6 +1307,13 @@ ch.eugster.events.report/icons/zoomplus.gif -text
 ch.eugster.events.report/icons/zoomplusd.gif -text
 ch.eugster.events.report/labels/Avery[!!-~]Zweckform[!!-~]3422[!!-~]3x8.jrxml -text
 ch.eugster.events.report/labels/Endisch[!!-~]A4[!!-~]3x11.jrxml -text
+ch.eugster.events.report/lib/commons-LICENSE.txt -text svneol=unset#text/plain
+ch.eugster.events.report/lib/commons-NOTICE.txt -text svneol=unset#text/plain
+ch.eugster.events.report/lib/commons-beanutils-1.8.0.jar -text
+ch.eugster.events.report/lib/commons-collections-2.1.1.jar -text
+ch.eugster.events.report/lib/commons-digester-2.1.jar -text
+ch.eugster.events.report/lib/commons-javaflow-20060411.jar -text
+ch.eugster.events.report/lib/commons-logging-1.1.1.jar -text
 ch.eugster.events.report/lib/jasperreports-4.8.0.jar -text
 ch.eugster.events.report/lib/jdt-compiler-3.1.1-LICENSE.html -text svneol=unset#text/plain
 ch.eugster.events.report/lib/jdt-compiler-3.1.1.jar -text
