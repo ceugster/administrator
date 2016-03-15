@@ -213,10 +213,11 @@ litigation.
    </license>
 
    <requires>
-      <import plugin="ch.eugster.events.report.commons" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="ch.eugster.events.report.pdf" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.8.2" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.report.commons" version="1.0.2" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.report.pdf" version="1.0.2" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.persistence"/>
    </requires>
 
    <plugin
