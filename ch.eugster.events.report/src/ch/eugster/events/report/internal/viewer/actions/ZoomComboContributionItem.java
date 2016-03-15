@@ -21,9 +21,11 @@ package ch.eugster.events.report.internal.viewer.actions;
 import java.text.DecimalFormat;
 
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -65,6 +67,7 @@ public class ZoomComboContributionItem extends ContributionItem implements IRepo
 	 */
 	public ZoomComboContributionItem(final IReportViewer viewer)
 	{
+		Assert.isNotNull(viewer);
 		this.viewer = viewer;
 		this.viewer.addReportViewerListener(this);
 		refresh();
@@ -112,6 +115,7 @@ public class ZoomComboContributionItem extends ContributionItem implements IRepo
 	@Override
 	public final void fill(final Menu parent, final int index)
 	{
+		Assert.isTrue(false, "Zoom Combo kann nicht zu Menu hinzugefügt werden"); //$NON-NLS-1$
 	}
 
 	/**
@@ -259,4 +263,18 @@ public class ZoomComboContributionItem extends ContributionItem implements IRepo
 	{
 		refresh();
 	}
+
+	private static int getTextWidth(final String string, final Control control)
+	{
+		GC gc = new GC(control);
+		try
+		{
+			return gc.textExtent(string).x;
+		}
+		finally
+		{
+			gc.dispose();
+		}
+	}
+
 }

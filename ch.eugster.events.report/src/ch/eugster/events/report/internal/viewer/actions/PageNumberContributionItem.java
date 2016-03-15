@@ -21,6 +21,7 @@ package ch.eugster.events.report.internal.viewer.actions;
 import java.text.MessageFormat;
 
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -64,6 +65,7 @@ public class PageNumberContributionItem extends ContributionItem implements IRep
 	 */
 	public PageNumberContributionItem(final IReportViewer viewer)
 	{
+		Assert.isNotNull(viewer);
 		this.viewer = viewer;
 		this.viewer.addReportViewerListener(this);
 		refresh();
@@ -97,6 +99,7 @@ public class PageNumberContributionItem extends ContributionItem implements IRep
 	@Override
 	public final void fill(final Menu parent, final int index)
 	{
+		Assert.isTrue(false, "Can't add page number to a menu");//$NON-NLS-1$
 	}
 
 	@Override
