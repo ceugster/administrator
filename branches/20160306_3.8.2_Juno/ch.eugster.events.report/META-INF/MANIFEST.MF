@@ -10,14 +10,11 @@ Export-Package: ch.eugster.events.report.engine,
  ch.eugster.events.report.entries
 Bundle-ClassPath: .,
  lib/jasperreports-4.8.0.jar,
- lib/jdt-compiler-3.1.1.jar,
- lib/commons-beanutils-1.8.0.jar,
- lib/commons-collections-2.1.1.jar,
- lib/commons-digester-2.1.jar,
- lib/commons-javaflow-20060411.jar,
- lib/commons-logging-1.1.1.jar
+ lib/jdt-compiler-3.1.1.jar
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
- org.eclipse.ui;bundle-version="3.8.2"
+ org.eclipse.ui;bundle-version="3.8.2",
+ ch.eugster.events.report.commons;bundle-version="1.0.2",
+ ch.eugster.events.report.pdf;bundle-version="1.0.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: ch.eugster.events.persistence.formatters,
  ch.eugster.events.persistence.model
