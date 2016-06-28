@@ -74,7 +74,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 
 	public String getId()
 	{
-		return this.getProperty(Key.TYPE.getKey()) + this.getProperty(Key.ID.getKey());
+		return this.getProperty(Key.ID.getKey());
 	}
 
 	protected void printReferences(Writer writer)
@@ -92,7 +92,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 
 	public enum Key implements DataMapKey
 	{
-		ID, TYPE, ANOTHER_LINE, SALUTATION, POLITE, MAILING_ADDRESS;
+		ID, ANOTHER_LINE, SALUTATION, POLITE, MAILING_ADDRESS;
 
 		@Override
 		public String getDescription()
@@ -102,10 +102,6 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 				case ID:
 				{
 					return "Id";
-				}
-				case TYPE:
-				{
-					return "Typ";
 				}
 				case ANOTHER_LINE:
 				{
@@ -139,10 +135,6 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 				{
 					return "address_group_member_id";
 				}
-				case TYPE:
-				{
-					return "address_group_member_type";
-				}
 				case ANOTHER_LINE:
 				{
 					return "address_group_member_another_line";
@@ -175,10 +167,10 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 				{
 					return "Id";
 				}
-				case TYPE:
-				{
-					return "Typ";
-				}
+//				case TYPE:
+//				{
+//					return "Typ";
+//				}
 				case ANOTHER_LINE:
 				{
 					return "Zusatzzeile";
@@ -212,48 +204,22 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 					{
 						if (member.getAddress().getValidLinks().size() == 1)
 						{
-							return member.getAddress().getValidLinks().iterator().next().getId().toString();
+							return "P" + member.getAddress().getValidLinks().iterator().next().getId().toString();
 						}
 						else
 						{
-							return member.getAddress().getId().toString();
+							return "A" + member.getAddress().getId().toString();
 						}
 					}
 					else
 					{
 						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
 						{
-							return member.getAddress().getId().toString();
+							return "A" + member.getAddress().getId().toString();
 						}
 						else
 						{
-							return member.getLink().getId().toString();
-						}
-					}
-				}
-				case TYPE:
-				{
-					
-					if (member.getLink() == null)
-					{
-						if (member.getAddress().getValidLinks().size() == 1)
-						{
-							return "P";
-						}
-						else
-						{
-							return "A";
-						}
-					}
-					else
-					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
-						{
-							return "A";
-						}
-						else
-						{
-							return "P";
+							return "P" + member.getLink().getId().toString();
 						}
 					}
 				}

@@ -15,7 +15,6 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddress>
 {
-
 	public LinkPersonAddressQuery(final ConnectionService connectionService)
 	{
 		super(connectionService);
