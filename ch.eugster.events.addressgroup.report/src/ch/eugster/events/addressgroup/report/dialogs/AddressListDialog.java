@@ -330,7 +330,7 @@ public class AddressListDialog extends TitleAreaDialog
 		}
 		else
 		{
-			keys.add(AddressGroupMemberMap.Key.TYPE);
+//			keys.add(AddressGroupMemberMap.Key.TYPE);
 			keys.add(AddressGroupMemberMap.Key.ID);
 			keys.add(PersonMap.Key.SEX);
 			keys.add(PersonMap.Key.FORM);

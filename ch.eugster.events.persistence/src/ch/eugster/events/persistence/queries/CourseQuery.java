@@ -57,11 +57,11 @@ public class CourseQuery extends AbstractEntityQuery<Course>
 		}
 		else if (open)
 		{
-			expression = expression.and(new ExpressionBuilder().get("advanceNoticeDoneDate").isNull());
+			expression = expression.and(new ExpressionBuilder().get("invitationDate").isNull());
 		}
 		else if (done)
 		{
-			expression = expression.and(new ExpressionBuilder().get("advanceNoticeDoneDate").notNull());
+			expression = expression.and(new ExpressionBuilder().get("invitationDate").notNull());
 		}
 		else
 		{

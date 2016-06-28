@@ -16,7 +16,6 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class PersonQuery extends AbstractEntityQuery<Person>
 {
-
 	public PersonQuery(final ConnectionService connectionService)
 	{
 		super(connectionService);
