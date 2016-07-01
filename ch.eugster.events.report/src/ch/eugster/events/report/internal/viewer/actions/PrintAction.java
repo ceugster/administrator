@@ -61,7 +61,7 @@ public class PrintAction extends AbstractReportViewerAction
 	}
 
 	/**
-	 * @see com.jasperassistant.designer.viewer.actions.AbstractReportViewerAction#calculateEnabled()
+	 * @see ch.eugster.events.report.internal.viewer.actions.AbstractReportViewerAction#calculateEnabled()
 	 */
 	@Override
 	protected boolean calculateEnabled()
@@ -104,7 +104,7 @@ public class PrintAction extends AbstractReportViewerAction
 	}
 
 	/**
-	 * @see com.jasperassistant.designer.viewer.actions.AbstractReportViewerAction#run()
+	 * @see ch.eugster.events.report.internal.viewer.actions.AbstractReportViewerAction#run()
 	 */
 	@Override
 	public void run()

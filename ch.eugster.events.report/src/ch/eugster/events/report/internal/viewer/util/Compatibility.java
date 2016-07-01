@@ -16,6 +16,7 @@ import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
  * 
  * @author Peter Severin (petru_severin@yahoo.com)
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class Compatibility {
     private static Class classJRPrintFrame;
 
@@ -24,7 +25,7 @@ public class Compatibility {
     static {
         try {
             classJRPrintFrame = Class.forName("net.sf.jasperreports.engine.JRPrintFrame");
-            classJRPrintFrame_getElements = classJRPrintFrame.getMethod("getElements", null);
+            classJRPrintFrame_getElements = classJRPrintFrame.getMethod("getElements");
         } catch (ClassNotFoundException e) {
             // ignore. running under an old version of JasperReports
         } catch (SecurityException e) {
@@ -53,7 +54,7 @@ public class Compatibility {
             return null;
 
         try {
-            return (List) classJRPrintFrame_getElements.invoke(element, null);
+            return (List) classJRPrintFrame_getElements.invoke(element);
         } catch (IllegalArgumentException e) {
             compatibilityError(e);
         } catch (IllegalAccessException e) {
