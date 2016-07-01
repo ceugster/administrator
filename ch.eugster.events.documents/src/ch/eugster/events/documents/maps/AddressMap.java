@@ -551,7 +551,7 @@ public class AddressMap extends AbstractDataMap
 				}
 				case NOTES:
 				{
-					return address.getProvince();
+					return address.getNotes();
 				}
 				default:
 				{
