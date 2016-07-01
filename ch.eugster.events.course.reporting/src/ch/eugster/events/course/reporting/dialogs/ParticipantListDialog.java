@@ -69,14 +69,14 @@ public class ParticipantListDialog extends TitleAreaDialog
 				try
 				{
 					monitor.beginTask("Dokument wird erstellt...", serviceReferences.length);
-					for (ServiceReference<DocumentBuilderService> service : serviceReferences)
+					for (ServiceReference<DocumentBuilderService> serviceReference : serviceReferences)
 					{
 						if (status.isOK())
 						{
 							monitor.worked(1);
 							return;
 						}
-						DocumentBuilderService builderService = (DocumentBuilderService) service;
+						DocumentBuilderService builderService = (DocumentBuilderService) tracker.getService(serviceReference);
 						status = builderService.buildDocument(new SubProgressMonitor(monitor, dataMaps.length),
 								keys, dataMaps);
 						if (status.isOK())
