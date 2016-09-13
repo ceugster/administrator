@@ -318,6 +318,10 @@ public class Address extends AbstractEntity implements Donator
 
 	public String getProvince()
 	{
+		if (this.getZipCode() != null)
+		{
+			return stringValueOf(this.getZipCode().getState());
+		}
 		return stringValueOf(this.province);
 	}
 
