@@ -13,6 +13,8 @@ import ch.eugster.events.persistence.model.IBookingState;
 
 public class BookingListReportItem implements Comparable<BookingListReportItem>
 {
+	private Course course;
+	
 	private String code;
 
 	private String name;
@@ -41,11 +43,6 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 
 	private String status;
 
-	public BookingListReportItem()
-	{
-		super();
-	}
-
 	/**
 	 * Load Address
 	 * 
@@ -53,6 +50,7 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 	 */
 	public BookingListReportItem(final Course course)
 	{
+		this.course = course;
 		loadData(course);
 	}
 
@@ -66,6 +64,11 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 			return this.getCode().compareTo(item.getCode());
 		}
 		return comparison;
+	}
+	
+	public Course getCourse()
+	{
+		return course;
 	}
 
 	public Double getAmount()
