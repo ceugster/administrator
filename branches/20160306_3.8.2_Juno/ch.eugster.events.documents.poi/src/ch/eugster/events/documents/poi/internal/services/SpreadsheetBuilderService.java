@@ -111,9 +111,9 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 				this.addRow(keys, map, sheet, ++counter, style, normal);
 				monitor.worked(1);
 			}
-			this.packColumns(sheet, 0, keys.length);
 			if (maps.length > 0)
 			{
+				this.packColumns(sheet, 0, keys.length);
 				this.showDocument(workbook);
 			}
 		}
