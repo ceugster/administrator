@@ -27,7 +27,7 @@ public abstract class AbstractEntity implements IEntity
 {
 	@Basic
 	@Convert("booleanConverter")
-	protected boolean deleted;
+	protected boolean deleted = false;
 
 	@Basic
 	protected int version;
@@ -153,7 +153,6 @@ public abstract class AbstractEntity implements IEntity
 	protected static AbstractEntity newInstance(final AbstractEntity entity)
 	{
 		entity.setId(null);
-		entity.setDeleted(false);
 		entity.setVersion(0);
 		entity.setInserted(null);
 		return entity;

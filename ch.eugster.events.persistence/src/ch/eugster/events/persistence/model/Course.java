@@ -1146,6 +1146,17 @@ public class Course extends AbstractEntity
 	{
 		return "Kurs";
 	}
+	
+	public int getParticipantsCount(BookingType bookingType)
+	{
+		int count = 0;
+		List<Booking> bookings = this.getBookings();
+		for (Booking booking : bookings)
+		{
+			count += booking.getParticipantCount(bookingType);
+		}
+		return count;
+	}
 
 	public String getInstanceName()
 	{
