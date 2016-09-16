@@ -313,6 +313,7 @@ ch.eugster.events.course.reporting/reports/booking_list.jrxml -text
 ch.eugster.events.course.reporting/reports/participant_list.jrxml -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/Activator.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/BookingListFactory.java -text
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/BookingListItem.java -text svneol=unset#text/plain
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/BookingListReportItem.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/CourseDescriptionFactory.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/ParticipantListFactory.java -text
