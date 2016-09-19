@@ -1,7 +1,6 @@
 package ch.eugster.events.person.editors;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,22 +31,28 @@ public class CityContentProposalProvider implements IContentProposalProvider
 	public IContentProposal[] getProposals(String contents, int position)
 	{
 		List<CityContentProposal> proposals = new ArrayList<CityContentProposal>();
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
-			List<ZipCode> zipCodes = query.selectByZipCode(zip.getText());
-			Iterator<ZipCode> iterator = zipCodes.iterator();
-			for (int i = 0; iterator.hasNext(); i++)
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				ZipCode zipCode = iterator.next();
-				proposals.add(new CityContentProposal(zipCode));
+				ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
+				List<ZipCode> zipCodes = query.selectByZipCode(zip.getText());
+				Iterator<ZipCode> iterator = zipCodes.iterator();
+				while (iterator.hasNext())
+				{
+					ZipCode zipCode = iterator.next();
+					proposals.add(new CityContentProposal(zipCode));
+				}
 			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		if (proposals.size() == 0)
 		{
 			zip.setData("zipCode", null);

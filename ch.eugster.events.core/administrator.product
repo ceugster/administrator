@@ -39,7 +39,7 @@
    <intro introId="ch.eugster.events.core.intro"/>
 
    <vm>
-      <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</windows>
+      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</windows>
    </vm>
 
    <license>
@@ -141,7 +141,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="ch.eugster.events.persistence"/>
       <plugin id="ch.eugster.events.ui"/>
       <plugin id="ch.eugster.events.user"/>
-      <plugin id="ch.eugster.odfdom" fragment=""/>
+      <plugin id="ch.eugster.odfdom"/>
       <plugin id="ch.eugster.poi"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="javax.persistence"/>
@@ -175,7 +175,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="org.eclipse.equinox.p2.artifact.repository"/>
       <plugin id="org.eclipse.equinox.p2.core"/>
       <plugin id="org.eclipse.equinox.p2.director"/>
-      <plugin id="org.eclipse.equinox.p2.discovery" fragment=""/>
+      <plugin id="org.eclipse.equinox.p2.discovery"/>
       <plugin id="org.eclipse.equinox.p2.engine"/>
       <plugin id="org.eclipse.equinox.p2.garbagecollector"/>
       <plugin id="org.eclipse.equinox.p2.jarprocessor"/>
@@ -186,7 +186,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="org.eclipse.equinox.p2.touchpoint.eclipse"/>
       <plugin id="org.eclipse.equinox.p2.touchpoint.natives"/>
       <plugin id="org.eclipse.equinox.p2.ui"/>
-      <plugin id="org.eclipse.equinox.p2.ui.discovery" fragment=""/>
+      <plugin id="org.eclipse.equinox.p2.ui.discovery"/>
       <plugin id="org.eclipse.equinox.p2.ui.sdk"/>
       <plugin id="org.eclipse.equinox.p2.ui.sdk.scheduler"/>
       <plugin id="org.eclipse.equinox.p2.updatechecker"/>
@@ -230,13 +230,13 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </plugins>
 
    <features>
-      <feature id="org.eclipse.equinox.p2.user.ui" version="2.0.1.r361_v20100903-897HFa-FX0z-z-ntoaavz0JPX628"/>
-      <feature id="org.eclipse.platform" version="3.6.2.r362_v20110210-9gF78Gs1FrIGnHDHWkEcopoN8AmxeZflGDGKQi"/>
       <feature id="ch.eugster.events.core.feature" version="1.0.0.qualifier"/>
+      <feature id="org.eclipse.equinox.p2.user.ui" version="2.2.0.v20121212-204731-62DG9JXTlTj-UXcQ2y3NLn6U4Z3H"/>
+      <feature id="org.eclipse.platform" version="3.8.1.v20130118-180812-9jF7oIBFG8eU2pim-VbIlTuQjY0RWWK3x-bv4I"/>
    </features>
 
    <configurations>
-      <plugin id="ch.eugster.events.core" autoStart="false" startLevel="4" />
+      <plugin id="ch.eugster.events.core" autoStart="true" startLevel="4" />
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="3" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="1" />

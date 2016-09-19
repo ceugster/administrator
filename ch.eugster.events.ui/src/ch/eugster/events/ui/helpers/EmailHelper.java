@@ -92,20 +92,23 @@ public class EmailHelper
 					}
 				}
 			}
-			StringBuilder s = new StringBuilder();
-			for (String email : emails)
+			if (emails.size() > 0)
 			{
-				if (s.length() == 0)
+				StringBuilder s = new StringBuilder();
+				for (String email : emails)
 				{
-					s = s.append("mailto:" + email);
+					if (s.length() == 0)
+					{
+						s = s.append("mailto:" + email);
+					}
+					else
+					{
+						s = s.append(";" + email);
+					}
 				}
-				else
-				{
-					s = s.append("," + "mailto:" + email);
-				}
+				URI uri = new URI(s.toString());
+				Desktop.getDesktop().mail(uri);
 			}
-			URI uri = new URI(s.toString());
-			Desktop.getDesktop().mail(uri);
 		}
 		catch (URISyntaxException se)
 		{

@@ -33,58 +33,68 @@ public class PredefinedEntityChecker
 
 	private IStatus checkUser()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-
 		IStatus status = Status.OK_STATUS;
-		String username = System.getProperty("user.name");
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
+		tracker.open();
+		try
 		{
-			UserQuery query = (UserQuery) service.getQuery(User.class);
-			User user = query.selectByUsername(username);
-			if (user == null)
+			String username = System.getProperty("user.name");
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				user = User.newInstance();
-				user.setUsername(username);
-				user.setState(UserStatus.USER);
-				user = query.merge(user);
-				if (user != null)
+				UserQuery query = (UserQuery) service.getQuery(User.class);
+				User user = query.selectByUsername(username);
+				if (user == null)
+				{
+					user = User.newInstance();
+					user.setUsername(username);
+					user.setState(UserStatus.USER);
+					user = query.merge(user);
+					if (user != null)
+					{
+						User.setCurrent(user);
+					}
+				}
+				else
 				{
 					User.setCurrent(user);
 				}
 			}
-			else
-			{
-				User.setCurrent(user);
-			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return status;
 	}
 
 	private IStatus checkVersion()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-
 		IStatus status = Status.OK_STATUS;
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
+		tracker.open();
+		try
 		{
-			VersionQuery query = (VersionQuery) service.getQuery(Version.class);
-			Version version = query.find(Version.class, Long.valueOf(1L));
-			if (version == null)
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				version = Version.newInstance();
-				version.setDataVersion(0);
-				version.setStructureVersion(1);
-				version = query.merge(version);
+				VersionQuery query = (VersionQuery) service.getQuery(Version.class);
+				Version version = query.find(Version.class, Long.valueOf(1L));
+				if (version == null)
+				{
+					version = Version.newInstance();
+					version.setDataVersion(0);
+					version.setStructureVersion(1);
+					version = query.merge(version);
+				}
 			}
 		}
+		finally
+		{
 		tracker.close();
+		}
 		return status;
 	}
 

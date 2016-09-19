@@ -96,25 +96,25 @@ public class CourseInvitationDialog extends TitleAreaDialog
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 				{
-					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle()
-							.getBundleContext(), DocumentBuilderService.class.getName(), null);
+					ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle()
+							.getBundleContext(), DocumentBuilderService.class, null);
+					tracker.open();
 					try
 					{
-						tracker.open();
-						ServiceReference[] references = tracker.getServiceReferences();
+						ServiceReference<DocumentBuilderService>[] references = tracker.getServiceReferences();
 						if (references != null)
 						{
 							try
 							{
 								monitor.beginTask("Dokumente werden erstellt...", references.length);
-								for (ServiceReference reference : references)
+								for (ServiceReference<DocumentBuilderService> reference : references)
 								{
 									DocumentBuilderService service = (DocumentBuilderService) tracker
 											.getService(reference);
 									DocumentBuilderService builderService = service;
 									IStatus status = builderService.buildDocument(new SubProgressMonitor(monitor,
 											dataMaps.length), new File(userPropertyTemplatePath.getValue()), dataMaps);
-									if (status.isOK())
+									if (status.isOK() || status.getSeverity() == IStatus.ERROR)
 									{
 										break;
 									}
@@ -139,7 +139,7 @@ public class CourseInvitationDialog extends TitleAreaDialog
 			});
 			if (updateCourse != null && updateCourse.getSelection())
 			{
-				ServiceTracker connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
+				ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class, null);
 				connectionServiceTracker.open();
 				try
 				{
@@ -274,18 +274,22 @@ public class CourseInvitationDialog extends TitleAreaDialog
 			@Override
 			public void widgetSelected(final SelectionEvent e)
 			{
-				String path = CourseInvitationDialog.this.documentPath.getText();
+				File file = new File(CourseInvitationDialog.this.documentPath.getText());
+				while (!file.exists())
+				{
+					file = file.getParentFile();
+				}
 				FileDialog dialog = new FileDialog(CourseInvitationDialog.this.getShell());
-				dialog.setFilterPath(path);
+				dialog.setFilterPath(file.getAbsolutePath());
 				dialog.setFilterExtensions(new String[] { "*.odt" });
 				dialog.setText(DIALOG_TITLE);
-				path = dialog.open();
+				String path = dialog.open();
 				if (path != null)
 				{
 					CourseInvitationDialog.this.documentPath.setText(path);
 
 				}
-				File file = new File(CourseInvitationDialog.this.documentPath.getText());
+				file = new File(CourseInvitationDialog.this.documentPath.getText());
 				if (file.exists())
 				{
 					userPropertyTemplatePath.setValue(file.getAbsolutePath());
@@ -380,11 +384,11 @@ public class CourseInvitationDialog extends TitleAreaDialog
 
 	private void setUserPath()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			Object service = tracker.getService();
 			if (service instanceof ConnectionService)
 			{

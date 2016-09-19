@@ -87,14 +87,12 @@ public class BankQuery extends AbstractEntityQuery<Bank>
 			String line = reader.readLine();
 			CountryQuery countryQuery = (CountryQuery) connectionService.getQuery(Country.class);
 			ZipCodeQuery zipCodeQuery = (ZipCodeQuery) connectionService.getQuery(ZipCode.class);
-			int row = 0;
 			while (line != null)
 			{
 				if (monitor.isCanceled())
 				{
 					throw new InterruptedException();
 				}
-				row++;
 				List<Bank> banks = query.selectByBcNrAndFilialId(getValue(2, 5, line), getValue(7, 4, line));
 				Bank bank = null;
 				if (banks.isEmpty())

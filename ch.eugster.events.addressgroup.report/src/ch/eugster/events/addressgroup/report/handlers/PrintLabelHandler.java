@@ -62,21 +62,28 @@ public class PrintLabelHandler extends AbstractHandler implements IHandler
 		{
 			if (event.getApplicationContext() instanceof EvaluationContext)
 			{
-				ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-						ReportService.class.getName(), null);
+				ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+						ReportService.class, null);
 				tracker.open();
-				ReportService service = (ReportService) tracker.getService();
-				if (service != null)
+				try
 				{
-					LabelFactory factory = new LabelFactory();
-					EvaluationContext context = (EvaluationContext) event.getApplicationContext();
-					ISelection sel = (ISelection) context.getParent().getVariable("selection");
-					IStructuredSelection ssel = (IStructuredSelection) sel;
-					if (buildLabelList(factory, ssel) > 0)
+					ReportService service = (ReportService) tracker.getService();
+					if (service != null)
 					{
-						Destination[] destinations = new Destination[] { Destination.PREVIEW, Destination.PRINTER };
-						service.processLabels(factory.getEntries(), new HashMap<String, Object>(), destinations);
+						LabelFactory factory = new LabelFactory();
+						EvaluationContext context = (EvaluationContext) event.getApplicationContext();
+						ISelection sel = (ISelection) context.getParent().getVariable("selection");
+						IStructuredSelection ssel = (IStructuredSelection) sel;
+						if (buildLabelList(factory, ssel) > 0)
+						{
+							Destination[] destinations = new Destination[] { Destination.PREVIEW, Destination.PRINTER };
+							service.processLabels(factory.getEntries(), new HashMap<String, Object>(), destinations);
+						}
 					}
+				}
+				finally
+				{
+					tracker.close();
 				}
 			}
 		}

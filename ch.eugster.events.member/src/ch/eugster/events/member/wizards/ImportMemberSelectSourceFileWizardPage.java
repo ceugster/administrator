@@ -24,8 +24,6 @@ public class ImportMemberSelectSourceFileWizardPage extends WizardPage implement
 
 	private Text path;
 
-	private ImportMemberWizard wizard;
-
 	public ImportMemberSelectSourceFileWizardPage()
 	{
 		super("import.member.select.source.file.wizard.page");

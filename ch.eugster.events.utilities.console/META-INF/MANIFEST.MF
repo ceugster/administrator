@@ -5,11 +5,10 @@ Bundle-SymbolicName: ch.eugster.events.utilities.console;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: ch.eugster.events.utilities.console.Activator
 Bundle-Vendor: Christian Eugster
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.eugster.events.persistence.model,
  ch.eugster.events.persistence.queries,
- ch.eugster.events.persistence.service,
- org.eclipse.osgi.framework.console;version="1.1.0",
- org.osgi.framework;version="1.5.0",
- org.osgi.util.tracker;version="1.4.0"
+ ch.eugster.events.persistence.service
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
+ org.eclipse.osgi.services;bundle-version="3.3.100"

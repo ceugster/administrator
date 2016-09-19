@@ -274,8 +274,8 @@ public class AddressGroupViewerDropAdapter extends ViewerDropAdapter
 
 			if (updateGroup)
 			{
-				ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-						ConnectionService.class.getName(), null);
+				ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+						ConnectionService.class, null);
 				tracker.open();
 				try
 				{

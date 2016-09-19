@@ -102,25 +102,31 @@ public abstract class AbstractEntityEditor<T extends AbstractEntity> extends Edi
 			AbstractEntityEditorInput<T> input = (AbstractEntityEditorInput<T>) this.getEditorInput();
 			T entity = input.getEntity();
 
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
 			tracker.open();
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
+			try
 			{
-				AbstractEntityQuery<T> query = (AbstractEntityQuery<T>) service.getQuery(entity.getClass());
-				input.setEntity(query.merge(entity));
-				if (input.hasParent())
+				ConnectionService service = (ConnectionService) tracker.getService();
+				if (service != null)
 				{
-					AbstractEntityQuery<? extends AbstractEntity> parentQuery = service.getQuery(input.getParent()
-							.getClass());
-					parentQuery.refresh(input.getParent());
+					AbstractEntityQuery<T> query = (AbstractEntityQuery<T>) service.getQuery(entity.getClass());
+					input.setEntity(query.merge(entity));
+					if (input.hasParent())
+					{
+						AbstractEntityQuery<? extends AbstractEntity> parentQuery = service.getQuery(input.getParent()
+								.getClass());
+						parentQuery.refresh(input.getParent());
+					}
+					this.setDirty(false);
+					this.scrolledForm.setText(this.getText());
+					this.updateControls();
 				}
-				this.setDirty(false);
-				this.scrolledForm.setText(this.getText());
-				this.updateControls();
 			}
-			tracker.close();
+			finally
+			{
+				tracker.close();
+			}
 		}
 	}
 

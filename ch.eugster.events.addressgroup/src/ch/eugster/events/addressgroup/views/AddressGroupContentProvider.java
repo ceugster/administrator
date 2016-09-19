@@ -25,18 +25,23 @@ public class AddressGroupContentProvider implements ITreeContentProvider
 		if (parentElement instanceof Domain)
 		{
 			AddressGroupCategory[] categories = new AddressGroupCategory[0];
-			ServiceTracker connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle()
-					.getBundleContext(), ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle()
+					.getBundleContext(), ConnectionService.class, null);
 			connectionServiceTracker.open();
-
-			ConnectionService con = (ConnectionService) connectionServiceTracker.getService();
-			if (con != null)
+			try
 			{
-				Domain domain = (Domain) parentElement;
-				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) con.getQuery(AddressGroupCategory.class);
-				categories = query.selectByDomain(domain).toArray(new AddressGroupCategory[0]);
+				ConnectionService con = (ConnectionService) connectionServiceTracker.getService();
+				if (con != null)
+				{
+					Domain domain = (Domain) parentElement;
+					AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) con.getQuery(AddressGroupCategory.class);
+					categories = query.selectByDomain(domain).toArray(new AddressGroupCategory[0]);
+				}
 			}
-			connectionServiceTracker.close();
+			finally
+			{
+				connectionServiceTracker.close();
+			}
 			return categories;
 		}
 		else if (parentElement instanceof AddressGroupCategory)
@@ -81,18 +86,23 @@ public class AddressGroupContentProvider implements ITreeContentProvider
 		if (element instanceof Domain)
 		{
 			long count = 0L;
-			ServiceTracker connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle()
-					.getBundleContext(), ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle()
+					.getBundleContext(), ConnectionService.class, null);
 			connectionServiceTracker.open();
-
-			ConnectionService con = (ConnectionService) connectionServiceTracker.getService();
-			if (con != null)
+			try
 			{
-				Domain domain = (Domain) element;
-				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) con.getQuery(AddressGroupCategory.class);
-				count = query.countByDomain(domain);
+				ConnectionService con = (ConnectionService) connectionServiceTracker.getService();
+				if (con != null)
+				{
+					Domain domain = (Domain) element;
+					AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) con.getQuery(AddressGroupCategory.class);
+					count = query.countByDomain(domain);
+				}
 			}
-			connectionServiceTracker.close();
+			finally
+			{
+				connectionServiceTracker.close();
+			}
 			return count > 0l;
 		}
 		else if (element instanceof AddressGroupCategory)

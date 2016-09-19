@@ -4,6 +4,7 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import ch.eugster.events.utilities.console.database.manipulator.CopyAllTeachersToNewAddressGroup;
 import ch.eugster.events.utilities.console.database.manipulator.DoubleAddressGroupMemberEntriesDeleter;
 import ch.eugster.events.utilities.console.database.manipulator.LawFolderUpdater;
 import ch.eugster.events.utilities.console.database.manipulator.PersonWithoutChildrenRemover;
@@ -28,6 +29,7 @@ public class Activator implements BundleActivator
 		context.registerService(CommandProvider.class.getName(), new LawFolderUpdater(), null);
 		context.registerService(CommandProvider.class.getName(), new DoubleAddressGroupMemberEntriesDeleter(), null);
 		context.registerService(CommandProvider.class.getName(), new PersonWithoutChildrenRemover(), null);
+		context.registerService(CommandProvider.class.getName(), new CopyAllTeachersToNewAddressGroup(), null);
 	}
 
 	/*

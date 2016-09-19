@@ -48,7 +48,7 @@ public class SeasonView extends AbstractEntityView implements IDoubleClickListen
 
 	private TableViewer viewer;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private IContextActivation ctxActivation;
 
@@ -189,11 +189,11 @@ public class SeasonView extends AbstractEntityView implements IDoubleClickListen
 
 		this.getSite().setSelectionProvider(this.viewer);
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public ConnectionService addingService(ServiceReference<ConnectionService> reference)
 			{
 				final ConnectionService connectionService = (ConnectionService) super.addingService(reference);
 				Display display = Display.getCurrent();
@@ -214,7 +214,7 @@ public class SeasonView extends AbstractEntityView implements IDoubleClickListen
 			}
 
 			@Override
-			public void removedService(ServiceReference reference, Object service)
+			public void removedService(ServiceReference<ConnectionService> reference, ConnectionService service)
 			{
 				Display display = Display.getCurrent();
 				if (display == null)

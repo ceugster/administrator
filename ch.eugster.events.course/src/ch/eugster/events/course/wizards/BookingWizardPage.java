@@ -604,8 +604,8 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 		List<PaymentTerm> paymentTerms = new ArrayList<PaymentTerm>();
 		PaymentTerm term = PaymentTerm.newInstance();
 		term.setId(Long.valueOf(0L));
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
 		try
 		{

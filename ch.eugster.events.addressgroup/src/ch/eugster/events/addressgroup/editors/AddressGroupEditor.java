@@ -154,26 +154,30 @@ public class AddressGroupEditor extends AbstractEntityEditor<AddressGroup>
 	{
 		Message msg = null;
 
-		ServiceTracker connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle()
-				.getBundleContext(), ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle()
+				.getBundleContext(), ConnectionService.class, null);
 		connectionServiceTracker.open();
-
-		ConnectionService con = (ConnectionService) connectionServiceTracker.getService();
-		if (con != null)
+		try
 		{
-			AddressGroupEditorInput input = (AddressGroupEditorInput) this.getEditorInput();
-			AddressGroup addressGroup = input.getEntity();
-			String code = this.code.getText();
-			AddressGroupQuery query = (AddressGroupQuery) con.getQuery(AddressGroup.class);
-			if (!query.isCodeUnique(code, addressGroup.getId()))
+			ConnectionService con = (ConnectionService) connectionServiceTracker.getService();
+			if (con != null)
 			{
-				msg = new Message(this.name, "Ungültiger Code");
-				msg.setMessage("Der gewählte Code wird bereits verwendet.");
-				return msg;
+				AddressGroupEditorInput input = (AddressGroupEditorInput) this.getEditorInput();
+				AddressGroup addressGroup = input.getEntity();
+				String code = this.code.getText();
+				AddressGroupQuery query = (AddressGroupQuery) con.getQuery(AddressGroup.class);
+				if (!query.isCodeUnique(code, addressGroup.getId()))
+				{
+					msg = new Message(this.name, "Ungültiger Code");
+					msg.setMessage("Der gewählte Code wird bereits verwendet.");
+					return msg;
+				}
 			}
 		}
-		connectionServiceTracker.close();
-
+		finally
+		{
+			connectionServiceTracker.close();
+		}
 		return msg;
 	}
 

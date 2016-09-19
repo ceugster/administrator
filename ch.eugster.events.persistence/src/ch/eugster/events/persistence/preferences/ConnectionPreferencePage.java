@@ -68,7 +68,7 @@ public class ConnectionPreferencePage extends FieldEditorPreferencePage implemen
 	@Override
 	protected IPreferenceStore doGetPreferenceStore()
 	{
-		return new ScopedPreferenceStore(new InstanceScope(), PreferenceInitializer.getServerQualifier());
+		return new ScopedPreferenceStore(InstanceScope.INSTANCE, PreferenceInitializer.getServerQualifier());
 	}
 	
 	@Override
@@ -181,7 +181,7 @@ public class ConnectionPreferencePage extends FieldEditorPreferencePage implemen
 	@Override
 	public void init(IWorkbench workbench)
 	{
-		IPreferenceStore store = new ScopedPreferenceStore(new InstanceScope(), PreferenceInitializer
+		IPreferenceStore store = new ScopedPreferenceStore(InstanceScope.INSTANCE, PreferenceInitializer
 						.getServerQualifier());
 		store.getString(PersistenceUnitProperties.JDBC_USER);
 		this.setPreferenceStore(store);

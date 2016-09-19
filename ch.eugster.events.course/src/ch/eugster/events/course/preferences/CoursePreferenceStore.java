@@ -15,7 +15,7 @@ public class CoursePreferenceStore extends ScopedPreferenceStore
 
 	private CoursePreferenceStore()
 	{
-		super(new InstanceScope(), Activator.PLUGIN_ID);
+		super(InstanceScope.INSTANCE, Activator.PLUGIN_ID);
 	}
 
 	@Override
@@ -37,17 +37,22 @@ public class CoursePreferenceStore extends ScopedPreferenceStore
 					this.getBoolean(PreferenceInitializer.KEY_MANDATORY_RUBRICS));
 			try
 			{
-				ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-						ConnectionService.class.getName(), null);
+				ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+						ConnectionService.class, null);
 				tracker.open();
-				ConnectionService service = (ConnectionService) tracker.getService();
-				if (service != null)
+				try
 				{
-					GlobalSettingsQuery query = (GlobalSettingsQuery) service.getQuery(GlobalSettings.class);
-					GlobalSettings.setInstance(query.merge(GlobalSettings.getInstance()));
+					ConnectionService service = (ConnectionService) tracker.getService();
+					if (service != null)
+					{
+						GlobalSettingsQuery query = (GlobalSettingsQuery) service.getQuery(GlobalSettings.class);
+						GlobalSettings.setInstance(query.merge(GlobalSettings.getInstance()));
+					}
 				}
-				tracker.close();
-
+				finally
+				{
+					tracker.close();
+				}
 				super.save();
 			}
 			catch (Exception e)

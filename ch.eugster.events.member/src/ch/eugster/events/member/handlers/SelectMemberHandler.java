@@ -20,17 +20,17 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class SelectMemberHandler extends AbstractHandler implements IHandler
 {
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private ConnectionService connectionService;
 
 	public SelectMemberHandler()
 	{
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public ConnectionService addingService(ServiceReference<ConnectionService> reference)
 			{
 				connectionService = (ConnectionService) super.addingService(reference);
 				setBaseEnabled(connectionService != null);
@@ -38,7 +38,7 @@ public class SelectMemberHandler extends AbstractHandler implements IHandler
 			}
 
 			@Override
-			public void removedService(ServiceReference reference, Object service)
+			public void removedService(ServiceReference<ConnectionService> reference, ConnectionService service)
 			{
 				connectionService = null;
 				setBaseEnabled(false);

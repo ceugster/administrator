@@ -368,6 +368,22 @@ public class Booking extends AbstractEntity
 		return count;
 	}
 
+	public int getParticipantCount(BookingType bookingType)
+	{
+		int count = 0;
+		for (Participant participant : this.participants)
+		{
+			if (!participant.isDeleted() && participant.getBookingType() != null)
+			{
+				if (participant.getBookingType().getId().equals(bookingType.getId()))
+				{
+					count += participant.getCount();
+				}
+			}
+		}
+		return count;
+	}
+
 	public int getBookedParticipantCount(boolean saved)
 	{
 		int count = 0;

@@ -39,15 +39,15 @@ public class GenerateAddressListHandler extends AbstractHandler implements IHand
 	public void setEnabled(final Object evaluationContext)
 	{
 		boolean enabled = false;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				DocumentBuilderService.class.getName(), null);
+		ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
+				DocumentBuilderService.class, null);
 		try
 		{
 			tracker.open();
-			ServiceReference[] references = tracker.getServiceReferences();
+			ServiceReference<DocumentBuilderService>[] references = tracker.getServiceReferences();
 			if (references != null)
 			{
-				for (ServiceReference reference : references)
+				for (ServiceReference<DocumentBuilderService> reference : references)
 				{
 					String target = (String) reference.getProperty("target");
 					if (target != null && target.equals("spreadsheet.address.list"))
