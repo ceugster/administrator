@@ -603,7 +603,7 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 					else if (entity instanceof Booking)
 					{
 						Booking booking = (Booking) entity;
-						viewer.refresh(booking);
+						viewer.refresh();
 						setSummaryLabels(booking.getCourse());
 					}
 					else if (entity instanceof Participant)
