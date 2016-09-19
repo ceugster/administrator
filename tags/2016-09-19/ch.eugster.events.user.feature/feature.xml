@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.eugster.events.user.feature"
+      label="Modul Benutzer"
+      version="1.0.0.qualifier"
+      provider-name="Christian Eugster">
+
+   <description>
+      User GUI
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import plugin="ch.eugster.events.persistence"/>
+      <import plugin="ch.eugster.events.ui"/>
+      <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.400" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.8.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.forms" version="3.5.200" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="ch.eugster.events.user"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

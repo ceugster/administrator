@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: XML Document Bundle
+Bundle-SymbolicName: ch.eugster.events.documents.xml;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Christian Eugster
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
+ org.jdom;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: ch.eugster.events.documents.xml.internal.Activator
+Service-Component: OSGI-INF/service.xml
+Import-Package: ch.eugster.events.documents.maps,
+ ch.eugster.events.documents.services
