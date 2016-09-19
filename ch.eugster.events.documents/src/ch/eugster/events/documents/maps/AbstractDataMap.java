@@ -75,7 +75,7 @@ public abstract class AbstractDataMap implements DataMap
 		}
 	}
 
-	protected void setProperty(final String key, final String value)
+	public void setProperty(final String key, final String value)
 	{
 		properties.setProperty(key, value);
 	}
