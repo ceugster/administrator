@@ -122,7 +122,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 					text.removeChild(stylableElement);
 					stylableElement = OdfElement.findFirstChildNode(OdfStylableElement.class, text);
 				}
-				document.addPageBreak();
+//				document.addPageBreak();
 				for (int i = 0; i < maps.length; i++)
 				{
 					stylableElement = OdfElement.findFirstChildNode(OdfStylableElement.class, textCopy);
