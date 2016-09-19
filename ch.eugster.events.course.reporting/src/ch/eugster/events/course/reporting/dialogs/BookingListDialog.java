@@ -4,10 +4,11 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -38,12 +39,13 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.reporting.Activator;
 import ch.eugster.events.course.reporting.BookingListFactory;
-import ch.eugster.events.course.reporting.BookingListReportItem;
+import ch.eugster.events.course.reporting.BookingListItem;
+import ch.eugster.events.course.reporting.BookingTypeKey;
 import ch.eugster.events.course.reporting.preferences.PreferenceConstants;
-import ch.eugster.events.documents.maps.CourseDetailMap;
 import ch.eugster.events.documents.maps.CourseMap;
 import ch.eugster.events.documents.maps.DataMap;
 import ch.eugster.events.documents.maps.DataMapKey;
+import ch.eugster.events.documents.maps.DomainMap;
 import ch.eugster.events.documents.maps.RubricMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.persistence.model.CourseState;
@@ -54,19 +56,21 @@ import ch.eugster.events.report.engine.ReportService;
 import ch.eugster.events.report.engine.ReportService.Destination;
 import ch.eugster.events.report.engine.ReportService.Format;
 
-public class BookingListReportDialog extends TitleAreaDialog
+public class BookingListDialog extends TitleAreaDialog
 {
 	private IDialogSettings settings;
 
 	private Map<CourseState, Boolean> selectedStates = new HashMap<CourseState, Boolean>();
-
+	
+	private Map<String, BookingTypeKey> bookingTypeKeys;
+	
 	private final IStructuredSelection ssel;
 
 	private final String message = "Erstellen einer Kursliste mit Buchungsstand.";
 
 	private boolean isPageComplete = false;
-
-	public BookingListReportDialog(final Shell parentShell, IStructuredSelection ssel)
+	
+	public BookingListDialog(final Shell parentShell, IStructuredSelection ssel)
 	{
 		super(parentShell);
 		this.ssel = ssel;
@@ -188,21 +192,21 @@ public class BookingListReportDialog extends TitleAreaDialog
 	@Override
 	protected void okPressed()
 	{
+		this.bookingTypeKeys = new HashMap<String, BookingTypeKey>();
 		setCurrentUser();
 		UIJob job = new UIJob("Generiere Kurseliste...")
 		{
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor)
 			{
-
-				BookingListFactory factory = BookingListFactory.create(User.getCurrent(), ssel, selectedStates);
+				BookingListFactory factory = BookingListFactory.create(User.getCurrent(), ssel, selectedStates, bookingTypeKeys);
 				if (factory.size() == 0)
 				{
 					MessageDialog.openInformation(null, "Keine Kurse vorhanden", "Ihre Auswahl enthält keine Kurse.");
 				}
 				else
 				{
-					Arrays.sort(factory.getCourses());
+					Arrays.sort(factory.getBookingListItems());
 					if (settings.getBoolean(TargetDocument.REPORT.name()))
 					{
 						printBookingListReport(factory);
@@ -279,7 +283,7 @@ public class BookingListReportDialog extends TitleAreaDialog
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/booking_list.jrxml");
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.export(url, factory.getCourses(), parameters, format, file);
+				reportService.export(url, factory.getBookingListItems(), parameters, format, file);
 				return true;
 			}
 		}
@@ -306,7 +310,7 @@ public class BookingListReportDialog extends TitleAreaDialog
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/booking_list.jrxml");
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.view(url, factory.getCourses(), parameters);
+				reportService.view(url, factory.getBookingListItems(), parameters);
 				return true;
 			}
 		}
@@ -333,7 +337,7 @@ public class BookingListReportDialog extends TitleAreaDialog
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/Booking_list.jrxml");
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.print(url, factory.getCourses(), parameters, showPrintDialog);
+				reportService.print(url, factory.getBookingListItems(), parameters, showPrintDialog);
 				return true;
 			}
 		}
@@ -401,15 +405,7 @@ public class BookingListReportDialog extends TitleAreaDialog
 	{
 		setCurrentUser();
 		final DataMapKey[] keys = getKeys();
-		final DataMap[] dataMaps = createDataMaps(factory).values().toArray(new DataMap[0]);
-//		Arrays.sort(dataMaps, new Comparator<DataMap>()
-//		{
-//			@Override
-//			public int compare(DataMap map1, DataMap map2) 
-//			{
-//				return map1.getProperty(CourseMap.Key.CODE.getKey()).compareTo(map2.getProperty(CourseMap.Key.CODE.getKey()));
-//			}
-//		});
+		final DataMap[] dataMaps = createDataMaps(factory).toArray(new DataMap[0]);
 
 		UIJob job = new UIJob("Dokument wird generiert...")
 		{
@@ -426,7 +422,7 @@ public class BookingListReportDialog extends TitleAreaDialog
 			{
 				if (!event.getResult().isOK())
 				{
-					ErrorDialog.openError(BookingListReportDialog.this.getShell(), "Verarbeitungsfehler",
+					ErrorDialog.openError(BookingListDialog.this.getShell(), "Verarbeitungsfehler",
 							"Beim Generieren des Dokuments ist ein Fehler aufgetreten.", event.getResult(), 0);
 				}
 			}
@@ -465,23 +461,36 @@ public class BookingListReportDialog extends TitleAreaDialog
 	{
 		List<DataMapKey> keys = new ArrayList<DataMapKey>();
 		keys.add(RubricMap.Key.NAME);
+		keys.add(DomainMap.Key.NAME);
 		keys.add(CourseMap.Key.CODE);
 		keys.add(CourseMap.Key.TITLE);
-		keys.add(CourseDetailMap.Key.START_DATE);
-		keys.add(CourseDetailMap.Key.START_TIME);
+		keys.add(CourseMap.Key.STATE);
+		keys.add(CourseMap.Key.DATE_RANGE_WITH_WEEKDAY_CODE);
 		keys.add(CourseMap.Key.GUIDE_WITH_PROFESSION);
 		keys.add(CourseMap.Key.ALL_LOCATIONS);
 		keys.add(CourseMap.Key.TARGET_PUBLIC);
+		BookingTypeKey[] bookingTypeKeys = this.bookingTypeKeys.values().toArray(new BookingTypeKey[0]);
+		Arrays.sort(bookingTypeKeys);
+		for (BookingTypeKey bookingTypeKey : bookingTypeKeys)
+		{
+			keys.add(bookingTypeKey);
+		}
 		return keys.toArray(new DataMapKey[0]);
 	}
 
-	private Map<Long, DataMap> createDataMaps(final BookingListFactory factory)
+	private Set<DataMap> createDataMaps(final BookingListFactory factory)
 	{
-		Map<Long, DataMap> maps = new HashMap<Long, DataMap>();
-		BookingListReportItem[] items = factory.getCourses();
-		for (BookingListReportItem item : items)
+		Set<DataMap> maps = new HashSet<DataMap>();
+		BookingListItem[] items = factory.getBookingListItems();
+		for (BookingListItem item : items)
 		{
-			maps.put(item.getCourse().getId(), new CourseMap(item.getCourse()));
+			CourseMap map = new CourseMap(item.getCourse());
+			Set<String> bookingTypeKeys = item.getBookingTypeCounts().keySet();
+			for (String key : bookingTypeKeys)
+			{
+				map.setProperty(key, item.getBookingTypeCounts().get(key).toString());
+			}
+			maps.add(map);
 		}
 		return maps;
 	}

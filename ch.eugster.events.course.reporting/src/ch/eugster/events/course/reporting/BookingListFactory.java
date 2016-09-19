@@ -14,7 +14,7 @@ import ch.eugster.events.persistence.model.User;
 
 public class BookingListFactory
 {
-	private List<BookingListReportItem> bookingListReportItems = new ArrayList<BookingListReportItem>();
+	private List<BookingListItem> bookingListItems = new ArrayList<BookingListItem>();
 
 	private IStructuredSelection ssel;
 
@@ -22,17 +22,17 @@ public class BookingListFactory
 
 	private User user;
 
-	private BookingListFactory(final User user, final IStructuredSelection ssel, Map<CourseState, Boolean> states)
+	private BookingListFactory(final User user, final IStructuredSelection ssel, Map<CourseState, Boolean> states, Map<String, BookingTypeKey> bookingTypeKeys)
 	{
 		this.user = user;
 		this.ssel = ssel;
 		this.states = states;
-		this.setSelection();
+		this.setSelection(bookingTypeKeys);
 	}
 
-	public BookingListReportItem[] getCourses()
+	public BookingListItem[] getBookingListItems()
 	{
-		return bookingListReportItems.toArray(new BookingListReportItem[0]);
+		return bookingListItems.toArray(new BookingListItem[0]);
 	}
 
 	public Map<String, Object> getParticipantListReportParameters()
@@ -101,7 +101,7 @@ public class BookingListFactory
 		return builder.toString();
 	}
 
-	private int setSelection()
+	private int setSelection(Map<String, BookingTypeKey> bookingTypeKeys)
 	{
 		Map<Long, Course> courses = new HashMap<Long, Course>();
 		Object[] objects = this.ssel.toArray();
@@ -112,19 +112,19 @@ public class BookingListFactory
 				Season season = (Season) object;
 				for (Course course : season.getCourses())
 				{
-					addCourse(course, courses, states);
+					addCourse(course, courses, states, bookingTypeKeys);
 				}
 			}
 			else if (object instanceof Course)
 			{
 				Course course = (Course) object;
-				addCourse(course, courses, states);
+				addCourse(course, courses, states, bookingTypeKeys);
 			}
 		}
 		return size();
 	}
 
-	private void addCourse(Course course, Map<Long, Course> courses, Map<CourseState, Boolean> states)
+	private void addCourse(Course course, Map<Long, Course> courses, Map<CourseState, Boolean> states, Map<String, BookingTypeKey> bookingTypeKeys)
 	{
 		if (!course.isDeleted())
 		{
@@ -134,7 +134,7 @@ public class BookingListFactory
 				if (state != null && state.booleanValue())
 				{
 					courses.put(course.getId(), course);
-					this.bookingListReportItems.add(new BookingListReportItem(course));
+					this.bookingListItems.add(new BookingListItem(course, bookingTypeKeys));
 				}
 			}
 		}
@@ -142,12 +142,13 @@ public class BookingListFactory
 
 	public int size()
 	{
-		return this.bookingListReportItems.size();
+		return this.bookingListItems.size();
 	}
 
 	public static BookingListFactory create(final User user, final IStructuredSelection ssel,
-			Map<CourseState, Boolean> states)
+			Map<CourseState, Boolean> states, Map<String, BookingTypeKey> bookingTypeKeys)
 	{
-		return new BookingListFactory(user, ssel, states);
+		return new BookingListFactory(user, ssel, states, bookingTypeKeys);
 	}
+	
 }
