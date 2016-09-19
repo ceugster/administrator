@@ -895,7 +895,7 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 
 		public String getBookingTypeName()
 		{
-			return type.getName();
+			return type == null ? "" : type.getName();
 		}
 
 		public int getCount()
