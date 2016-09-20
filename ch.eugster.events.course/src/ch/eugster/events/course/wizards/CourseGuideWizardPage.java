@@ -2,6 +2,7 @@ package ch.eugster.events.course.wizards;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -30,12 +31,14 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.Activator;
 import ch.eugster.events.persistence.formatters.CourseFormatter;
+import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.Guide;
 import ch.eugster.events.persistence.model.GuideType;
-import ch.eugster.events.persistence.queries.GuideQuery;
+import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.queries.GuideTypeQuery;
+import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
 public class CourseGuideWizardPage extends WizardPage implements Listener, SelectionListener
@@ -111,8 +114,15 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 			ConnectionService service = (ConnectionService) tracker.getService();
 			if (service != null)
 			{
-				GuideQuery query = (GuideQuery) service.getQuery(Guide.class);
-				List<Guide> guides = query.selectAll();
+				List<Guide> guides = new Vector<Guide>();
+				LinkPersonAddressQuery query = (LinkPersonAddressQuery) service.getQuery(LinkPersonAddress.class);
+				List<LinkPersonAddress> links = query.selectGuides();
+				for (LinkPersonAddress link : links)
+				{
+					guides.add(link.getGuide());
+				}
+//				GuideQuery query = (GuideQuery) service.getQuery(Guide.class);
+//				List<Guide> guides = query.selectValids();
 				this.guideViewer.setInput(guides.toArray(new Guide[0]));
 			}
 	
@@ -416,7 +426,7 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 			if (element instanceof Guide)
 			{
 				Guide guide = (Guide) element;
-				return PersonFormatter.getInstance().formatLastnameFirstname(guide.getLink().getPerson());
+				return LinkPersonAddressFormatter.getInstance().formatPersonAndAddress(guide.getLink());
 			}
 			return "";
 
