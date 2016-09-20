@@ -178,5 +178,15 @@ public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddres
 		List<LinkPersonAddress> links = select(LinkPersonAddress.class, expression, maxResults);
 		return links;
 	}
+	
+	public List<LinkPersonAddress> selectGuides()
+	{
+		Expression expression = new ExpressionBuilder().get("address").get("deleted").equal(false);
+		expression = expression.and(new ExpressionBuilder().get("person").get("deleted").equal(false));
+		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
+		expression = expression.and(new ExpressionBuilder().get("guide").notNull());
+		expression = expression.and(new ExpressionBuilder().get("guide").get("deleted").equal(false));
+		return this.select(LinkPersonAddress.class, expression);
+	}
 
 }
