@@ -4,7 +4,6 @@ import java.io.Writer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
@@ -552,7 +551,7 @@ public class AddressMap extends AbstractDataMap
 				}
 				case NOTES:
 				{
-					return address.getProvince();
+					return address.getNotes();
 				}
 				default:
 				{

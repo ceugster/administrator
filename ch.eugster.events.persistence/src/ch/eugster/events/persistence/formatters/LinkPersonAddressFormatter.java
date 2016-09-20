@@ -114,6 +114,14 @@ public class LinkPersonAddressFormatter extends AbstractFormatter
 	{
 		return this.formatLabel(link);
 	}
+	
+	public String formatPersonAndAddress(LinkPersonAddress link)
+	{
+		String name = PersonFormatter.getInstance().formatLastnameFirstname(link.getPerson());
+		String address = AddressFormatter.getInstance().formatAddressLine(link.getAddress());
+		String city = AddressFormatter.getInstance().formatCityLine(link.getAddress());
+		return name + ", " + address + ", " + city;
+	}
 
 	public static LinkPersonAddressFormatter getInstance()
 	{

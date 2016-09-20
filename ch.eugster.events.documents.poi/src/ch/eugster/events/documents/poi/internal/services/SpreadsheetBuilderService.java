@@ -111,9 +111,9 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 				this.addRow(keys, map, sheet, ++counter, style, normal);
 				monitor.worked(1);
 			}
-			this.packColumns(sheet, 0, keys.length);
 			if (maps.length > 0)
 			{
+				this.packColumns(sheet, 0, keys.length);
 				this.showDocument(workbook);
 			}
 		}
@@ -238,7 +238,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 	{
 		IStatus status = Status.OK_STATUS;
 
-		IPreferenceStore store = new ScopedPreferenceStore(new InstanceScope(), Activator.getDefault().getBundle()
+		IPreferenceStore store = new ScopedPreferenceStore(InstanceScope.INSTANCE, Activator.getDefault().getBundle()
 				.getSymbolicName());
 		String path = store.getString(PreferenceConstants.KEY_SPREADSHEET_PATH);
 

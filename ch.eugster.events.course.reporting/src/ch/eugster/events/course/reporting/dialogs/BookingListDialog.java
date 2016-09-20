@@ -2,15 +2,22 @@ package ch.eugster.events.course.reporting.dialogs;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -32,7 +39,15 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.reporting.Activator;
 import ch.eugster.events.course.reporting.BookingListFactory;
+import ch.eugster.events.course.reporting.BookingListItem;
+import ch.eugster.events.course.reporting.BookingTypeKey;
 import ch.eugster.events.course.reporting.preferences.PreferenceConstants;
+import ch.eugster.events.documents.maps.CourseMap;
+import ch.eugster.events.documents.maps.DataMap;
+import ch.eugster.events.documents.maps.DataMapKey;
+import ch.eugster.events.documents.maps.DomainMap;
+import ch.eugster.events.documents.maps.RubricMap;
+import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.persistence.model.CourseState;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.queries.UserQuery;
@@ -41,19 +56,21 @@ import ch.eugster.events.report.engine.ReportService;
 import ch.eugster.events.report.engine.ReportService.Destination;
 import ch.eugster.events.report.engine.ReportService.Format;
 
-public class BookingListReportDialog extends TitleAreaDialog
+public class BookingListDialog extends TitleAreaDialog
 {
 	private IDialogSettings settings;
 
 	private Map<CourseState, Boolean> selectedStates = new HashMap<CourseState, Boolean>();
-
+	
+	private Map<String, BookingTypeKey> bookingTypeKeys;
+	
 	private final IStructuredSelection ssel;
 
 	private final String message = "Erstellen einer Kursliste mit Buchungsstand.";
 
 	private boolean isPageComplete = false;
-
-	public BookingListReportDialog(final Shell parentShell, IStructuredSelection ssel)
+	
+	public BookingListDialog(final Shell parentShell, IStructuredSelection ssel)
 	{
 		super(parentShell);
 		this.ssel = ssel;
@@ -113,7 +130,57 @@ public class BookingListReportDialog extends TitleAreaDialog
 				}
 			});
 		}
+		
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 3;
 
+		group = new Group(composite, SWT.SHADOW_ETCHED_IN);
+		group.setLayoutData(gridData);
+		group.setLayout(new GridLayout());
+		group.setText("Zieldokument");
+
+		final Button reportButton = new Button(group, SWT.RADIO);
+		final Button spreadsheetButton = new Button(group, SWT.RADIO);
+
+		boolean selected = settings.getBoolean(TargetDocument.REPORT.name());
+		reportButton.setText(TargetDocument.REPORT.label());
+		reportButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		reportButton.setSelection(selected);
+		reportButton.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent e)
+			{
+				widgetSelected(e);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent e)
+			{
+				settings.put(TargetDocument.REPORT.name(), reportButton.getSelection());
+				settings.put(TargetDocument.SPREADSHEET.name(), !reportButton.getSelection());
+			}
+		});
+		selected = settings.getBoolean(TargetDocument.SPREADSHEET.name());
+		spreadsheetButton.setText(TargetDocument.SPREADSHEET.label());
+		spreadsheetButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		spreadsheetButton.setSelection(selected);
+		spreadsheetButton.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent e)
+			{
+				widgetSelected(e);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent e)
+			{
+				settings.put(TargetDocument.SPREADSHEET.name(), spreadsheetButton.getSelection());
+				settings.put(TargetDocument.REPORT.name(), !spreadsheetButton.getSelection());
+			}
+		});
+		
 		return parent;
 	}
 
@@ -125,22 +192,29 @@ public class BookingListReportDialog extends TitleAreaDialog
 	@Override
 	protected void okPressed()
 	{
+		this.bookingTypeKeys = new HashMap<String, BookingTypeKey>();
 		setCurrentUser();
 		UIJob job = new UIJob("Generiere Kurseliste...")
 		{
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor)
 			{
-
-				BookingListFactory factory = BookingListFactory.create(User.getCurrent(), ssel, selectedStates);
+				BookingListFactory factory = BookingListFactory.create(User.getCurrent(), ssel, selectedStates, bookingTypeKeys);
 				if (factory.size() == 0)
 				{
 					MessageDialog.openInformation(null, "Keine Kurse vorhanden", "Ihre Auswahl enthält keine Kurse.");
 				}
 				else
 				{
-					Arrays.sort(factory.getCourses());
-					printBookingListReport(factory);
+					Arrays.sort(factory.getBookingListItems());
+					if (settings.getBoolean(TargetDocument.REPORT.name()))
+					{
+						printBookingListReport(factory);
+					}
+					else
+					{
+						printBookingListSpreadsheet(factory);
+					}
 				}
 				return Status.OK_STATUS;
 			}
@@ -153,16 +227,22 @@ public class BookingListReportDialog extends TitleAreaDialog
 
 	private void setCurrentUser()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			UserQuery query = (UserQuery) service.getQuery(User.class);
-			User.setCurrent(query.merge(User.getCurrent()));
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				UserQuery query = (UserQuery) service.getQuery(User.class);
+				User.setCurrent(query.merge(User.getCurrent()));
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 	}
 
 	@Override
@@ -193,17 +273,17 @@ public class BookingListReportDialog extends TitleAreaDialog
 
 	private boolean export(final BookingListFactory factory, final Format format, final File file)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/booking_list.jrxml");
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.export(url, factory.getCourses(), parameters, format, file);
+				reportService.export(url, factory.getBookingListItems(), parameters, format, file);
 				return true;
 			}
 		}
@@ -220,17 +300,17 @@ public class BookingListReportDialog extends TitleAreaDialog
 
 	private boolean preview(final BookingListFactory factory)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/booking_list.jrxml");
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.view(url, factory.getCourses(), parameters);
+				reportService.view(url, factory.getBookingListItems(), parameters);
 				return true;
 			}
 		}
@@ -247,17 +327,17 @@ public class BookingListReportDialog extends TitleAreaDialog
 
 	private boolean print(final BookingListFactory factory, final boolean showPrintDialog)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{
 				URL url = Activator.getDefault().getBundle().getEntry("reports/Booking_list.jrxml");
 				Map<String, Object> parameters = factory.getParticipantListReportParameters();
-				reportService.print(url, factory.getCourses(), parameters, showPrintDialog);
+				reportService.print(url, factory.getBookingListItems(), parameters, showPrintDialog);
 				return true;
 			}
 		}
@@ -274,7 +354,7 @@ public class BookingListReportDialog extends TitleAreaDialog
 
 	private boolean printBookingListReport(final BookingListFactory factory)
 	{
-		IEclipsePreferences prefs = new InstanceScope().getNode(Activator.PLUGIN_ID);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 		int dest = prefs.getInt(PreferenceConstants.P_DESTINATION, 0);
 		Destination destination = Destination.values()[dest];
 		destination = Destination.PREVIEW;
@@ -321,4 +401,121 @@ public class BookingListReportDialog extends TitleAreaDialog
 		return false;
 	}
 
+	private void printBookingListSpreadsheet(final BookingListFactory factory)
+	{
+		setCurrentUser();
+		final DataMapKey[] keys = getKeys();
+		final DataMap[] dataMaps = createDataMaps(factory).toArray(new DataMap[0]);
+
+		UIJob job = new UIJob("Dokument wird generiert...")
+		{
+			@Override
+			public IStatus runInUIThread(final IProgressMonitor monitor)
+			{
+				return buildDocument(monitor, keys, dataMaps);
+			}
+		};
+		job.addJobChangeListener(new JobChangeAdapter()
+		{
+			@Override
+			public void done(final IJobChangeEvent event)
+			{
+				if (!event.getResult().isOK())
+				{
+					ErrorDialog.openError(BookingListDialog.this.getShell(), "Verarbeitungsfehler",
+							"Beim Generieren des Dokuments ist ein Fehler aufgetreten.", event.getResult(), 0);
+				}
+			}
+		});
+		job.schedule();
+		super.okPressed();
+	}
+	
+	private IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap[] dataMaps)
+	{
+		IStatus status = Status.CANCEL_STATUS;
+		final ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
+				DocumentBuilderService.class, null);
+		tracker.open();
+		try
+		{
+			Object[] services = tracker.getServices();
+			for (Object service : services)
+			{
+				if (service instanceof DocumentBuilderService)
+				{
+
+					DocumentBuilderService builderService = (DocumentBuilderService) service;
+					status = builderService.buildDocument(monitor, keys, dataMaps);
+				}
+			}
+		}
+		finally
+		{
+			tracker.close();
+		}
+		return status;
+	}
+
+	private DataMapKey[] getKeys()
+	{
+		List<DataMapKey> keys = new ArrayList<DataMapKey>();
+		keys.add(RubricMap.Key.NAME);
+		keys.add(DomainMap.Key.NAME);
+		keys.add(CourseMap.Key.CODE);
+		keys.add(CourseMap.Key.TITLE);
+		keys.add(CourseMap.Key.STATE);
+		keys.add(CourseMap.Key.DATE_RANGE_WITH_WEEKDAY_CODE);
+		keys.add(CourseMap.Key.GUIDE_WITH_PROFESSION);
+		keys.add(CourseMap.Key.ALL_LOCATIONS);
+		keys.add(CourseMap.Key.TARGET_PUBLIC);
+		BookingTypeKey[] bookingTypeKeys = this.bookingTypeKeys.values().toArray(new BookingTypeKey[0]);
+		Arrays.sort(bookingTypeKeys);
+		for (BookingTypeKey bookingTypeKey : bookingTypeKeys)
+		{
+			keys.add(bookingTypeKey);
+		}
+		return keys.toArray(new DataMapKey[0]);
+	}
+
+	private Set<DataMap> createDataMaps(final BookingListFactory factory)
+	{
+		Set<DataMap> maps = new HashSet<DataMap>();
+		BookingListItem[] items = factory.getBookingListItems();
+		for (BookingListItem item : items)
+		{
+			CourseMap map = new CourseMap(item.getCourse());
+			Set<String> bookingTypeKeys = item.getBookingTypeCounts().keySet();
+			for (String key : bookingTypeKeys)
+			{
+				map.setProperty(key, item.getBookingTypeCounts().get(key).toString());
+			}
+			maps.add(map);
+		}
+		return maps;
+	}
+	
+	private enum TargetDocument
+	{
+		REPORT, SPREADSHEET;
+		
+		public String label()
+		{
+			switch (this)
+			{
+			case REPORT:
+			{
+				return "Bericht";
+			}
+			case SPREADSHEET:
+			{
+				return "Tabelle";
+			}
+			default:
+			{
+				throw new RuntimeException("Invalid Selection for TargetDocument");
+			}
+			}
+		}
+	}
 }

@@ -212,18 +212,18 @@ public class DonationAddressListDialog extends TitleAreaDialog
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 					{
 						IStatus status = Status.OK_STATUS;
-						ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle()
-								.getBundleContext(), DocumentBuilderService.class.getName(), null);
+						ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle()
+								.getBundleContext(), DocumentBuilderService.class, null);
 						try
 						{
 							tracker.open();
-							ServiceReference[] references = tracker.getServiceReferences();
+							ServiceReference<DocumentBuilderService>[] references = tracker.getServiceReferences();
 							if (references != null)
 							{
 								try
 								{
 									monitor.beginTask("Dokument wird erstellt...", references.length);
-									for (ServiceReference reference : references)
+									for (ServiceReference<DocumentBuilderService> reference : references)
 									{
 										DocumentBuilderService service = (DocumentBuilderService) tracker
 												.getService(reference);

@@ -1,15 +1,11 @@
 package ch.eugster.events.addressgroup.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.osgi.util.tracker.ServiceTracker;
 
-import ch.eugster.events.addressgroup.Activator;
 import ch.eugster.events.addressgroup.dialogs.AddressGroupMemberDialog;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressGroupMember;
@@ -17,19 +13,10 @@ import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.queries.AddressQuery;
 import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
-import ch.eugster.events.persistence.service.ConnectionService;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 
-public class EditAddressGroupMembers extends AbstractHandler implements IHandler
+public class EditAddressGroupMembers extends ConnectionServiceDependentAbstractHandler
 {
-	private ServiceTracker tracker;
-
-	public EditAddressGroupMembers()
-	{
-		tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-	}
-
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
@@ -83,56 +70,31 @@ public class EditAddressGroupMembers extends AbstractHandler implements IHandler
 		return null;
 	}
 
-	// private Person refresh(Person person)
-	// {
-	// ConnectionService service = (ConnectionService) tracker.getService();
-	// try
-	// {
-	// PersonQuery query = (PersonQuery) service.getQuery(Person.class);
-	// return (Person) query.refresh(person);
-	// }
-	// catch (Exception e)
-	// {
-	// PersonQuery query = (PersonQuery) service.getQuery(Person.class);
-	// return query.find(Person.class, person.getId());
-	// }
-	// }
-
 	private Address refresh(Address address)
 	{
-		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
 		try
 		{
-			AddressQuery query = (AddressQuery) service.getQuery(Address.class);
+			AddressQuery query = (AddressQuery) connectionService.getQuery(Address.class);
 			return (Address) query.refresh(address);
 		}
 		catch (Exception e)
 		{
-			AddressQuery query = (AddressQuery) service.getQuery(Address.class);
+			AddressQuery query = (AddressQuery) connectionService.getQuery(Address.class);
 			return query.find(Address.class, address.getId());
 		}
 	}
 
-	@Override
-	public void dispose()
-	{
-		tracker.close();
-		super.dispose();
-	}
-
 	private LinkPersonAddress refresh(LinkPersonAddress link)
 	{
-		ConnectionService service = (ConnectionService) tracker.getService();
 		try
 		{
-			LinkPersonAddressQuery query = (LinkPersonAddressQuery) service.getQuery(LinkPersonAddress.class);
+			LinkPersonAddressQuery query = (LinkPersonAddressQuery) connectionService.getQuery(LinkPersonAddress.class);
 			link = (LinkPersonAddress) query.refresh(link);
 			return link;
 		}
 		catch (Exception e)
 		{
-			LinkPersonAddressQuery query = (LinkPersonAddressQuery) service.getQuery(LinkPersonAddress.class);
+			LinkPersonAddressQuery query = (LinkPersonAddressQuery) connectionService.getQuery(LinkPersonAddress.class);
 			return query.find(LinkPersonAddress.class, link.getId());
 		}
 	}

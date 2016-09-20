@@ -8,6 +8,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -39,8 +40,6 @@ import org.eclipse.ui.progress.UIJob;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.addressgroup.Activator;
-import ch.eugster.events.addressgroup.dialogs.AddressGroupMemberTreeContentProvider;
-import ch.eugster.events.addressgroup.dialogs.AddressGroupMemberTreeLabelProvider;
 import ch.eugster.events.domain.views.DomainLabelProvider;
 import ch.eugster.events.domain.views.DomainSorter;
 import ch.eugster.events.persistence.events.EntityMediator;
@@ -75,7 +74,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 
 	private final Map<Long, AddressGroupMember> current = new HashMap<Long, AddressGroupMember>();
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private boolean dirty;
 
@@ -197,8 +196,8 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		});
 
 		this.addressGroupViewer = new ContainerCheckedTreeViewer(tree);
-		this.addressGroupViewer.setContentProvider(new AddressGroupMemberTreeContentProvider());
-		this.addressGroupViewer.setLabelProvider(new AddressGroupMemberTreeLabelProvider());
+		this.addressGroupViewer.setContentProvider(new PersonAddressGroupMemberTreeContentProvider());
+		this.addressGroupViewer.setLabelProvider(new PersonAddressGroupMemberTreeLabelProvider(monitors));
 		this.addressGroupViewer.setSorter(new PersonAddressGroupMemberSorter(this));
 		this.addressGroupViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
 		this.addressGroupViewer.addCheckStateListener(this);
@@ -254,7 +253,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		EntityMediator.addListener(Address.class, this);
 		EntityMediator.addListener(Person.class, this);
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		connectionServiceTracker.open();
 
@@ -302,7 +301,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 					Monitor monitor = this.monitors.get(member.getAddressGroup().getId());
 					if (monitor == null)
 					{
-						monitor = new Monitor(member.getAddressGroup(), !member.isDeleted());
+						monitor = new Monitor(member, !member.isDeleted());
 						this.monitors.put(member.getAddressGroup().getId(), monitor);
 						this.current.put(member.getAddressGroup().getId(), member);
 					}
@@ -347,6 +346,13 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 	@Override
 	public void selectionChanged(final IWorkbenchPart part, final ISelection selection)
 	{
+		if (this.dirty)
+		{
+			if (MessageDialog.openQuestion(this.getSite().getShell(), "Änderungen speichern", "Sie haben Änderungen an den aktuellen Adressgruppen vorgenommen. Sollen diese Änderungen gespeichert werden?"))
+			{
+				this.updateAddressGroupMembers();
+			}
+		}
 		if (selection instanceof StructuredSelection)
 		{
 			StructuredSelection ssel = (StructuredSelection) selection;
@@ -493,6 +499,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 							AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
 									.getQuery(AddressGroupMember.class);
 							current.put(addressGroupId, query.merge(member));
+							service.refresh(parent);
 						}
 					}
 				}
@@ -504,6 +511,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 						AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
 								.getQuery(AddressGroupMember.class);
 						current.put(addressGroupId, query.merge(member));
+						service.refresh(parent);
 					}
 				}
 			}
@@ -619,17 +627,24 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		monitor.checked = checked;
 	}
 
-	private class Monitor
+	class Monitor
 	{
-		// public boolean update = false;
+		public AddressGroupMember addressGroupMember = null;
 
 		public boolean checked = false;
 
 		public AddressGroup addressGroup = null;
 
-		public Monitor(final AddressGroup addressGroup, final boolean checked)
+		public Monitor(final AddressGroup addressGroup, boolean checked)
 		{
 			this.addressGroup = addressGroup;
+			this.checked = checked;
+		}
+
+		public Monitor(final AddressGroupMember addressGroupMember, boolean checked)
+		{
+			this.addressGroupMember = addressGroupMember;
+			this.addressGroup = addressGroupMember.getAddressGroup();
 			this.checked = checked;
 		}
 	}

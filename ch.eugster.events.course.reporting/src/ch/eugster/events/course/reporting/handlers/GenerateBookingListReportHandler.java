@@ -12,7 +12,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
-import ch.eugster.events.course.reporting.dialogs.BookingListReportDialog;
+import ch.eugster.events.course.reporting.dialogs.BookingListDialog;
 
 public class GenerateBookingListReportHandler extends AbstractHandler implements IHandler
 {
@@ -35,7 +35,7 @@ public class GenerateBookingListReportHandler extends AbstractHandler implements
 				}
 				else
 				{
-					BookingListReportDialog dialog = new BookingListReportDialog(shell, ssel);
+					BookingListDialog dialog = new BookingListDialog(shell, ssel);
 					dialog.open();
 				}
 			}

@@ -136,7 +136,7 @@ public class DocumentPreferencePage extends FieldEditorPreferencePage implements
 	@Override
 	public void init(final IWorkbench workbench)
 	{
-		IPreferenceStore store = new ScopedPreferenceStore(new InstanceScope(), Activator.getDefault()
+		IPreferenceStore store = new ScopedPreferenceStore(InstanceScope.INSTANCE, Activator.getDefault()
 				.getBundleContext().getBundle().getSymbolicName());
 		this.setPreferenceStore(store);
 		this.setDescription("Pfade zu externen Ressourcen");

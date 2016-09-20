@@ -52,7 +52,7 @@ public class FormLetterFolderPreferencePage extends FieldEditorPreferencePage im
 	@Override
 	public void init(IWorkbench workbench)
 	{
-		IPreferenceStore store = new ScopedPreferenceStore(new InstanceScope(), Activator.PLUGIN_ID);
+		IPreferenceStore store = new ScopedPreferenceStore(InstanceScope.INSTANCE, Activator.PLUGIN_ID);
 		this.setPreferenceStore(store);
 		this.setDescription("Verzeichnis Serienbriefe");
 	}

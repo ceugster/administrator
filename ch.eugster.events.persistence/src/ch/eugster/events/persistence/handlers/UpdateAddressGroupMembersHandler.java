@@ -39,11 +39,11 @@ public class UpdateAddressGroupMembersHandler extends AbstractHandler implements
 		Shell shell = (Shell) ctx.getVariable("activeShell");
 		if (MessageDialog.openConfirm(shell, "Bitte beachten", "Bitte beachten Sie folgendes:\n1. Alle anderen Benutzer müssen das Programm beenden, bevor Sie diese Routine starten\n2. Nach der Ausführung müssen Sie den Administrator ebenfalls neu starten"))
 		{
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
+			tracker.open();
 			try
 			{
-				tracker.open();
 				final ConnectionService service = (ConnectionService) tracker.getService();
 				if (service == null)
 				{

@@ -82,15 +82,6 @@ public class MemberDialog extends TitleAreaDialog implements ICheckStateListener
 
 	private void checkMembership(final Membership membership)
 	{
-		int checked = 0;
-		Monitor monitor = this.monitors.get(membership.getId());
-		if (monitor != null)
-		{
-			if (monitor.checked)
-			{
-				checked++;
-			}
-		}
 		Member member = null;
 		if (entity instanceof LinkPersonAddress)
 		{
@@ -230,36 +221,42 @@ public class MemberDialog extends TitleAreaDialog implements ICheckStateListener
 		});
 		tableViewerColumn.getColumn().setText("Mitgliednummer");
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			MemberQuery query = (MemberQuery) service.getQuery(Member.class);
-			List<Member> members = null;
-			if (this.entity instanceof LinkPersonAddress)
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				members = query.selectByLink((LinkPersonAddress) this.entity);
+				MemberQuery query = (MemberQuery) service.getQuery(Member.class);
+				List<Member> members = null;
+				if (this.entity instanceof LinkPersonAddress)
+				{
+					members = query.selectByLink((LinkPersonAddress) this.entity);
+				}
+				else if (this.entity instanceof Address)
+				{
+					members = query.selectByAddress((Address) this.entity);
+				}
+	
+				for (Member member : members)
+				{
+					this.monitors.put(member.getMembership().getId(),
+							new Monitor(member.getMembership(), !member.isDeleted(), member.getCode()));
+					this.current.put(member.getMembership().getId(), member);
+				}
+	
+				MembershipQuery membershipQuery = (MembershipQuery) service.getQuery(Membership.class);
+				List<Membership> memberships = membershipQuery.selectAll();
+				membershipViewer.setInput(memberships.toArray(new Membership[0]));
 			}
-			else if (this.entity instanceof Address)
-			{
-				members = query.selectByAddress((Address) this.entity);
-			}
-
-			for (Member member : members)
-			{
-				this.monitors.put(member.getMembership().getId(),
-						new Monitor(member.getMembership(), !member.isDeleted(), member.getCode()));
-				this.current.put(member.getMembership().getId(), member);
-			}
-
-			MembershipQuery membershipQuery = (MembershipQuery) service.getQuery(Membership.class);
-			List<Membership> memberships = membershipQuery.selectAll();
-			membershipViewer.setInput(memberships.toArray(new Membership[0]));
 		}
-		tracker.close();
-
+		finally
+		{
+			tracker.close();
+		}
+		
 		Membership[] memberships = (Membership[]) membershipViewer.getInput();
 		for (Membership membership : memberships)
 		{
@@ -374,57 +371,63 @@ public class MemberDialog extends TitleAreaDialog implements ICheckStateListener
 
 	public void updateMembers()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			Long[] membershipIds = this.monitors.keySet().toArray(new Long[0]);
-			for (Long membershipId : membershipIds)
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				Member member = this.current.get(membershipId);
-				Monitor monitor = this.monitors.get(membershipId);
-				if (member == null)
+				Long[] membershipIds = this.monitors.keySet().toArray(new Long[0]);
+				for (Long membershipId : membershipIds)
 				{
-					if (monitor.checked)
+					Member member = this.current.get(membershipId);
+					Monitor monitor = this.monitors.get(membershipId);
+					if (member == null)
 					{
-						if (entity instanceof LinkPersonAddress)
+						if (monitor.checked)
 						{
-							member = Member.newInstance(monitor.membership, (LinkPersonAddress) this.entity);
-							member.getLink().addMember(member);
-							member.setCode(monitor.code);
-							member.setDate(GregorianCalendar.getInstance());
-							// member.getMembership().addMember(member);
-							LinkPersonAddressQuery query = (LinkPersonAddressQuery) service
-									.getQuery(LinkPersonAddress.class);
-							query.merge(member.getLink());
-						}
-						else if (entity instanceof Address)
-						{
-							member = Member.newInstance(monitor.membership, (Address) this.entity);
-							member.getAddress().addMember(member);
-							member.setCode(monitor.code);
-							member.setDate(GregorianCalendar.getInstance());
-							// member.getMembership().addMember(member);
-							AddressQuery query = (AddressQuery) service.getQuery(Address.class);
-							query.merge(member.getAddress());
+							if (entity instanceof LinkPersonAddress)
+							{
+								member = Member.newInstance(monitor.membership, (LinkPersonAddress) this.entity);
+								member.getLink().addMember(member);
+								member.setCode(monitor.code);
+								member.setDate(GregorianCalendar.getInstance());
+								// member.getMembership().addMember(member);
+								LinkPersonAddressQuery query = (LinkPersonAddressQuery) service
+										.getQuery(LinkPersonAddress.class);
+								query.merge(member.getLink());
+							}
+							else if (entity instanceof Address)
+							{
+								member = Member.newInstance(monitor.membership, (Address) this.entity);
+								member.getAddress().addMember(member);
+								member.setCode(monitor.code);
+								member.setDate(GregorianCalendar.getInstance());
+								// member.getMembership().addMember(member);
+								AddressQuery query = (AddressQuery) service.getQuery(Address.class);
+								query.merge(member.getAddress());
+							}
 						}
 					}
-				}
-				else
-				{
-					if (monitor.checked != !member.isDeleted())
+					else
 					{
-						member.setCode(monitor.code);
-						member.setDeleted(!monitor.checked);
-						MemberQuery query = (MemberQuery) service.getQuery(Member.class);
-						query.merge(member);
+						if (monitor.checked != !member.isDeleted())
+						{
+							member.setCode(monitor.code);
+							member.setDeleted(!monitor.checked);
+							MemberQuery query = (MemberQuery) service.getQuery(Member.class);
+							query.merge(member);
+						}
 					}
 				}
 			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 	}
 
 	private void updateMonitor(final Membership membership, final boolean checked, final String code)

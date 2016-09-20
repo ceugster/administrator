@@ -224,26 +224,30 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 	{
 		Message msg = null;
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			GuideTypeEditorInput input = (GuideTypeEditorInput) this.getEditorInput();
-			GuideType guideType = (GuideType) input.getAdapter(GuideType.class);
-			String code = this.code.getText();
-			GuideTypeQuery query = (GuideTypeQuery) service.getQuery(GuideType.class);
-			if (!query.isCodeUnique(code, guideType.getId()))
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				msg = new Message(this.code, "Ungültiger Code");
-				msg.setMessage("Der gewählte Code wird bereits verwendet.");
-				return msg;
+				GuideTypeEditorInput input = (GuideTypeEditorInput) this.getEditorInput();
+				GuideType guideType = (GuideType) input.getAdapter(GuideType.class);
+				String code = this.code.getText();
+				GuideTypeQuery query = (GuideTypeQuery) service.getQuery(GuideType.class);
+				if (!query.isCodeUnique(code, guideType.getId()))
+				{
+					msg = new Message(this.code, "Ungültiger Code");
+					msg.setMessage("Der gewählte Code wird bereits verwendet.");
+					return msg;
+				}
 			}
 		}
-		tracker.close();
-
+		finally
+		{
+			tracker.close();
+		}
 		return msg;
 	}
 
