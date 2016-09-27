@@ -22,7 +22,7 @@ public class Activator extends AbstractUIPlugin
 
 	private VisitSettings settings;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	/**
 	 * The constructor
@@ -59,11 +59,11 @@ public class Activator extends AbstractUIPlugin
 		super.start(context);
 		plugin = this;
 
-		connectionServiceTracker = new ServiceTracker(context, ConnectionService.class.getName(), null)
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(context, ConnectionService.class, null)
 		{
 
 			@Override
-			public Object addingService(final ServiceReference reference)
+			public ConnectionService addingService(final ServiceReference<ConnectionService> reference)
 			{
 				ConnectionService service = (ConnectionService) super.addingService(reference);
 				if (service != null)
@@ -75,7 +75,7 @@ public class Activator extends AbstractUIPlugin
 			}
 
 			@Override
-			public void remove(final ServiceReference reference)
+			public void remove(final ServiceReference<ConnectionService> reference)
 			{
 			}
 		};

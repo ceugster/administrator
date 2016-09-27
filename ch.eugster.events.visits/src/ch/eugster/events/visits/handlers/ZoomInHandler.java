@@ -11,7 +11,7 @@ import ch.eugster.events.visits.views.ThemeView;
 
 public class ZoomInHandler extends AbstractHandler implements IHandler
 {
-	private static final double PPS_ADD = 240D;
+//	private static final double PPS_ADD = 240D;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException

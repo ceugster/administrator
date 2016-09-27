@@ -130,20 +130,27 @@ public class ApplianceEditor extends AbstractEntityEditor<Appliance>
 	{
 		Message msg = null;
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			ApplianceEditorInput input = (ApplianceEditorInput) this.getEditorInput();
-			Appliance appliance = (Appliance) input.getAdapter(Appliance.class);
-			ApplianceQuery query = (ApplianceQuery) service.getQuery(Appliance.class);
-			if (!query.isNameUnique(name.getText(), appliance.getId()))
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				msg = new Message(this.name, "Bezeichnung vorhanden", "Die Bezeichnung " + name.getText()
-						+ " ist bereits vorhanden. Bitte wählen Sie eine Bezeichnung, die noch nicht vorhanden ist.");
+				ApplianceEditorInput input = (ApplianceEditorInput) this.getEditorInput();
+				Appliance appliance = (Appliance) input.getAdapter(Appliance.class);
+				ApplianceQuery query = (ApplianceQuery) service.getQuery(Appliance.class);
+				if (!query.isNameUnique(name.getText(), appliance.getId()))
+				{
+					msg = new Message(this.name, "Bezeichnung vorhanden", "Die Bezeichnung " + name.getText()
+							+ " ist bereits vorhanden. Bitte wählen Sie eine Bezeichnung, die noch nicht vorhanden ist.");
+				}
 			}
+		}
+		finally
+		{
+			tracker.close();
 		}
 		return msg;
 	}
