@@ -8,7 +8,7 @@ import ch.eugster.events.persistence.model.Visitor;
 
 public class VisitorEmailLabelProvider extends LabelProvider
 {
-	private final ComboViewer viewer;
+//	private final ComboViewer viewer;
 
 	private Visitor visitor;
 
@@ -19,7 +19,7 @@ public class VisitorEmailLabelProvider extends LabelProvider
 
 	public VisitorEmailLabelProvider(ComboViewer viewer)
 	{
-		this.viewer = viewer;
+//		this.viewer = viewer;
 	}
 
 	@Override

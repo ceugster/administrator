@@ -60,7 +60,7 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 
 	private TableViewer viewer;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	@Override
 	public void init(IViewSite site) throws PartInitException
@@ -369,11 +369,11 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 
 		getSite().setSelectionProvider(viewer);
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public ConnectionService addingService(ServiceReference<ConnectionService> reference)
 			{
 				final ConnectionService connectionService = (ConnectionService) super.addingService(reference);
 				UIJob job = new UIJob("Loading data...")
@@ -395,7 +395,7 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 			}
 
 			@Override
-			public void removedService(ServiceReference reference, Object service)
+			public void removedService(ServiceReference<ConnectionService> reference, ConnectionService service)
 			{
 				UIJob job = new UIJob("Removing data...")
 				{

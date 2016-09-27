@@ -3,6 +3,7 @@ package ch.eugster.events.persistence.model;
 import static javax.persistence.CascadeType.ALL;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Vector;
@@ -93,6 +94,10 @@ public class Visit extends AbstractEntity
 	@Basic
 	@Column(name = "visit_class_room")
 	private String classRoom;
+
+	@Basic
+	@Column(name = "visit_color")
+	private int color;
 
 	@Basic
 	@Temporal(TemporalType.TIMESTAMP)
@@ -226,9 +231,27 @@ public class Visit extends AbstractEntity
 		return theme;
 	}
 
+	public int getColor()
+	{
+		return this.color;
+	}
+	
 	public List<VisitVisitor> getVisitors()
 	{
 		return this.visitors;
+	}
+
+	public List<VisitVisitor> getValidVisitors()
+	{
+		List<VisitVisitor> visitors = new ArrayList<VisitVisitor>();
+		for (VisitVisitor visitor : this.visitors)
+		{
+			if (visitor.isValid())
+			{
+				visitors.add(visitor);
+			}
+		}
+		return visitors;
 	}
 
 	public void removeAppliance(final VisitAppliance appliance)
@@ -282,7 +305,12 @@ public class Visit extends AbstractEntity
 
 	public void setSchoolClass(final SchoolClass schoolClass)
 	{
-		this.schoolClass = schoolClass;
+		this.propertyChangeSupport.firePropertyChange("schoolClass", this.schoolClass, this.schoolClass = schoolClass);
+	}
+
+	public void setColor(final int color)
+	{
+		this.propertyChangeSupport.firePropertyChange("color", this.color, this.color = color);
 	}
 
 	public void setSelectedEmail(final SelectedEmail selectedEmail)
@@ -300,12 +328,11 @@ public class Visit extends AbstractEntity
 	public void setStart(final Calendar start)
 	{
 		this.propertyChangeSupport.firePropertyChange("start", this.start, this.start = start);
-		this.start = start;
 	}
 
 	public void setState(final State state)
 	{
-		this.state = state;
+		this.propertyChangeSupport.firePropertyChange("state", this.state, this.state = state);
 	}
 
 	public void setTeacher(final Teacher teacher)
@@ -316,7 +343,6 @@ public class Visit extends AbstractEntity
 	public void setTheme(final VisitTheme theme)
 	{
 		this.propertyChangeSupport.firePropertyChange("theme", this.theme, this.theme = theme);
-		this.theme = theme;
 	}
 
 	public void setDeleted(boolean deleted)

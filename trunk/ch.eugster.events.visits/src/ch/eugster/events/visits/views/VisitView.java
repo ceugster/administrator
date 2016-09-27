@@ -1,7 +1,5 @@
 package ch.eugster.events.visits.views;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,9 +33,12 @@ import org.osgi.util.tracker.ServiceTracker;
 import ch.eugster.events.persistence.events.EntityListener;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
+import ch.eugster.events.persistence.formatters.DateFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
+import ch.eugster.events.persistence.model.SchoolClass;
 import ch.eugster.events.persistence.model.Visit;
+import ch.eugster.events.persistence.model.VisitTheme;
 import ch.eugster.events.persistence.model.VisitVisitor;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.views.AbstractEntityView;
@@ -51,7 +52,7 @@ public class VisitView extends AbstractEntityView implements IDoubleClickListene
 
 	private TableViewer viewer;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	@Override
 	public void init(IViewSite site) throws PartInitException
@@ -125,7 +126,8 @@ public class VisitView extends AbstractEntityView implements IDoubleClickListene
 				Object object = cell.getElement();
 				if (object instanceof Visit)
 				{
-					cell.setText(((Visit) object).getTheme().getName());
+					VisitTheme theme = ((Visit) object).getTheme();
+					cell.setText(theme == null ? "" : theme.getName());
 				}
 			}
 		});
@@ -142,7 +144,9 @@ public class VisitView extends AbstractEntityView implements IDoubleClickListene
 				Object object = cell.getElement();
 				if (object instanceof Visit)
 				{
-					cell.setText(((Visit) object).getSchoolClass().getName());
+					Visit visit = (Visit) object;
+					SchoolClass schoolclass = visit.getSchoolClass();
+					cell.setText(schoolclass == null ? "" : schoolclass.getName());
 				}
 			}
 		});
@@ -191,39 +195,9 @@ public class VisitView extends AbstractEntityView implements IDoubleClickListene
 				Object object = cell.getElement();
 				if (object instanceof Visit)
 				{
-					StringBuilder daterange = new StringBuilder();
 					Visit visit = (Visit) object;
-					Calendar start = visit.getStart();
-					Calendar end = visit.getEnd();
-					if (start != null && end != null)
-					{
-						if (start.get(Calendar.YEAR) == end.get(Calendar.YEAR))
-						{
-							if (start.get(Calendar.MONTH) == end.get(Calendar.MONTH))
-							{
-								if (start.get(Calendar.DATE) == end.get(Calendar.DATE))
-								{
-									daterange = daterange.append(SimpleDateFormat.getDateInstance().format(start.getTime()));
-									daterange = daterange.append(" " + new SimpleDateFormat("HH:mm").format(start.getTime()));
-									daterange = daterange.append("-" + new SimpleDateFormat("HH:mm").format(end.getTime()));
-								}
-							}
-						}
-						if (daterange.length() == 0)
-						{
-							daterange = daterange.append(new SimpleDateFormat("dd.MM.yyyy HH:mm").format(start.getTime()));
-							daterange = daterange.append("-" + new SimpleDateFormat("dd.MM.yyyy HH:mm").format(end.getTime()));
-						}
-					}
-					else if (end == null)
-					{
-						daterange = daterange.append(new SimpleDateFormat("dd.MM.yyyy HH:mm").format(start.getTime()));
-					}
-					else if (start == null)
-					{
-						daterange = daterange.append(new SimpleDateFormat("dd.MM.yyyy HH:mm").format(end.getTime()));
-					}
-					cell.setText(daterange.toString());
+					String daterange = DateFormatter.getInstance().formatDateRange(visit.getStart(), visit.getEnd());
+					cell.setText(daterange);
 				}
 			}
 		});
@@ -235,11 +209,11 @@ public class VisitView extends AbstractEntityView implements IDoubleClickListene
 
 		getSite().setSelectionProvider(viewer);
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public ConnectionService addingService(ServiceReference<ConnectionService> reference)
 			{
 				final ConnectionService connectionService = (ConnectionService) super.addingService(reference);
 				UIJob job = new UIJob("Loading data...")
@@ -257,7 +231,7 @@ public class VisitView extends AbstractEntityView implements IDoubleClickListene
 			}
 
 			@Override
-			public void removedService(ServiceReference reference, Object service)
+			public void removedService(ServiceReference<ConnectionService> reference, ConnectionService service)
 			{
 				UIJob job = new UIJob("Removing data...")
 				{

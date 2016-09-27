@@ -78,26 +78,19 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 
 	private void extract(final AddressGroup addressGroup)
 	{
-		if (!addressGroup.isDeleted())
+		if (addressGroup.isValid())
 		{
 			List<AddressGroupMember> addressGroupMembers = addressGroup.getAddressGroupMembers();
 			for (AddressGroupMember addressGroupMember : addressGroupMembers)
 			{
 				this.extract(addressGroupMember);
 			}
-			// for (AddressGroupLink link : addressGroup.getChildren())
-			// {
-			// if (!link.isDeleted() && !link.getChild().isDeleted())
-			// {
-			// extract(link.getChild());
-			// }
-			// }
 		}
 	}
 
 	private void extract(final AddressGroupCategory category)
 	{
-		if (!category.isDeleted())
+		if (category.isValid())
 		{
 			List<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
@@ -109,13 +102,13 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 
 	private void extract(final AddressGroupMember member)
 	{
-		if (!member.isDeleted())
+		if (member.isValid())
 		{
-			if (member.getLink() == null && !member.getAddress().isDeleted())
+			if (member.getLink() == null)
 			{
 				addAddress(member.getAddress().getEmail());
 			}
-			else if (!member.getLink().isDeleted() && !member.getLink().getPerson().isDeleted())
+			else
 			{
 				if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
 				{

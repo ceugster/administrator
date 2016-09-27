@@ -154,20 +154,27 @@ public class SchoolClassEditor extends AbstractEntityEditor<SchoolClass>
 	{
 		Message msg = null;
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			SchoolClassEditorInput input = (SchoolClassEditorInput) this.getEditorInput();
-			SchoolClass schoolClass = (SchoolClass) input.getAdapter(SchoolClass.class);
-			SchoolClassQuery query = (SchoolClassQuery) service.getQuery(SchoolClass.class);
-			if (!query.isNameUnique(name.getText(), schoolClass.getId()))
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				msg = new Message(this.name, "Bezeichnung vorhanden", "Die Bezeichnung " + name.getText()
-						+ " ist bereits vorhanden. Bitte wählen Sie eine Bezeichnung, die noch nicht vorhanden ist.");
+				SchoolClassEditorInput input = (SchoolClassEditorInput) this.getEditorInput();
+				SchoolClass schoolClass = (SchoolClass) input.getAdapter(SchoolClass.class);
+				SchoolClassQuery query = (SchoolClassQuery) service.getQuery(SchoolClass.class);
+				if (!query.isNameUnique(name.getText(), schoolClass.getId()))
+				{
+					msg = new Message(this.name, "Bezeichnung vorhanden", "Die Bezeichnung " + name.getText()
+							+ " ist bereits vorhanden. Bitte wählen Sie eine Bezeichnung, die noch nicht vorhanden ist.");
+				}
 			}
+		}
+		finally
+		{
+			tracker.close();
 		}
 		return msg;
 	}

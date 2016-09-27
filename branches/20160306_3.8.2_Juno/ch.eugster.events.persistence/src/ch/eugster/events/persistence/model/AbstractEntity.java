@@ -108,6 +108,11 @@ public abstract class AbstractEntity implements IEntity
 	{
 		return this.deleted;
 	}
+	
+	public boolean isValid()
+	{
+		return !this.deleted;
+	}
 
 	public void setDeleted(final boolean deleted)
 	{

@@ -58,6 +58,18 @@ public class DonationQuery extends AbstractEntityQuery<Donation>
 		return years;
 	}
 
+	public List<Donation> selectValids()
+	{
+		Expression expression = new ExpressionBuilder(Donation.class).get("deleted").equal(false);
+		Expression donator = new ExpressionBuilder().get("link").isNull();
+		Expression validDonator = new ExpressionBuilder().get("link").get("deleted").equal(false);
+		validDonator = validDonator.and(new ExpressionBuilder().get("link").get("person").get("deleted").equal(false));
+		validDonator = validDonator.and(new ExpressionBuilder().get("link").get("address").get("deleted").equal(false));
+		donator = donator.or(validDonator);
+		expression = expression.and(donator).and(new ExpressionBuilder().get("address").get("deleted").equal(false));
+		return select(Donation.class, expression);
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Donation> selectByYear(Integer year)
 	{

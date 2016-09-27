@@ -86,6 +86,15 @@ public class AddressGroupCategory extends AbstractEntity
 		super();
 		this.setDomain(domain);
 	}
+	
+	public boolean isValid()
+	{
+		if (this.domain == null || this.domain.isValid())
+		{
+			return !this.deleted;
+		}
+		return false;
+	}
 
 	/**
 	 * 
