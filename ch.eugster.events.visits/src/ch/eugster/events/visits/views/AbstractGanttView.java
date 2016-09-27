@@ -1,7 +1,7 @@
 package ch.eugster.events.visits.views;
 
-import java.awt.Font;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -19,7 +19,6 @@ import org.eclipse.nebula.widgets.ganttchart.IGanttEventListener;
 import org.eclipse.nebula.widgets.ganttchart.ISettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -33,6 +32,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
+import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.Visit;
 import ch.eugster.events.persistence.model.VisitVisitor;
@@ -42,14 +42,12 @@ import ch.eugster.events.visits.Activator;
 import ch.eugster.events.visits.editors.VisitEditor;
 import ch.eugster.events.visits.editors.VisitEditorInput;
 
-public abstract class AbstractGanttView extends ViewPart implements IViewPart, IGanttEventListener
+public abstract class AbstractGanttView<T extends AbstractEntity> extends ViewPart implements IViewPart, IGanttEventListener
 {
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	protected ConnectionService connectionService;
 
-	protected Root root;
-	
 	protected GanttChart ganttChart;
 
 	protected IDialogSettings settings;
@@ -95,25 +93,25 @@ public abstract class AbstractGanttView extends ViewPart implements IViewPart, I
 		ganttComposite.setZoomLevel(settings.getInt("zoom"));
 		ganttComposite.setDate(GregorianCalendar.getInstance(), SWT.CENTER);
 		
-		if (PlatformUI.getWorkbench().getDisplay().getActiveShell().getFont() != null)
-		{
-			ganttChart.setFont(PlatformUI.getWorkbench().getDisplay().getActiveShell().getFont());
-		}
+//		if (PlatformUI.getWorkbench().getDisplay().getActiveShell().getFont() != null)
+//		{
+//			ganttChart.setFont(PlatformUI.getWorkbench().getDisplay().getActiveShell().getFont());
+//		}
 
 		ganttChart.addGanttEventListener(this);
 
-		this.connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+		this.connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		this.connectionServiceTracker.open();
 		this.connectionService = (ConnectionService) this.connectionServiceTracker.getService();
-		this.initializeRoot();
+		this.initialize();
 		
 		registerEntityListeners();
 	}
 
-	protected abstract void initializeRoot();
+	protected abstract void initialize();
 	
-	protected abstract void clearRoot();
+	protected abstract void clear();
 	
 	@Override
 	public void eventDoubleClicked(final GanttEvent event, final MouseEvent mouseEvent)
@@ -189,15 +187,15 @@ public abstract class AbstractGanttView extends ViewPart implements IViewPart, I
 	{
 		for (Object evt : events)
 		{
-			GanttEvent event = (GanttEvent) evt;
-			event.setStartDate(event.getActualStartDate());
-			event.setEndDate(event.getActualEndDate());
-			Visit visit = (Visit) event.getData();
-			visit.setStart(event.getStartDate());
-			visit.setEnd(event.getEndDate());
-			event.setAdvancedTooltip(AbstractGanttView.this.getTooltip(visit));
-			VisitQuery query = (VisitQuery)connectionService.getQuery(Visit.class);
-			event.setData(query.merge(visit));
+//			GanttEvent event = (GanttEvent) evt;
+//			event.setStartDate(event.getActualStartDate());
+//			event.setEndDate(event.getActualEndDate());
+//			Visit visit = (Visit) event.getData();
+//			visit.setStart(event.getStartDate());
+//			visit.setEnd(event.getEndDate());
+//			event.setAdvancedTooltip(getTooltip(visit));
+//			VisitQuery query = (VisitQuery)connectionService.getQuery(Visit.class);
+//			event.setData(query.merge(visit));
 		}
 	}
 
@@ -286,73 +284,12 @@ public abstract class AbstractGanttView extends ViewPart implements IViewPart, I
 		super.dispose();
 	}
 
-	protected String getContent(final Visit visit)
-	{
-		/*
-		 * Dates
-		 */
-		StringBuilder content = new StringBuilder(visit.getFormattedPeriod());
-		if (content.length() > 0)
-		{
-			content = content.append("\n\n");
-		}
+	protected abstract <T> String getContent(final T entity);
 
-		content = content.append("Thema: " + visit.getTheme().getName());
-		content = content.append("\n");
-		for (VisitVisitor visitor : visit.getVisitors())
-		{
-			if (!visitor.isDeleted())
-			{
-				content = content.append("\n");
-				content = content.append(visitor.getType().label() + ": ");
-				content = content.append(PersonFormatter.getInstance().formatLastnameFirstname(
-						visitor.getVisitor().getLink().getPerson()));
-			}
-		}
-		content = content.append("\n");
-		if (visit.getTeacher() != null)
-		{
-			content = content.append("Lehrperson: "
-					+ PersonFormatter.getInstance().formatFirstnameLastname(visit.getTeacher().getLink().getPerson()));
-		}
-		if (visit.getSchoolClass() != null)
-		{
-			content = content.append("\n\n");
-			content = content
-					.append("Klasse: " + visit.getSchoolClass().getName())
-					.append(Visit.stringValueOf(visit.getClassName()).isEmpty() ? " (" : ", " + visit.getClassName()
-							+ " (")
-					.append(NumberFormat.getIntegerInstance().format(visit.getPupils()) + " Schüler/innen)");
-		}
-		if (visit.getTeacher() != null)
-		{
-			content = content.append("\n\n");
-			Address address = visit.getTeacher().getLink().getAddress();
-			content = content
-					.append("Schulhaus: ")
-					.append(Address.stringValueOf(address.getName()).trim().isEmpty() ? "?, " : address.getName()
-							+ ", ")
-					.append("Stockwert: "
-							+ (Visit.stringValueOf(visit.getFloor()).isEmpty() ? "?, " : visit.getFloor() + ", "))
-					.append("Schulzimmer: "
-							+ (Visit.stringValueOf(visit.getClassRoom()).trim().isEmpty() ? "?" : ", "
-									+ visit.getClassRoom()));
-			content = content.append("\n");
-			content = content.append("Ort: " + AddressFormatter.getInstance().formatCityLine(address) + " ("
-					+ address.getProvince() + ")");
-			content = content.append("\n\n");
-		}
+	protected abstract <T> AdvancedTooltip getTooltip(final T entity);
 
-		return content.toString();
-	}
-
-	protected AdvancedTooltip getTooltip(final Visit visit)
-	{
-		StringBuilder tooltipTitle = new StringBuilder(visit.getTheme() == null ? "" : visit.getTheme().getName());
-		tooltipTitle = tooltipTitle.append(visit.getState() == null ? "" : " - " + visit.getState().label());
-		return new AdvancedTooltip(tooltipTitle.toString(), getContent(visit));
-	}
-
+	protected abstract void eventsMoved(final List events);
+	
 	protected abstract void registerEntityListeners();
 
 	@Override
@@ -397,121 +334,126 @@ public abstract class AbstractGanttView extends ViewPart implements IViewPart, I
 		settings.put("view", ganttChart.getGanttComposite().getCurrentView());
 	}
 	
-	protected abstract class Root
-	{
-		private GanttEvent scope;
+//	protected abstract class Root
+//	{
+//		private GanttEvent scope;
+//	
+//		public Root(String name, GanttChart ganttChart)
+//		{
+//			this.scope = new GanttEvent(ganttChart, name);
+//			this.scope.setVerticalEventAlignment(SWT.CENTER);
+//			this.scope.setStartDate(GregorianCalendar.getInstance());
+//			this.scope.setEndDate(GregorianCalendar.getInstance());
+//			this.scope.setData(this);
+//		}
+//
+//		public GanttEvent getScope()
+//		{
+//			return this.scope;
+//		}
+//
+//		public abstract void addGanttGroup(VisitGanttGroup group);
+//	}
+
+//	public class VisitGanttGroup extends GanttGroup
+//	{
+//		public VisitGanttGroup(GanttChart parent) 
+//		{
+//			super(parent);
+//		}
+//		
+//		private GanttEvent createVisitGanttEvent(Visit visit, GanttChart ganttChart) 
+//		{
+//			GanttEvent event = new GanttEvent(ganttChart, SimpleDateFormat.getDateInstance().format(visit.getStart().getTime()));
+//			event.setStartDate(visit.getStart());
+//			event.setEndDate(visit.getEnd());
+//			return event;
+//		}
+//		
+//		public GanttEvent addEvent(Visit visit)
+//		{
+//			GanttEvent event = createVisitGanttEvent(visit, ganttChart);
+//			this.addEvent(event);
+//			return event;
+//		}
+//
+//		public GanttEvent getEvent(Visit visit)
+//		{
+//			@SuppressWarnings("unchecked")
+//			List<GanttEvent> events = this.getEventMembers();
+//			for (GanttEvent event : events)
+//			{
+////				if (event.getVisit().getId().equals(visit.getId()))
+////				{
+//					return event;
+////				}
+//			}
+//			return null;
+//		}
+//
+//		public GanttEvent removeEvent(Visit visit)
+//		{
+//			@SuppressWarnings("unchecked")
+//			List<GanttEvent> events = this.getEventMembers();
+//			for (GanttEvent event : events)
+//			{
+////				if (event.getVisit().getId().equals(visit.getId()))
+////				{
+//					this.removeEvent(event);
+//					return event;
+////				}
+//			}
+//			return null;
+//		}
+//	}
 	
-		public Root(String name, GanttChart ganttChart)
-		{
-			this.scope = new GanttEvent(ganttChart, name);
-			this.scope.setVerticalEventAlignment(SWT.CENTER);
-			this.scope.setStartDate(GregorianCalendar.getInstance());
-			this.scope.setEndDate(GregorianCalendar.getInstance());
-			this.scope.setData(this);
-		}
-
-		public GanttEvent getScope()
-		{
-			return this.scope;
-		}
-
-		public abstract void addGanttGroup(VisitGanttGroup group);
-	}
-
-	public abstract class VisitGanttGroup extends GanttGroup
-	{
-		public VisitGanttGroup(GanttChart parent) 
-		{
-			super(parent);
-		}
-		
-		public abstract VisitGanttEvent createVisitGanttEvent(Visit visit, GanttChart ganttChart);
-		
-		public VisitGanttEvent addEvent(Visit visit)
-		{
-			VisitGanttEvent event = createVisitGanttEvent(visit, ganttChart);
-			this.addEvent(event);
-			return event;
-		}
-
-		public VisitGanttEvent getEvent(Visit visit)
-		{
-			@SuppressWarnings("unchecked")
-			List<VisitGanttEvent> events = this.getEventMembers();
-			for (VisitGanttEvent event : events)
-			{
-				if (event.getVisit().getId().equals(visit.getId()))
-				{
-					return event;
-				}
-			}
-			return null;
-		}
-
-		public VisitGanttEvent removeEvent(Visit visit)
-		{
-			@SuppressWarnings("unchecked")
-			List<VisitGanttEvent> events = this.getEventMembers();
-			for (VisitGanttEvent event : events)
-			{
-				if (event.getVisit().getId().equals(visit.getId()))
-				{
-					this.removeEvent(event);
-					return event;
-				}
-			}
-			return null;
-		}
-	}
-	
-	public abstract class VisitGanttEvent extends GanttEvent
-	{
-		public VisitGanttEvent(Visit visit, GanttChart ganttChart) 
-		{
-			super(ganttChart, visit.getTheme().getName());
-			this.setData(visit);
-		}
-		
-		public Visit getVisit()
-		{
-			return (Visit) this.getData();
-		}
-
-		public abstract Color getColor();
-
-		public void update()
-		{
-			int fontStyle = Font.BOLD;
-			if (this.getVisit().getState() != null)
-			{
-				if (this.getVisit().getState().equals(Visit.State.PROVISORILY))
-				{
-					fontStyle = Font.ITALIC;
-				}
-			}
-			if (this.getTextFont() == null)
-			{
-				this.setTextFont(ganttChart.getFont());
-			}
-			this.getTextFont().getFontData()[0].setStyle(fontStyle);
-			this.setStartDate(this.getVisit().getStart());
-			this.setRevisedStart(this.getVisit().getStart());
-			this.setEndDate(this.getVisit().getEnd());
-			this.setRevisedEnd(this.getVisit().getEnd());
-			this.setData(this.getVisit());
-			this.setAutomaticRowHeight();
-			Color newColor = getColor();
-			Color oldColor = this.getGradientStatusColor();
-			if (oldColor != null && (newColor == null || !this.getGradientStatusColor().equals(newColor)))
-			{
-				this.getGradientStatusColor().dispose();
-			}
-			if (newColor != null)
-			{
-				this.setGradientStatusColor(newColor);
-			}
-			this.setAdvancedTooltip(getTooltip(this.getVisit()));
-		}
-	}
-
+//	public class VisitGanttEvent extends GanttEvent
+//	{
+//		public VisitGanttEvent(Visit visit, GanttChart ganttChart) 
+//		{
+//			super(ganttChart, visit.getTheme().getName());
+//			this.setData(visit);
+//			this.update();
+//		}
+//		
+//		public Visit getVisit()
+//		{
+//			return (Visit) this.getData();
+//		}
+//
+//		public Color getColor() 
+//		{
+//			java.awt.Color c = new java.awt.Color(this.getVisit().getTheme().getColor().intValue());
+//			return new Color(this.getParentChart().getDisplay(), new RGB(c.getRed(), c.getGreen(), c.getBlue()));
+//		}
+//
+//		public void update()
+//		{
+////			int fontStyle = Font.BOLD;
+//			Visit visit = getVisit();
+////			if (visit.getState() != null)
+////			{
+////				if (visit.getState().equals(Visit.State.PROVISORILY))
+////				{
+////					fontStyle = Font.ITALIC;
+////				}
+////			}
+////			if (this.getTextFont() == null)
+////			{
+////				this.setTextFont(ganttChart.getFont());
+////			}
+////			this.getTextFont().getFontData()[0].setStyle(fontStyle);
+//			this.setStartDate(visit.getStart());
+//			this.setRevisedStart(visit.getStart());
+//			this.setEndDate(visit.getEnd());
+//			this.setRevisedEnd(visit.getEnd());
+//			this.setStatusColor(ColorCache.getColor(255, 104, 145));
+//			this.setGradientStatusColor(ColorCache.getColor(168, 185, 216));
+////			this.setAutomaticRowHeight();
+////			this.setStatusColor(ColorCache.getColor(81, 104, 145));
+////			this.setGradientStatusColor(ColorCache.getColor(81, 104, 145));
+//			this.setAdvancedTooltip(getTooltip(this.getVisit()));
+//		}
+//	}
+//
 }

@@ -156,26 +156,30 @@ public class VisitThemeEditor extends AbstractEntityEditor<VisitTheme>
 	{
 		Message msg = null;
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null);
 		tracker.open();
-
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			VisitThemeEditorInput input = (VisitThemeEditorInput) this.getEditorInput();
-			VisitTheme visitTheme = (VisitTheme) input.getAdapter(VisitTheme.class);
-			String name = this.name.getText();
-			VisitThemeQuery query = (VisitThemeQuery) service.getQuery(VisitTheme.class);
-			if (!query.isNameUnique(name, visitTheme.getId()))
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				msg = new Message(this.name, "Ungültige Bezeichnung");
-				msg.setMessage("Die gewählte Bezeichnung wird bereits verwendet.");
-				return msg;
+				VisitThemeEditorInput input = (VisitThemeEditorInput) this.getEditorInput();
+				VisitTheme visitTheme = (VisitTheme) input.getAdapter(VisitTheme.class);
+				String name = this.name.getText();
+				VisitThemeQuery query = (VisitThemeQuery) service.getQuery(VisitTheme.class);
+				if (!query.isNameUnique(name, visitTheme.getId()))
+				{
+					msg = new Message(this.name, "Ungültige Bezeichnung");
+					msg.setMessage("Die gewählte Bezeichnung wird bereits verwendet.");
+					return msg;
+				}
 			}
 		}
-		tracker.close();
-
+		finally
+		{
+			tracker.close();
+		}
 		return msg;
 	}
 

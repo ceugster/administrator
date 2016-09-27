@@ -154,7 +154,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 
 	private ComboViewer stateViewer;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	@Override
 	protected void initialize()
@@ -310,11 +310,11 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 
 	private void startConnectionTracking()
 	{
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public ConnectionService addingService(ServiceReference<ConnectionService> reference)
 			{
 				ConnectionService service = (ConnectionService) super.addingService(reference);
 				VisitThemeQuery themeQuery = (VisitThemeQuery) service.getQuery(VisitTheme.class);
@@ -344,7 +344,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 			}
 
 			@Override
-			public void remove(ServiceReference reference)
+			public void remove(ServiceReference<ConnectionService> reference)
 			{
 				themeViewer.setInput(new VisitTheme[0]);
 				teacherViewer.setInput(new Teacher[0]);
@@ -407,6 +407,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT | SWT.FULL_SELECTION);
 		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		combo.setCursor(combo.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
+		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
 
 		this.themeViewer = new ComboViewer(combo);
 		this.themeViewer.setContentProvider(new ArrayContentProvider());
@@ -1071,6 +1072,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 
 			CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
 			combo.setLayoutData(gridData);
+			combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
 
 			this.visitorViewers[i] = new ComboViewer(combo);
 			this.visitorViewers[i].setData("visitor.type", visitorTypes[i]);

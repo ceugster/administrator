@@ -1655,7 +1655,6 @@ ch.eugster.events.visits/src/ch/eugster/events/visits/views/TeacherTreeViewerLab
 ch.eugster.events.visits/src/ch/eugster/events/visits/views/TeacherView.java -text
 ch.eugster.events.visits/src/ch/eugster/events/visits/views/ThemeView.java -text
 ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitContentProvider.java -text
-ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitGanttEvent.java -text
 ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitSettings.java -text
 ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitTableContentProvider.java -text
 ch.eugster.events.visits/src/ch/eugster/events/visits/views/VisitThemeContentProvider.java -text

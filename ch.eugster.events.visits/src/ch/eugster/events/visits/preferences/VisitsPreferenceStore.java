@@ -20,7 +20,7 @@ public class VisitsPreferenceStore extends ScopedPreferenceStore
 
 	public VisitsPreferenceStore()
 	{
-		super(new InstanceScope(), Activator.PLUGIN_ID);
+		super(InstanceScope.INSTANCE, Activator.PLUGIN_ID);
 		setAvailableAddressTypes();
 
 		AddressType addressType = Activator.getDefault().getSettings().getDefaultAddressType();
@@ -63,11 +63,11 @@ public class VisitsPreferenceStore extends ScopedPreferenceStore
 					.setDefaultAddressType(
 							availableAddressTypes[this.getInt(PreferenceInitializer.KEY_DEFAULT_ADDRESS_TYPE)]);
 
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
+			tracker.open();
 			try
 			{
-				ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-						ConnectionService.class.getName(), null);
-				tracker.open();
 				ConnectionService service = (ConnectionService) tracker.getService();
 				if (service != null)
 				{
@@ -80,22 +80,32 @@ public class VisitsPreferenceStore extends ScopedPreferenceStore
 			catch (Exception e)
 			{
 			}
+			finally
+			{
+				tracker.close();
+			}
 		}
 	}
 
 	private void setAvailableAddressTypes()
 	{
 		Collection<AddressType> addressTypes = new ArrayList<AddressType>();
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
-			addressTypes.addAll(query.selectAll(false));
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
+				addressTypes.addAll(query.selectAll(false));
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		availableAddressTypes = addressTypes.toArray(new AddressType[0]);
 	}
 

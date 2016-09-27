@@ -21,17 +21,17 @@ import ch.eugster.events.visits.Activator;
 
 public class DeleteSchoolClassHandler extends AbstractHandler
 {
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private ConnectionService connectionService;
 
 	public DeleteSchoolClassHandler()
 	{
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public ConnectionService addingService(ServiceReference<ConnectionService> reference)
 			{
 				connectionService = (ConnectionService) super.addingService(reference);
 				setBaseEnabled(connectionService != null);
@@ -39,7 +39,7 @@ public class DeleteSchoolClassHandler extends AbstractHandler
 			}
 
 			@Override
-			public void removedService(ServiceReference reference, Object service)
+			public void removedService(ServiceReference<ConnectionService> reference, ConnectionService service)
 			{
 				super.removedService(reference, service);
 				setBaseEnabled(false);

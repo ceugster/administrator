@@ -14,8 +14,8 @@
       <view
             class="ch.eugster.events.visits.views.ThemeView"
             icon="icons/panda.png"
-            id="ch.eugster.events.visits.theme.gantt"
-            name="Themen"
+            id="ch.eugster.events.visits.theme.overview"
+            name="Themenübersicht"
             restorable="true">
       </view>
       <view
@@ -85,7 +85,7 @@
                   style="push">
                <parameter
                      name="org.eclipse.ui.views.showView.viewId"
-                     value="ch.eugster.events.visits.theme.gantt">
+                     value="ch.eugster.events.visits.theme.overview">
                </parameter>
             </command>
             <command
@@ -166,7 +166,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:ch.eugster.events.visits.overview?after=additions">
+            locationURI="toolbar:ch.eugster.events.visits.theme.overview?after=additions">
          <command
                commandId="ch.eugster.events.visits.add"
                disabledIcon="icons/add_grey_16.gif"
@@ -453,7 +453,7 @@
       </command>
       <command
             defaultHandler="ch.eugster.events.visits.handlers.AddVisitHandler"
-            id="ch.eugster.events.visits.visit.add"
+            id="ch.eugster.events.visits.add"
             name="Neuer Besuch">
       </command>
       <command
@@ -710,7 +710,7 @@
             targetID="ch.eugster.events.visits.perspective">
          <view
                closeable="true"
-               id="ch.eugster.events.visits.overview"
+               id="ch.eugster.events.visits.theme.overview"
                minimized="false"
                moveable="true"
                relationship="left"
@@ -719,12 +719,9 @@
                standalone="true"
                visible="true">
          </view>
-      </perspectiveExtension>
-      <perspectiveExtension
-            targetID="ch.eugster.events.core.perspective">
          <view
                closeable="true"
-               id="ch.eugster.events.visits.appliance.view"
+               id="ch.eugster.events.visits.theme.view"
                minimized="false"
                moveable="true"
                relationship="left"
@@ -732,9 +729,12 @@
                showTitle="true"
                visible="true">
          </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="ch.eugster.events.core.perspective">
          <view
                closeable="true"
-               id="ch.eugster.events.visits.theme.view"
+               id="ch.eugster.events.visits.appliance.view"
                minimized="false"
                moveable="true"
                relationship="left"
@@ -828,6 +828,34 @@
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
+      <editorContribution
+            id="ch.eugster.events.visit.VisitEditorContribution"
+            targetID="ch.eugster.events.visits.visit.editor">
+         <action
+               class="ch.eugster.events.ui.actions.ResetEditorActionDelegate"
+               definitionId="org.eclipse.ui.file.revert"
+               disabledIcon="icons/reset_grey_16.png"
+               hoverIcon="icons/reset_16.png"
+               icon="icons/reset_16.png"
+               id="ch.eugster.events.visit.VisitEditor.revert"
+               label="Revert"
+               style="push"
+               toolbarPath="ch.eugster.events.ui.toolbar.editor.actions"
+               tooltip="Verwerfen der vorgenommenen Änderungen">
+         </action>
+         <action
+               class="ch.eugster.events.ui.actions.SaveEditorActionDelegate"
+               definitionId="org.eclipse.ui.file.save"
+               disabledIcon="icons/save_grey_16.png"
+               hoverIcon="icons/save_16.png"
+               icon="icons/save_16.png"
+               id="ch.eugster.events.visit.VisitEditor.save"
+               label="Save"
+               style="push"
+               toolbarPath="ch.eugster.events.ui.toolbar.editor.actions"
+               tooltip="Speichern der Änderungen im aktuellen Editor">
+         </action>
+      </editorContribution>
       <editorContribution
             id="ch.eugster.events.visit.visitThemeEditorContribution"
             targetID="ch.eugster.events.visits.theme.editor">

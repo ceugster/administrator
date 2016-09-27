@@ -45,7 +45,7 @@ public class EmailAccountView extends AbstractEntityView implements IDoubleClick
 
 	private TableViewer viewer;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private void createContextMenu()
 	{
@@ -197,11 +197,11 @@ public class EmailAccountView extends AbstractEntityView implements IDoubleClick
 
 		getSite().setSelectionProvider(viewer);
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null)
 		{
 			@Override
-			public Object addingService(final ServiceReference reference)
+			public ConnectionService addingService(final ServiceReference<ConnectionService> reference)
 			{
 				final ConnectionService connectionService = (ConnectionService) super.addingService(reference);
 				UIJob job = new UIJob("Loading data...")
@@ -219,7 +219,7 @@ public class EmailAccountView extends AbstractEntityView implements IDoubleClick
 			}
 
 			@Override
-			public void removedService(final ServiceReference reference, final Object service)
+			public void removedService(final ServiceReference<ConnectionService> reference, final ConnectionService service)
 			{
 				UIJob job = new UIJob("Removing data...")
 				{

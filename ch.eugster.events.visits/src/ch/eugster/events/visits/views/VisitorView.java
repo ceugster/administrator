@@ -17,6 +17,7 @@ import ch.eugster.events.persistence.events.EntityListener;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Visit;
+import ch.eugster.events.persistence.model.VisitTheme;
 import ch.eugster.events.persistence.model.VisitVisitor;
 import ch.eugster.events.persistence.queries.VisitThemeQuery;
 
@@ -98,13 +99,13 @@ public class VisitorView extends AbstractGanttView
 				if (entity instanceof Visit)
 				{
 					Visit visit = (Visit) entity;
-					VisitGanttGroup ganttGroup = ((VisitorRoot)VisitorView.this.root).getGanttGroup(visit.getvi.getVisitor());
-					VisitGanttEvent event = ganttGroup.removeEvent(visit);
-					if (event != null)
-					{
-						root.getScope().removeScopeEvent(event);
-						ganttChart.redrawGanttChart();
-					}
+//					VisitGanttGroup ganttGroup = ((VisitorRoot)VisitorView.this.root).getGanttGroup(visit.getvi.getVisitor());
+//					VisitGanttEvent event = ganttGroup.removeEvent(visit);
+//					if (event != null)
+//					{
+//						root.getScope().removeScopeEvent(event);
+//						ganttChart.redrawGanttChart();
+//					}
 				}
 			}
 
@@ -114,13 +115,13 @@ public class VisitorView extends AbstractGanttView
 				if (entity instanceof Visit)
 				{
 					Visit visit = (Visit) entity;
-					VisitGanttGroup ganttGroup = ((VisitorRoot)VisitorView.this.root).getGanttGroup(visit.getTheme());
-					VisitGanttEvent event = ganttGroup.addEvent(visit);
-					if (event != null)
-					{
-						root.getScope().addScopeEvent(event);
-						ganttChart.redrawGanttChart();
-					}
+//					VisitGanttGroup ganttGroup = ((VisitorRoot)VisitorView.this.root).getGanttGroup(visit.getTheme());
+//					VisitGanttEvent event = ganttGroup.addEvent(visit);
+//					if (event != null)
+//					{
+//						root.getScope().addScopeEvent(event);
+//						ganttChart.redrawGanttChart();
+//					}
 				}
 			}
 
@@ -130,13 +131,13 @@ public class VisitorView extends AbstractGanttView
 				if (entity instanceof Visit)
 				{
 					Visit visit = (Visit) entity;
-					VisitGanttGroup ganttGroup = ((VisitorRoot)VisitorView.this.root).getGanttGroup(visit.getTheme());
-					VisitGanttEvent event = ganttGroup.removeEvent(visit);
-					if (event != null)
-					{
-						root.getScope().removeScopeEvent(event);
-						ganttChart.redrawGanttChart();
-					}
+//					VisitGanttGroup ganttGroup = ((VisitorRoot)VisitorView.this.root).getGanttGroup(visit.getTheme());
+//					VisitGanttEvent event = ganttGroup.removeEvent(visit);
+//					if (event != null)
+//					{
+//						root.getScope().removeScopeEvent(event);
+//						ganttChart.redrawGanttChart();
+//					}
 				}
 			}
 
@@ -146,13 +147,13 @@ public class VisitorView extends AbstractGanttView
 				if (entity instanceof Visit)
 				{
 					Visit visit = (Visit) entity;
-					VisitGanttGroup ganttGroup = ((VisitorRoot)VisitorView.this.root).getGanttGroup(visit.getTheme());
-					VisitGanttEvent event = ganttGroup.getEvent(visit);
-					if (event != null)
-					{
-						event.update();
-						ganttChart.redrawGanttChart();
-					}
+//					VisitGanttGroup ganttGroup = ((VisitorRoot)VisitorView.this.root).getGanttGroup(visit.getTheme());
+//					VisitGanttEvent event = ganttGroup.getEvent(visit);
+//					if (event != null)
+//					{
+//						event.update();
+//						ganttChart.redrawGanttChart();
+//					}
 				}
 			}
 		};
@@ -178,12 +179,12 @@ public class VisitorView extends AbstractGanttView
 	{
 		this.root = new VisitorRoot(ganttChart);
 		VisitThemeQuery themeQuery = (VisitThemeQuery) this.connectionService.getQuery(VisitVisitor.class);
-		List<VisitVisitor> themes = themeQuery.selectAll(false);
-		for (VisitVisitor theme : themes)
-		{
-			VisitGanttGroup group = new VisitVisitorGanttGroup(theme, ganttChart);
-			this.root.addGanttGroup(group);
-		}
+		List<VisitTheme> themes = themeQuery.selectVisibles();
+//		for (VisitTheme theme : themes)
+//		{
+//			VisitGanttGroup group = new VisitGanttGroup(theme, ganttChart);
+//			this.root.addGanttGroup(group);
+//		}
 	}
 
 	protected void clearRoot()
@@ -211,14 +212,14 @@ public class VisitorView extends AbstractGanttView
 		
 		public void addGanttGroup(VisitGanttGroup ganttGroup)
 		{
-			visitorGroups.put(ganttGroup.getVisitor(), ganttGroup);
-			List<Visit> visits = ganttGroup.getVisitors().getVisits(false);
-			for (Visit visit : visits)
-			{
-				VisitGanttEvent event = new VisitThemeGanttEvent(visit, ganttChart);
-				ganttGroup.addEvent(event);
-				this.getScope().addScopeEvent(event);
-			}
+//			visitorGroups.put(ganttGroup.getVisitor(), ganttGroup);
+//			List<Visit> visits = ganttGroup.getVisitors().getVisits(false);
+//			for (Visit visit : visits)
+//			{
+//				VisitGanttEvent event = new VisitThemeGanttEvent(visit, ganttChart);
+//				ganttGroup.addEvent(event);
+//				this.getScope().addScopeEvent(event);
+//			}
 			this.getScope().getParentChart().redrawGanttChart();
 		}
 
@@ -229,7 +230,7 @@ public class VisitorView extends AbstractGanttView
 
 		public void updateGanttGroup(VisitVisitor theme)
 		{
-			this.visitorGroups.get(theme).update(theme);
+//			this.visitorGroups.get(theme).update(theme);
 			this.getScope().getParentChart().redrawGanttChart();
 		}
 

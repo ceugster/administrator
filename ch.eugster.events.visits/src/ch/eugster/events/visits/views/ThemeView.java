@@ -1,29 +1,37 @@
 package ch.eugster.events.visits.views;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import org.eclipse.nebula.widgets.ganttchart.AdvancedTooltip;
 import org.eclipse.nebula.widgets.ganttchart.GanttChart;
+import org.eclipse.nebula.widgets.ganttchart.GanttEvent;
+import org.eclipse.nebula.widgets.ganttchart.GanttSection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import ch.eugster.events.persistence.events.EntityAdapter;
 import ch.eugster.events.persistence.events.EntityListener;
 import ch.eugster.events.persistence.events.EntityMediator;
+import ch.eugster.events.persistence.formatters.AddressFormatter;
+import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
+import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.Visit;
 import ch.eugster.events.persistence.model.VisitTheme;
+import ch.eugster.events.persistence.model.VisitVisitor;
+import ch.eugster.events.persistence.queries.VisitQuery;
 import ch.eugster.events.persistence.queries.VisitThemeQuery;
 
-public class ThemeView extends AbstractGanttView
+public class ThemeView extends AbstractGanttView<Visit>
 {
 	public static final String ID = "ch.eugster.events.visits.theme.view";
 
+	private Map<Long, GanttSection> sections = new HashMap<Long, GanttSection>();
+	
 	private EntityListener themeListener;
 	
 	private EntityListener visitListener;
@@ -54,7 +62,8 @@ public class ThemeView extends AbstractGanttView
 			{
 				if (entity instanceof VisitTheme)
 				{
-					((ThemeRoot)ThemeView.this.root).removeGanttGroup((VisitTheme) entity);
+					VisitTheme theme = (VisitTheme) entity;
+					ThemeView.this.sections.remove(theme.getId());
 				}
 			}
 
@@ -64,8 +73,7 @@ public class ThemeView extends AbstractGanttView
 				if (entity instanceof VisitTheme)
 				{
 					VisitTheme theme = (VisitTheme) entity;
-					VisitGanttGroup group = new VisitThemeGanttGroup(theme, ganttChart);
-					((ThemeRoot)ThemeView.this.root).addGanttGroup(group);
+					ThemeView.this.sections.put(theme.getId(), new GanttSection(ganttChart, theme.getName()));
 				}
 			}
 
@@ -74,7 +82,8 @@ public class ThemeView extends AbstractGanttView
 			{
 				if (entity instanceof VisitTheme)
 				{
-					((ThemeRoot)ThemeView.this.root).removeGanttGroup((VisitTheme) entity);
+					VisitTheme theme = (VisitTheme) entity;
+					ThemeView.this.sections.remove(theme.getId());
 				}
 			}
 
@@ -84,7 +93,8 @@ public class ThemeView extends AbstractGanttView
 				if (entity instanceof VisitTheme)
 				{
 					VisitTheme theme = (VisitTheme) entity;
-					((ThemeRoot)ThemeView.this.root).updateGanttGroup(theme);
+					GanttSection section = ThemeView.this.sections.get(theme.getId());
+//					section.update(theme);
 				}
 			}
 		};
@@ -98,12 +108,14 @@ public class ThemeView extends AbstractGanttView
 				if (entity instanceof Visit)
 				{
 					Visit visit = (Visit) entity;
-					VisitGanttGroup ganttGroup = ((ThemeRoot)ThemeView.this.root).getGanttGroup(visit.getTheme());
-					VisitGanttEvent event = ganttGroup.removeEvent(visit);
-					if (event != null)
+					if (visit.getTheme() != null)
 					{
-						root.getScope().removeScopeEvent(event);
-						ganttChart.redrawGanttChart();
+						GanttSection section = sections.get(visit.getTheme().getId());
+//						GanttEvent event = section.removeGanttEvent(visit);
+//						if (event != null)
+//						{
+//							ganttChart.redrawGanttChart();
+//						}
 					}
 				}
 			}
@@ -114,13 +126,12 @@ public class ThemeView extends AbstractGanttView
 				if (entity instanceof Visit)
 				{
 					Visit visit = (Visit) entity;
-					VisitGanttGroup ganttGroup = ((ThemeRoot)ThemeView.this.root).getGanttGroup(visit.getTheme());
-					VisitGanttEvent event = ganttGroup.addEvent(visit);
-					if (event != null)
-					{
-						root.getScope().addScopeEvent(event);
-						ganttChart.redrawGanttChart();
-					}
+//					if (visit.getTheme() != null)
+//					{
+//						GanttSection section = sections.get(visit.getTheme().getId());
+//						section.getGroup().addEvent(visit);
+//						ganttChart.redrawGanttChart();
+//					}
 				}
 			}
 
@@ -130,13 +141,15 @@ public class ThemeView extends AbstractGanttView
 				if (entity instanceof Visit)
 				{
 					Visit visit = (Visit) entity;
-					VisitGanttGroup ganttGroup = ((ThemeRoot)ThemeView.this.root).getGanttGroup(visit.getTheme());
-					VisitGanttEvent event = ganttGroup.removeEvent(visit);
-					if (event != null)
-					{
-						root.getScope().removeScopeEvent(event);
-						ganttChart.redrawGanttChart();
-					}
+//					if (visit.getTheme() != null)
+//					{
+//						ThemeGanttSection section = sections.get(visit.getTheme().getId());
+//						GanttEvent event = section.getGroup().removeEvent(visit);
+//						if (event != null)
+//						{
+//							ganttChart.redrawGanttChart();
+//						}
+//					}
 				}
 			}
 
@@ -146,13 +159,16 @@ public class ThemeView extends AbstractGanttView
 				if (entity instanceof Visit)
 				{
 					Visit visit = (Visit) entity;
-					VisitGanttGroup ganttGroup = ((ThemeRoot)ThemeView.this.root).getGanttGroup(visit.getTheme());
-					VisitGanttEvent event = ganttGroup.getEvent(visit);
-					if (event != null)
-					{
-						event.update();
-						ganttChart.redrawGanttChart();
-					}
+//					if (visit.getTheme() != null)
+//					{
+//						ThemeGanttSection section = sections.get(visit.getTheme().getId());
+//						GanttEvent event = section.getGroup().getEvent(visit);
+//						if (event != null)
+//						{
+////							event.update();
+//							ganttChart.redrawGanttChart();
+//						}
+//					}
 				}
 			}
 		};
@@ -174,106 +190,133 @@ public class ThemeView extends AbstractGanttView
 	}
 
 	@Override
-	protected void initializeRoot()
+	protected void initialize()
 	{
-		this.root = new ThemeRoot(ganttChart);
 		VisitThemeQuery themeQuery = (VisitThemeQuery) this.connectionService.getQuery(VisitTheme.class);
 		List<VisitTheme> themes = themeQuery.selectAll(false);
 		for (VisitTheme theme : themes)
 		{
-			VisitGanttGroup group = new VisitThemeGanttGroup(theme, ganttChart);
-			this.root.addGanttGroup(group);
-		}
-	}
-
-	protected void clearRoot()
-	{
-		Set<VisitTheme> themes = ((ThemeRoot) this.root).getThemes();
-		for (VisitTheme theme : themes)
-		{
-			((ThemeRoot) this.root).removeGanttGroup(theme);
-		}
-	}
-	
-	private class ThemeRoot extends Root
-	{
-		private Map<VisitTheme, VisitGanttGroup> themeGroups = new HashMap<VisitTheme, VisitGanttGroup>();
-		
-		public ThemeRoot(GanttChart ganttChart)
-		{
-			super("Themen", ganttChart);
-		}
-		
-		public Set<VisitTheme> getThemes()
-		{
-			return themeGroups.keySet();
-		}
-		
-		public void addGanttGroup(VisitGanttGroup ganttGroup)
-		{
-			themeGroups.put(ganttGroup.getTheme(), ganttGroup);
-			List<Visit> visits = ganttGroup.getTheme().getVisits(false);
+			GanttSection section = new GanttSection(ganttChart, theme.getName());
+			List<Visit> visits = theme.getVisits(false);
 			for (Visit visit : visits)
 			{
-				VisitGanttEvent event = new VisitThemeGanttEvent(visit, ganttChart);
-				ganttGroup.addEvent(event);
-				this.getScope().addScopeEvent(event);
+				if (visit.getStart() != null && visit.getEnd() != null)
+				{
+					GanttEvent event = new GanttEvent(ganttChart, getLabelText(visit), visit.getStart(), visit.getEnd(), 0);
+					section.addGanttEvent(event);
+				}
 			}
-			this.getScope().getParentChart().redrawGanttChart();
+			this.sections.put(theme.getId(), section);
 		}
+	}
 
-		public VisitGanttGroup getGanttGroup(VisitTheme theme)
+	private String getLabelText(final Visit visit)
+	{
+		if (!visit.getVisitors().isEmpty())
 		{
-			return this.themeGroups.get(theme);
-		}
-
-		public void updateGanttGroup(VisitTheme theme)
-		{
-			this.themeGroups.get(theme).update(theme);
-			this.getScope().getParentChart().redrawGanttChart();
-		}
-
-		public void removeGanttGroup(VisitTheme theme)
-		{
-			VisitGanttGroup themeGroup = this.themeGroups.remove(theme);
-			@SuppressWarnings("unchecked")
-			List<VisitGanttEvent> events = themeGroup.getEventMembers();
-			for (VisitGanttEvent event : events)
-			{
-				this.getScope().removeScopeEvent(event);
-			}
-			themeGroup.dispose();
-			this.getScope().getParentChart().redrawGanttChart();
+			return visit.getVisitors().get(0).
 		}
 	}
 	
-	private class VisitThemeGanttGroup extends VisitGanttGroup
+	protected String getContent(final Visit visit)
 	{
-		public VisitThemeGanttGroup(VisitTheme theme, GanttChart parent) 
+		/*
+		 * Dates
+		 */
+		StringBuilder content = new StringBuilder(visit.getFormattedPeriod());
+		if (content.length() > 0)
 		{
-			super(theme, parent);
+			content = content.append("\n\n");
 		}
 
-		@Override
-		public VisitGanttEvent createVisitGanttEvent(Visit visit,
-				GanttChart ganttChart) 
+		content = content.append("Thema: " + visit.getTheme().getName());
+		content = content.append("\n");
+		for (VisitVisitor visitor : visit.getVisitors())
 		{
-			return new VisitThemeGanttEvent(visit, ganttChart);
+			if (!visitor.isDeleted())
+			{
+				content = content.append("\n");
+				content = content.append(visitor.getType().label() + ": ");
+				content = content.append(PersonFormatter.getInstance().formatLastnameFirstname(
+						visitor.getVisitor().getLink().getPerson()));
+			}
+		}
+		content = content.append("\n");
+		if (visit.getTeacher() != null)
+		{
+			content = content.append("Lehrperson: "
+					+ PersonFormatter.getInstance().formatFirstnameLastname(visit.getTeacher().getLink().getPerson()));
+		}
+		if (visit.getSchoolClass() != null)
+		{
+			content = content.append("\n\n");
+			content = content
+					.append("Klasse: " + visit.getSchoolClass().getName())
+					.append(Visit.stringValueOf(visit.getClassName()).isEmpty() ? " (" : ", " + visit.getClassName()
+							+ " (")
+					.append(NumberFormat.getIntegerInstance().format(visit.getPupils()) + " Schüler/innen)");
+		}
+		if (visit.getTeacher() != null)
+		{
+			content = content.append("\n\n");
+			Address address = visit.getTeacher().getLink().getAddress();
+			content = content
+					.append("Schulhaus: ")
+					.append(Address.stringValueOf(address.getName()).trim().isEmpty() ? "?, " : address.getName()
+							+ ", ")
+					.append("Stockwert: "
+							+ (Visit.stringValueOf(visit.getFloor()).isEmpty() ? "?, " : visit.getFloor() + ", "))
+					.append("Schulzimmer: "
+							+ (Visit.stringValueOf(visit.getClassRoom()).trim().isEmpty() ? "?" : ", "
+									+ visit.getClassRoom()));
+			content = content.append("\n");
+			content = content.append("Ort: " + AddressFormatter.getInstance().formatCityLine(address) + " ("
+					+ address.getProvince() + ")");
+			content = content.append("\n\n");
+		}
+
+		return content.toString();
+	}
+
+	protected AdvancedTooltip getTooltip(final Visit visit)
+	{
+		StringBuilder tooltipTitle = new StringBuilder(visit.getTheme() == null ? "" : visit.getTheme().getName());
+		tooltipTitle = tooltipTitle.append(visit.getState() == null ? "" : " - " + visit.getState().label());
+		return new AdvancedTooltip(tooltipTitle.toString(), getContent(visit));
+	}
+
+	protected void eventsMoved(List events)
+	{
+		for (Object evt : events)
+		{
+			GanttEvent event = (GanttEvent) evt;
+			event.setStartDate(event.getActualStartDate());
+			event.setEndDate(event.getActualEndDate());
+			Visit visit = (Visit) event.getData();
+			visit.setStart(event.getStartDate());
+			visit.setEnd(event.getEndDate());
+			event.setAdvancedTooltip(AbstractGanttView.this.getTooltip(visit));
+			VisitQuery query = (VisitQuery)connectionService.getQuery(Visit.class);
+			event.setData(query.merge(visit));
 		}
 	}
 
-	private class VisitThemeGanttEvent extends VisitGanttEvent
+	@Override
+	protected void clear() 
 	{
-		public VisitThemeGanttEvent(Visit visit, GanttChart ganttChart) 
-		{
-			super(visit, ganttChart);
-		}
+		// TODO Auto-generated method stub
+		
+	}
 
-		@Override
-		public Color getColor() 
-		{
-			java.awt.Color c = new java.awt.Color(this.getVisit().getTheme().getColor().intValue());
-			return new Color(this.getParentChart().getDisplay(), new RGB(c.getRed(), c.getGreen(), c.getBlue()));
-		}
+	@Override
+	protected <T> String getContent(T entity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected <T> AdvancedTooltip getTooltip(T entity) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

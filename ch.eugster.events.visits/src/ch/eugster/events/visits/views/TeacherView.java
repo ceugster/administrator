@@ -49,7 +49,7 @@ public class TeacherView extends AbstractEntityView implements IDoubleClickListe
 
 	private TreeViewer viewer;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	@Override
 	public void init(IViewSite site) throws PartInitException
@@ -195,11 +195,11 @@ public class TeacherView extends AbstractEntityView implements IDoubleClickListe
 
 		getSite().setSelectionProvider(viewer);
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public ConnectionService addingService(ServiceReference<ConnectionService> reference)
 			{
 				final ConnectionService connectionService = (ConnectionService) super.addingService(reference);
 				UIJob job = new UIJob("Loading data...")
@@ -221,7 +221,7 @@ public class TeacherView extends AbstractEntityView implements IDoubleClickListe
 			}
 
 			@Override
-			public void removedService(ServiceReference reference, Object service)
+			public void removedService(ServiceReference<ConnectionService> reference, ConnectionService service)
 			{
 				UIJob job = new UIJob("Removing data...")
 				{

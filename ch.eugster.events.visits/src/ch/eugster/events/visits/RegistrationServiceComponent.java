@@ -13,7 +13,6 @@ import javax.mail.Store;
 import org.osgi.service.component.ComponentContext;
 
 import ch.eugster.events.persistence.model.EmailAccount;
-import ch.eugster.events.persistence.model.VisitSettings;
 import ch.eugster.events.persistence.queries.EmailAccountQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.visits.service.RegistrationService;
@@ -22,7 +21,7 @@ public class RegistrationServiceComponent implements RegistrationService
 {
 	private ConnectionService connectionService;
 
-	private VisitSettings settings;
+//	private VisitSettings settings;
 
 	protected void activate(final ComponentContext context)
 	{
