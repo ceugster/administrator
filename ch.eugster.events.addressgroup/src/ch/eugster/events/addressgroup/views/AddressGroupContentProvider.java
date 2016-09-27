@@ -109,18 +109,6 @@ public class AddressGroupContentProvider implements ITreeContentProvider
 		{
 			return ((AddressGroupCategory) element).getAddressGroups().size() > 0;
 		}
-		// else if (element instanceof AddressGroup)
-		// {
-		// int i = 0;
-		// for (AddressGroupLink link : ((AddressGroup) element).getChildren())
-		// {
-		// if (!link.isDeleted())
-		// {
-		// i++;
-		// }
-		// }
-		// return i > 0;
-		// }
 		return false;
 	}
 

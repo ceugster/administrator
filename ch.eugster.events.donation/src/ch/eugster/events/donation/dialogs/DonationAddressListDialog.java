@@ -3,6 +3,7 @@ package ch.eugster.events.donation.dialogs;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,8 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -46,6 +49,8 @@ import ch.eugster.events.persistence.model.DonationPurpose;
 import ch.eugster.events.persistence.model.DonationYear;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
+import ch.eugster.events.persistence.queries.DonationQuery;
+import ch.eugster.events.persistence.service.ConnectionService;
 
 public class DonationAddressListDialog extends TitleAreaDialog
 {
@@ -68,6 +73,9 @@ public class DonationAddressListDialog extends TitleAreaDialog
 	/*
 	 * in SelectionMode YEAR
 	 */
+	
+	private Button printAllDonations;
+	
 	private DonationYear selectedDonationYear;
 
 	private DonationPurpose selectedDonationPurpose;
@@ -75,6 +83,10 @@ public class DonationAddressListDialog extends TitleAreaDialog
 	private Domain selectedDomain;
 
 	private String selectedName;
+	
+	/*
+	 * Common
+	 */
 
 	private final String message = "Wählen Sie die gewünschten Optionen.";
 
@@ -328,11 +340,44 @@ public class DonationAddressListDialog extends TitleAreaDialog
 		}
 		else if (selectionMode.equals(SelectionMode.YEAR))
 		{
-			createDataMaps(selectedDonationYear, selectedDonationPurpose, selectedDomain, dataMaps);
+			if (this.printAllDonations.getSelection())
+			{
+				createDataMaps(dataMaps);
+			}
+			else
+			{
+				createDataMaps(selectedDonationYear, selectedDonationPurpose, selectedDomain, dataMaps);
+			}
 		}
 		return dataMaps.values().toArray(new DataMap[0]);
 	}
 
+	private void createDataMaps(final Map<String, DataMap> dataMaps)
+	{
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class, null);
+		tracker.open();
+		try
+		{
+			ConnectionService service = tracker.getService();
+			if (service != null)
+			{
+				DonationQuery query = (DonationQuery) service.getQuery(Donation.class);
+				createDataMaps(query.selectValids(), dataMaps);
+			}
+			else
+			{
+				MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						"Keine Verbindung", null, "Es konnte keine Verbindung zur Datenbank hergestellt werden.",
+						MessageDialog.INFORMATION, new String[] { "OK" }, 0);
+				dialog.open();
+			}
+		}
+		finally
+		{
+			tracker.close();
+		}
+	}
+	
 	private void createDataMaps(final Address address, final Integer year, DonationPurpose purpose, Domain domain,
 			final Map<String, DataMap> dataMaps)
 	{
@@ -355,31 +400,17 @@ public class DonationAddressListDialog extends TitleAreaDialog
 	private void createDataMaps(final Donation donation, final Integer year, DonationPurpose purpose, Domain domain,
 			final Map<String, DataMap> dataMaps)
 	{
-		if (donation.isDeleted())
+		if (!donation.isValid())
 		{
 			return;
 		}
-		if (donation.getLink() == null)
+		if (donation.getLink() == null || !donation.getLink().isValid())
 		{
-			if (donation.getAddress().getValidLinks().size() == 1)
-			{
-				createDataMaps(donation.getAddress().getValidLinks().iterator().next(), year, purpose, domain, dataMaps);
-			}
-			else
-			{
-				createDataMaps(donation.getAddress(), year, purpose, domain, dataMaps);
-			}
+			createDataMaps(donation.getAddress(), year, purpose, domain, dataMaps);
 		}
 		else
 		{
-			if (donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
-			{
-				createDataMaps(donation.getAddress(), year, purpose, domain, dataMaps);
-			}
-			else
-			{
-				createDataMaps(donation.getLink(), year, purpose, domain, dataMaps);
-			}
+			createDataMaps(donation.getLink(), year, purpose, domain, dataMaps);
 		}
 	}
 
@@ -391,30 +422,68 @@ public class DonationAddressListDialog extends TitleAreaDialog
 			if (printDonation(donation))
 			{
 				DonationMap map = new DonationMap(donation);
-				if (donation.getLink() == null)
+				if (donation.getLink() == null || !donation.getLink().isValid())
 				{
-					if (donation.getAddress().getValidLinks().size() == 1)
+					map.setProperties(new AddressMap(donation.getAddress()).getProperties());
+				}
+				else
+				{
+					map.setProperties(new LinkMap(donation.getLink()).getProperties());
+				}
+				dataMaps.put(donation.getId().toString(), map);
+			}
+		}
+	}
+
+	private void createDataMaps(List<Donation> donations, final Map<String, DataMap> dataMaps)
+	{
+		Map<String, Donation> donators = new HashMap<String, Donation>();
+		for (Donation donation : donations)
+		{
+			if (donation.isValid())
+			{
+				String key = null;
+				Donation d = null;
+				if (donation.getLink() == null || !donation.getLink().isValid())
+				{
+					key = "A" + donation.getAddress().getId().toString();
+					d = donators.get(key);
+					if (d == null)
 					{
-						map.setProperties(new LinkMap(donation.getAddress().getValidLinks().iterator().next()).getProperties());
-					}
-					else
-					{
-						map.setProperties(new AddressMap(donation.getAddress()).getProperties());
+						d = Donation.newInstance(donation.getAddress());
+						d.setId(donation.getId());
+						donators.put(key, d);
 					}
 				}
 				else
 				{
-					if (donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
+					key = "P" + donation.getLink().getId().toString();
+					d = donators.get(key);
+					if (d == null)
 					{
-						map.setProperties(new AddressMap(donation.getAddress()).getProperties());
-					}
-					else
-					{
-						map.setProperties(new LinkMap(donation.getLink()).getProperties());
-
+						d = Donation.newInstance(donation.getLink());
+						d.setId(donation.getId());
+						donators.put(key, d);
 					}
 				}
-				dataMaps.put(donation.getId().toString(), map);
+				d.setAmount(d.getAmount() + donation.getAmount());
+			}
+		}
+		if (!donators.isEmpty())
+		{
+			Collection<Donation> ds = donators.values();
+			for (Donation d : ds)
+			{
+				DonationMap map = new DonationMap(d);
+				if (d.getLink() == null || !d.getLink().isValid())
+				{
+					map.setProperties(new AddressMap(d.getAddress()).getProperties());
+				}
+				else
+				{
+					map.setProperties(new LinkMap(d.getLink()).getProperties());
+				}
+				dataMaps.put(d.getId().toString(), map);
 			}
 		}
 	}
@@ -429,7 +498,7 @@ public class DonationAddressListDialog extends TitleAreaDialog
 		{
 			return true;
 		}
-		if (donation.getLink() != null || donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
+		if (donation.getLink() != null)
 		{
 			if (donation.getLink().getPerson().getFirstname().toLowerCase().contains(selectedName.toLowerCase()))
 			{
@@ -445,7 +514,7 @@ public class DonationAddressListDialog extends TitleAreaDialog
 
 	private boolean printDonation(Donation donation)
 	{
-		if (donation.isDeleted())
+		if (!donation.isValid())
 		{
 			return false;
 		}
@@ -522,50 +591,80 @@ public class DonationAddressListDialog extends TitleAreaDialog
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout(3, false));
 
-		Label label = new Label(composite, SWT.None);
-		label.setLayoutData(new GridData());
-		label.setText("Vorlage");
-
-		if (selectionMode.equals(SelectionMode.PERSON))
+		if (selectionMode.equals(SelectionMode.YEAR))
 		{
-			yearSelector = new Button(composite, SWT.CHECK);
-			yearSelector.setLayoutData(new GridData());
-			yearSelector.setText("Auswahl Jahr");
-
 			GridData gridData = new GridData();
-			gridData.widthHint = 48;
-			gridData.horizontalSpan = 2;
+			gridData.heightHint = 12;
+			gridData.horizontalSpan = 3;
 
-			year = new Spinner(composite, SWT.None);
-			year.setLayoutData(gridData);
-			year.setDigits(0);
-			year.setMinimum(0);
-			year.setMaximum(Integer.MAX_VALUE);
-			year.setIncrement(1);
-			year.setPageIncrement(10);
+			Label label = new Label(composite, SWT.None);
+			label.setLayoutData(gridData);
 
-			Object[] elements = personSelection.toArray();
-			for (Object element : elements)
+			gridData = new GridData(GridData.FILL_HORIZONTAL);
+			gridData.horizontalSpan = 3;
+
+			printAllDonations = new Button(composite, SWT.CHECK);
+			printAllDonations.setLayoutData(gridData);
+			printAllDonations.setText("Sämtliche Spender auflisten (wenn nicht aktiviert, wird die aktuelle Selektion gelistet).");
+			printAllDonations.addSelectionListener(new SelectionListener()
 			{
-				if (element instanceof Address)
+				@Override
+				public void widgetSelected(SelectionEvent e) 
 				{
-					Address address = (Address) element;
-					setRange(address.getDonations());
 				}
-				else if (element instanceof LinkPersonAddress)
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) 
 				{
-					LinkPersonAddress link = (LinkPersonAddress) element;
-					setRange(link.getDonations());
+					widgetSelected(e);
 				}
-				if (element instanceof Person)
-				{
-					Person person = (Person) element;
-					setRange(person.getDonations());
-				}
-			}
-			year.setSelection(year.getMaximum());
-			yearSelector.setSelection(true);
+			});
 		}
+
+//		Label label = new Label(composite, SWT.None);
+//		label.setLayoutData(new GridData());
+//		label.setText("Vorlage");
+//
+//		if (selectionMode.equals(SelectionMode.PERSON))
+//		{
+//			yearSelector = new Button(composite, SWT.CHECK);
+//			yearSelector.setLayoutData(new GridData());
+//			yearSelector.setText("Auswahl Jahr");
+//
+//			GridData gridData = new GridData();
+//			gridData.widthHint = 48;
+//			gridData.horizontalSpan = 2;
+//
+//			year = new Spinner(composite, SWT.None);
+//			year.setLayoutData(gridData);
+//			year.setDigits(0);
+//			year.setMinimum(0);
+//			year.setMaximum(Integer.MAX_VALUE);
+//			year.setIncrement(1);
+//			year.setPageIncrement(10);
+//
+//			Object[] elements = personSelection.toArray();
+//			for (Object element : elements)
+//			{
+//				if (element instanceof Address)
+//				{
+//					Address address = (Address) element;
+//					setRange(address.getDonations());
+//				}
+//				else if (element instanceof LinkPersonAddress)
+//				{
+//					LinkPersonAddress link = (LinkPersonAddress) element;
+//					setRange(link.getDonations());
+//				}
+//				if (element instanceof Person)
+//				{
+//					Person person = (Person) element;
+//					setRange(person.getDonations());
+//				}
+//			}
+//			year.setSelection(year.getMaximum());
+//			yearSelector.setSelection(true);
+//		}
 
 		return parent;
 	}

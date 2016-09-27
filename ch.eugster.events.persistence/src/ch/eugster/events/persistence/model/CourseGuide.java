@@ -78,6 +78,11 @@ public class CourseGuide extends AbstractEntity implements Comparable<CourseGuid
 		this.setCourse(course);
 	}
 
+	public boolean isValid()
+	{
+		return !this.deleted && this.getCourse().isValid() && this.getGuide().isValid();
+	}
+	
 	public void addCompensation(final Compensation compensation)
 	{
 		this.propertyChangeSupport.firePropertyChange("compensations", this.compensations,

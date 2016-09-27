@@ -41,11 +41,6 @@ public class PrintLabelHandler extends AbstractHandler implements IHandler
 				AddressGroup group = (AddressGroup) element;
 				this.extract(factory, group);
 			}
-			// else if (element instanceof AddressGroupLink)
-			// {
-			// this.extract(((AddressGroupLink)
-			// element).getChild());
-			// }
 			else if (element instanceof AddressGroupMember)
 			{
 				AddressGroupMember member = (AddressGroupMember) element;
@@ -92,55 +87,39 @@ public class PrintLabelHandler extends AbstractHandler implements IHandler
 
 	private void extract(final LabelFactory factory, final AddressGroup addressGroup)
 	{
-		if (!addressGroup.isDeleted())
+		if (addressGroup.isValid())
 		{
 			List<AddressGroupMember> addressGroupMembers = addressGroup.getAddressGroupMembers();
 			for (AddressGroupMember addressGroupMember : addressGroupMembers)
 			{
 				this.extract(factory, addressGroupMember);
 			}
-			// for (AddressGroupLink link : addressGroup.getChildren())
-			// {
-			// if (!link.isDeleted() && !link.getChild().isDeleted())
-			// {
-			// extract(link.getChild());
-			// }
-			// }
 		}
 	}
 
 	private void extract(final LabelFactory factory, final AddressGroupCategory category)
 	{
-		if (!category.isDeleted())
+		if (category.isValid())
 		{
 			List<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
 			{
-				if (!addressGroup.isDeleted())
-				{
-					this.extract(factory, addressGroup);
-				}
+				this.extract(factory, addressGroup);
 			}
 		}
 	}
 
 	private void extract(final LabelFactory factory, final AddressGroupMember member)
 	{
-		if (!member.isDeleted())
+		if (member.isValid())
 		{
 			if (member.getLink() == null)
 			{
-				if (!member.getAddress().isDeleted())
-				{
-					factory.addEntry(member.getAddress());
-				}
+				factory.addEntry(member.getAddress());
 			}
 			else
 			{
-				if (!member.getLink().isDeleted())
-				{
-					factory.addEntry(member.getLink());
-				}
+				factory.addEntry(member.getLink());
 			}
 		}
 	}

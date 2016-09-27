@@ -85,6 +85,11 @@ public class Donation extends AbstractEntity
 		this.setLink(link);
 	}
 
+	public boolean isValid()
+	{
+		return !this.deleted && ((this.getLink() == null) ? this.getAddress().isValid() : this.getLink().isValid());
+	}
+	
 	public Address getAddress()
 	{
 		return this.address;

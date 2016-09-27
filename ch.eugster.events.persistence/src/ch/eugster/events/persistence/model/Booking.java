@@ -177,6 +177,11 @@ public class Booking extends AbstractEntity
 		this.setCourse(course);
 	}
 
+	public boolean isValid()
+	{
+		return !this.deleted && this.getCourse().isValid();
+	}
+	
 	public void addParticipant(final Participant participant)
 	{
 		this.propertyChangeSupport.firePropertyChange("participants", this.participants,

@@ -190,8 +190,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				if (object instanceof AddressGroupMember)
 				{
 					AddressGroupMember member = (AddressGroupMember) object;
-					if (member.getLink() == null || member.getLink().isDeleted()
-							|| member.getLink().getPerson().isDeleted())
+					if (member.getLink() == null || !member.getLink().isValid())
 					{
 						cell.setText(AddressFormatter.getInstance().formatId(member.getAddress()));
 						cell.setImage(Activator.getDefault().getImageRegistry().get("ADDRESS"));
@@ -244,8 +243,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				if (object instanceof AddressGroupMember)
 				{
 					AddressGroupMember member = (AddressGroupMember) object;
-					if (member.getLink() == null || member.getLink().isDeleted()
-							|| member.getLink().getPerson().isDeleted())
+					if (member.getLink() == null || !member.getLink().isValid())
 					{
 						cell.setText(member.getAddress().getName());
 					}
@@ -341,8 +339,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				if (object instanceof AddressGroupMember)
 				{
 					AddressGroupMember member = (AddressGroupMember) object;
-					if (member.getLink() == null || member.getLink().isDeleted()
-							|| member.getLink().getPerson().isDeleted())
+					if (member.getLink() == null || !member.getLink().isValid())
 					{
 						cell.setText(AddressFormatter.getInstance().formatCityLine(member.getAddress()));
 					}
@@ -393,8 +390,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				if (object instanceof AddressGroupMember)
 				{
 					AddressGroupMember member = (AddressGroupMember) object;
-					if (member.getLink() == null || member.getLink().isDeleted()
-							|| member.getLink().getPerson().isDeleted())
+					if (member.getLink() == null || !member.getLink().isValid())
 					{
 						cell.setText(member.getAddress().getEmail());
 					}
@@ -502,7 +498,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 
 	private void editAddressGroupMember(final AddressGroupMember member)
 	{
-		if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
+		if (member.getLink() == null || !member.getLink().isValid())
 		{
 			editAddress(member.getAddress());
 		}
@@ -514,7 +510,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 
 	private void editLink(final LinkPersonAddress link)
 	{
-		if (link.getPerson().isDeleted() || link.isDeleted())
+		if (!link.isValid())
 		{
 			String title = "Entfernte Person";
 			String message = "Eine entfernte Person kann nicht bearbeitet werden.";

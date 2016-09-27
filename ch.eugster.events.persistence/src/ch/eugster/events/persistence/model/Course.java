@@ -348,6 +348,11 @@ public class Course extends AbstractEntity
 		this.setSeason(season);
 	}
 
+	public boolean isValid()
+	{
+		return !this.deleted && this.getSeason().isValid();
+	}
+	
 	public void addBooking(final Booking booking)
 	{
 		this.propertyChangeSupport.firePropertyChange("bookings", this.bookings, this.bookings.add(booking));

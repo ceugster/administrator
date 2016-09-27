@@ -32,8 +32,8 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.8.2",
  org.eclipse.core.runtime;bundle-version="3.8.0",
  org.eclipse.ui.forms;bundle-version="3.5.200",
  org.eclipse.core.expressions;bundle-version="3.4.400",
- org.eclipse.nebula.widgets.formattedtext;bundle-version="1.0.0",
  org.eclipse.nebula.jface.cdatetime;bundle-version="0.14.0",
  org.eclipse.nebula.widgets.cdatetime;bundle-version="0.14.0",
- org.eclipse.nebula.widgets.radiogroup;bundle-version="0.1.0"
+ org.eclipse.nebula.widgets.radiogroup;bundle-version="0.1.0",
+ org.eclipse.nebula.widgets.formattedtext;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

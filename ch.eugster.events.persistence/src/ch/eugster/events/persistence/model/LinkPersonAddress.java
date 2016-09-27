@@ -251,6 +251,11 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		return donations;
 	}
 	
+	public boolean isValid()
+	{
+		return !this.isDeleted() && !this.getPerson().isDeleted() && !this.getAddress().isDeleted();
+	}
+	
 	public String getEmail()
 	{
 		return stringValueOf(this.email);

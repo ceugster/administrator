@@ -107,6 +107,10 @@ public class AddressGroup extends AbstractEntity
 	// this.children.add(child));
 	// }
 
+	public boolean isValid()
+	{
+		return !this.deleted && this.getAddressGroupCategory().isValid();
+	}
 	/**
 	 * 
 	 * @param addressGroupMember

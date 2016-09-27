@@ -1507,6 +1507,29 @@ public abstract class DatabaseUpdater
 						}
 						updateSequenceTable(con);
 					}
+					if (structureVersion == 38)
+					{
+						String tableName = "events_visit_theme";
+						String columnName = "visit_theme_hidden";
+						if (!columnExists(con, tableName, columnName))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE " + tableName + " ");
+							builder.append("ADD COLUMN " + columnName + " TINYINT DEFAULT 0");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+						tableName = "events_visit";
+						columnName = "visit_color";
+						if (!columnExists(con, tableName, columnName))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE " + tableName + " ");
+							builder.append("ADD COLUMN " + columnName + " INTEGER DEFAULT NULL");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+					}
 					if (ok)
 					{
 						stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);
