@@ -3,16 +3,17 @@ package ch.eugster.events.addressgroup.views;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
+import ch.eugster.events.addressgroup.AddressGroupMemberSelector;
 import ch.eugster.events.persistence.model.AddressGroup;
 
-public class PersonAddressGroupMemberSorter extends ViewerSorter
+public class AddressGroupMemberTreeSorter extends ViewerSorter
 {
-	private final PersonAddressGroupMemberView view;
+	private final AddressGroupMemberSelector selector;
 
-	public PersonAddressGroupMemberSorter(PersonAddressGroupMemberView view)
+	public AddressGroupMemberTreeSorter(AddressGroupMemberSelector selector)
 	{
 		super();
-		this.view = view;
+		this.selector = selector;
 	}
 
 	@Override
@@ -23,8 +24,8 @@ public class PersonAddressGroupMemberSorter extends ViewerSorter
 			AddressGroup addressGroup1 = (AddressGroup) element1;
 			AddressGroup addressGroup2 = (AddressGroup) element2;
 
-			boolean checked1 = view.isChecked(addressGroup1);
-			boolean checked2 = view.isChecked(addressGroup2);
+			boolean checked1 = selector.isChecked(addressGroup1);
+			boolean checked2 = selector.isChecked(addressGroup2);
 
 			if (checked1 && checked2)
 				return addressGroup1.getCode().compareTo(addressGroup2.getCode());

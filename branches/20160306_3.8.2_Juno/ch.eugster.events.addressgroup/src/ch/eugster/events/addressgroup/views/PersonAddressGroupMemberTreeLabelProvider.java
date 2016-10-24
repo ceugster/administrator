@@ -6,8 +6,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 import ch.eugster.events.addressgroup.AddressGroupFormatter;
-import ch.eugster.events.addressgroup.views.PersonAddressGroupMemberView.Monitor;
-import ch.eugster.events.persistence.formatters.AddressFormatter;
+import ch.eugster.events.addressgroup.Monitor;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AddressGroup;
 import ch.eugster.events.persistence.model.AddressGroupCategory;

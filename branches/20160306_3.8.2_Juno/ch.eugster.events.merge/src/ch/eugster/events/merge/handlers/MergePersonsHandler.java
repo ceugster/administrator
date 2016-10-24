@@ -83,7 +83,7 @@ public class MergePersonsHandler extends ConnectionServiceDependentAbstractHandl
 							if (!exists(selectedLink, addressGroupMember))
 							{
 								link.removeAddressGroupMember(addressGroupMember);
-								addressGroupMember.setParent(selectedLink, selectedLink.getAddress());
+								addressGroupMember.setLink(selectedLink);
 								selectedLink.addAddressGroupMember(addressGroupMember);
 							}
 						}
