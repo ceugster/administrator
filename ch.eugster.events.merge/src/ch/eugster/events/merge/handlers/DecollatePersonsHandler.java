@@ -17,8 +17,6 @@ import ch.eugster.events.merge.Activator;
 import ch.eugster.events.merge.views.PersonView;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressGroupMember;
-import ch.eugster.events.persistence.model.Donation;
-import ch.eugster.events.persistence.model.Guide;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Member;
 import ch.eugster.events.persistence.model.Person;
@@ -47,36 +45,45 @@ public class DecollatePersonsHandler extends AbstractHandler implements IHandler
 					for (int i = 0; i < count; i++)
 					{
 						Person newPerson = selectedLink.getPerson().copy();
-						LinkPersonAddress link = LinkPersonAddress.newInstance(newPerson, address);
-						link.setAddressType(selectedLink.getAddressType());
+						LinkPersonAddress newLink = LinkPersonAddress.newInstance(newPerson, address);
+						newLink.setAddressType(selectedLink.getAddressType());
 						AddressGroupMember[] addressGroupMembers = selectedLink.getAddressGroupMembers().toArray(
 								new AddressGroupMember[0]);
 						for (AddressGroupMember addressGroupMember : addressGroupMembers)
 						{
 							AddressGroupMember newMember = addressGroupMember.copy(addressGroupMember.getAddressGroup());
-							newMember.setParent(addressGroupMember.getLink(), addressGroupMember.getAddress());
+							newLink.addAddressGroupMember(newMember);
 						}
-						Member[] members = link.getMembers().toArray(new Member[0]);
-						for (Member member : members)
-						{
-							link.removeMember(member);
-							member.setLink(selectedLink);
-						}
-						Donation[] donations = selectedLink.getDonations().toArray(new Donation[0]);
-						for (Donation donation : donations)
-						{
-							selectedLink.removeDonation(donation);
-							selectedLink.getAddress().addDonation(donation);
-						}
-						if (selectedLink.getGuide() != null)
-						{
-							Guide newGuide = Guide.newInstance(link);
-							newGuide.setDescription(selectedLink.getGuide().getDescription());
-							newGuide.setPhone(selectedLink.getGuide().getPhone());
-							link.setGuide(newGuide);
-						}
-						newPerson.setDefaultLink(link);
-						link = query.merge(link);
+						Member[] members = selectedLink.getMembers().toArray(new Member[0]);
+						/*
+						 * Do not change members!
+						 */
+//						for (Member member : members)
+//						{
+//							Member newMember = Member.newInstance(member.getMembership(), newLink);
+//							newLink.addMember(newMember);
+//						}
+						/*
+						 * Do not change donations!
+						 */
+//						Donation[] donations = selectedLink.getDonations().toArray(new Donation[0]);
+//						for (Donation donation : donations)
+//						{
+//							selectedLink.removeDonation(donation);
+//							selectedLink.getAddress().addDonation(donation);
+//						}
+						/*
+						 * Do not change guides!
+						 */
+//						if (selectedLink.getGuide() != null)
+//						{
+//							Guide newGuide = Guide.newInstance(link);
+//							newGuide.setDescription(selectedLink.getGuide().getDescription());
+//							newGuide.setPhone(selectedLink.getGuide().getPhone());
+//							link.setGuide(newGuide);
+//						}
+						newPerson.setDefaultLink(newLink);
+						newLink = query.merge(newLink);
 					}
 				}
 			}

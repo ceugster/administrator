@@ -3,10 +3,14 @@ package ch.eugster.events.addressgroup.handlers;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.PlatformUI;
 
 import ch.eugster.events.addressgroup.dialogs.AddressGroupMemberDialog;
+import ch.eugster.events.addressgroup.views.PersonAddressGroupMemberView;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
@@ -22,6 +26,15 @@ public class EditAddressGroupMembers extends ConnectionServiceDependentAbstractH
 	{
 		EvaluationContext context = (EvaluationContext) event.getApplicationContext();
 		Shell shell = (Shell) context.getParent().getVariable("activeWorkbenchWindowShell");
+		IViewReference[] references = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getViewReferences();
+		for (IViewReference reference : references)
+		{
+			if (reference.getId().equals(PersonAddressGroupMemberView.ID))
+			{
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(PersonAddressGroupMemberView.ID));
+				return Status.OK_STATUS;
+			}
+		}
 		StructuredSelection ssel = (StructuredSelection) context.getParent().getVariable("activeMenuSelection");
 		if (!ssel.isEmpty())
 		{

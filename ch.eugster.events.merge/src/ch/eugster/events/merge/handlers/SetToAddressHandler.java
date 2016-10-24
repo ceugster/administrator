@@ -61,7 +61,7 @@ public class SetToAddressHandler extends ConnectionServiceDependentAbstractHandl
 						selectedLink.removeAddressGroupMember(addressGroupMember);
 						if (!addressGroupMember.isDeleted())
 						{
-							addressGroupMember.setParent(null, selectedLink.getAddress());
+							addressGroupMember.setAddress(selectedLink.getAddress());
 						}
 					}
 					Donation[] donations = selectedLink.getDonations().toArray(new Donation[0]);
