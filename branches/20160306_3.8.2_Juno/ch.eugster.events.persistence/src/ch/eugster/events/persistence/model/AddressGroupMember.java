@@ -65,20 +65,21 @@ public class AddressGroupMember extends AbstractEntity
 	{
 		super();
 		this.setAddressGroup(addressGroup);
-		this.setParent(null, address);
+		this.setAddress(address);
 	}
 
 	private AddressGroupMember(final AddressGroup addressGroup, final LinkPersonAddress link)
 	{
 		super();
 		this.setAddressGroup(addressGroup);
-		this.setParent(link, link.getAddress());
+		this.setLink(link);
 	}
 
 	public AddressGroupMember copy(final AddressGroup addressGroup)
 	{
 		AddressGroupMember copy = AddressGroupMember.newInstance(addressGroup);
-		copy.setParent(this.getLink(), this.getAddress());
+		copy.setLink(this.getLink());
+		copy.setAddress(this.getAddress());
 		copy.setCopiedFrom(this.addressGroup);
 		return copy;
 	}
@@ -113,7 +114,7 @@ public class AddressGroupMember extends AbstractEntity
 	{
 		return this.link;
 	}
-
+	
 	public void setAddressGroup(final AddressGroup addressGroup)
 	{
 		this.propertyChangeSupport.firePropertyChange("addressGroup", this.addressGroup,
@@ -122,7 +123,8 @@ public class AddressGroupMember extends AbstractEntity
 
 	public void setCopiedFrom(final AddressGroup source)
 	{
-		this.copiedFrom = source;
+		this.propertyChangeSupport.firePropertyChange("copiedFrom", this.copiedFrom,
+				this.copiedFrom = source);
 	}
 
 	@Override
@@ -131,10 +133,14 @@ public class AddressGroupMember extends AbstractEntity
 		this.propertyChangeSupport.firePropertyChange("id", this.id, this.id = id);
 	}
 
-	public void setParent(final LinkPersonAddress link, final Address address)
+	public void setLink(final LinkPersonAddress link)
 	{
-		this.link = link;
-		this.address = address;
+		this.propertyChangeSupport.firePropertyChange("link", this.link, this.link = link);
+	}
+
+	public void setAddress(final Address address)
+	{
+		this.propertyChangeSupport.firePropertyChange("address", this.address, this.address = address);
 	}
 
 	public static AddressGroupMember newInstance()

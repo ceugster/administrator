@@ -1519,8 +1519,11 @@ public abstract class DatabaseUpdater
 							System.out.println(builder.toString());
 							ok = executeSqlQuery(con, builder.toString());
 						}
-						tableName = "events_visit";
-						columnName = "visit_color";
+					}
+					if (structureVersion == 39)
+					{
+						String tableName = "events_visit";
+						String columnName = "visit_color";
 						if (!columnExists(con, tableName, columnName))
 						{
 							StringBuilder builder = new StringBuilder("ALTER TABLE " + tableName + " ");

@@ -68,6 +68,11 @@ public class Teacher extends AbstractEntity implements LinkPersonAddressChild, I
 	{
 	}
 
+	public boolean isValid()
+	{
+		return !this.deleted && this.getLink().isValid();
+	}
+	
 	public String getBestReachTime()
 	{
 		return stringValueOf(this.bestReachTime);
