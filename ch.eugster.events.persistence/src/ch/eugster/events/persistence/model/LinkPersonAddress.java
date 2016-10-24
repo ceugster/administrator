@@ -69,12 +69,6 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 	@Column(name = "pa_link_phone")
 	private String phone;
 
-	@OneToOne(optional = true, cascade = ALL, mappedBy = "link")
-	private Visitor visitor;
-
-	@OneToOne(optional = true, cascade = ALL, mappedBy = "link")
-	private Teacher teacher;
-
 	/*
 	 * Contacts
 	 */
@@ -99,6 +93,13 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 	@OneToOne(cascade = ALL, optional = true)
 	@JoinColumn(name = "pa_link_guide_id", referencedColumnName = "guide_id")
 	private Guide guide;
+
+	@OneToOne(optional = true, cascade = ALL, mappedBy = "link")
+	private Visitor visitor;
+
+	@OneToOne(optional = true, cascade = ALL, mappedBy = "link")
+	private Teacher teacher;
+
 
 	private LinkPersonAddress()
 	{
@@ -458,16 +459,12 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 				member.setAddress(address);
 			}
 		}
-		for (Donation donation : donations)
+		for (Donation donation : this.donations)
 		{
 			if (!donation.getAddress().getId().equals(address.getId()))
 			{
 				donation.setAddress(address);
 			}
-		}
-		for (AddressGroupMember addressGroupMember : addressGroupMembers)
-		{
-			addressGroupMember.setParent(this, address);
 		}
 	}
 

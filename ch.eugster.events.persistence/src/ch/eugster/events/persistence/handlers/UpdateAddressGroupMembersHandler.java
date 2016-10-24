@@ -151,17 +151,13 @@ public class UpdateAddressGroupMembersHandler extends AbstractHandler implements
 					if (member.getAddress().getValidLinks().size() > 0)
 					{
 						LinkPersonAddress link = member.getAddress().getValidLinks().get(0);
-						if (link.getId().equals(Long.valueOf(53811)))
-						{
-							System.out.println();
-						}
-						if (member.getAddressGroup().contains(link, member.getAddress()))
+						if (member.getAddressGroup().contains(link))
 						{
 							member.setDeleted(true);
 						}
 						else
 						{
-							member.setParent(link, member.getAddress());
+							member.setLink(link);
 						}
 						doMerge = true;
 					}

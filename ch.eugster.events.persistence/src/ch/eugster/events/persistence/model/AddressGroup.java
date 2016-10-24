@@ -228,17 +228,27 @@ public class AddressGroup extends AbstractEntity
 		this.propertyChangeSupport.firePropertyChange("code", this.code, this.code = code);
 	}
 	
-	public boolean contains(LinkPersonAddress link, Address address)
+	public boolean contains(Address address)
 	{
 		List<AddressGroupMember> members = this.getValidAddressGroupMembers();
 		for (AddressGroupMember member : members)
 		{
-			if (member.getAddress().getId().equals(address.getId()))
+			if (member.getAddress() != null && member.getAddress().getId().equals(address.getId()))
 			{
-				if (member.getLink() != null && member.getLink().getId().equals(link.getId()))
-				{
-					return true;
-				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean contains(LinkPersonAddress link)
+	{
+		List<AddressGroupMember> members = this.getValidAddressGroupMembers();
+		for (AddressGroupMember member : members)
+		{
+			if (member.getLink() != null && member.getLink().getId().equals(link.getId()))
+			{
+				return true;
 			}
 		}
 		return false;

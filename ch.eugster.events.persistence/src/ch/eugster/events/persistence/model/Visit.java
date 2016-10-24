@@ -27,6 +27,8 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import ch.eugster.events.persistence.model.VisitVisitor.VisitorType;
+
 @Entity
 @Table(name = "events_visit")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "visit_user_id")) })
@@ -118,6 +120,11 @@ public class Visit extends AbstractEntity
 	private Visit()
 	{
 		super();
+	}
+	
+	public boolean isValid()
+	{
+		return !this.deleted && this.theme.isValid() && this.teacher.isValid();
 	}
 
 	public void addAppliance(final VisitAppliance appliance)
@@ -252,6 +259,18 @@ public class Visit extends AbstractEntity
 			}
 		}
 		return visitors;
+	}
+	
+	public VisitVisitor getVisitor(VisitorType type)
+	{
+		for (VisitVisitor visitor : this.visitors)
+		{
+			if (visitor.isValid() && visitor.getType().equals(type))
+			{
+				return visitor;
+			}
+		}
+		return null;
 	}
 
 	public void removeAppliance(final VisitAppliance appliance)

@@ -12,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -63,11 +64,6 @@ public class SchoolClass extends AbstractEntity
 	{
 	}
 
-	public static SchoolClass newInstance()
-	{
-		return (SchoolClass) AbstractEntity.newInstance(new SchoolClass());
-	}
-
 	public void setLevel(Level level)
 	{
 		this.propertyChangeSupport.firePropertyChange("level", this.level, this.level = level);
@@ -87,6 +83,11 @@ public class SchoolClass extends AbstractEntity
 	public String getName()
 	{
 		return name;
+	}
+	
+	public static SchoolClass newInstance()
+	{
+		return (SchoolClass) AbstractEntity.newInstance(new SchoolClass());
 	}
 
 	public enum Level
