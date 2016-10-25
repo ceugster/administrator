@@ -108,6 +108,9 @@
    <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201609271432.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201609271432">
       <category name="persistence"/>
    </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201610251319.jar" id="ch.eugster.events.course.feature" version="1.0.0.201610251319">
+      <category name="course"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>

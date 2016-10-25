@@ -1709,6 +1709,40 @@
                tooltip="Entfernen der ausgewählten Zahlungsbedingung">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="toolbar:ch.eugster.events.course.basicbookingtype.view?after=additions">
+         <command
+               commandId="ch.eugster.events.course.command.addBasicBookingType"
+               disabledIcon="icons/add_grey_16.gif"
+               hoverIcon="icons/add_16.gif"
+               icon="icons/add_16.gif"
+               label="Buchungsart hinzufügen"
+               style="push"
+               tooltip="Neuen Buchungsart hinzufügen">
+         </command>
+         <command
+               commandId="ch.eugster.events.course.command.editBasicBookingType"
+               disabledIcon="icons/edit_grey_16.png"
+               hoverIcon="icons/edit_16.png"
+               icon="icons/edit_16.png"
+               label="Buchungsart bearbeiten"
+               style="push"
+               tooltip="Ausgewählte Buchungsart bearbeiten">
+         </command>
+         <command
+               commandId="ch.eugster.events.course.command.deleteBasicBookingType"
+               disabledIcon="icons/delete_grey_16.png"
+               hoverIcon="icons/delete_16.png"
+               icon="icons/delete_16.png"
+               label="Buchungsart entfernen"
+               style="push"
+               tooltip="Ausgewählte Buchungsart entfernen">
+         </command>
+         <separator
+               name="ch.eugster.events.course.separator2"
+               visible="true">
+         </separator>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">

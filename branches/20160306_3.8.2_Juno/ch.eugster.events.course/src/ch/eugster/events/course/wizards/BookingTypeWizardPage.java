@@ -126,8 +126,8 @@ public class BookingTypeWizardPage extends WizardPage implements Listener, Selec
 					BookingTypeProposition proposition = (BookingTypeProposition) ssel.getFirstElement();
 					BookingTypeWizardPage.this.codeText.setText(proposition.getCode());
 					BookingTypeWizardPage.this.maxAge.setSelection(proposition.getMaxAge());
+					BookingTypeWizardPage.this.priceText.setText(nf.format(proposition.getPrice()));
 					BookingTypeWizardPage.this.annulationChargesText.setText(nf.format(proposition.getAnnulationCharges()));
-					BookingTypeWizardPage.this.annulationChargesText.setText(nf.format(proposition.getPrice()));
 					ssel = proposition.getMembership() == null ? new StructuredSelection() : new StructuredSelection(proposition.getMembership());
 					BookingTypeWizardPage.this.membershipViewer.setSelection(ssel);
 				}
