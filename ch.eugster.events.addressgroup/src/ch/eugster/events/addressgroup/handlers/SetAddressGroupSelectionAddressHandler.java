@@ -48,7 +48,7 @@ public class SetAddressGroupSelectionAddressHandler extends AbstractHandler impl
 	}
 
 	@Override
-	public void updateElement(UIElement element, Map map)
+	public void updateElement(UIElement element, @SuppressWarnings("rawtypes") Map map)
 	{
 		ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command command = service.getCommand("ch.eugster.events.addressgroup.command.set.addressgroup.selection.address");
