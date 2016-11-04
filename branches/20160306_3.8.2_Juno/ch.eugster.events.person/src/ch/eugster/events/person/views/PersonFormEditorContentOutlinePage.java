@@ -5,7 +5,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -13,6 +15,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -32,6 +35,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
+import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.events.EntityAdapter;
 import ch.eugster.events.persistence.events.EntityMediator;
@@ -40,18 +44,25 @@ import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.AddressGroup;
+import ch.eugster.events.persistence.model.AddressGroupCategory;
 import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.BankAccount;
 import ch.eugster.events.persistence.model.Booking;
+import ch.eugster.events.persistence.model.Contact;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseDetail;
 import ch.eugster.events.persistence.model.Donation;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
+import ch.eugster.events.persistence.model.LinkPersonAddressContact;
 import ch.eugster.events.persistence.model.Member;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Person;
+import ch.eugster.events.persistence.model.PersonContact;
+import ch.eugster.events.persistence.queries.ContactQuery;
+import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.person.Activator;
 import ch.eugster.events.person.dialogs.BankAccountDialog;
+import ch.eugster.events.person.dialogs.ContactDialog;
 import ch.eugster.events.person.editors.FormEditorLinkPage;
 import ch.eugster.events.person.editors.FormEditorPersonPage;
 import ch.eugster.events.person.editors.PersonEditorInput;
@@ -67,13 +78,14 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 
 	private FormPage currentPage;
 
-	private final EntityAdapter bankAccountListener;
+	private final EntityAdapter entityListener;
 
 	public PersonFormEditorContentOutlinePage(final FormPage page)
 	{
 		this.currentPage = page;
 		this.currentPage.getEditor().addPageChangedListener(this);
-		this.bankAccountListener = new EntityAdapter() 
+
+		this.entityListener = new EntityAdapter() 
 		{
 			@Override
 			public void postUpdate(AbstractEntity entity) 
@@ -92,6 +104,34 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 					}
 					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
 				}
+				if (entity instanceof PersonContact)
+				{
+					PersonContact updatedContact = (PersonContact) entity;
+					List<PersonContact> contacts = updatedContact.getPerson().getValidContacts();
+					for (PersonContact contact : contacts)
+					{
+						if (contact.getId().equals(updatedContact.getId()))
+						{
+							updatedContact.getPerson().removeContact(contact);
+							updatedContact.getPerson().addContact(updatedContact);
+						}
+					}
+					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
+				}
+				if (entity instanceof LinkPersonAddressContact)
+				{
+					LinkPersonAddressContact updatedContact = (LinkPersonAddressContact) entity;
+					List<LinkPersonAddressContact> contacts = updatedContact.getLink().getValidContacts();
+					for (LinkPersonAddressContact contact : contacts)
+					{
+						if (contact.getId().equals(updatedContact.getId()))
+						{
+							updatedContact.getLink().removeContact(contact);
+							updatedContact.getLink().addContact(updatedContact);
+						}
+					}
+					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
+				}
 			}
 
 			@Override
@@ -103,9 +143,40 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 					account.getPerson().addBankAccount(account);
 					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
 				}
+				else if (entity instanceof PersonContact)
+				{
+					PersonContact contact = (PersonContact) entity;
+					contact.getPerson().addContact(contact);
+					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
+				}
+				else if (entity instanceof LinkPersonAddressContact)
+				{
+					LinkPersonAddressContact contact = (LinkPersonAddressContact) entity;
+					contact.getLink().addContact(contact);
+					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
+				}
+			}
+			
+			@Override
+			public void postDelete(AbstractEntity entity)
+			{
+				if (entity instanceof PersonContact)
+				{
+					PersonContact contact = (PersonContact) entity;
+					contact.getPerson().removeContact(contact);
+					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
+				}
+				if (entity instanceof LinkPersonAddressContact)
+				{
+					LinkPersonAddressContact contact = (LinkPersonAddressContact) entity;
+					contact.getLink().removeContact(contact);
+					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
+				}
 			}
 		};
-		EntityMediator.addListener(BankAccount.class, bankAccountListener);
+		EntityMediator.addListener(BankAccount.class, entityListener);
+		EntityMediator.addListener(PersonContact.class, entityListener);
+		EntityMediator.addListener(LinkPersonAddressContact.class, entityListener);
 	}
 
 	protected void createContextMenu()
@@ -131,6 +202,15 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				else if (object instanceof LinkPersonAddress)
 				{
 					manager.add(PersonFormEditorContentOutlinePage.this.createEditLinkAction((LinkPersonAddress) object));
+				}
+				if (object instanceof ContactRoot)
+				{
+					manager.add(PersonFormEditorContentOutlinePage.this.createAddContactAction((ContactRoot) object));
+				}
+				else if (object instanceof Contact)
+				{
+					manager.add(PersonFormEditorContentOutlinePage.this.createEditContactAction((Contact) object));
+					manager.add(PersonFormEditorContentOutlinePage.this.createDeleteContactAction((Contact) object));
 				}
 			}
 		});
@@ -221,11 +301,46 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				if (person != null)
 				{
 					BankAccount account = BankAccount.newInstance(person);
-//					account.getPropertyChangeSupport().addPropertyChangeListener(PersonFormEditorContentOutlinePage.this);
 					Shell shell = PersonFormEditorContentOutlinePage.this.getSite().getShell();
 					BankAccountDialog dialog = new BankAccountDialog(shell, account);
 					dialog.open();
-//					account.getPropertyChangeSupport().removePropertyChangeListener(PersonFormEditorContentOutlinePage.this);
+				}
+			}
+		};
+		action.setText("Hinzufügen");
+		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("ADD"));
+		return action;
+	}
+
+	private IAction createAddContactAction(ContactRoot root)
+	{
+		IAction action = new Action()
+		{
+			@Override
+			public void run()
+			{
+				Contact contact = null;
+				if (currentPage instanceof FormEditorPersonPage)
+				{
+					Person person = ((FormEditorPersonPage) currentPage).getPerson();
+					if (person != null)
+					{
+						contact = PersonContact.newInstance(person);
+					}
+				}
+				else if (currentPage instanceof FormEditorLinkPage)
+				{
+					LinkPersonAddress link = ((FormEditorLinkPage) currentPage).getLink();
+					if (link != null)
+					{
+						contact = LinkPersonAddressContact.newInstance(link);
+					}
+				}
+				if (contact != null)
+				{
+					Shell shell = PersonFormEditorContentOutlinePage.this.getSite().getShell();
+					ContactDialog dialog = new ContactDialog(shell, contact);
+					dialog.open();
 				}
 			}
 		};
@@ -247,14 +362,66 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			}
 		};
 		action.setText("Barbeiten");
-		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("ADD"));
+		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor(Activator.KEY_EDIT));
+		return action;
+	}
+
+	private IAction createEditContactAction(final Contact contact)
+	{
+		IAction action = new Action()
+		{
+			@Override
+			public void run()
+			{
+				Shell shell = PersonFormEditorContentOutlinePage.this.getSite().getShell();
+				ContactDialog dialog = new ContactDialog(shell, contact);
+				dialog.open();
+			}
+		};
+		action.setText("Barbeiten");
+		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor(Activator.KEY_EDIT));
+		return action;
+	}
+
+	private IAction createDeleteContactAction(final Contact contact)
+	{
+		IAction action = new Action()
+		{
+			@Override
+			public void run()
+			{
+				Shell shell = PersonFormEditorContentOutlinePage.this.getSite().getShell();
+				if (MessageDialog.openConfirm(shell, "Kontakt entfernen", "Wollen Sie den ausgewählten Kontakt entfernen?"))
+				{
+					ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class, null);
+					tracker.open();
+					try
+					{
+						ConnectionService service = tracker.getService();
+						if (service != null)
+						{
+							ContactQuery query = (ContactQuery) service.getQuery(Contact.class);
+							query.delete(contact);
+						}
+					}
+					finally
+					{
+						tracker.close();
+					}
+				}
+			}
+		};
+		action.setText("Entfernen");
+		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor(Activator.KEY_DELETE));
 		return action;
 	}
 
 	@Override
 	public void dispose()
 	{
-		EntityMediator.removeListener(BankAccount.class, bankAccountListener);
+		EntityMediator.removeListener(BankAccount.class, entityListener);
+		EntityMediator.removeListener(PersonContact.class, entityListener);
+		EntityMediator.removeListener(LinkPersonAddressContact.class, entityListener);
 		if (this.currentPage != null)
 		{
 			this.currentPage.getEditor().removePageChangedListener(this);
@@ -304,27 +471,48 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 	{
 		private final FormPage currentPage;
 
+		private Map<Long, AddressGroupCategoryContainer> map;
+
 		public AddressGroupMemberRoot(final FormPage page)
 		{
 			this.currentPage = page;
+			this.map = new HashMap<Long, AddressGroupCategoryContainer>();
 		}
 
 		@Override
 		public Object[] getChildren()
 		{
-			if (this.currentPage instanceof FormEditorPersonPage)
+			if (this.map.isEmpty())
 			{
-				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return person.getAddressGroupMembers().toArray(new AddressGroupMember[0]);
+				this.map.clear();
+				List<AddressGroupMember> members = null;
+				if (this.currentPage instanceof FormEditorPersonPage)
+				{
+					FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
+					Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+					members = person.getAddressGroupMembers();
+				}
+				else if (this.currentPage instanceof FormEditorLinkPage)
+				{
+					FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
+					LinkPersonAddress link = page.getLink();
+					members = link.getValidAddressGroupMembers();
+				}
+				if (members != null && !members.isEmpty())
+				{
+					for (AddressGroupMember member : members)
+					{
+						AddressGroupCategoryContainer container = map.get(member.getAddressGroup().getAddressGroupCategory().getId());
+						if (container == null)
+						{
+							container = new AddressGroupCategoryContainer(member.getAddressGroup().getAddressGroupCategory());
+							map.put(member.getAddressGroup().getAddressGroupCategory().getId(), container);
+						}
+						container.addMember(member);
+					}
+				}
 			}
-			else if (this.currentPage instanceof FormEditorLinkPage)
-			{
-				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
-				LinkPersonAddress link = page.getLink();
-				return link.getValidAddressGroupMembers().toArray(new AddressGroupMember[0]);
-			}
-			return new AddressGroupMember[0];
+			return map.values().toArray(new AddressGroupCategoryContainer[0]);
 		}
 
 		@Override
@@ -336,13 +524,13 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public Image getImage()
 		{
-			return Activator.getDefault().getImageRegistry().get(Activator.KEY_PERSON_BLUE);
+			return Activator.getDefault().getImageRegistry().get(Activator.KEY_ADDRESS_GROUP);
 		}
 
 		@Override
 		public String getName()
 		{
-			return "Adressgruppen (" + getChildren().length + ")";
+			return "Gruppenzugehörigkeiten";
 		}
 
 		@Override
@@ -354,19 +542,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public boolean hasChildren()
 		{
-			if (this.currentPage instanceof FormEditorPersonPage)
-			{
-				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return person.getAddressGroupMembers().size() > 0;
-			}
-			else if (this.currentPage instanceof FormEditorLinkPage)
-			{
-				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
-				LinkPersonAddress link = page.getLink();
-				return link.getAddressGroupMembers().size() > 0;
-			}
-			return false;
+			return true;
 		}
 	}
 
@@ -405,6 +581,15 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			{
 				return Activator.getDefault().getImageRegistry().get(Activator.KEY_BANK_CARD);
 			}
+			else if (element instanceof AddressGroupCategoryContainer)
+			{
+				return Activator.getDefault().getImageRegistry().get(Activator.KEY_CATEGORY);
+			}
+			else if (element instanceof Contact)
+			{
+				Contact contact = (Contact) element;
+				return contact.getType().getProtocol().icon();
+			}
 			return null;
 		}
 
@@ -436,12 +621,20 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				Member member = (Member) element;
 				return member.getMembership().format();
 			}
+			else if (element instanceof AddressGroupCategoryContainer)
+			{
+				AddressGroupCategory category = ((AddressGroupCategoryContainer) element).getCategory();
+				StringBuilder builder = new StringBuilder(category.getName());
+				if (category.getDomain() != null && !category.getDomain().getName().isEmpty())
+				{
+					builder = builder.append(" (" + category.getDomain().getName() + ")");
+				}
+				return  builder.toString();
+			}
 			else if (element instanceof AddressGroupMember)
 			{
-				AddressGroupMember member = (AddressGroupMember) element;
-				AddressGroup group = member.getAddressGroup();
-				return group.getCode().isEmpty() ? group.getName() : (group.getCode() + (group.getName().isEmpty() ? ""
-						: " - " + group.getName()));
+				AddressGroup addressGroup = ((AddressGroupMember) element).getAddressGroup();
+				return addressGroup.getCode() + " - " + addressGroup.getName();
 			}
 			else if (element instanceof Participant)
 			{
@@ -460,6 +653,12 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			{
 				BankAccount account = (BankAccount) element;
 				return account.getIban() + " (" + account.getAccountNumber() + ")";
+			}
+			else if (element instanceof Contact)
+			{
+				Contact contact = (Contact) element;
+				String title = (contact.getName().isEmpty() ? (contact.getType().getName().isEmpty() ? contact.getType().getProtocol().label() : contact.getType().getName()) : contact.getName());
+				return title + ": " + contact.getValue();
 			}
 			return "";
 		}
@@ -609,6 +808,76 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		}
 	}
 
+	private class ContactRoot implements Root
+	{
+		private final FormPage currentPage;
+
+		public ContactRoot(final FormPage page)
+		{
+			this.currentPage = page;
+		}
+
+		@Override
+		public Object[] getChildren()
+		{
+			if (this.currentPage instanceof FormEditorPersonPage)
+			{
+				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
+				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				return person.getValidContacts().toArray(new PersonContact[0]);
+			}
+			else if (this.currentPage instanceof FormEditorLinkPage)
+			{
+				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
+				LinkPersonAddress link = page.getLink();
+				return link.getValidContacts().toArray(new LinkPersonAddressContact[0]);
+			}
+			return new LinkPersonAddressContact[0];
+		}
+
+		@Override
+		public FormPage getFormPage()
+		{
+			return currentPage;
+		}
+
+		@Override
+		public Image getImage()
+		{
+			return Activator.getDefault().getImageRegistry().get(Activator.KEY_CONTACTS);
+		}
+
+		@Override
+		public String getName()
+		{
+			return "Kontakte (" + getChildren().length + ")";
+		}
+
+		@Override
+		public Integer getOrder()
+		{
+			return Integer.valueOf(Order.DONATION.ordinal());
+		}
+
+		@Override
+		public boolean hasChildren()
+		{
+			if (this.currentPage instanceof FormEditorPersonPage)
+			{
+				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
+				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
+				return !person.getContacts().isEmpty();
+			}
+			else if (this.currentPage instanceof FormEditorLinkPage)
+			{
+				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
+				LinkPersonAddress link = page.getLink();
+				return !link.getContacts().isEmpty();
+			}
+			return false;
+		}
+	}
+
 	private class MemberRoot implements Root
 	{
 		private final FormPage currentPage;
@@ -706,6 +975,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				roots.add(new DonationRoot(page));
 				roots.add(new AddressGroupMemberRoot(page));
 				roots.add(new BankAccountRoot(page));
+				roots.add(new ContactRoot(page));
 				return roots.toArray(new Root[0]);
 			}
 			else if (parentElement instanceof FormEditorLinkPage)
@@ -721,12 +991,18 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				roots.add(new DonationRoot(page));
 				roots.add(new AddressGroupMemberRoot(page));
 				roots.add(new BankAccountRoot(page));
+				roots.add(new ContactRoot(page));
 				return roots.toArray(new Root[0]);
 			}
 			else if (parentElement instanceof Root)
 			{
 				Root root = (Root) parentElement;
 				return root.getChildren();
+			}
+			else if (parentElement instanceof AddressGroupCategoryContainer)
+			{
+				AddressGroupCategoryContainer container = (AddressGroupCategoryContainer) parentElement;
+				return container.getMembers();
 			}
 			return new Object[0];
 		}
@@ -770,6 +1046,10 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 					}
 				}
 				return persons.size() > 0;
+			}
+			if (element instanceof AddressGroupCategoryContainer)
+			{
+				return ((AddressGroupCategoryContainer) element).getMembers().length != 0;
 			}
 			return false;
 		}
@@ -947,5 +1227,33 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		Integer getOrder();
 
 		boolean hasChildren();
+	}
+	
+	class AddressGroupCategoryContainer
+	{
+		private AddressGroupCategory category;
+		
+		private List<AddressGroupMember> members;
+		
+		public AddressGroupCategoryContainer(AddressGroupCategory category)
+		{
+			this.category = category;
+			this.members = new ArrayList<AddressGroupMember>();
+		}
+		
+		public AddressGroupCategory getCategory()
+		{
+			return this.category;
+		}
+		
+		public void addMember(AddressGroupMember member)
+		{
+			members.add(member);
+		}
+		
+		public AddressGroupMember[] getMembers()
+		{
+			return this.members.toArray(new AddressGroupMember[0]);
+		}
 	}
 }

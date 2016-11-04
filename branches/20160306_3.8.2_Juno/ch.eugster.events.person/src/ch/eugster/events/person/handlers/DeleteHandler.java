@@ -61,7 +61,7 @@ public class DeleteHandler extends ConnectionServiceDependentAbstractHandler
 		String msg = null;
 		if (items == 1)
 		{
-			msg = persons == 0 ? "Soll die ausgewählte Adresse entfernt werden?"
+			msg = addresses == 1 ? "Soll die ausgewählte Adresse entfernt werden?"
 					: "Soll die ausgewählte Person entfernt werden?";
 		}
 		else

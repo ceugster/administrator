@@ -65,6 +65,14 @@ public class Activator extends AbstractUIPlugin
 
 	public static final String KEY_OK = "ok";
 	
+	public static final String KEY_CLEAR = "clear";
+	
+	public static final String KEY_CATEGORY = "category";
+	
+	public static final String KEY_ADDRESS_GROUP = "address.group";
+	
+	public static final String KEY_CONTACTS = "contacts";
+	
 	// The shared instance
 	private static Activator plugin;
 
@@ -125,7 +133,7 @@ public class Activator extends AbstractUIPlugin
 		imageRegistry.put(KEY_ON, ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/bulp_on.png")));
 		imageRegistry.put(KEY_OFF, ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/bulp_off.png")));
 		imageRegistry.put(KEY_ADDRESS_MAIN,
-				ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/home_16.png")));
+				ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/address_16x16.png")));
 		imageRegistry.put(KEY_ADDRESS_GREY,
 				ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/home_grey_16.png")));
 		imageRegistry.put(KEY_CHANGE_ADDRESS,
@@ -134,6 +142,10 @@ public class Activator extends AbstractUIPlugin
 		imageRegistry.put(KEY_WARN,
 				ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/warn_16.gif")));
 		imageRegistry.put(KEY_OK, ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/ok_16.gif")));
+		imageRegistry.put(KEY_CLEAR, ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/clear_16.png")));
+		imageRegistry.put(KEY_CATEGORY, ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/category_16.png")));
+		imageRegistry.put(KEY_ADDRESS_GROUP, ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/addressgroup_16.png")));
+		imageRegistry.put(KEY_CONTACTS, ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/contact_16.png")));
 	}
 
 	/*
