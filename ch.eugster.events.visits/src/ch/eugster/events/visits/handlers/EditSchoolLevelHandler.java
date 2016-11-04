@@ -10,11 +10,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-import ch.eugster.events.persistence.model.SchoolClass;
-import ch.eugster.events.visits.editors.SchoolClassEditor;
-import ch.eugster.events.visits.editors.SchoolClassEditorInput;
+import ch.eugster.events.persistence.model.SchoolLevel;
+import ch.eugster.events.visits.editors.SchoolLevelEditor;
+import ch.eugster.events.visits.editors.SchoolLevelEditorInput;
 
-public class EditSchoolClassHandler extends AbstractHandler implements IHandler
+public class EditSchoolLevelHandler extends AbstractHandler implements IHandler
 {
 
 	@Override
@@ -28,13 +28,13 @@ public class EditSchoolClassHandler extends AbstractHandler implements IHandler
 			{
 				StructuredSelection ssel = (StructuredSelection) selection;
 				Object element = ssel.getFirstElement();
-				if (element instanceof SchoolClass)
+				if (element instanceof SchoolLevel)
 				{
-					SchoolClass schoolClass = (SchoolClass) element;
+					SchoolLevel schoolLevel = (SchoolLevel) element;
 					try
 					{
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-								.openEditor(new SchoolClassEditorInput(schoolClass), SchoolClassEditor.ID, true);
+								.openEditor(new SchoolLevelEditorInput(schoolLevel), SchoolLevelEditor.ID, true);
 					}
 					catch (PartInitException e)
 					{

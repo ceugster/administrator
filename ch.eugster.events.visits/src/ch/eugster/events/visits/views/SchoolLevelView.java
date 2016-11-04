@@ -34,14 +34,14 @@ import ch.eugster.events.persistence.events.EntityListener;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.model.AbstractEntity;
-import ch.eugster.events.persistence.model.SchoolClass;
+import ch.eugster.events.persistence.model.SchoolLevel;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.views.AbstractEntityView;
 import ch.eugster.events.visits.Activator;
-import ch.eugster.events.visits.editors.SchoolClassEditor;
-import ch.eugster.events.visits.editors.SchoolClassEditorInput;
+import ch.eugster.events.visits.editors.SchoolLevelEditor;
+import ch.eugster.events.visits.editors.SchoolLevelEditorInput;
 
-public class SchoolClassView extends AbstractEntityView implements IDoubleClickListener, EntityListener
+public class SchoolLevelView extends AbstractEntityView implements IDoubleClickListener, EntityListener
 {
 	private IContextActivation ctxActivation;
 
@@ -53,10 +53,10 @@ public class SchoolClassView extends AbstractEntityView implements IDoubleClickL
 	public void init(IViewSite site) throws PartInitException
 	{
 		super.init(site);
-		EntityMediator.addListener(SchoolClass.class, this);
+		EntityMediator.addListener(SchoolLevel.class, this);
 
 		IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
-		ctxActivation = ctxService.activateContext("ch.eugster.events.visits.schoolclass.context");
+		ctxActivation = ctxService.activateContext("ch.eugster.events.visits.schoollevel.context");
 	}
 
 	@Override
@@ -65,14 +65,14 @@ public class SchoolClassView extends AbstractEntityView implements IDoubleClickL
 		IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
 		ctxService.deactivateContext(ctxActivation);
 
-		EntityMediator.removeListener(SchoolClass.class, this);
+		EntityMediator.removeListener(SchoolLevel.class, this);
 		super.dispose();
 	}
 
 	@Override
 	public void postDelete(AbstractEntity entity)
 	{
-		if (entity instanceof SchoolClass)
+		if (entity instanceof SchoolLevel)
 		{
 			this.viewer.refresh();
 		}
@@ -81,7 +81,7 @@ public class SchoolClassView extends AbstractEntityView implements IDoubleClickL
 	@Override
 	public void postPersist(AbstractEntity entity)
 	{
-		if (entity instanceof SchoolClass)
+		if (entity instanceof SchoolLevel)
 		{
 			this.viewer.add(entity);
 		}
@@ -90,7 +90,7 @@ public class SchoolClassView extends AbstractEntityView implements IDoubleClickL
 	@Override
 	public void postUpdate(AbstractEntity entity)
 	{
-		if (entity instanceof SchoolClass)
+		if (entity instanceof SchoolLevel)
 		{
 			this.viewer.refresh(entity);
 		}
@@ -106,14 +106,14 @@ public class SchoolClassView extends AbstractEntityView implements IDoubleClickL
 		table.setHeaderVisible(true);
 
 		viewer = new TableViewer(table);
-		viewer.setContentProvider(new SchoolClassContentProvider());
+		viewer.setContentProvider(new SchoolLevelContentProvider());
 		viewer.setSorter(new ViewerSorter()
 		{
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2)
 			{
-				SchoolClass sc1 = (SchoolClass) e1;
-				SchoolClass sc2 = (SchoolClass) e2;
+				SchoolLevel sc1 = (SchoolLevel) e1;
+				SchoolLevel sc2 = (SchoolLevel) e2;
 				return sc1.getName().compareTo(sc2.getName());
 			}
 		});
@@ -127,9 +127,9 @@ public class SchoolClassView extends AbstractEntityView implements IDoubleClickL
 			public void update(ViewerCell cell)
 			{
 				Object object = cell.getElement();
-				if (object instanceof SchoolClass)
+				if (object instanceof SchoolLevel)
 				{
-					cell.setText(((SchoolClass) object).getName());
+					cell.setText(((SchoolLevel) object).getName());
 				}
 			}
 		});
@@ -144,9 +144,9 @@ public class SchoolClassView extends AbstractEntityView implements IDoubleClickL
 			public void update(ViewerCell cell)
 			{
 				Object object = cell.getElement();
-				if (object instanceof SchoolClass)
+				if (object instanceof SchoolLevel)
 				{
-					cell.setText(((SchoolClass) object).getLevel().label());
+					cell.setText(((SchoolLevel) object).getName());
 				}
 			}
 		});
@@ -219,18 +219,18 @@ public class SchoolClassView extends AbstractEntityView implements IDoubleClickL
 	{
 		ISelection selection = event.getSelection();
 		Object object = ((IStructuredSelection) selection).getFirstElement();
-		if (object instanceof SchoolClass)
+		if (object instanceof SchoolLevel)
 		{
-			editSchoolClass((SchoolClass) object);
+			editSchoolLevel((SchoolLevel) object);
 		}
 	}
 
-	private void editSchoolClass(SchoolClass schoolClass)
+	private void editSchoolLevel(SchoolLevel schoolLevel)
 	{
 		try
 		{
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-					.openEditor(new SchoolClassEditorInput(schoolClass), SchoolClassEditor.ID, true);
+					.openEditor(new SchoolLevelEditorInput(schoolLevel), SchoolLevelEditor.ID, true);
 		}
 		catch (PartInitException e)
 		{

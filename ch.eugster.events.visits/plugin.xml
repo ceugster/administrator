@@ -33,9 +33,9 @@
             restorable="true">
       </view>
       <view
-            class="ch.eugster.events.visits.views.SchoolClassView"
-            id="ch.eugster.events.visits.schoolclass.view"
-            name="Schulklasse"
+            class="ch.eugster.events.visits.views.SchoolLevelView"
+            id="ch.eugster.events.visits.schoollevel.view"
+            name="Auswertungsstufen"
             restorable="true">
       </view>
       <view
@@ -118,7 +118,7 @@
                   style="push">
                <parameter
                      name="org.eclipse.ui.views.showView.viewId"
-                     value="ch.eugster.events.visits.schoolclass.view">
+                     value="ch.eugster.events.visits.schoollevel.view">
                </parameter>
             </command>
             <command
@@ -168,7 +168,7 @@
             allPopups="false"
             locationURI="toolbar:ch.eugster.events.visits.theme.overview?after=additions">
          <command
-               commandId="ch.eugster.events.visits.add"
+               commandId="ch.eugster.events.visits.visit.add"
                disabledIcon="icons/add_grey_16.gif"
                hoverIcon="icons/add_16.gif"
                icon="icons/add_16.gif"
@@ -283,9 +283,9 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:ch.eugster.events.visits.schoolclass.view">
+            locationURI="toolbar:ch.eugster.events.visits.schoollevel.view">
          <command
-               commandId="ch.eugster.events.visits.schoolclass.new"
+               commandId="ch.eugster.events.visits.schoollevel.new"
                disabledIcon="icons/add_grey_16.gif"
                icon="icons/add_16.gif"
                label="Hinzufügen"
@@ -293,7 +293,7 @@
                tooltip="Eine neue Schulklasse hinzufügen">
          </command>
          <command
-               commandId="ch.eugster.events.visits.schoolclass.edit"
+               commandId="ch.eugster.events.visits.schoollevel.edit"
                disabledIcon="icons/edit_grey_16.png"
                icon="icons/edit_16.png"
                label="Bearbeiten"
@@ -301,7 +301,7 @@
                tooltip="Die ausgewählte Schulklasse bearbeiten">
          </command>
          <command
-               commandId="ch.eugster.events.visits.schoolclass.delete"
+               commandId="ch.eugster.events.visits.schoollevel.delete"
                disabledIcon="icons/delete_grey_16.png"
                icon="icons/delete_16.png"
                label="Entfernen"
@@ -453,7 +453,7 @@
       </command>
       <command
             defaultHandler="ch.eugster.events.visits.handlers.AddVisitHandler"
-            id="ch.eugster.events.visits.add"
+            id="ch.eugster.events.visits.visit.add"
             name="Neuer Besuch">
       </command>
       <command
@@ -480,17 +480,17 @@
             name="Remove Appliance">
       </command>
       <command
-            id="ch.eugster.events.visits.schoolclass.edit"
-            name="Edit SchoolClass">
+            id="ch.eugster.events.visits.schoollevel.edit"
+            name="Edit SchoolLevel">
       </command>
       <command
-            id="ch.eugster.events.visits.schoolclass.delete"
-            name="Remove SchoolClass">
+            id="ch.eugster.events.visits.schoollevel.delete"
+            name="Remove SchoolLevel">
       </command>
       <command
-            defaultHandler="ch.eugster.events.visits.handlers.NewSchoolClassHandler"
-            id="ch.eugster.events.visits.schoolclass.new"
-            name="New SchoolClass">
+            defaultHandler="ch.eugster.events.visits.handlers.NewSchoolLevelHandler"
+            id="ch.eugster.events.visits.schoollevel.new"
+            name="New SchoolLevel">
       </command>
       <command
             defaultHandler="ch.eugster.events.visits.handlers.AddEmailAccountHandler"
@@ -623,8 +623,8 @@
          </activeWhen>
       </handler>
       <handler
-            class="ch.eugster.events.visits.handlers.EditSchoolClassHandler"
-            commandId="ch.eugster.events.visits.schoolclass.edit">
+            class="ch.eugster.events.visits.handlers.EditSchoolLevelHandler"
+            commandId="ch.eugster.events.visits.schoollevel.edit">
          <activeWhen>
             <with
                   variable="selection">
@@ -642,14 +642,14 @@
          </activeWhen>
       </handler>
       <handler
-            class="ch.eugster.events.visits.handlers.DeleteSchoolClassHandler"
-            commandId="ch.eugster.events.visits.schoolclass.delete">
+            class="ch.eugster.events.visits.handlers.DeleteSchoolLevelHandler"
+            commandId="ch.eugster.events.visits.schoollevel.delete">
          <activeWhen>
             <with
                   variable="selection">
                <iterate>
                   <instanceof
-                        value="ch.eugster.events.persistence.model.SchoolClass">
+                        value="ch.eugster.events.persistence.model.SchoolLevel">
                   </instanceof>
                </iterate>
             </with>
@@ -737,18 +737,18 @@
                id="ch.eugster.events.visits.appliance.view"
                minimized="false"
                moveable="true"
-               relationship="left"
-               relative="org.eclipse.ui.editorss"
+               relationship="stack"
+               relative="ch.eugster.events.addresstype.view"
                showTitle="true"
                visible="true">
          </view>
          <view
                closeable="true"
-               id="ch.eugster.events.visits.schoolclass.view"
+               id="ch.eugster.events.visits.schoollevel.view"
                minimized="false"
                moveable="true"
-               relationship="left"
-               relative="org.eclipse.ui.editorss"
+               relationship="stack"
+               relative="ch.eugster.events.addresstype.view"
                showTitle="true"
                visible="true">
          </view>
@@ -785,11 +785,11 @@
             name="Appliance Editor">
       </editor>
       <editor
-            class="ch.eugster.events.visits.editors.SchoolClassEditor"
+            class="ch.eugster.events.visits.editors.SchoolLevelEditor"
             default="false"
             icon="icons/panda.png"
-            id="ch.eugster.events.visits.schoolclass.editor"
-            name="SchoolClass Editor">
+            id="ch.eugster.events.visits.schoollevel.editor"
+            name="SchoolLevel Editor">
       </editor>
       <editor
             class="ch.eugster.events.visits.editors.EmailAccountEditor"
@@ -810,8 +810,8 @@
             name="Gerätekontext">
       </context>
       <context
-            id="ch.eugster.events.visits.schoolclass.context"
-            name="Schulklassekontext">
+            id="ch.eugster.events.visits.schoollevel.context"
+            name="Schullevelkontext">
       </context>
       <context
             id="ch.eugster.events.visits.todo.context"
@@ -913,34 +913,6 @@
          </action>
       </editorContribution>
       <editorContribution
-            id="ch.eugster.events.visit.visitEditorContribution"
-            targetID="ch.eugster.events.visits.visit.editor">
-         <action
-               class="ch.eugster.events.ui.actions.ResetEditorActionDelegate"
-               definitionId="org.eclipse.ui.file.revert"
-               disabledIcon="icons/reset_grey_16.png"
-               hoverIcon="icons/reset_16.png"
-               icon="icons/reset_16.png"
-               id="ch.eugster.events.visit.visitEditor.revert"
-               label="Revert"
-               style="push"
-               toolbarPath="ch.eugster.events.ui.toolbar.editor.actions"
-               tooltip="Verwerfen der vorgenommenen Änderungen">
-         </action>
-         <action
-               class="ch.eugster.events.ui.actions.SaveEditorActionDelegate"
-               definitionId="org.eclipse.ui.file.save"
-               disabledIcon="icons/save_grey_16.png"
-               hoverIcon="icons/save_16.png"
-               icon="icons/save_16.png"
-               id="ch.eugster.events.visit.visitEditor.save"
-               label="Save"
-               style="push"
-               toolbarPath="ch.eugster.events.ui.toolbar.editor.actions"
-               tooltip="Speichern der Änderungen im aktuellen Editor">
-         </action>
-      </editorContribution>
-      <editorContribution
             id="ch.eugster.events.visit.visitApplianceEditorContribution"
             targetID="ch.eugster.events.visits.appliance.editor">
          <action
@@ -969,15 +941,15 @@
          </action>
       </editorContribution>
       <editorContribution
-            id="ch.eugster.events.visit.visitSchoolClassEditorContribution"
-            targetID="ch.eugster.events.visits.schoolclass.editor">
+            id="ch.eugster.events.visit.visitSchoolLevelEditorContribution"
+            targetID="ch.eugster.events.visits.schoollevel.editor">
          <action
                class="ch.eugster.events.ui.actions.ResetEditorActionDelegate"
                definitionId="org.eclipse.ui.file.revert"
                disabledIcon="icons/reset_grey_16.png"
                hoverIcon="icons/reset_16.png"
                icon="icons/reset_16.png"
-               id="ch.eugster.events.visit.visitSchoolClassEditor.revert"
+               id="ch.eugster.events.visit.visitSchoolLevelEditor.revert"
                label="Revert"
                style="push"
                toolbarPath="ch.eugster.events.ui.toolbar.editor.actions"
@@ -989,7 +961,7 @@
                disabledIcon="icons/save_grey_16.png"
                hoverIcon="icons/save_16.png"
                icon="icons/save_16.png"
-               id="ch.eugster.events.visit.visitSchoolClassEditor.save"
+               id="ch.eugster.events.visit.visitSchoolLevelEditor.save"
                label="Save"
                style="push"
                toolbarPath="ch.eugster.events.ui.toolbar.editor.actions"

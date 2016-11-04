@@ -67,17 +67,12 @@ public class SetVisitorHandler extends AbstractHandler implements IHandler, IEle
 				{
 					Person person = (Person) ssel.getFirstElement();
 					link = person.getDefaultLink();
-					if ((link == null || link.isDeleted() || link.getPerson().isDeleted())
-							&& person.getLinks().size() > 0)
-					{
-						link = person.getLinks().iterator().next();
-					}
 				}
 				else if (ssel.getFirstElement() instanceof LinkPersonAddress)
 				{
 					link = (LinkPersonAddress) ssel.getFirstElement();
 				}
-				if (link != null && !link.isDeleted() && !link.getPerson().isDeleted())
+				if (link.isValid())
 				{
 					if (connectionService != null)
 					{

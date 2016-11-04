@@ -287,31 +287,28 @@ public class TeacherEditor extends AbstractEntityEditor<Teacher>
 	{
 		TeacherEditorInput input = (TeacherEditorInput) this.getEditorInput();
 		Teacher teacher = (Teacher) input.getAdapter(Teacher.class);
-		if (teacher != null)
+		this.reachableTime.setText(teacher.getBestReachTime());
+
+		SelectedPhone[] phones = getSelectablePhones(teacher.getLink());
+		this.reachablePhone.setInput(phones);
+		if (phones.length > 0)
 		{
-			this.reachableTime.setText(teacher.getBestReachTime());
-
-			SelectedPhone[] phones = getSelectablePhones(teacher.getLink());
-			this.reachablePhone.setInput(phones);
-			if (phones.length > 0)
-			{
-				StructuredSelection ssel = new StructuredSelection(
-						new SelectedPhone[] { (teacher.getSelectedPhone() == null ? phones[0]
-								: teacher.getSelectedPhone()) });
-				this.reachablePhone.setSelection(ssel);
-			}
-
-			SelectedEmail[] emails = getSelectableEmails(teacher.getLink());
-			this.email.setInput(emails);
-			if (emails.length > 0)
-			{
-				StructuredSelection ssel = new StructuredSelection(
-						new SelectedEmail[] { (teacher.getSelectedEmail() == null ? emails[0]
-								: teacher.getSelectedEmail()) });
-				this.email.setSelection(ssel);
-			}
+			StructuredSelection ssel = new StructuredSelection(
+					new SelectedPhone[] { (teacher.getSelectedPhone() == null ? phones[0]
+							: teacher.getSelectedPhone()) });
+			this.reachablePhone.setSelection(ssel);
 		}
-		this.setDirty(false);
+
+		SelectedEmail[] emails = getSelectableEmails(teacher.getLink());
+		this.email.setInput(emails);
+		if (emails.length > 0)
+		{
+			StructuredSelection ssel = new StructuredSelection(
+					new SelectedEmail[] { (teacher.getSelectedEmail() == null ? emails[0]
+							: teacher.getSelectedEmail()) });
+			this.email.setSelection(ssel);
+		}
+		this.setDirty(teacher.getId() == null);
 	}
 
 	@Override
@@ -319,16 +316,13 @@ public class TeacherEditor extends AbstractEntityEditor<Teacher>
 	{
 		TeacherEditorInput input = (TeacherEditorInput) this.getEditorInput();
 		Teacher teacher = (Teacher) input.getAdapter(Teacher.class);
-		if (teacher != null)
-		{
-			teacher.setBestReachTime(this.reachableTime.getText());
+		teacher.setBestReachTime(this.reachableTime.getText());
 
-			StructuredSelection ssel = (StructuredSelection) this.reachablePhone.getSelection();
-			teacher.setSelectedPhone((SelectedPhone) ssel.getFirstElement());
+		StructuredSelection ssel = (StructuredSelection) this.reachablePhone.getSelection();
+		teacher.setSelectedPhone((SelectedPhone) ssel.getFirstElement());
 
-			ssel = (StructuredSelection) this.email.getSelection();
-			teacher.setSelectedEmail((SelectedEmail) ssel.getFirstElement());
-		}
+		ssel = (StructuredSelection) this.email.getSelection();
+		teacher.setSelectedEmail((SelectedEmail) ssel.getFirstElement());
 	}
 
 	@Override

@@ -20,6 +20,7 @@ import org.osgi.util.tracker.ServiceTracker;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.Teacher;
+import ch.eugster.events.persistence.queries.TeacherQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.person.views.PersonView;
 import ch.eugster.events.visits.Activator;
@@ -70,38 +71,30 @@ public class SetTeacherHandler extends AbstractHandler implements IHandler, IEle
 				{
 					Person person = (Person) ssel.getFirstElement();
 					link = person.getDefaultLink();
-					if ((link == null || link.isDeleted() || link.getPerson().isDeleted())
-							&& person.getLinks().size() > 0)
-					{
-						link = person.getLinks().iterator().next();
-					}
 				}
 				else if (ssel.getFirstElement() instanceof LinkPersonAddress)
 				{
 					link = (LinkPersonAddress) ssel.getFirstElement();
 				}
-				if (link != null && !link.isDeleted() && !link.getPerson().isDeleted())
+				if (link != null && link.isValid())
 				{
-					Teacher teacher = null;
-					if (link.getTeacher() == null)
+					Teacher teacher = link.getTeacher();
+					if (teacher == null)
 					{
 						teacher = Teacher.newInstance(link);
 					}
-					else if (!link.getTeacher().isDeleted())
+					if (teacher.isDeleted())
 					{
-						teacher = link.getTeacher();
+						teacher.setDeleted(false);
 					}
-					if (teacher instanceof Teacher)
+					try
 					{
-						try
-						{
-							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-									.openEditor(new TeacherEditorInput(teacher), TeacherEditor.ID, true);
-						}
-						catch (PartInitException e)
-						{
-							e.printStackTrace();
-						}
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+								.openEditor(new TeacherEditorInput(teacher), TeacherEditor.ID, true);
+					}
+					catch (PartInitException e)
+					{
+						e.printStackTrace();
 					}
 				}
 			}

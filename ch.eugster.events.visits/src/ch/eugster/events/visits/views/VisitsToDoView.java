@@ -271,13 +271,13 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 				if (object instanceof Visit)
 				{
 					Visit visit = (Visit) object;
-					if (visit.getSchoolClass() == null)
+					if (visit.getSchoolLevel() == null)
 					{
 						cell.setBackground(getErrorBackground());
 					}
 					else
 					{
-						cell.setText(visit.getSchoolClass().getName());
+						cell.setText(visit.getSchoolLevel().getName());
 						cell.setBackground(getBackground(visit.getTheme()));
 					}
 				}

@@ -9,11 +9,11 @@ package ch.eugster.events.visits.views;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import ch.eugster.events.persistence.model.SchoolClass;
-import ch.eugster.events.persistence.queries.SchoolClassQuery;
+import ch.eugster.events.persistence.model.SchoolLevel;
+import ch.eugster.events.persistence.queries.SchoolLevelQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
-public class SchoolClassContentProvider implements IStructuredContentProvider
+public class SchoolLevelContentProvider implements IStructuredContentProvider
 {
 	@Override
 	public Object[] getElements(Object object)
@@ -21,10 +21,10 @@ public class SchoolClassContentProvider implements IStructuredContentProvider
 		if (object instanceof ConnectionService)
 		{
 			ConnectionService service = (ConnectionService) object;
-			SchoolClassQuery query = (SchoolClassQuery) service.getQuery(SchoolClass.class);
-			return query.selectAll(SchoolClass.class).toArray(new SchoolClass[0]);
+			SchoolLevelQuery query = (SchoolLevelQuery) service.getQuery(SchoolLevel.class);
+			return query.selectAll(SchoolLevel.class).toArray(new SchoolLevel[0]);
 		}
-		return new SchoolClass[0];
+		return new SchoolLevel[0];
 	}
 
 	@Override
