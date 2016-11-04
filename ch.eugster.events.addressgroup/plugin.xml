@@ -240,28 +240,6 @@
             id="ch.eugster.events.addressgroup.command.deleteDoubleMembers"
             name="Delete Double Members">
       </command>
-      <command
-            categoryId="ch.eugster.events.addressgroup.group"
-            defaultHandler="ch.eugster.events.addressgroup.handlers.SetAddressGroupSelectionLinkHandler"
-            description="Adressgruppen für Person wählen"
-            id="ch.eugster.events.addressgroup.command.set.addressgroup.selection.link"
-            name="Adressgruppen für Person wählen">
-         <state
-               class="org.eclipse.ui.handlers.RegistryToggleState:true"
-               id="ch.eugster.events.addressgroup.person.view.selection.link.state">
-         </state>
-      </command>
-      <command
-            categoryId="ch.eugster.events.addressgroup.group"
-            defaultHandler="ch.eugster.events.addressgroup.handlers.SetAddressGroupSelectionAddressHandler"
-            description="Adressgruppen für Adresse wählen"
-            id="ch.eugster.events.addressgroup.command.set.addressgroup.selection.address"
-            name="Adressgruppen für Adresse wählen">
-         <state
-               class="org.eclipse.ui.handlers.RegistryToggleState:false"
-               id="ch.eugster.events.addressgroup.person.view.selection.address.state">
-         </state>
-      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -868,24 +846,6 @@
       </menuContribution>
       <menuContribution
             locationURI="toolbar:ch.eugster.events.addressgroup.person.view?after=additions">
-         <command
-               commandId="ch.eugster.events.addressgroup.command.set.addressgroup.selection.link"
-               disabledIcon="icons/person_grey_16.png"
-               hoverIcon="icons/person_blue_16.png"
-               icon="icons/person_blue_16.png"
-               label="Adressgruppen für Person wählen"
-               style="toggle"
-               tooltip="Adressgruppen für Person wählen">
-         </command>
-         <command
-               commandId="ch.eugster.events.addressgroup.command.set.addressgroup.selection.address"
-               disabledIcon="icons/address_grey_16.png"
-               hoverIcon="icons/address_16.png"
-               icon="icons/address_16.png"
-               label="Adressgruppen für Adresse wählen"
-               style="toggle"
-               tooltip="Adressgruppen für Adresse wählen">
-         </command>
          <command
                commandId="ch.eugster.events.addressgroup.command.updatePersonAddressGroupMember"
                disabledIcon="icons/save_grey_16.png"

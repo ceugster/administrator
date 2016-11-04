@@ -7,8 +7,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -23,11 +21,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -41,7 +36,6 @@ import org.eclipse.ui.progress.UIJob;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.addressgroup.Activator;
-import ch.eugster.events.addressgroup.AddressGroupMemberParentType;
 import ch.eugster.events.addressgroup.AddressGroupMemberSelector;
 import ch.eugster.events.addressgroup.Monitor;
 import ch.eugster.events.addressgroup.views.AddressGroupMemberTreeSorter;
@@ -83,8 +77,6 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 	private final Hashtable<Long, Monitor> monitors = new Hashtable<Long, Monitor>();
 
 	private AbstractEntity parent;
-
-	private IDialogSettings settings;
 
 	private ServiceTracker<ConnectionService, ConnectionService> tracker;
 
@@ -160,20 +152,6 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 				ConnectionService.class, null);
 		tracker.open();
 		connectionService = (ConnectionService) tracker.getService();
-
-		settings = Activator.getDefault().getDialogSettings().getSection("addressgroup.member.selection.dialog");
-		if (settings == null)
-		{
-			settings = Activator.getDefault().getDialogSettings().addNewSection("addressgroup.member.selection.dialog");
-		}
-		try
-		{
-			settings.getInt("current.mode");
-		}
-		catch (NumberFormatException e)
-		{
-			settings.put("current.mode", AddressGroupMemberParentType.LINK_PERSON_ADDRESS.ordinal());
-		}
 	}
 	
 	@Override
@@ -253,70 +231,6 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 	@Override
 	protected void createButtonsForButtonBar(final Composite parent)
 	{
-		((GridLayout) parent.getLayout()).numColumns++;
-		Button button = new Button(parent, SWT.RADIO);
-		button.setImage(Activator.getDefault().getImageRegistry().get("MEMBER_PERSON"));
-		button.addSelectionListener(new SelectionListener() 
-		{
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) 
-			{
-				widgetSelected(e);
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent e) 
-			{
-				AddressGroupMemberParentType newMode = AddressGroupMemberParentType.LINK_PERSON_ADDRESS;
-				AddressGroupMemberParentType oldMode = AddressGroupMemberParentType.values()[AddressGroupMemberDialog.this.settings.getInt("current.mode")];
-				AddressGroupMemberDialog.this.settings.put("current.mode", newMode.ordinal());
-				if (!oldMode.equals(newMode))
-				{
-					if (AddressGroupMemberDialog.this.isDirty())
-					{
-						if (MessageDialog.openQuestion(AddressGroupMemberDialog.this.getShell(), "Änderungen speichern", "Sie haben Änderungen an den aktuellen Adressgruppen vorgenommen. Sollen diese Änderungen gespeichert werden?"))
-						{
-							AddressGroupMemberDialog.this.updateAddressGroupMembers();
-						}
-					}
-					AddressGroupMemberDialog.this.reset();
-					AddressGroupMemberDialog.this.refreshViewer();
-				}
-			}
-		});
-		button.setSelection(settings.getInt("current.mode") == AddressGroupMemberParentType.LINK_PERSON_ADDRESS.ordinal());
-		((GridLayout) parent.getLayout()).numColumns++;
-		button = new Button(parent, SWT.RADIO);
-		button.setImage(Activator.getDefault().getImageRegistry().get("MEMBER_ADDRESS"));
-		button.addSelectionListener(new SelectionListener() 
-		{
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) 
-			{
-				widgetSelected(e);
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent e) 
-			{
-				AddressGroupMemberParentType newMode = AddressGroupMemberParentType.ADDRESS;
-				AddressGroupMemberParentType oldMode = AddressGroupMemberParentType.values()[AddressGroupMemberDialog.this.settings.getInt("current.mode")];
-				AddressGroupMemberDialog.this.settings.put("current.mode", newMode.ordinal());
-				if (!oldMode.equals(newMode))
-				{
-					if (AddressGroupMemberDialog.this.isDirty())
-					{
-						if (MessageDialog.openQuestion(AddressGroupMemberDialog.this.getShell(), "Änderungen speichern", "Sie haben Änderungen an den aktuellen Adressgruppen vorgenommen. Sollen diese Änderungen gespeichert werden?"))
-						{
-							AddressGroupMemberDialog.this.updateAddressGroupMembers();
-						}
-					}
-					AddressGroupMemberDialog.this.reset();
-					AddressGroupMemberDialog.this.refreshViewer();
-				}
-			}
-		});
-		button.setSelection(settings.getInt("current.mode") == AddressGroupMemberParentType.ADDRESS.ordinal());
 		this.createButton(parent, IDialogConstants.OK_ID, "Speichern", true);
 		this.createButton(parent, IDialogConstants.CANCEL_ID, "Abbrechen", false);
 	}
@@ -468,14 +382,7 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 			{
 				LinkPersonAddress link = (LinkPersonAddress) this.parent;
 				AddressGroupMemberQuery query = (AddressGroupMemberQuery) connectionService.getQuery(AddressGroupMember.class);
-				if (settings.getInt("current.mode") == AddressGroupMemberParentType.LINK_PERSON_ADDRESS.ordinal())
-				{
-					members = query.selectByLink(link);
-				}
-				else if (settings.getInt("current.mode") == AddressGroupMemberParentType.ADDRESS.ordinal())
-				{
-					members = query.selectByAddress(link.getAddress());
-				}
+				members = query.selectByLink(link);
 			}
 			else if (this.parent instanceof Address)
 			{
@@ -577,7 +484,7 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		{
 			ComboViewer comboViewer = (ComboViewer) event.getSource();
 			StructuredSelection ssel = (StructuredSelection) comboViewer.getSelection();
-			this.updateViewer(ssel.getFirstElement(), settings.getInt("current.mode"));
+			this.updateViewer(ssel.getFirstElement());
 			this.checkCategory(ssel.getFirstElement());
 		}
 	}
@@ -647,23 +554,11 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 					{
 						if (parent instanceof LinkPersonAddress)
 						{
-							if (this.settings.getInt("current.mode") == AddressGroupMemberParentType.ADDRESS.ordinal())
+							member = getMember(monitor.addressGroup, (LinkPersonAddress) parent);
+							if (member == null)
 							{
-								member = getMember(monitor.addressGroup, ((LinkPersonAddress) this.parent).getAddress());
-								if (member == null)
-								{
-									member = AddressGroupMember.newInstance(monitor.addressGroup,
-											((LinkPersonAddress) this.parent).getAddress());
-								}
-							}
-							else if (this.settings.getInt("current.mode") == AddressGroupMemberParentType.LINK_PERSON_ADDRESS.ordinal())
-							{
-								member = getMember(monitor.addressGroup, (LinkPersonAddress) parent);
-								if (member == null)
-								{
-									member = AddressGroupMember.newInstance(monitor.addressGroup,
-											(LinkPersonAddress) this.parent);
-								}
+								member = AddressGroupMember.newInstance(monitor.addressGroup,
+										(LinkPersonAddress) this.parent);
 							}
 						}
 						else if (this.parent instanceof Address)
@@ -710,7 +605,7 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		monitor.checked = checked;
 	}
 
-	private void updateViewer(final Object object, int currentMode)
+	private void updateViewer(final Object object)
 	{
 		UIJob updateViewer = new UIJob("")
 		{
