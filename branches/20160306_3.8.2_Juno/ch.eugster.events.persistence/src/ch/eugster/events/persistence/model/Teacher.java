@@ -53,6 +53,10 @@ public class Teacher extends AbstractEntity implements LinkPersonAddressChild, I
 	@Enumerated(EnumType.ORDINAL)
 	private SelectedEmail selectedEmail;
 
+	@Basic
+	@Column(name = "teacher_notes")
+	private String notes;
+
 	private Teacher()
 	{
 		super();
@@ -159,11 +163,22 @@ public class Teacher extends AbstractEntity implements LinkPersonAddressChild, I
 	{
 		return this.selectedPhone;
 	}
+	
+	public String getNotes()
+	{
+		return stringValueOf(this.notes);
+	}
 
 	public void setBestReachTime(final String time)
 	{
 		this.propertyChangeSupport.firePropertyChange("bestReachTime", this.bestReachTime,
 				this.bestReachTime = (time == null || time.isEmpty() ? null : time));
+	}
+
+	public void setNotes(final String notes)
+	{
+		this.propertyChangeSupport.firePropertyChange("notes", this.notes,
+				this.notes = (notes == null || notes.isEmpty() ? null : notes));
 	}
 
 	@Override

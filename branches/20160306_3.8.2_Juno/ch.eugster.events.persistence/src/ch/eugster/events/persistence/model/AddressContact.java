@@ -5,11 +5,8 @@ import javax.persistence.AssociationOverrides;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -21,8 +18,7 @@ import javax.persistence.Table;
 		@AttributeOverride(name = "updated", column = @Column(name = "contact_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "contact_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "contact_version")) })
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "contact_discriminator", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("A")
 public class AddressContact extends Contact
 {
 	/*
@@ -34,13 +30,14 @@ public class AddressContact extends Contact
 
 	private AddressContact()
 	{
-		this(null);
+		super();
 	}
 
 	private AddressContact(Address address)
 	{
 		super();
 		this.setAddress(address);
+		this.setCountry(address.getCountry());
 	}
 
 	public Address getAddress()

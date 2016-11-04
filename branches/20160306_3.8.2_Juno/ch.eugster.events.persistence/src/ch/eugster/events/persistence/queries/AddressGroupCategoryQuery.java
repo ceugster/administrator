@@ -24,6 +24,13 @@ public class AddressGroupCategoryQuery extends AbstractEntityQuery<AddressGroupC
 		return count(AddressGroupCategory.class, expression);
 	}
 
+	public List<AddressGroupCategory> selectValidsByDomain(Domain domain)
+	{
+		Expression expression = new ExpressionBuilder(AddressGroupCategory.class).get("domain").equal(domain);
+		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
+		return select(AddressGroupCategory.class, expression);
+	}
+
 	public List<AddressGroupCategory> selectByDomain(Domain domain)
 	{
 		Expression expression = new ExpressionBuilder(AddressGroupCategory.class).get("domain").equal(domain);

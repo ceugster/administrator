@@ -9,11 +9,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+
+import org.eclipse.swt.graphics.Image;
+
+import ch.eugster.events.persistence.Activator;
+import ch.eugster.events.persistence.formatters.PhoneFormatter;
 
 @Entity
 @Table(name = "events_contact_type")
@@ -40,13 +47,18 @@ public class ContactType extends AbstractEntity
 	private String name;
 
 	@Basic
-	@Column(name = "contact_type_desc")
+	@Column(name = "contact_type_description")
 	private String description;
 
 	@Basic
 	@Column(name = "contact_type_protocol")
 	@Enumerated(EnumType.ORDINAL)
 	private Protocol protocol;
+
+	@Basic(fetch = FetchType.LAZY)
+	@Lob
+	@Column(name = "contact_type_icon", columnDefinition = "BLOB")
+	private byte[] icon;
 
 	private ContactType()
 	{
@@ -118,15 +130,19 @@ public class ContactType extends AbstractEntity
 
 	public enum Protocol
 	{
-		PHONE, EMAIL, HTTP;
+		PHONE, MOBILE, EMAIL, HTTP, OTHER;
 
-		public boolean check(final String address)
+		public boolean check(final String address, Country country)
 		{
 			switch (this)
 			{
 				case PHONE:
 				{
-					return true;
+					return !PhoneFormatter.format(address, country).isEmpty();
+				}
+				case MOBILE:
+				{
+					return !PhoneFormatter.format(address, country).isEmpty();
 				}
 				case EMAIL:
 				{
@@ -136,6 +152,10 @@ public class ContactType extends AbstractEntity
 				case HTTP:
 				{
 					return address.length() > 0;
+				}
+				case OTHER:
+				{
+					return true;
 				}
 				default:
 				{
@@ -152,17 +172,52 @@ public class ContactType extends AbstractEntity
 				{
 					return "Telefon";
 				}
+				case MOBILE:
+				{
+					return "Mobile";
+				}
 				case EMAIL:
 				{
 					return "Email";
 				}
 				case HTTP:
 				{
-					return "Website";
+					return "Webadresse";
+				}
+				case OTHER:
+				{
+					
 				}
 				default:
 				{
 					throw new RuntimeException("No such Protocol");
+				}
+			}
+		}
+
+		public Image icon()
+		{
+			switch (this)
+			{
+				case PHONE:
+				{
+					return Activator.getDefault().getImageRegistry().get("phone");
+				}
+				case MOBILE:
+				{
+					return Activator.getDefault().getImageRegistry().get("mobile");
+				}
+				case EMAIL:
+				{
+					return Activator.getDefault().getImageRegistry().get("email");
+				}
+				case HTTP:
+				{
+					return Activator.getDefault().getImageRegistry().get("browse");
+				}
+				default:
+				{
+					return null;
 				}
 			}
 		}
@@ -175,11 +230,19 @@ public class ContactType extends AbstractEntity
 				{
 					return true;
 				}
+				case MOBILE:
+				{
+					return true;
+				}
 				case EMAIL:
 				{
 					return false;
 				}
 				case HTTP:
+				{
+					return false;
+				}
+				case OTHER:
 				{
 					return false;
 				}

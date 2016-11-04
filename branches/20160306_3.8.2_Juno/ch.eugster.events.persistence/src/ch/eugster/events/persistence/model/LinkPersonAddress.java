@@ -73,7 +73,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 	 * Contacts
 	 */
 	@OneToMany(cascade = ALL, mappedBy = "link")
-	private List<LinkPersonAddressExtendedField> contacts = new Vector<LinkPersonAddressExtendedField>();
+	private List<LinkPersonAddressContact> contacts = new Vector<LinkPersonAddressContact>();
 
 	@OneToMany(cascade = ALL, mappedBy = "link")
 	private List<Member> members = new Vector<Member>();
@@ -135,9 +135,14 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 				this.addressGroupMembers.add(member));
 	}
 
-	public void addContact(final LinkPersonAddressExtendedField contact)
+	public void addContact(final LinkPersonAddressContact contact)
 	{
 		this.propertyChangeSupport.firePropertyChange("addContact", this.contacts, this.contacts.add(contact));
+	}
+
+	public void removeContact(final LinkPersonAddressContact contact)
+	{
+		this.propertyChangeSupport.firePropertyChange("removeContact", this.contacts, this.contacts.remove(contact));
 	}
 
 	public void addDonation(final Donation donation)
@@ -161,32 +166,6 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		this.propertyChangeSupport.firePropertyChange("participants", this.participants,
 				this.participants.add(participant));
 	}
-
-	// public LinkPersonAddress copy()
-	// {
-	// LinkPersonAddress copy = (LinkPersonAddress)
-	// AbstractEntity.copy(LinkPersonAddress.newInstance());
-	// copy.setAddress(this.getAddress());
-	// copy.setAddressType(this.getAddressType());
-	// copy.setEmail(this.getEmail());
-	// copy.setFunction(this.getFunction());
-	// copy.setPerson(this.getPerson());
-	// copy.setPhone(this.getPhone());
-	// return copy;
-	// }
-	//
-	// public LinkPersonAddress copy(final AddressType addressType)
-	// {
-	// LinkPersonAddress copy = (LinkPersonAddress)
-	// AbstractEntity.newInstance(LinkPersonAddress.newInstance());
-	// copy.setAddress(this.getAddress());
-	// copy.setAddressType(addressType);
-	// copy.setEmail(this.getEmail());
-	// copy.setFunction(this.getFunction());
-	// copy.setPerson(this.getPerson());
-	// copy.setPhone(this.getPhone());
-	// return copy;
-	// }
 
 	public Address getAddress()
 	{
@@ -229,8 +208,21 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		return false;
 	}
 
-	public List<LinkPersonAddressExtendedField> getContacts()
+	public List<LinkPersonAddressContact> getContacts()
 	{
+		return contacts;
+	}
+
+	public List<LinkPersonAddressContact> getValidContacts()
+	{
+		List<LinkPersonAddressContact> contacts = new ArrayList<LinkPersonAddressContact>();
+		for (LinkPersonAddressContact contact : this.contacts)
+		{
+			if (contact.isValid())
+			{
+				contacts.add(contact);
+			}
+		}
 		return contacts;
 	}
 

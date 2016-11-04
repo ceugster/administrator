@@ -230,6 +230,10 @@ public class Activator extends AbstractUIPlugin
 	{
 		super.initializeImageRegistry(imageRegistry);
 		imageRegistry.put("WIZARD", ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/defcon_wiz.png")));
+		imageRegistry.put("phone", ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/phone_16.png")));
+		imageRegistry.put("mobile", ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/mobile_16.png")));
+		imageRegistry.put("email", ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/email_16.png")));
+		imageRegistry.put("browse", ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/browse_16.png")));
 	}
 
 	private IStatus readProperties()

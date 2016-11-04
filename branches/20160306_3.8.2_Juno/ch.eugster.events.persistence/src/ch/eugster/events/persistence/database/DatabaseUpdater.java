@@ -135,7 +135,8 @@ public abstract class DatabaseUpdater
 			statement = connection.createStatement();
 			try
 			{
-				return statement.execute(query);
+				statement.execute(query);
+				return true;
 			}
 			finally
 			{
@@ -167,6 +168,8 @@ public abstract class DatabaseUpdater
 
 	protected abstract String getClobTypeName();
 
+	protected abstract String getBlobTypeName();
+	
 	protected abstract String getCurrentDate();
 
 	protected abstract String getEngine();
@@ -1531,6 +1534,231 @@ public abstract class DatabaseUpdater
 							log(LogService.LOG_INFO, builder.toString());
 							System.out.println(builder.toString());
 							ok = executeSqlQuery(con, builder.toString());
+						}
+					}
+					if (structureVersion == 40)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						String tableName = "events_contact_type";
+						String[] columnNames = { "contact_type_id",
+												 "contact_type_code",
+												 "contact_type_name",
+												 "contact_type_description",
+												 "contact_type_protocol",
+												 "contact_type_icon",
+												 "contact_type_deleted",
+												 "contact_type_version",
+												 "contact_type_user_id",
+												 "contact_type_updated",
+												 "contact_type_inserted" };
+						String[] dataTypes = {
+								"int(10)",
+								"varchar(15)",
+								"varchar(255)",
+								"varchar(6000)",
+								"int(10)",
+								this.getBlobTypeName(),
+								"int(1)",
+								"int(10)",
+								"int(10)",
+								"datetime",
+								"datetime" };
+						String[] defaults = {
+								"NOT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL" };
+						String primaryKey = "contact_type_id";
+						if (!tableExists(con, tableName))
+						{
+							String sql = getCreateTable(tableName, columnNames, dataTypes, defaults, primaryKey, new String[0]);
+							log(LogService.LOG_INFO, sql);
+							System.out.println(sql);
+							ok = executeSqlQuery(con, sql);
+						}
+						tableName = "events_contact";
+						columnNames = new String[] { "contact_id",
+												 "contact_contact_type_id",
+												 "contact_country_id",
+												 "contact_discriminator",
+												 "contact_name",
+												 "contact_value",
+												 "contact_owner_id",
+												 "contact_deleted",
+												 "contact_version",
+												 "contact_user_id",
+												 "contact_updated",
+												 "contact_inserted" };
+						dataTypes = new String[] {
+								"int(10)",
+								"int(10)",
+								"int(10)",
+								"char(1)",
+								"varchar(255)",
+								this.getClobTypeName(),
+								"int(10)",
+								"int(1)",
+								"int(10)",
+								"int(10)",
+								"datetime",
+								"datetime" };
+						defaults = new String[] {
+								"NOT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"NOT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL" };
+						primaryKey = "contact_id";
+						if (!tableExists(con, tableName))
+						{
+							String sql = getCreateTable(tableName, columnNames, dataTypes, defaults, primaryKey, new String[0]);
+							log(LogService.LOG_INFO, sql);
+							System.out.println(sql);
+							ok = executeSqlQuery(con, sql);
+						}
+						updateSequenceTable(con);
+						String sql = "SELECT contact_type_id FROM events_contact_type WHERE contact_type_id = 1";
+						ResultSet results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							sql = "INSERT INTO events_contact_type VALUES (1, '', 'Telefon', '', 0, null, 0, 0, null, null, null)";
+							stm.executeUpdate(sql);
+						}
+						results.close();
+						sql = "SELECT contact_type_id FROM events_contact_type WHERE contact_type_id = 2";
+						results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							sql = "INSERT INTO events_contact_type VALUES (2, '', 'Mobile', '', 1, null, 0, 0, null, null, null)";
+							stm.executeUpdate(sql);
+						}
+						results.close();
+						sql = "SELECT contact_type_id FROM events_contact_type WHERE contact_type_id = 3";
+						results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							sql = "INSERT INTO events_contact_type VALUES (3, '', 'Email', '', 2, null, 0, 0, null, null, null)";
+							stm.executeUpdate(sql);
+						}
+						results.close();
+						sql = "SELECT contact_type_id FROM events_contact_type WHERE contact_type_id = 4";
+						results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							sql = "INSERT INTO events_contact_type VALUES (4, '', 'Website', '', 3, null, 0, 0, null, null, null)";
+							stm.executeUpdate(sql);
+						}
+						results.close();
+						sql = "SELECT contact_type_id FROM events_contact_type WHERE contact_type_id = 5";
+						results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							sql = "INSERT INTO events_contact_type VALUES (5, '', 'Andere', '', 4, null, 0, 0, null, null, null)";
+							stm.executeUpdate(sql);
+						}
+						results.close();
+					}
+					if (structureVersion == 41)
+					{
+						if (!tableExists(con, "events_school_level"))
+						{
+							ok = executeSqlQuery(
+									con,
+									new StringBuilder("CREATE TABLE events_school_level (")
+											.append("school_level_id BIGINT UNSIGNED NOT NULL, ")
+											.append("school_level_deleted TINYINT DEFAULT NULL, ")
+											.append("school_level_version INTEGER DEFAULT NULL, ")
+											.append("school_level_inserted DATETIME DEFAULT NULL, ")
+											.append("school_level_updated DATETIME DEFAULT NULL, ")
+											.append("school_level_user_id BIGINT DEFAULT NULL, ")
+											.append("school_level_name VARCHAR(255) DEFAULT NULL)").toString());
+							ok = executeSqlQuery(con,
+									"ALTER TABLE events_school_level ADD PRIMARY KEY (school_level_id)");
+							ok = executeSqlQuery(con,
+									"CREATE INDEX idx_school_level_name ON events_school_level(school_level_name)");
+						}
+						String sql = "SELECT school_level_id FROM events_school_level WHERE school_level_id = 1";
+						ResultSet results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							ok = executeSqlQuery(
+									con,
+									"INSERT INTO events_school_level (school_level_id, school_level_name, school_level_version, school_level_deleted) VALUES (1, \"Kindergarten\", 0, 0);");
+						}
+						results.close();
+						sql = "SELECT school_level_id FROM events_school_level WHERE school_level_id = 2";
+						results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							ok = executeSqlQuery(
+									con,
+									"INSERT INTO events_school_level (school_level_id, school_level_name, school_level_version, school_level_deleted) VALUES (2, \"Unterstufe\", 0, 0);");
+						}
+						results.close();
+						sql = "SELECT school_level_id FROM events_school_level WHERE school_level_id = 3";
+						results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							ok = executeSqlQuery(
+									con,
+									"INSERT INTO events_school_level (school_level_id, school_level_name, school_level_version, school_level_deleted) VALUES (3, \"Mittelstufe\", 0, 0);");
+						}
+						results.close();
+						sql = "SELECT school_level_id FROM events_school_level WHERE school_level_id = 4";
+						results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							ok = executeSqlQuery(
+									con,
+									"INSERT INTO events_school_level (school_level_id, school_level_name, school_level_version, school_level_deleted) VALUES (4, \"Oberstufe\", 0, 0);");
+						}
+						results.close();
+
+						if (!rowExists(con, "events_sequence", "seq_name", "events_school_level_id_seq", "'"))
+						{
+							ok = executeSqlQuery(con,
+									"INSERT INTO events_sequence (seq_name, seq_count) VALUES ('events_school_level_id_seq', 5);");
+						}
+						
+						if (tableExists(con, "events_school_class"))
+						{
+							ok = executeSqlQuery(con, "DROP TABLE events_school_class");
+						}
+						
+						if (columnExists(con, "events_visit", "visit_school_class_id"))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE events_visit\n")
+									.append("\tCHANGE COLUMN visit_school_class_id visit_school_level_id INT(10) NULL DEFAULT NULL,\n")
+									.append("\tDROP INDEX visit_school_class_id,\n")
+									.append("\tADD INDEX visit_school_level_id (visit_school_level_id ASC)");
+							ok = executeSqlQuery(con, builder.toString());
+						}
+					}
+					if (structureVersion == 42)
+					{
+						if (!columnExists(con, "events_teacher", "teacher_notes"))
+						{
+							ok = executeSqlQuery(con,
+									"ALTER TABLE events_teacher ADD COLUMN teacher_notes " + this.getClobTypeName() + " NULL");
+						}
+						if (!columnExists(con, "events_visit", "visit_notes"))
+						{
+							ok = executeSqlQuery(con,
+									"ALTER TABLE events_visit ADD COLUMN visit_notes " + this.getClobTypeName() + " NULL");
 						}
 					}
 					if (ok)

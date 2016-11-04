@@ -9,6 +9,8 @@ import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
 
 import ch.eugster.events.persistence.model.Country;
+import ch.eugster.events.persistence.model.FieldExtension;
+import ch.eugster.events.persistence.model.FieldExtensionTarget;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.PersonSex;
 import ch.eugster.events.persistence.model.PersonTitle;
@@ -230,6 +232,90 @@ public class PersonQuery extends AbstractEntityQuery<Person>
 	{
 		Expression expression = createCriteriaExpression(criteria, new ExpressionBuilder(Person.class));
 		return select(Person.class, expression, maxResults);
+	}
+
+	public List<Person> selectByCriteria(final Map<String, String> criteria,
+			final Map<String, FieldExtension> extensions, final int maxResults)
+	{
+		Expression expression = createCriteriaExpression(criteria, extensions, new ExpressionBuilder(
+				Person.class));
+		List<Person> persons = select(Person.class, expression, maxResults);
+		return persons;
+	}
+	
+	private Expression createCriteriaExpression(final Map<String, String> criteria,
+			final Map<String, FieldExtension> extensions, Expression expression)
+	{
+		Expression extended = null;
+		Set<Entry<String, String>> entries = criteria.entrySet();
+		for (Entry<String, String> entry : entries)
+		{
+			if (entry.getKey().equals("lastname"))
+			{
+				expression = expression.and(getLastnameExpression(entry.getValue()));
+			}
+			else if (entry.getKey().equals("firstname"))
+			{
+				expression = expression.and(getFirstnameExpression(entry.getValue()));
+			}
+			else if (entry.getKey().equals("organization"))
+			{
+				expression = expression.and(getOrganizationExpression(entry.getValue()));
+			}
+			else if (entry.getKey().equals("address"))
+			{
+				expression = expression.and(getAddressExpression(entry.getValue()));
+			}
+			else if (entry.getKey().equals("city"))
+			{
+				expression = expression.and(getCityExpression(entry.getValue()));
+			}
+			else if (entry.getKey().equals("phone"))
+			{
+				expression = expression.and(getPhoneExpression(entry.getValue()));
+			}
+			else if (entry.getKey().equals("email"))
+			{
+				expression = expression.and(getEmailExpression(entry.getValue()));
+			}
+			else
+			{
+				FieldExtension extension = extensions.get(entry.getKey());
+				if (extension != null)
+				{
+					if (extended == null)
+					{
+						extended = getExtendedExpression(extension, entry.getValue());
+					}
+					else
+					{
+						Expression expr = getExtendedExpression(extension, entry.getValue());
+						if (expr != null)
+						{
+							extended.and(expr);
+						}
+					}
+				}
+			}
+		}
+		return expression;
+	}
+
+	private Expression getExtendedExpression(final FieldExtension extension, final String value)
+	{
+		if (extension.getTarget().equals(FieldExtensionTarget.PA_LINK))
+		{
+			return new ExpressionBuilder().anyOf("links").anyOf("extendedFields").get("fieldExtension").get("id")
+					.equal(extension.getId())
+					.and(new ExpressionBuilder().anyOf("extendedFields").get("value").equal(value));
+		}
+		else if (extension.getTarget().equals(FieldExtensionTarget.PERSON))
+		{
+			return new ExpressionBuilder().anyOf("extendedFields").get("fieldExtension").get("id")
+					.equal(extension.getId())
+					.and(new ExpressionBuilder().get("person").anyOf("extendedFields").get("value").equal(value));
+		}
+		return null;
 	}
 
 }

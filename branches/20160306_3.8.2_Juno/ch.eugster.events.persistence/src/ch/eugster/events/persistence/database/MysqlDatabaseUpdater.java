@@ -9,6 +9,12 @@ public class MysqlDatabaseUpdater extends DatabaseUpdater
 	}
 
 	@Override
+	protected String getBlobTypeName()
+	{
+		return "BLOB";
+	}
+
+	@Override
 	protected String getCurrentDate()
 	{
 		return "CURRENT_DATE()";

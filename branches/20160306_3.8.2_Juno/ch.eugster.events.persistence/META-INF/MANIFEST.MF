@@ -10,7 +10,7 @@ Bundle-ClassPath: lib/mysql-connector-java-3.0.11-stable-bin.jar,
  lib/derby.jar,
  lib/derbyclient.jar,
  lib/sqljdbc4.jar,
- lib/libphonenumber-5.5.jar,
+ lib/libphonenumber-7.7.2.jar,
  .
 Export-Package: ch.eugster.events.persistence.events,
  ch.eugster.events.persistence.exceptions,
