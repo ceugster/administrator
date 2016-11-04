@@ -1,13 +1,13 @@
 package ch.eugster.events.visits.editors;
 
-import ch.eugster.events.persistence.model.SchoolClass;
+import ch.eugster.events.persistence.model.SchoolLevel;
 import ch.eugster.events.ui.editors.AbstractEntityEditorInput;
 
-public class SchoolClassEditorInput extends AbstractEntityEditorInput<SchoolClass>
+public class SchoolLevelEditorInput extends AbstractEntityEditorInput<SchoolLevel>
 {
-	public SchoolClassEditorInput(SchoolClass schoolClass)
+	public SchoolLevelEditorInput(SchoolLevel schoolLevel)
 	{
-		entity = schoolClass;
+		entity = schoolLevel;
 	}
 
 	@Override

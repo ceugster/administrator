@@ -33,7 +33,7 @@ public class VisitTodoFilter extends ViewerFilter
 			{
 				return true;
 			}
-			if (visit.getSchoolClass() == null)
+			if (visit.getSchoolLevel() == null)
 			{
 				return true;
 			}

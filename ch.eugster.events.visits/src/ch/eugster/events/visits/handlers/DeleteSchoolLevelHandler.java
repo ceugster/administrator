@@ -12,20 +12,20 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.model.Appliance;
-import ch.eugster.events.persistence.model.SchoolClass;
+import ch.eugster.events.persistence.model.SchoolLevel;
 import ch.eugster.events.persistence.model.Visit;
-import ch.eugster.events.persistence.queries.SchoolClassQuery;
+import ch.eugster.events.persistence.queries.SchoolLevelQuery;
 import ch.eugster.events.persistence.queries.VisitQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.visits.Activator;
 
-public class DeleteSchoolClassHandler extends AbstractHandler
+public class DeleteSchoolLevelHandler extends AbstractHandler
 {
 	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private ConnectionService connectionService;
 
-	public DeleteSchoolClassHandler()
+	public DeleteSchoolLevelHandler()
 	{
 		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class.getName(), null)
@@ -61,18 +61,18 @@ public class DeleteSchoolClassHandler extends AbstractHandler
 				StructuredSelection ssel = (StructuredSelection) selection;
 				if (ssel.getFirstElement() instanceof Appliance)
 				{
-					SchoolClass schoolClass = (SchoolClass) ssel.getFirstElement();
+					SchoolLevel schoolLevel = (SchoolLevel) ssel.getFirstElement();
 					if (connectionService != null)
 					{
 						IWorkbenchPart part = (IWorkbenchPart) context.getParent().getVariable("activePart");
 						Shell shell = part.getSite().getShell();
 
 						VisitQuery visitQuery = (VisitQuery) connectionService.getQuery(Visit.class);
-						if (visitQuery.countSchoolClasses(schoolClass) == 0L)
+						if (visitQuery.countSchoolLevels(schoolLevel) == 0L)
 						{
 							String title = "Löschbestätigung";
 							StringBuilder msg = new StringBuilder("Soll die ausgewählte Schulklasse "
-									+ schoolClass.getName() + " entfernt werden?");
+									+ schoolLevel.getName() + " entfernt werden?");
 							int icon = MessageDialog.QUESTION;
 							String[] buttons = new String[] { "Ja", "Nein" };
 							MessageDialog dialog = new MessageDialog(shell, title, null, msg.toString(), icon, buttons,
@@ -81,17 +81,17 @@ public class DeleteSchoolClassHandler extends AbstractHandler
 							{
 								if (connectionService != null)
 								{
-									SchoolClassQuery deleteQuery = (SchoolClassQuery) connectionService
-											.getQuery(SchoolClass.class);
-									deleteQuery.delete(schoolClass);
+									SchoolLevelQuery deleteQuery = (SchoolLevelQuery) connectionService
+											.getQuery(SchoolLevel.class);
+									deleteQuery.delete(schoolLevel);
 								}
 							}
 						}
 						else
 						{
-							String title = schoolClass.getName();
+							String title = schoolLevel.getName();
 							StringBuilder msg = new StringBuilder("Die ausgewählte Schulklasse "
-									+ schoolClass.getName() + " kann nicht entfernt werden, da sie in Verwendung ist.");
+									+ schoolLevel.getName() + " kann nicht entfernt werden, da sie in Verwendung ist.");
 							int icon = MessageDialog.INFORMATION;
 							String[] buttons = new String[] { "OK" };
 							MessageDialog dialog = new MessageDialog(shell, title, null, msg.toString(), icon, buttons,
