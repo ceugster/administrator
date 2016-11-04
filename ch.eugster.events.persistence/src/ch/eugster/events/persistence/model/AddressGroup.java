@@ -157,7 +157,7 @@ public class AddressGroup extends AbstractEntity
 		List<AddressGroupMember> validMembers = new ArrayList<AddressGroupMember>();
 		for (AddressGroupMember member : this.addressGroupMembers)
 		{
-			if (!member.isDeleted() && !member.getAddress().isDeleted() && (member.getLink() == null || !member.getLink().isDeleted()))
+			if (!member.isDeleted() && (member.getAddress() == null || !member.getAddress().isDeleted()) && (member.getLink() == null || !member.getLink().isDeleted()))
 			{
 				validMembers.add(member);
 			}

@@ -50,8 +50,8 @@ public class Visit extends AbstractEntity
 	private Teacher teacher;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "visit_school_class_id", referencedColumnName = "school_class_id")
-	private SchoolClass schoolClass;
+	@JoinColumn(name = "visit_school_level_id", referencedColumnName = "school_level_id")
+	private SchoolLevel schoolLevel;
 
 	/**
 	 * Data
@@ -110,6 +110,10 @@ public class Visit extends AbstractEntity
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "visit_end")
 	private Calendar end;
+
+	@Basic
+	@Column(name = "visit_notes")
+	private String notes;
 
 	@OneToMany(mappedBy = "visit", cascade = ALL)
 	private List<VisitAppliance> appliances = new Vector<VisitAppliance>();
@@ -203,9 +207,9 @@ public class Visit extends AbstractEntity
 		return pupils;
 	}
 
-	public SchoolClass getSchoolClass()
+	public SchoolLevel getSchoolLevel()
 	{
-		return schoolClass;
+		return schoolLevel;
 	}
 
 	public SelectedEmail getSelectedEmail()
@@ -233,6 +237,10 @@ public class Visit extends AbstractEntity
 		return teacher;
 	}
 
+	public String getNotes()
+	{
+		return stringValueOf(this.notes);
+	}
 	public VisitTheme getTheme()
 	{
 		return theme;
@@ -322,9 +330,9 @@ public class Visit extends AbstractEntity
 		this.propertyChangeSupport.firePropertyChange("pupils", this.pupils, this.pupils = pupils);
 	}
 
-	public void setSchoolClass(final SchoolClass schoolClass)
+	public void setSchoolLevel(final SchoolLevel schoolLevel)
 	{
-		this.propertyChangeSupport.firePropertyChange("schoolClass", this.schoolClass, this.schoolClass = schoolClass);
+		this.propertyChangeSupport.firePropertyChange("schoolLevel", this.schoolLevel, this.schoolLevel = schoolLevel);
 	}
 
 	public void setColor(final int color)
@@ -342,6 +350,12 @@ public class Visit extends AbstractEntity
 	{
 		this.propertyChangeSupport.firePropertyChange("phone", this.selectedPhone,
 				this.selectedPhone = phone == null ? SelectedPhone.NONE : phone);
+	}
+
+	public void setNotes(final String notes)
+	{
+		this.propertyChangeSupport.firePropertyChange("notes", this.notes,
+				this.notes = notes == null || notes.isEmpty() ? null : notes);
 	}
 
 	public void setStart(final Calendar start)

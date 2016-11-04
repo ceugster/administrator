@@ -128,6 +128,9 @@ public class Address extends AbstractEntity implements Donator
 	@OneToMany(cascade = ALL, mappedBy = "address")
 	private List<BankAccount> bankAccounts = new Vector<BankAccount>();
 
+	@OneToMany(cascade = ALL, mappedBy = "address")
+	private List<AddressContact> contacts = new Vector<AddressContact>();
+
 	/*
 	 * Constructor
 	 */
@@ -150,6 +153,11 @@ public class Address extends AbstractEntity implements Donator
 	public void addLink(final LinkPersonAddress link)
 	{
 		this.propertyChangeSupport.firePropertyChange("links", this.links, this.links.add(link));
+	}
+	
+	public void addContact(AddressContact contact)
+	{
+		this.propertyChangeSupport.firePropertyChange("addContact", this.contacts, this.contacts.add(contact));
 	}
 
 	// public boolean isManualMailingAddress()
@@ -213,6 +221,24 @@ public class Address extends AbstractEntity implements Donator
 		return addressGroupMembers;
 	}
 
+	public List<AddressContact> getContacts()
+	{
+		return this.contacts;
+	}
+	
+	public List<AddressContact> getValidContacts()
+	{
+		List<AddressContact> contacts = new ArrayList<AddressContact>();
+		for (AddressContact contact : this.contacts)
+		{
+			if (contact.isValid())
+			{
+				contacts.add(contact);
+			}
+		}
+		return contacts;
+	}
+	
 	// public void setMailingAddress(String mailingAddress)
 	// {
 	// this.mailingAddress = mailingAddress;
