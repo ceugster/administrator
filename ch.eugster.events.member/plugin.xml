@@ -250,5 +250,48 @@
    <extension
          point="org.eclipse.ui.bindings">
    </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            id="ch.eugster.events.member.editor.membership"
+            targetID="ch.eugster.events.member.editor">
+         <action
+               class="ch.eugster.events.ui.actions.ResetFormEditorActionDelegate"
+               definitionId="org.eclipse.ui.file.revert"
+               disabledIcon="icons/reset_grey_16.png"
+               hoverIcon="icons/reset_16.png"
+               icon="icons/reset_16.png"
+               id="ch.eugster.events.member.editor.revert"
+               label="Revert"
+               mode="FORCE_TEXT"
+               style="push"
+               toolbarPath="ch.eugster.events.ui.toolbar.editor.actions"
+               tooltip="Verwerfen der vorgenommenen Änderungen">
+         </action>
+         <action
+               class="ch.eugster.events.ui.actions.SaveFormEditorActionDelegate"
+               definitionId="org.eclipse.ui.file.save"
+               disabledIcon="icons/save_grey_16.png"
+               hoverIcon="icons/save_16.png"
+               icon="icons/save_16.png"
+               id="ch.eugster.events.member.editor.save"
+               label="Save"
+               mode="FORCE_TEXT"
+               style="push"
+               toolbarPath="ch.eugster.events.ui.toolbar.editor.actions"
+               tooltip="Speichern der vorgenommenen Änderungen">
+         </action>
+      </editorContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="ch.eugster.events.member.editors.MembershipEditor"
+            default="false"
+            icon="icons/member_16.png"
+            id="ch.eugster.events.member.editor"
+            name="Mitgliedschaften">
+      </editor>
+   </extension>
 
 </plugin>
