@@ -765,7 +765,8 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 		info.setLayout(new GridLayout(3, true));
 
 		this.showDeleted = new Button(info, SWT.CHECK);
-		this.showDeleted.setText("Entfernte Personen zeigen");
+		this.showDeleted.setText("Gelöschte Objekte zeigen");
+		this.showDeleted.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.showDeleted.addSelectionListener(new SelectionListener()
 		{
 			@Override
@@ -1157,7 +1158,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor)
 					{
-						refreshViewer(entity);
+						refreshViewer();
 						packColumns();
 						return Status.OK_STATUS;
 					}

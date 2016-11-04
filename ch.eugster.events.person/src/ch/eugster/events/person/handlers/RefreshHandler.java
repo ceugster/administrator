@@ -29,30 +29,35 @@ public class RefreshHandler extends ConnectionServiceDependentAbstractHandler
 			EvaluationContext context = (EvaluationContext) ctx;
 			Object sel = context.getVariable("selection");
 			Object part = context.getVariable("activePart");
-			if (sel instanceof IStructuredSelection)
+			if (part instanceof PersonView)
 			{
-				IStructuredSelection ssel = (IStructuredSelection) sel;
-				Iterator<?> iterator = ssel.iterator();
-				while (iterator.hasNext())
-				{
-					Object entity = iterator.next();
-					if (entity instanceof Person)
-					{
-						Person person = refresh((Person) entity);
-						updateViewer(part, person);
-					}
-					else if (entity instanceof Address)
-					{
-						Address address = refresh((Address) entity);
-						updateViewer(part, address);
-					}
-					else if (entity instanceof LinkPersonAddress)
-					{
-						LinkPersonAddress link = refresh((LinkPersonAddress) entity);
-						updateViewer(part, link);
-					}
-				}
+				PersonView view = (PersonView) part;
+				view.getSearcher().schedule();
 			}
+//			if (sel instanceof IStructuredSelection)
+//			{
+//				IStructuredSelection ssel = (IStructuredSelection) sel;
+//				Iterator<?> iterator = ssel.iterator();
+//				while (iterator.hasNext())
+//				{
+//					Object entity = iterator.next();
+//					if (entity instanceof Person)
+//					{
+//						Person person = refresh((Person) entity);
+//						updateViewer(part, person);
+//					}
+//					else if (entity instanceof Address)
+//					{
+//						Address address = refresh((Address) entity);
+//						updateViewer(part, address);
+//					}
+//					else if (entity instanceof LinkPersonAddress)
+//					{
+//						LinkPersonAddress link = refresh((LinkPersonAddress) entity);
+//						updateViewer(part, link);
+//					}
+//				}
+//			}
 		}
 		return Status.OK_STATUS;
 	}
