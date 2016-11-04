@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -68,14 +69,17 @@ import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.exceptions.PersistenceException;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.formatters.AddressFormatter;
+import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
+import ch.eugster.events.persistence.model.AddressSalutation;
 import ch.eugster.events.persistence.model.Appliance;
+import ch.eugster.events.persistence.model.Country;
 import ch.eugster.events.persistence.model.ISelectedEmailProvider;
 import ch.eugster.events.persistence.model.ISelectedPhoneProvider;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.LinkPersonAddressChild;
-import ch.eugster.events.persistence.model.SchoolClass;
+import ch.eugster.events.persistence.model.SchoolLevel;
 import ch.eugster.events.persistence.model.SelectedEmail;
 import ch.eugster.events.persistence.model.SelectedPhone;
 import ch.eugster.events.persistence.model.Teacher;
@@ -86,7 +90,7 @@ import ch.eugster.events.persistence.model.VisitVisitor;
 import ch.eugster.events.persistence.model.VisitVisitor.VisitorType;
 import ch.eugster.events.persistence.model.Visitor;
 import ch.eugster.events.persistence.queries.ApplianceQuery;
-import ch.eugster.events.persistence.queries.SchoolClassQuery;
+import ch.eugster.events.persistence.queries.SchoolLevelQuery;
 import ch.eugster.events.persistence.queries.TeacherQuery;
 import ch.eugster.events.persistence.queries.VisitThemeQuery;
 import ch.eugster.events.persistence.queries.VisitorQuery;
@@ -98,12 +102,30 @@ import ch.eugster.events.ui.editors.AbstractEntityEditor;
 import ch.eugster.events.ui.editors.AbstractEntityEditorInput;
 import ch.eugster.events.visits.Activator;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
+
 public class VisitEditor extends AbstractEntityEditor<Teacher>
 {
 	public static final String ID = "ch.eugster.events.visits.visit.editor";
 
+	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+
+	/*
+	 * Visit
+	 */
+	private ComboViewer stateViewer;
+
 	private ComboViewer themeViewer;
 
+	/*
+	 * State
+	 */
+	/*
+	 * Teacher Data
+	 */
 	private ComboViewer teacherViewer;
 
 	private Text reachableTime;
@@ -112,25 +134,14 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 
 	private ComboViewer teacherEmailViewer;
 
-	private ComboViewer schoolClassViewer;
-
 	private ImageHyperlink editPerson;
 
 	private ImageHyperlink sendTeacherEmail;
 
-	private Text name;
-
-	private Text addressPhone;
-
-	private Text addressEmail;
-
-	private ImageHyperlink sendAddressEmail;
-
-	private CheckboxTableViewer applianceViewer;
-
-	private Text city;
-
-	private Text address;
+	/*
+	 * SchoolClass
+	 */
+	private ComboViewer schoolLevelViewer;
 
 	private Text floor;
 
@@ -140,6 +151,34 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 
 	private Spinner pupils;
 
+	/*
+	 * Address
+	 */
+	private Text salutation;
+	
+	private Text name;
+	
+	private Text address;
+
+	private Text pob;
+	
+	private Text anotherLine;
+
+	private Text city;
+
+	private Text province;
+	
+	private Text addressPhone;
+
+	private Text addressFax;
+	
+	private Text addressEmail;
+
+	private ImageHyperlink sendAddressEmail;
+
+	/*
+	 * Visitors
+	 */
 	private ComboViewer[] visitorViewers;
 
 	private ComboViewer[] visitorPhoneViewers;
@@ -152,8 +191,13 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 
 	private CDateTime end;
 
-	private ComboViewer stateViewer;
+	private CheckboxTableViewer applianceViewer;
 
+	/*
+	 * Bemerkungen
+	 */
+	private Text notes;
+	
 	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	@Override
@@ -171,6 +215,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		this.createAddressSection(parent);
 		this.createVisitorSection(parent);
 		this.createApplianceSection(parent);
+		this.createNotesSection(parent);
 
 		startConnectionTracking();
 		addEntityListeners();
@@ -194,9 +239,9 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				visitorViewers[visitorType.ordinal()].add(entity);
 			}
 		}
-		else if (entity instanceof SchoolClass)
+		else if (entity instanceof SchoolLevel)
 		{
-			schoolClassViewer.add(entity);
+			schoolLevelViewer.add(entity);
 		}
 		else if (entity instanceof Appliance)
 		{
@@ -232,9 +277,9 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				visitorViewers[visitorType.ordinal()].refresh();
 			}
 		}
-		else if (entity instanceof SchoolClass)
+		else if (entity instanceof SchoolLevel)
 		{
-			schoolClassViewer.refresh();
+			schoolLevelViewer.refresh();
 		}
 		else if (entity instanceof Appliance)
 		{
@@ -270,9 +315,9 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				visitorViewers[visitorType.ordinal()].refresh();
 			}
 		}
-		else if (entity instanceof SchoolClass)
+		else if (entity instanceof SchoolLevel)
 		{
-			schoolClassViewer.refresh();
+			schoolLevelViewer.refresh();
 		}
 		else if (entity instanceof Appliance)
 		{
@@ -298,9 +343,9 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				visitorViewers[visitorType.ordinal()].refresh();
 			}
 		}
-		else if (entity instanceof SchoolClass)
+		else if (entity instanceof SchoolLevel)
 		{
-			schoolClassViewer.refresh();
+			schoolLevelViewer.refresh();
 		}
 		else if (entity instanceof Appliance)
 		{
@@ -331,8 +376,8 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 					visitorViewers[visitorType.ordinal()].setInput(visitors.toArray(new Visitor[0]));
 					visitorViewers[visitorType.ordinal()].setSelection(selection);
 				}
-				SchoolClassQuery schoolClassQuery = (SchoolClassQuery) service.getQuery(SchoolClass.class);
-				schoolClassViewer.setInput(schoolClassQuery.selectAll().toArray(new SchoolClass[0]));
+				SchoolLevelQuery schoolLevelQuery = (SchoolLevelQuery) service.getQuery(SchoolLevel.class);
+				schoolLevelViewer.setInput(schoolLevelQuery.selectAll().toArray(new SchoolLevel[0]));
 				ApplianceQuery applianceQuery = (ApplianceQuery) service.getQuery(Appliance.class);
 				applianceViewer.setInput(applianceQuery.selectAll().toArray(new Appliance[0]));
 				TableColumn[] tableColumns = applianceViewer.getTable().getColumns();
@@ -354,7 +399,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 					visitorViewers[visitorType.ordinal()].setInput(new Visitor[0]);
 					visitorViewers[visitorType.ordinal()].setSelection(selection);
 				}
-				schoolClassViewer.setInput(new SchoolClass[0]);
+				schoolLevelViewer.setInput(new SchoolLevel[0]);
 			}
 
 		};
@@ -365,7 +410,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 	{
 		EntityMediator.addListener(VisitTheme.class, this);
 		EntityMediator.addListener(Teacher.class, this);
-		EntityMediator.addListener(SchoolClass.class, this);
+		EntityMediator.addListener(SchoolLevel.class, this);
 		EntityMediator.addListener(Visitor.class, this);
 		EntityMediator.addListener(Visit.class, this);
 	}
@@ -523,6 +568,55 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		return composite;
 	}
 
+	private void createNotesSection(ScrolledForm parent)
+	{
+		ColumnLayoutData layoutData = new ColumnLayoutData();
+		layoutData.widthHint = 200;
+		TableWrapLayout sectionLayout = new TableWrapLayout();
+		sectionLayout.numColumns = 1;
+
+		Section section = this.formToolkit.createSection(this.scrolledForm.getBody(), ExpandableComposite.EXPANDED
+				| ExpandableComposite.COMPACT | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
+		section.setLayoutData(layoutData);
+		section.setLayout(sectionLayout);
+		section.setText("Bemerkungen");
+		section.setClient(this.fillNotesSection(section));
+		section.addExpansionListener(new ExpansionAdapter()
+		{
+			@Override
+			public void expansionStateChanged(ExpansionEvent e)
+			{
+				VisitEditor.this.scrolledForm.reflow(true);
+			}
+		});
+	}
+
+	private Control fillNotesSection(Section parent)
+	{
+		GridLayout layout = new GridLayout();
+
+		Composite composite = this.formToolkit.createComposite(parent);
+		composite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		composite.setLayout(layout);
+
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 48;
+		notes = formToolkit.createText(composite, "");
+		notes.setLayoutData(gridData);
+		notes.addModifyListener(new ModifyListener()
+		{
+			@Override
+			public void modifyText(ModifyEvent e) 
+			{
+				setDirty(true);
+			}
+		});
+
+		this.formToolkit.paintBordersFor(composite);
+
+		return composite;
+	}
+
 	private void createTeacherSection(ScrolledForm parent)
 	{
 		ColumnLayoutData layoutData = new ColumnLayoutData();
@@ -557,6 +651,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 
 		CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
 		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
 
 		this.teacherViewer = new ComboViewer(combo);
 		this.teacherViewer.setContentProvider(new ArrayContentProvider());
@@ -568,7 +663,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				if (element instanceof Teacher)
 				{
 					Teacher teacher = (Teacher) element;
-					return PersonFormatter.getInstance().formatLastnameFirstname(teacher.getLink().getPerson());
+					return LinkPersonAddressFormatter.getInstance().formatPersonAndAddress(teacher.getLink());
 				}
 				return "";
 			}
@@ -803,38 +898,8 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		composite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		composite.setLayout(layout);
 
+
 		Label label = this.formToolkit.createLabel(composite, "Schulklasse", SWT.NONE);
-		label.setLayoutData(new GridData());
-
-		CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
-		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
-
-		this.schoolClassViewer = new ComboViewer(combo);
-		this.schoolClassViewer.setContentProvider(new ArrayContentProvider());
-		this.schoolClassViewer.setLabelProvider(new LabelProvider()
-		{
-			@Override
-			public String getText(Object element)
-			{
-				if (element instanceof SchoolClass)
-				{
-					SchoolClass schoolClass = (SchoolClass) element;
-					return schoolClass.getName();
-				}
-				return "";
-			}
-		});
-		this.schoolClassViewer.addSelectionChangedListener(new ISelectionChangedListener()
-		{
-			@Override
-			public void selectionChanged(SelectionChangedEvent event)
-			{
-				VisitEditor.this.setDirty(true);
-			}
-		});
-
-		label = this.formToolkit.createLabel(composite, "Bezeichnung", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		this.className = this.formToolkit.createText(composite, "", SWT.FLAT);
@@ -847,7 +912,38 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				VisitEditor.this.setDirty(true);
 			}
 		});
-		this.schoolClassViewer.addFilter(new DeletedEntityFilter());
+
+		label = this.formToolkit.createLabel(composite, "Auswertungsstufe", SWT.NONE);
+		label.setLayoutData(new GridData());
+
+		CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
+
+		this.schoolLevelViewer = new ComboViewer(combo);
+		this.schoolLevelViewer.setContentProvider(new ArrayContentProvider());
+		this.schoolLevelViewer.setLabelProvider(new LabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				if (element instanceof SchoolLevel)
+				{
+					SchoolLevel schoolLevel = (SchoolLevel) element;
+					return schoolLevel.getName();
+				}
+				return "";
+			}
+		});
+		this.schoolLevelViewer.addSelectionChangedListener(new ISelectionChangedListener()
+		{
+			@Override
+			public void selectionChanged(SelectionChangedEvent event)
+			{
+				VisitEditor.this.setDirty(true);
+			}
+		});
+		this.schoolLevelViewer.addFilter(new DeletedEntityFilter());
 
 		label = this.formToolkit.createLabel(composite, "Anzahl Schüler/innen", SWT.NONE);
 		label.setLayoutData(new GridData());
@@ -923,10 +1019,20 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		composite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		composite.setLayout(layout);
 
-		Label label = this.formToolkit.createLabel(composite, "Schule", SWT.NONE);
+		Label label = this.formToolkit.createLabel(composite, "Anrede", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+
+		this.salutation = this.formToolkit.createText(composite, "", SWT.FLAT);
+		this.salutation.setLayoutData(gridData);
+		this.salutation.setEnabled(false);
+
+		label = this.formToolkit.createLabel(composite, "Bezeichnung", SWT.NONE);
+		label.setLayoutData(new GridData());
+
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
 
 		this.name = this.formToolkit.createText(composite, "", SWT.FLAT);
@@ -939,19 +1045,44 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
 
-		this.address = this.formToolkit.createText(composite, "", SWT.FLAT);
+		this.address = this.formToolkit.createText(composite, "");
 		this.address.setLayoutData(gridData);
 		this.address.setEnabled(false);
-
-		label = this.formToolkit.createLabel(composite, "Ort", SWT.NONE);
+		
+		label = this.formToolkit.createLabel(composite, "Postfach", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
 
+		this.pob = this.formToolkit.createText(composite, "", SWT.FLAT);
+		this.pob.setLayoutData(gridData);
+		this.pob.setEnabled(false);
+
+		label = this.formToolkit.createLabel(composite, "Zusatzzeile", SWT.NONE);
+		label.setLayoutData(new GridData());
+
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+
+		this.anotherLine = this.formToolkit.createText(composite, "", SWT.FLAT);
+		this.anotherLine.setLayoutData(gridData);
+		this.anotherLine.setEnabled(false);
+
+		label = this.formToolkit.createLabel(composite, "Ort", SWT.NONE);
+		label.setLayoutData(new GridData());
+
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+
 		this.city = this.formToolkit.createText(composite, "", SWT.FLAT);
 		this.city.setLayoutData(gridData);
 		this.city.setEnabled(false);
+
+		gridData = new GridData();
+
+		this.province = this.formToolkit.createText(composite, "", SWT.FLAT);
+		this.province.setLayoutData(gridData);
+		this.province.setEnabled(false);
 
 		label = this.formToolkit.createLabel(composite, "Telefon", SWT.NONE);
 		label.setLayoutData(new GridData());
@@ -962,6 +1093,16 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		this.addressPhone = this.formToolkit.createText(composite, "", SWT.FLAT);
 		this.addressPhone.setLayoutData(gridData);
 		this.addressPhone.setEnabled(false);
+
+		label = this.formToolkit.createLabel(composite, "Fax", SWT.NONE);
+		label.setLayoutData(new GridData());
+
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+
+		this.addressFax = this.formToolkit.createText(composite, "", SWT.FLAT);
+		this.addressFax.setLayoutData(gridData);
+		this.addressFax.setEnabled(false);
 
 		label = this.formToolkit.createLabel(composite, "Email", SWT.NONE);
 		label.setLayoutData(new GridData());
@@ -1085,8 +1226,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 					if (element instanceof Visitor)
 					{
 						Visitor visitor = (Visitor) element;
-						return hasLink(visitor) ? PersonFormatter.getInstance().formatLastnameFirstname(
-								visitor.getLink().getPerson()) : "";
+						return visitor.isValid() ? LinkPersonAddressFormatter.getInstance().formatPersonAndAddress(visitor.getLink()) : "";
 					}
 					return "";
 				}
@@ -1098,9 +1238,9 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				{
 					Visitor v1 = (Visitor) e1;
 					Visitor v2 = (Visitor) e2;
-					String name1 = hasLink(v1) ? PersonFormatter.getInstance().formatLastnameFirstname(
+					String name1 = v1.isValid() ? PersonFormatter.getInstance().formatLastnameFirstname(
 							v1.getLink().getPerson()) : "";
-					String name2 = hasLink(v2) ? PersonFormatter.getInstance().formatLastnameFirstname(
+					String name2 = v2.isValid() ? PersonFormatter.getInstance().formatLastnameFirstname(
 							v2.getLink().getPerson()) : "";
 					return name1.compareTo(name2);
 				}
@@ -1120,7 +1260,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 					((VisitorEmailLabelProvider) visitorEmailViewers[type.ordinal()].getLabelProvider())
 							.setVisitor(visitor);
 
-					if (visitor == null || !hasLink(visitor))
+					if (visitor == null || !visitor.isValid())
 					{
 						visitorPhoneViewers[type.ordinal()].setInput(new SelectedPhone[0]);
 						visitorEmailViewers[type.ordinal()].setInput(new SelectedEmail[0]);
@@ -1128,15 +1268,32 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 					}
 					else
 					{
-						SelectedPhone[] selectablePhones = getSelectablePhones(visitor);
-						visitorPhoneViewers[type.ordinal()].setInput(selectablePhones);
-						visitorPhoneViewers[type.ordinal()].setSelection(getSelectedPhone(visitor));
+						Visit visit = (Visit) getEditorInput().getAdapter(Visit.class);
+						VisitVisitor v = visit.getVisitor(type);
+						if (v == null || !v.getVisitor().getId().equals(visitor.getId()))
+						{
+							SelectedPhone[] selectablePhones = getSelectablePhones(visitor);
+							visitorPhoneViewers[type.ordinal()].setInput(selectablePhones);
+							visitorPhoneViewers[type.ordinal()].setSelection(selectPhone(selectablePhones));
 
-						SelectedEmail[] selectableEmails = getSelectableEmails(visitor.getLink());
-						visitorEmailViewers[type.ordinal()].setInput(selectableEmails);
-						StructuredSelection sel = getSelectedEmail(visitor);
-						visitorEmailViewers[type.ordinal()].setSelection(sel);
-						sendVisitorEmails[type.ordinal()].setEnabled(!sel.isEmpty());
+							SelectedEmail[] selectableEmails = getSelectableEmails(visitor.getLink());
+							visitorEmailViewers[type.ordinal()].setInput(selectableEmails);
+							StructuredSelection sel = selectEmail(selectableEmails);
+							visitorEmailViewers[type.ordinal()].setSelection(sel);
+							sendVisitorEmails[type.ordinal()].setEnabled(!sel.isEmpty());
+						}
+						else if (v.getVisitor().getId().equals(visitor.getId()))
+						{
+							SelectedPhone[] selectablePhones = getSelectablePhones(visitor);
+							visitorPhoneViewers[type.ordinal()].setInput(selectablePhones);
+							visitorPhoneViewers[type.ordinal()].setSelection(getSelectedPhone(visitor));
+
+							SelectedEmail[] selectableEmails = getSelectableEmails(visitor.getLink());
+							visitorEmailViewers[type.ordinal()].setInput(selectableEmails);
+							StructuredSelection sel = getSelectedEmail(visitor);
+							visitorEmailViewers[type.ordinal()].setSelection(sel);
+							sendVisitorEmails[type.ordinal()].setEnabled(!sel.isEmpty());
+						}
 					}
 					setDirty(true);
 				}
@@ -1242,12 +1399,6 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				VisitEditor.this.scrolledForm.reflow(true);
 			}
 		});
-	}
-
-	private boolean hasLink(Visitor visitor)
-	{
-		return visitor.getLink() != null && !visitor.getLink().isDeleted()
-				&& !visitor.getLink().getPerson().isDeleted();
 	}
 
 	private Control fillVisitSection(Section parent)
@@ -1426,7 +1577,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 
 	private SelectedPhone[] getSelectablePhones(LinkPersonAddressChild child)
 	{
-		Collection<SelectedPhone> phones = new ArrayList<SelectedPhone>();
+		List<SelectedPhone> phones = new ArrayList<SelectedPhone>();
 		phones.add(SelectedPhone.NONE);
 		if (!child.getLink().getPerson().getPhone().isEmpty())
 		{
@@ -1453,6 +1604,18 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		else
 		{
 			return new StructuredSelection(new SelectedPhone[] { phone });
+		}
+	}
+
+	private StructuredSelection selectPhone(SelectedPhone[] phones)
+	{
+		if (phones.length > 1)
+		{
+			return new StructuredSelection(new SelectedPhone[] { phones[1] });
+		}
+		else
+		{
+			return new StructuredSelection();
 		}
 	}
 
@@ -1488,6 +1651,18 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		}
 	}
 
+	private StructuredSelection selectEmail(SelectedEmail[] emails)
+	{
+		if (emails.length > 1)
+		{
+			return new StructuredSelection(new SelectedEmail[] { emails[1] });
+		}
+		else
+		{
+			return new StructuredSelection();
+		}
+	}
+
 	private String getReachableTime(Teacher teacher)
 	{
 		VisitEditorInput input = (VisitEditorInput) this.getEditorInput();
@@ -1502,12 +1677,40 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 
 	private void setAddressData(Teacher teacher)
 	{
-		this.name.setText(teacher == null ? "" : teacher.getLink().getAddress().getName());
-		this.address.setText(teacher == null ? "" : teacher.getLink().getAddress().getAddress());
-		this.city.setText(teacher == null ? "" : AddressFormatter.getInstance().formatCityLine(teacher.getLink().getAddress()));
-		this.addressPhone.setText(teacher == null ? "" : teacher.getLink().getAddress().getPhone());
-		this.addressEmail.setText(teacher == null ? "" : teacher.getLink().getAddress().getEmail());
-		this.sendAddressEmail.setEnabled(!this.addressEmail.getText().isEmpty());
+		if (teacher == null)
+		{
+			this.salutation.setText("");
+			this.name.setText("");
+			this.address.setText("");
+			this.pob.setText("");
+			this.anotherLine.setText("");
+			this.city.setText("");
+			this.province.setText("");
+			this.addressPhone.setText("");
+			this.addressFax.setText("");
+			this.addressEmail.setText("");
+			this.sendAddressEmail.setEnabled(!this.addressEmail.getText().isEmpty());
+		}
+		else
+		{
+			AddressSalutation salutation = teacher.getLink().getAddress().getSalutation();
+			this.salutation.setText(salutation == null ? "" : salutation.getSalutation());
+			this.name.setText(teacher.getLink().getAddress().getName());
+			this.address.setText(teacher.getLink().getAddress().getAddress());
+			this.pob.setText(teacher.getLink().getAddress().getPob());
+			this.anotherLine.setText(teacher.getLink().getAddress().getAnotherLine());
+			this.city.setText(AddressFormatter.getInstance().formatCityLine(teacher.getLink().getAddress()));
+			String province = teacher.getLink().getAddress().getZipCode() == null ? teacher.getLink().getAddress().getProvince() : teacher.getLink()
+					.getAddress().getZipCode().getState();
+			if (province != null)
+			{
+				this.province.setText(province);
+			}
+			this.addressPhone.setText(teacher.getLink().getAddress().getPhone());
+			this.addressFax.setText(teacher.getLink().getAddress().getPhone());
+			this.addressEmail.setText(teacher.getLink().getAddress().getEmail());
+			this.sendAddressEmail.setEnabled(!this.addressEmail.getText().isEmpty());
+		}
 	}
 
 	@Override
@@ -1520,18 +1723,25 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				new VisitTheme[] { visit.getTheme() });
 		this.themeViewer.setSelection(ssel);
 
-		SchoolClass schoolClass = visit.getSchoolClass();
-		if (schoolClass != null)
+		SchoolLevel schoolLevel = visit.getSchoolLevel();
+		if (schoolLevel != null)
 		{
-			schoolClassViewer.setSelection(new StructuredSelection(new SchoolClass[] { schoolClass }));
+			schoolLevelViewer.setSelection(new StructuredSelection(new SchoolLevel[] { schoolLevel }));
 		}
 		ssel = new StructuredSelection(visit.getState() == null ? Visit.State.PROVISORILY : visit.getState());
 		this.stateViewer.setSelection(ssel);
 
 		Teacher teacher = visit.getTeacher();
-
-		ssel = teacher == null ? new StructuredSelection() : new StructuredSelection(new Teacher[] { teacher });
-		this.teacherViewer.setSelection(ssel);
+		if (teacher == null)
+		{
+			this.teacherViewer.setSelection(new StructuredSelection());
+		}
+		else
+		{
+			ssel = new StructuredSelection(new Teacher[] { teacher });
+			this.teacherViewer.setSelection(ssel);
+			this.setAddressData(teacher);
+		}
 
 		ssel = visit.getSelectedPhone() == null ? new StructuredSelection() : new StructuredSelection(
 				new SelectedPhone[] { visit.getSelectedPhone() });
@@ -1603,6 +1813,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				}
 			}
 		}
+		this.notes.setText(visit.getNotes());
 		this.setDirty(false);
 	}
 
@@ -1628,8 +1839,8 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		visit.setEnd(end.getSelection() == null ? null : calendar);
 		ssel = (StructuredSelection) stateViewer.getSelection();
 		visit.setState(ssel.isEmpty() ? Visit.State.PROVISORILY : (Visit.State) ssel.getFirstElement());
-		ssel = (StructuredSelection) schoolClassViewer.getSelection();
-		visit.setSchoolClass(ssel.isEmpty() ? null : (SchoolClass) ssel.getFirstElement());
+		ssel = (StructuredSelection) schoolLevelViewer.getSelection();
+		visit.setSchoolLevel(ssel.isEmpty() ? null : (SchoolLevel) ssel.getFirstElement());
 		ssel = (StructuredSelection) teacherViewer.getSelection();
 		visit.setTeacher(ssel.isEmpty() ? null : (Teacher) ssel.getFirstElement());
 		visit.setBestReachTime(reachableTime.getText());
@@ -1637,8 +1848,6 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		visit.setSelectedPhone(ssel.isEmpty() ? SelectedPhone.NONE : (SelectedPhone) ssel.getFirstElement());
 		ssel = (StructuredSelection) teacherEmailViewer.getSelection();
 		visit.setSelectedEmail(ssel.isEmpty() ? SelectedEmail.NONE : (SelectedEmail) ssel.getFirstElement());
-		ssel = (StructuredSelection) schoolClassViewer.getSelection();
-		visit.setSchoolClass(ssel.isEmpty() ? null : (SchoolClass) ssel.getFirstElement());
 		visit.setClassName(className.getText());
 		visit.setPupils(pupils.getSelection());
 		visit.setFloor(floor.getText());
@@ -1653,7 +1862,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				if (visitVisitor.getType().equals(visitorType))
 				{
 					found = true;
-					if (visitor == null || !hasLink(visitor))
+					if (visitor == null || !visitor.isValid())
 					{
 						visitVisitor.setDeleted(true);
 					}
@@ -1709,6 +1918,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				visit.addAppliance(visitAppliance);
 			}
 		}
+		visit.setNotes(this.notes.getText());
 	}
 
 	@Override
@@ -1744,7 +1954,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 
 		EntityMediator.removeListener(VisitTheme.class, this);
 		EntityMediator.removeListener(Teacher.class, this);
-		EntityMediator.removeListener(SchoolClass.class, this);
+		EntityMediator.removeListener(SchoolLevel.class, this);
 		EntityMediator.removeListener(Visitor.class, this);
 		EntityMediator.removeListener(Visit.class, this);
 	}
@@ -1780,5 +1990,30 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				}
 			}
 		}
+	}
+
+	private String formatPhoneNumber(String value)
+	{
+		Country country = null;
+		Visit visit = (Visit) this.getEditorInput().getAdapter(Visit.class);
+		if (visit.getTeacher() != null)
+		{
+			if (visit.getTeacher().getLink().getAddress().getCountry() != null)
+			{
+				country = visit.getTeacher().getLink().getAddress().getCountry();
+			}
+		}
+		if (country != null)
+		{
+			try
+			{
+				PhoneNumber phoneNumber = phoneUtil.parse(value, country.getIso3166alpha2());
+				value = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
+			}
+			catch (NumberParseException ex)
+			{
+			}
+		}
+		return value;
 	}
 }

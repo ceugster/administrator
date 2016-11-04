@@ -1,13 +1,6 @@
 package ch.eugster.events.visits.editors;
 
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
@@ -20,7 +13,6 @@ import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ColumnLayoutData;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -28,20 +20,17 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.exceptions.PersistenceException;
-import ch.eugster.events.persistence.model.SchoolClass;
-import ch.eugster.events.persistence.model.SchoolClass.Level;
-import ch.eugster.events.persistence.queries.SchoolClassQuery;
+import ch.eugster.events.persistence.model.SchoolLevel;
+import ch.eugster.events.persistence.queries.SchoolLevelQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.dialogs.Message;
 import ch.eugster.events.ui.editors.AbstractEntityEditor;
 import ch.eugster.events.ui.editors.AbstractEntityEditorInput;
 import ch.eugster.events.visits.Activator;
 
-public class SchoolClassEditor extends AbstractEntityEditor<SchoolClass>
+public class SchoolLevelEditor extends AbstractEntityEditor<SchoolLevel>
 {
-	public static final String ID = "ch.eugster.events.visits.schoolclass.editor";
-
-	private ComboViewer levelViewer;
+	public static final String ID = "ch.eugster.events.visits.schoollevel.editor";
 
 	private Text name;
 
@@ -74,7 +63,7 @@ public class SchoolClassEditor extends AbstractEntityEditor<SchoolClass>
 			@Override
 			public void expansionStateChanged(ExpansionEvent e)
 			{
-				SchoolClassEditor.this.scrolledForm.reflow(true);
+				SchoolLevelEditor.this.scrolledForm.reflow(true);
 			}
 		});
 	}
@@ -87,7 +76,7 @@ public class SchoolClassEditor extends AbstractEntityEditor<SchoolClass>
 		composite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		composite.setLayout(layout);
 
-		Label label = this.formToolkit.createLabel(composite, "Bezeichnung", SWT.NONE);
+		Label label = this.formToolkit.createLabel(composite, "Auswertungsstufe", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		this.name = this.formToolkit.createText(composite, "");
@@ -97,41 +86,9 @@ public class SchoolClassEditor extends AbstractEntityEditor<SchoolClass>
 			@Override
 			public void modifyText(ModifyEvent e)
 			{
-				SchoolClassEditor.this.setDirty(true);
+				SchoolLevelEditor.this.setDirty(true);
 			}
 		});
-
-		label = this.formToolkit.createLabel(composite, "Auswertungsstufe", SWT.NONE);
-		label.setLayoutData(new GridData());
-
-		CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
-		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
-
-		this.levelViewer = new ComboViewer(combo);
-		this.levelViewer.setContentProvider(new ArrayContentProvider());
-		this.levelViewer.setLabelProvider(new LabelProvider()
-		{
-			@Override
-			public String getText(Object element)
-			{
-				if (element instanceof Level)
-				{
-					Level level = (Level) element;
-					return level.label();
-				}
-				return "";
-			}
-		});
-		this.levelViewer.addSelectionChangedListener(new ISelectionChangedListener()
-		{
-			@Override
-			public void selectionChanged(SelectionChangedEvent event)
-			{
-				SchoolClassEditor.this.setDirty(true);
-			}
-		});
-		this.levelViewer.setInput(SchoolClass.Level.values());
 
 		this.formToolkit.paintBordersFor(composite);
 
@@ -162,10 +119,10 @@ public class SchoolClassEditor extends AbstractEntityEditor<SchoolClass>
 			ConnectionService service = (ConnectionService) tracker.getService();
 			if (service != null)
 			{
-				SchoolClassEditorInput input = (SchoolClassEditorInput) this.getEditorInput();
-				SchoolClass schoolClass = (SchoolClass) input.getAdapter(SchoolClass.class);
-				SchoolClassQuery query = (SchoolClassQuery) service.getQuery(SchoolClass.class);
-				if (!query.isNameUnique(name.getText(), schoolClass.getId()))
+				SchoolLevelEditorInput input = (SchoolLevelEditorInput) this.getEditorInput();
+				SchoolLevel schoolLevel = (SchoolLevel) input.getAdapter(SchoolLevel.class);
+				SchoolLevelQuery query = (SchoolLevelQuery) service.getQuery(SchoolLevel.class);
+				if (!query.isNameUnique(name.getText(), schoolLevel.getId()))
 				{
 					msg = new Message(this.name, "Bezeichnung vorhanden", "Die Bezeichnung " + name.getText()
 							+ " ist bereits vorhanden. Bitte wählen Sie eine Bezeichnung, die noch nicht vorhanden ist.");
@@ -194,51 +151,40 @@ public class SchoolClassEditor extends AbstractEntityEditor<SchoolClass>
 	{
 		Message msg = null;
 
-		if (levelViewer.getSelection().isEmpty())
-		{
-			msg = new Message(this.levelViewer.getControl(), "Auswertungsstufe fehlt",
-					"Die Auswertungsstufe darf nicht leer sein.");
-		}
 		return msg;
 	}
 
 	@Override
 	protected String getName()
 	{
-		SchoolClassEditorInput input = (SchoolClassEditorInput) this.getEditorInput();
-		SchoolClass schoolClass = (SchoolClass) input.getAdapter(SchoolClass.class);
-		return SchoolClass.stringValueOf(schoolClass.getName()).isEmpty() ? "Neu" : schoolClass.getName();
+		SchoolLevelEditorInput input = (SchoolLevelEditorInput) this.getEditorInput();
+		SchoolLevel schoolLevel = (SchoolLevel) input.getAdapter(SchoolLevel.class);
+		return SchoolLevel.stringValueOf(schoolLevel.getName()).isEmpty() ? "Neu" : schoolLevel.getName();
 	}
 
 	@Override
 	protected String getText()
 	{
-		SchoolClassEditorInput input = (SchoolClassEditorInput) this.getEditorInput();
-		SchoolClass schoolClass = (SchoolClass) input.getAdapter(SchoolClass.class);
-		return SchoolClass.stringValueOf(schoolClass.getName()).isEmpty() ? "Neu" : schoolClass.getName();
+		SchoolLevelEditorInput input = (SchoolLevelEditorInput) this.getEditorInput();
+		SchoolLevel schoolLevel = (SchoolLevel) input.getAdapter(SchoolLevel.class);
+		return SchoolLevel.stringValueOf(schoolLevel.getName()).isEmpty() ? "Neu" : schoolLevel.getName();
 	}
 
 	@Override
 	protected void loadValues()
 	{
-		SchoolClassEditorInput input = (SchoolClassEditorInput) this.getEditorInput();
-		SchoolClass schoolClass = (SchoolClass) input.getAdapter(SchoolClass.class);
-		this.name.setText(SchoolClass.stringValueOf(schoolClass.getName()));
-		if (schoolClass.getLevel() != null)
-		{
-			this.levelViewer.setSelection(new StructuredSelection(new Level[] { schoolClass.getLevel() }));
-		}
+		SchoolLevelEditorInput input = (SchoolLevelEditorInput) this.getEditorInput();
+		SchoolLevel schoolLevel = (SchoolLevel) input.getAdapter(SchoolLevel.class);
+		this.name.setText(SchoolLevel.stringValueOf(schoolLevel.getName()));
 		this.setDirty(false);
 	}
 
 	@Override
 	protected void saveValues()
 	{
-		SchoolClassEditorInput input = (SchoolClassEditorInput) this.getEditorInput();
-		SchoolClass schoolClass = (SchoolClass) input.getAdapter(SchoolClass.class);
-		schoolClass.setName(this.name.getText().isEmpty() ? null : this.name.getText());
-		StructuredSelection ssel = (StructuredSelection) this.levelViewer.getSelection();
-		schoolClass.setLevel(ssel.isEmpty() ? null : (Level) ssel.getFirstElement());
+		SchoolLevelEditorInput input = (SchoolLevelEditorInput) this.getEditorInput();
+		SchoolLevel schoolLevel = (SchoolLevel) input.getAdapter(SchoolLevel.class);
+		schoolLevel.setName(this.name.getText().isEmpty() ? null : this.name.getText());
 	}
 
 	@Override
@@ -259,9 +205,9 @@ public class SchoolClassEditor extends AbstractEntityEditor<SchoolClass>
 	}
 
 	@Override
-	protected boolean validateType(AbstractEntityEditorInput<SchoolClass> input)
+	protected boolean validateType(AbstractEntityEditorInput<SchoolLevel> input)
 	{
-		return input.getAdapter(SchoolClass.class) instanceof SchoolClass;
+		return input.getAdapter(SchoolLevel.class) instanceof SchoolLevel;
 	}
 
 	@Override

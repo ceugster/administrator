@@ -21,7 +21,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
@@ -36,17 +38,18 @@ import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.formatters.DateFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
-import ch.eugster.events.persistence.model.SchoolClass;
+import ch.eugster.events.persistence.model.SchoolLevel;
 import ch.eugster.events.persistence.model.Visit;
 import ch.eugster.events.persistence.model.VisitTheme;
 import ch.eugster.events.persistence.model.VisitVisitor;
 import ch.eugster.events.persistence.service.ConnectionService;
+import ch.eugster.events.person.views.PersonView;
 import ch.eugster.events.ui.views.AbstractEntityView;
 import ch.eugster.events.visits.Activator;
 import ch.eugster.events.visits.editors.VisitEditor;
 import ch.eugster.events.visits.editors.VisitEditorInput;
 
-public class VisitView extends AbstractEntityView implements IDoubleClickListener, EntityListener
+public class VisitView extends AbstractEntityView implements IDoubleClickListener, ISelectionListener, EntityListener
 {
 	private IContextActivation ctxActivation;
 
@@ -145,14 +148,33 @@ public class VisitView extends AbstractEntityView implements IDoubleClickListene
 				if (object instanceof Visit)
 				{
 					Visit visit = (Visit) object;
-					SchoolClass schoolclass = visit.getSchoolClass();
-					cell.setText(schoolclass == null ? "" : schoolclass.getName());
+					String className = visit.getClassName();
+					cell.setText(className);
 				}
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
 		tableColumn.setText("Schule");
+
+		tableViewerColumn = new TableViewerColumn(viewer, SWT.NONE);
+		tableViewerColumn.setLabelProvider(new CellLabelProvider()
+		{
+			@Override
+			public void update(ViewerCell cell)
+			{
+				Object object = cell.getElement();
+				if (object instanceof Visit)
+				{
+					Visit visit = (Visit) object;
+					SchoolLevel schoolLevel = visit.getSchoolLevel();
+					cell.setText(schoolLevel == null ? "" : schoolLevel.getName());
+				}
+			}
+		});
+		tableColumn = tableViewerColumn.getColumn();
+		tableColumn.setResizable(true);
+		tableColumn.setText("Stufe");
 
 		tableViewerColumn = new TableViewerColumn(viewer, SWT.NONE);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
@@ -248,6 +270,7 @@ public class VisitView extends AbstractEntityView implements IDoubleClickListene
 
 		};
 		connectionServiceTracker.open();
+		this.getSite().getPage().addSelectionListener(ThemeView.ID, this);
 	}
 
 	private void createContextMenu()
@@ -300,4 +323,12 @@ public class VisitView extends AbstractEntityView implements IDoubleClickListene
 		}
 	}
 
+	@Override
+	public void selectionChanged(IWorkbenchPart workbenchPart, ISelection selection) 
+	{
+		if (workbenchPart instanceof ThemeView)
+		{
+			this.viewer.setSelection(selection);
+		}
+	}
 }
