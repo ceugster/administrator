@@ -193,14 +193,14 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				{
 					Person person = (Person) object;
 					cell.setText(ViewerColumn.CODE.value(person));
-					cell.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_PERSON_BLUE));
+					cell.setImage(Activator.getDefault().getImageRegistry().get(person.getDefaultLink().getValidMembers().size() == 0 ? Activator.KEY_PERSON_BLUE : Activator.KEY_PERSON_BLUE_WITH_STAR));
 					deleted = person.isDeleted();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
 					cell.setText(ViewerColumn.CODE.value(link));
-					cell.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_PERSON_BLUE));
+					cell.setImage(Activator.getDefault().getImageRegistry().get(link.getValidMembers().size() == 0 ? Activator.KEY_PERSON_BLUE : Activator.KEY_PERSON_BLUE_WITH_STAR));
 					deleted = link.isDeleted();
 				}
 				else if (object instanceof Address)

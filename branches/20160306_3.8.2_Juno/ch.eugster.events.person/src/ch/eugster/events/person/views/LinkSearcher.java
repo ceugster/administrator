@@ -23,6 +23,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
@@ -150,7 +151,9 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		Control[] tablist = composite.getTabList();
 		ToolBar toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
 		toolBar.setLayoutData(new GridData());
 		ToolItem item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
 		item.setData("target", widget);
@@ -207,7 +210,9 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		tablist = composite.getTabList();
 		toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
 		toolBar.setLayoutData(new GridData());
 		item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
 		item.setData("target", widget);
@@ -264,7 +269,9 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		tablist = composite.getTabList();
 		toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
 		toolBar.setLayoutData(new GridData());
 		item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
 		item.setData("target", widget);
@@ -321,7 +328,9 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		tablist = composite.getTabList();
 		toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
 		toolBar.setLayoutData(new GridData());
 		item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
 		item.setData("target", widget);
@@ -378,7 +387,9 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		tablist = composite.getTabList();
 		toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
 		toolBar.setLayoutData(new GridData());
 		item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
 		item.setData("target", widget);
@@ -435,7 +446,9 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		tablist = composite.getTabList();
 		toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
 		toolBar.setLayoutData(new GridData());
 		item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
 		item.setData("target", widget);
@@ -492,7 +505,9 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		tablist = composite.getTabList();
 		toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
 		toolBar.setLayoutData(new GridData());
 		item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
 		item.setData("target", widget);
@@ -564,7 +579,9 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		tablist = composite.getTabList();
 		toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
 		toolBar.setLayoutData(new GridData());
 		item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
 		item.setData("target", widget);
