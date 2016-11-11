@@ -25,7 +25,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 			this.setProperty(key.getKey(), key.getValue(member, isGroup));
 		}
 		this.setProperties(new AddressGroupMap(member.getAddressGroup()).getProperties());
-		if (member.getLink() == null)
+		if (member.isValidAddressMember())
 		{
 			if (member.getAddress().getValidLinks().size() == 1)
 			{
@@ -36,11 +36,11 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 				this.setProperties(new AddressMap(member.getAddress(), isGroup).getProperties());
 			}
 		}
-		else if (isGroup && member.getAddress().getValidLinks().size() > 1)
+		else if (isGroup && member.isValidLinkMember() && member.getLink().getAddress().getValidLinks().size() > 1)
 		{
-			this.setProperties(new AddressMap(member.getAddress(), isGroup).getProperties());
+			this.setProperties(new AddressMap(member.getLink().getAddress(), isGroup).getProperties());
 		}
-		else
+		else if (member.isValidLinkMember())
 		{
 			this.setProperties(new LinkMap(member.getLink()).getProperties());
 		}
@@ -52,20 +52,26 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 		List<AddressGroupMember> ms = member.getAddressGroup().getAddressGroupMembers();
 		for (AddressGroupMember m : ms)
 		{
-			if (!m.isDeleted() && m.getAddressGroup().getId().equals(member.getAddressGroup().getId()) && !m.getId().equals(member.getId()) && m.getAddress().getId().equals(member.getAddress().getId()))
+			if (m.isValidAddressMember() && member.isValidAddressMember() && m.getAddress().getId().equals(member.getAddress().getId()))
 			{
-				return true;
-			}
-		}
-		List<LinkPersonAddress> links = member.getAddress().getValidLinks();
-		for (LinkPersonAddress link : links)
-		{
-			ms = link.getAddressGroupMembers();
-			for (AddressGroupMember m : ms)
-			{
-				if (!m.isDeleted() && m.getAddressGroup().getId().equals(member.getAddressGroup().getId()) && !m.getId().equals(member.getId()) && m.getAddress().getId().equals(member.getAddress().getId()))
+				if (m.getAddressGroup().getId().equals(member.getAddressGroup().getId()) && !m.getId().equals(member.getId()))
 				{
 					return true;
+				}
+			}
+		}
+		if (member.isValidAddressMember())
+		{
+			List<LinkPersonAddress> links = member.getAddress().getValidLinks();
+			for (LinkPersonAddress link : links)
+			{
+				ms = link.getAddressGroupMembers();
+				for (AddressGroupMember m : ms)
+				{
+					if (m.isValidAddressMember() && m.getAddressGroup().getId().equals(member.getAddressGroup().getId()) && !m.getId().equals(member.getId()) && m.getAddress().getId().equals(member.getAddress().getId()))
+					{
+						return true;
+					}
 				}
 			}
 		}
@@ -200,7 +206,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 			{
 				case ID:
 				{
-					if (member.getLink() == null)
+					if (member.isValidAddressMember())
 					{
 						if (member.getAddress().getValidLinks().size() == 1)
 						{
@@ -211,16 +217,13 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 							return "A" + member.getAddress().getId().toString();
 						}
 					}
+					else if (member.isValidLinkMember())
+					{
+						return "P" + member.getLink().getId().toString();
+					}
 					else
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
-						{
-							return "A" + member.getAddress().getId().toString();
-						}
-						else
-						{
-							return "P" + member.getLink().getId().toString();
-						}
+						return "";
 					}
 				}
 				case ANOTHER_LINE:
