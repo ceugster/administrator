@@ -58,20 +58,35 @@ public class DeleteDoubleMembersHandler extends ConnectionServiceDependentAbstra
 			List<AddressGroupMember> addressGroupMembers = addressGroup.getAddressGroupMembers();
 			for (AddressGroupMember addressGroupMember : addressGroupMembers)
 			{
-				String id = addressGroupMember.getLink() == null || addressGroupMember.getLink().isDeleted()
-						|| addressGroupMember.getLink().getPerson().isDeleted() ? "A"
-						+ addressGroupMember.getAddress().getId() : "P" + addressGroupMember.getLink().getId();
-				AddressGroupMember member = members.get(id);
-				if (member == null)
+				String id = null;
+				if (addressGroupMember.isValid())
 				{
-					members.put(id, addressGroupMember);
+					if ((addressGroupMember.getLink() == null || !addressGroupMember.getLink().isValid()))
+					{
+						if (addressGroupMember.getAddress().isValid())
+						{
+							id = "A" + addressGroupMember.getAddress().getId().toString();
+						}
+					}
+					else if (addressGroupMember.getLink().isValid())
+					{
+						id = "P" + addressGroupMember.getLink().getId().toString();
+					}
 				}
-				else
+				if (id != null)
 				{
-					AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
-							.getQuery(AddressGroupMember.class);
-					addressGroupMember.setUpdated(calendar);
-					query.delete(addressGroupMember);
+					AddressGroupMember member = members.get(id);
+					if (member == null)
+					{
+						members.put(id, addressGroupMember);
+					}
+					else
+					{
+						AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
+								.getQuery(AddressGroupMember.class);
+						addressGroupMember.setUpdated(calendar);
+						query.delete(addressGroupMember);
+					}
 				}
 			}
 			members.clear();

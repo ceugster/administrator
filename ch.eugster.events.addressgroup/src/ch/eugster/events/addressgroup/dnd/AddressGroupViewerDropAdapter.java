@@ -84,38 +84,23 @@ public class AddressGroupViewerDropAdapter extends ViewerDropAdapter
 		AddressGroupMember[] members = addressGroup.getAddressGroupMembers().toArray(new AddressGroupMember[0]);
 		for (AddressGroupMember member : members)
 		{
-			if (newMember.getLink() == null || newMember.getLink().isDeleted()
-					|| newMember.getLink().getPerson().isDeleted())
+			if (newMember.isValidLinkMember() && newMember.getLink().getId().equals(member.getLink().getId()))
 			{
-				if (newMember.getAddress() != null)
+				if (member.isDeleted())
 				{
-					if (member.getAddress() != null
-							&& member.getAddress().getId().equals(newMember.getAddress().getId()))
-					{
-						if (member.isDeleted())
-						{
-							member.setDeleted(false);
-							return true;
-						}
-						return false;
-					}
+					member.setDeleted(false);
+					return true;
 				}
+				return false;
 			}
-			else
+			else if (newMember.isValidAddressMember() &&  member.getAddress().getId().equals(newMember.getAddress().getId()))
 			{
-				if (member.getLink() != null && !member.getLink().isDeleted()
-						&& !member.getLink().getPerson().isDeleted())
+				if (member.isDeleted())
 				{
-					if (member.getLink().getId().equals(newMember.getLink().getId()))
-					{
-						if (member.isDeleted())
-						{
-							member.setDeleted(false);
-							return true;
-						}
-						return false;
-					}
+					member.setDeleted(false);
+					return true;
 				}
+				return false;
 			}
 		}
 		return true;
