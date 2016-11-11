@@ -1073,18 +1073,26 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 				LinkPersonAddress link = FormEditorLinkPage.this.getLink();
 				if (link != null)
 				{
-					link.setDeleted(true);
 					getEditor().removePage(getEditor().getActivePage());
+					if (link.getId() == null)
+					{
+						link.getPerson().removeLink(link);
+						link.setPerson(null);
+						link.getAddress().removeLink(link);
+						link.setAddress(null);
+					}
+					else
+					{
+						link.setDeleted(true);
+					}
 				}
 			}
 		});
 		/**
-		 * set enabled only and only if link has an id and there are at least
-		 * one other active address page!
+		 * set enabled only and only if link has another active address page!
 		 */
 		LinkPersonAddress link = getLink();
-		boolean enabled = link == null || link.isDeleted() || link.getPerson().isDeleted() ? false : link.getPerson()
-				.getDefaultLink() != link;
+		boolean enabled = link.getPerson().getDefaultLink() != link;
 		deleteHyperlink.setEnabled(enabled);
 		String key = enabled ? Activator.KEY_DELETE : Activator.KEY_DELETE_INACTIVE;
 		image = Activator.getDefault().getImageRegistry().get(key);

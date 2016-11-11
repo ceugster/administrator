@@ -986,15 +986,6 @@
                tooltip="Neue Person hinzufügen">
          </command>
          <command
-               commandId="ch.eugster.events.person.command.addAddress"
-               disabledIcon="icons/home_grey_16.png"
-               hoverIcon="icons/home_16.png"
-               icon="icons/home_16.png"
-               label="Neue Adresse hinzufügen"
-               style="push"
-               tooltip="Neue Adresse hinzufügen">
-         </command>
-         <command
                commandId="ch.eugster.events.person.command.edit"
                disabledIcon="icons/edit_grey_16.png"
                hoverIcon="icons/edit_16.png"
