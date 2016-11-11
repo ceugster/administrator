@@ -295,7 +295,14 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				if (object instanceof AddressGroupMember)
 				{
 					AddressGroupMember member = (AddressGroupMember) object;
-					cell.setText(member.getAddress().getAddress());
+					if (member.getAddress() == null)
+					{
+						cell.setText(member.getLink().getAddress().getAddress());
+					}
+					else
+					{
+						cell.setText(member.getAddress().getAddress());
+					}
 				}
 			}
 		});
@@ -498,11 +505,11 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 
 	private void editAddressGroupMember(final AddressGroupMember member)
 	{
-		if (member.getLink() == null || !member.getLink().isValid())
+		if (member.isValidAddressMember())
 		{
 			editAddress(member.getAddress());
 		}
-		else
+		else if (member.isValidLinkMember())
 		{
 			editLink(member.getLink());
 		}

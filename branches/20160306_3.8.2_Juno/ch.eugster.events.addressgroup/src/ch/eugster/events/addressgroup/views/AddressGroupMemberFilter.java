@@ -22,7 +22,7 @@ public class AddressGroupMemberFilter extends ViewerFilter
 				return filter;
 
 			AddressGroupMember member = (AddressGroupMember) element;
-			if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
+			if (member.isValidAddressMember())
 			{
 				Address address = member.getAddress();
 				String name = address.getName();
@@ -52,7 +52,7 @@ public class AddressGroupMemberFilter extends ViewerFilter
 				}
 				return false;
 			}
-			else
+			else if (member.isValidLinkMember())
 			{
 				LinkPersonAddress link = member.getLink();
 				String name = PersonFormatter.getInstance().formatLastnameFirstname(link.getPerson());

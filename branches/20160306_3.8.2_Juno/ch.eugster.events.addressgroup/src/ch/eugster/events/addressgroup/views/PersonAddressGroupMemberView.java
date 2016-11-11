@@ -8,9 +8,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -23,7 +21,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -40,8 +37,6 @@ import org.osgi.util.tracker.ServiceTracker;
 import ch.eugster.events.addressgroup.Activator;
 import ch.eugster.events.addressgroup.AddressGroupMemberSelector;
 import ch.eugster.events.addressgroup.Monitor;
-import ch.eugster.events.domain.views.DomainLabelProvider;
-import ch.eugster.events.domain.views.DomainSorter;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.model.AbstractEntity;
@@ -52,9 +47,8 @@ import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
-import ch.eugster.events.persistence.model.User;
+import ch.eugster.events.persistence.queries.AddressGroupCategoryQuery;
 import ch.eugster.events.persistence.queries.AddressGroupMemberQuery;
-import ch.eugster.events.persistence.queries.DomainQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.person.views.PersonView;
 import ch.eugster.events.ui.views.AbstractEntityView;
@@ -70,44 +64,61 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 
 	private boolean dirty;
 
-	private ComboViewer domainViewer;
-
 	private ContainerCheckedTreeViewer addressGroupViewer;
 
 	private final Map<Long, Monitor> monitors = new HashMap<Long, Monitor>();
 
 	private AbstractEntity parent;
 	
-	private void checkCategories()
+	private void checkParents()
 	{
+		this.addressGroupViewer.expandAll();
 		TreeItem[] items = this.addressGroupViewer.getTree().getItems();
 		for (TreeItem item : items)
 		{
 			Object element = item.getData();
-			if (element instanceof AddressGroupCategory)
+			if (element instanceof Domain)
 			{
-				AddressGroupCategory category = (AddressGroupCategory) element;
-				List<AddressGroup> addressGroups = category.getValidAddressGroups();
-				int checked = 0;
-				for (AddressGroup addressGroup : addressGroups)
+				this.addressGroupViewer.setSubtreeChecked(element, false);
+				ConnectionService service = (ConnectionService) connectionServiceTracker.getService();
+				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) service.getQuery(AddressGroupCategory.class);
+				List<AddressGroupCategory> categories = query.selectValidsByDomain((Domain)element);
+				int checkedCategories = 0;
+				int grayCheckedCategories = 0;
+				for (AddressGroupCategory category : categories)
 				{
-					Monitor monitor = this.monitors.get(addressGroup.getId());
-					if (monitor != null && monitor.isValid())
+					List<AddressGroup> addressGroups = category.getValidAddressGroups();
+					int checked = 0;
+					for (AddressGroup addressGroup : addressGroups)
 					{
-						if (monitor.checked)
+						Monitor monitor = this.monitors.get(addressGroup.getId());
+						if (monitor != null && monitor.isValid())
 						{
-							checked++;
+							if (monitor.checked)
+							{
+								checked++;
+							}
 						}
+						this.addressGroupViewer.setChecked(addressGroup, monitor != null &&  monitor.isValid() && monitor.checked);
 					}
-					this.addressGroupViewer.setChecked(addressGroup, monitor != null &&  monitor.isValid() && monitor.checked);
+					if (checked == addressGroups.size())
+					{
+						checkedCategories++;
+						this.addressGroupViewer.setChecked(category, true);
+					}
+					else if (checked > 0)
+					{
+						grayCheckedCategories++;
+						this.addressGroupViewer.setGrayChecked(category, true);
+					}
 				}
-				if (checked == addressGroups.size())
+				if (checkedCategories > 0 && checkedCategories == categories.size())
 				{
-					this.addressGroupViewer.setChecked(category, true);
+					this.addressGroupViewer.setChecked(element, true);
 				}
-				else if (checked > 0)
+				else if (grayCheckedCategories > 0)
 				{
-					this.addressGroupViewer.setGrayChecked(category, true);
+					this.addressGroupViewer.setGrayChecked(element, true);
 				}
 			}
 		}
@@ -152,31 +163,6 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout());
 
-		Combo combo = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN);
-		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		this.domainViewer = new ComboViewer(combo);
-		this.domainViewer.setContentProvider(new ArrayContentProvider());
-		this.domainViewer.setLabelProvider(new DomainLabelProvider());
-		this.domainViewer.setSorter(new DomainSorter());
-		this.domainViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
-
-		ConnectionService service = connectionServiceTracker.getService();
-		if (service != null)
-		{
-			Domain[] domains = (Domain[]) domainViewer.getInput();
-			if (domains == null)
-			{
-				DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
-				domains = query.selectValids().toArray(new Domain[0]);
-				if (domains.length == 0)
-				{
-					domains = new Domain[] { Domain.newInstance() };
-				}
-				domainViewer.setInput(domains);
-			}
-		}
-
 		final Tree tree = new Tree(composite, SWT.BORDER | SWT.SINGLE | SWT.CHECK | SWT.HIDE_SELECTION);
 		tree.setHeaderVisible(false);
 		tree.setLinesVisible(false);
@@ -216,8 +202,6 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		this.addressGroupViewer.addCheckStateListener(this);
 		this.addressGroupViewer.addTreeListener(this);
 
-		this.domainViewer.addSelectionChangedListener(this);
-
 		PersonView view = (PersonView) this.getSite().getPage().findView(PersonView.ID);
 		if (view != null)
 		{
@@ -240,35 +224,20 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 				}
 			}
 		}
+		this.addressGroupViewer.setInput(connectionServiceTracker.getService());
 		reset();
-
 		this.getSite().getPage().addSelectionListener(PersonView.ID, this);
 	}
 	
-	private IStructuredSelection getDefaultDomainSelection(IStructuredSelection ssel)
-	{
-		Domain defaultDomain = (Domain) ssel.getFirstElement();
-		if (this.parent instanceof LinkPersonAddress)
-		{
-			defaultDomain = ((LinkPersonAddress) this.parent).getPerson().getDomain();
-		}
-		if (defaultDomain == null)
-		{
-			if (User.getCurrent() != null)
-			{
-				defaultDomain = User.getCurrent().getDomain();
-			}
-		}
-		return defaultDomain == null ? new StructuredSelection() : new StructuredSelection(new Domain[] { defaultDomain });
-	}
-
 	@Override
 	public void dispose()
 	{
 		connectionServiceTracker.close();
 
-		EntityMediator.removeListener(AddressGroupMember.class, this);
+		EntityMediator.removeListener(Domain.class, this);
+		EntityMediator.removeListener(AddressGroupCategory.class, this);
 		EntityMediator.removeListener(AddressGroup.class, this);
+		EntityMediator.removeListener(AddressGroupMember.class, this);
 		EntityMediator.removeListener(LinkPersonAddress.class, this);
 		EntityMediator.removeListener(Person.class, this);
 		EntityMediator.removeListener(Address.class, this);
@@ -283,7 +252,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
 		for (AddressGroupMember member : members)
 		{
-			if (member.getAddress() != null && member.getAddress().getId().equals(address.getId()))
+			if (member.isValidAddressMember() && member.getAddress().getId().equals(address.getId()))
 			{
 				return member;
 			}
@@ -296,7 +265,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
 		for (AddressGroupMember member : members)
 		{
-			if (member.getLink() != null && member.getLink().getId().equals(link.getId()))
+			if (member.isValidLinkMember() && member.getLink().getId().equals(link.getId()))
 			{
 				return member;
 			}
@@ -309,8 +278,10 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 	{
 		super.init(site);
 
-		EntityMediator.addListener(AddressGroupMember.class, this);
+		EntityMediator.addListener(Domain.class, this);
+		EntityMediator.addListener(AddressGroupCategory.class, this);
 		EntityMediator.addListener(AddressGroup.class, this);
+		EntityMediator.addListener(AddressGroupMember.class, this);
 		EntityMediator.addListener(LinkPersonAddress.class, this);
 		EntityMediator.addListener(Address.class, this);
 		EntityMediator.addListener(Person.class, this);
@@ -327,7 +298,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		if (!addressGroupViewer.getControl().isDisposed())
 		{
 			addressGroupViewer.refresh();
-			checkCategories();
+			checkParents();
 		}
 	}
 
@@ -336,7 +307,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		if (!addressGroupViewer.getControl().isDisposed())
 		{
 			addressGroupViewer.refresh(object);
-			checkCategories();
+			checkParents();
 		}
 	}
 
@@ -406,57 +377,49 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 
 	public void reset()
 	{
+		this.addressGroupViewer.getTree().setEnabled(false);
 		this.monitors.clear();
 		this.current.clear();
 
-		if (this.parent == null)
-		{
-			this.domainViewer.setSelection(new StructuredSelection());
-		}
-		else
-		{
-			IStructuredSelection domainSelection = getDefaultDomainSelection((IStructuredSelection) domainViewer.getSelection());
-			this.domainViewer.setSelection(domainSelection);
+		List<AddressGroupMember> members = null;
 
-			List<AddressGroupMember> members = null;
-
-			ConnectionService service = (ConnectionService) connectionServiceTracker.getService();
-			if (service != null)
+		ConnectionService service = (ConnectionService) connectionServiceTracker.getService();
+		if (service != null)
+		{
+			if (this.parent instanceof LinkPersonAddress)
 			{
-				if (this.parent instanceof LinkPersonAddress)
-				{
-					LinkPersonAddress link = (LinkPersonAddress) this.parent;
-					AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
-					members = query.selectByLink(link);
-				}
-				else if (this.parent instanceof Address)
-				{
-					Address address = (Address) this.parent;
-					AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
-					members = query.selectByAddress(address);
-				}
+				LinkPersonAddress link = (LinkPersonAddress) this.parent;
+				AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
+				members = query.selectByLink(link);
 			}
-			if (members != null)
+			else if (this.parent instanceof Address)
 			{
-				for (AddressGroupMember member : members)
+				Address address = (Address) this.parent;
+				AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
+				members = query.selectByAddress(address);
+			}
+		}
+		if (members != null)
+		{
+			for (AddressGroupMember member : members)
+			{
+				Monitor monitor = this.monitors.get(member.getAddressGroup().getId());
+				if (monitor == null)
 				{
-					Monitor monitor = this.monitors.get(member.getAddressGroup().getId());
-					if (monitor == null)
-					{
-						monitor = new Monitor(member, !member.isDeleted());
-						this.monitors.put(member.getAddressGroup().getId(), monitor);
-						this.current.put(member.getAddressGroup().getId(), member);
-					}
-					else if (!monitor.checked)
-					{
-						monitor.checked = !member.isDeleted();
-					}
+					monitor = new Monitor(member, !member.isDeleted());
+					this.monitors.put(member.getAddressGroup().getId(), monitor);
+					this.current.put(member.getAddressGroup().getId(), member);
+				}
+				else if (!monitor.checked)
+				{
+					monitor.checked = !member.isDeleted();
 				}
 			}
 		}
-		this.domainViewer.getControl().setEnabled(this.parent != null);
-		this.addressGroupViewer.getTree().setEnabled(this.parent != null);
+		this.checkParents();
 		this.setDirty(false);
+		this.addressGroupViewer.refresh();
+		this.addressGroupViewer.getTree().setEnabled(this.parent != null);
 	}
 	
 	@Override
@@ -499,11 +462,13 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 	@Override
 	public void selectionChanged(final SelectionChangedEvent event)
 	{
-		if (event.getSource().equals(this.domainViewer))
+		if (event.getSource().equals(this.addressGroupViewer))
 		{
-			StructuredSelection ssel = (StructuredSelection) domainViewer.getSelection();
-			this.updateViewer(ssel.getFirstElement());
-			this.checkCategories();
+			StructuredSelection ssel = (StructuredSelection) addressGroupViewer.getSelection();
+			if (ssel.getFirstElement() instanceof Domain)
+			{
+				this.checkParents();
+			}
 		}
 	}
 
@@ -616,26 +581,4 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		monitor.checked = checked;
 	}
 
-	private void updateViewer(final Object object)
-	{
-		UIJob updateViewer = new UIJob("")
-		{
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor)
-			{
-				if (!addressGroupViewer.getControl().isDisposed())
-				{
-					PersonAddressGroupMemberView.this.showBusy(true);
-					PersonAddressGroupMemberView.this.addressGroupViewer.setInput(object);
-					PersonAddressGroupMemberView.this.internalRefresh();
-					PersonAddressGroupMemberView.this.showBusy(false);
-				}
-				return Status.OK_STATUS;
-			}
-
-		};
-		updateViewer.setUser(true);
-		updateViewer.schedule();
-	}
-	
 }

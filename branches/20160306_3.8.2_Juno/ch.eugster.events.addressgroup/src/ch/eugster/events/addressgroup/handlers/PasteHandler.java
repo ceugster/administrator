@@ -300,7 +300,7 @@ public class PasteHandler extends ConnectionServiceDependentAbstractHandler
 		List<AddressGroupMember> targetMembers = target.getAddressGroupMembers();
 		for (AddressGroupMember targetMember : targetMembers)
 		{
-			if (!targetMember.isDeleted() && targetMember.getLink() != null)
+			if (targetMember.isValidLinkMember())
 			{
 				if (targetMember.getLink().getPerson().getId().equals(link.getPerson().getId()))
 				{
@@ -314,7 +314,7 @@ public class PasteHandler extends ConnectionServiceDependentAbstractHandler
 
 	private boolean found(final AddressGroup target, final AddressGroupMember member)
 	{
-		if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
+		if (member.isValidAddressMember())
 		{
 			return found(target, member.getAddress());
 		}
@@ -330,8 +330,7 @@ public class PasteHandler extends ConnectionServiceDependentAbstractHandler
 		List<AddressGroupMember> targetMembers = target.getAddressGroupMembers();
 		for (AddressGroupMember targetMember : targetMembers)
 		{
-			if (targetMember.getLink() == null || targetMember.getLink().isDeleted()
-					|| targetMember.getLink().getPerson().isDeleted())
+			if (targetMember.isValidAddressMember())
 			{
 				if (!targetMember.isDeleted() && targetMember.getAddress().getId().equals(address.getId()))
 				{

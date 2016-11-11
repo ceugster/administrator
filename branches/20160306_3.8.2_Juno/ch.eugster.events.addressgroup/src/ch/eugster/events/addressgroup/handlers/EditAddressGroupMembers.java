@@ -56,14 +56,16 @@ public class EditAddressGroupMembers extends ConnectionServiceDependentAbstractH
 			else if (ssel.getFirstElement() instanceof AddressGroupMember)
 			{
 				AddressGroupMember member = ((AddressGroupMember) ssel.getFirstElement());
-				if (member.getLink() == null || member.getLink().isDeleted()
-						|| member.getLink().getPerson().isDeleted())
+				if (member.isValidLinkMember())
 				{
-					address = refresh(member.getAddress());
+					link = refresh(member.getLink());
 				}
 				else
 				{
-					link = refresh(member.getLink());
+					if (member.isValidAddressMember())
+					{
+						address = refresh(member.getAddress());
+					}
 				}
 			}
 			AddressGroupMemberDialog dialog = null;

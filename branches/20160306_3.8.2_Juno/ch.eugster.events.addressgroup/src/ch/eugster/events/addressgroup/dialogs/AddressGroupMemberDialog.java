@@ -417,9 +417,12 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
 		for (AddressGroupMember member : members)
 		{
-			if (member.getAddress().getId().equals(address.getId()))
+			if (member.isValidAddressMember() || member.isValidLinkMember())
 			{
-				return member;
+				if (member.getAddressId().equals(address.getId()))
+				{
+					return member;
+				}
 			}
 		}
 		return null;
@@ -430,7 +433,7 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
 		for (AddressGroupMember member : members)
 		{
-			if (member.getLink() != null && member.getLink().getId().equals(link.getId()))
+			if (member.isValidLinkMember() && member.getLink().getId().equals(link.getId()))
 			{
 				return member;
 			}

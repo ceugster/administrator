@@ -10,6 +10,7 @@ import ch.eugster.events.persistence.model.AddressGroupCategory;
 import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.queries.AddressGroupCategoryQuery;
+import ch.eugster.events.persistence.queries.DomainQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
 public class PersonAddressGroupMemberTreeContentProvider implements ITreeContentProvider
@@ -23,7 +24,18 @@ public class PersonAddressGroupMemberTreeContentProvider implements ITreeContent
 	@Override
 	public Object[] getChildren(Object object)
 	{
-		if (object instanceof Domain)
+		if (object instanceof ConnectionService)
+		{
+			ConnectionService service = (ConnectionService) object;
+			DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
+			Domain[] domains = query.selectValids().toArray(new Domain[0]);
+			if (domains.length == 0)
+			{
+				domains = new Domain[] { Domain.newInstance() };
+			}
+			return domains;
+		}
+		else if (object instanceof Domain)
 		{
 			AddressGroupCategory[] categories = new AddressGroupCategory[0];
 			ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle()
@@ -55,6 +67,10 @@ public class PersonAddressGroupMemberTreeContentProvider implements ITreeContent
 	@Override
 	public boolean hasChildren(Object object)
 	{
+		if (object instanceof ConnectionService)
+		{
+			return true;
+		}
 		if (object instanceof Domain)
 		{
 			long count = 0l;
