@@ -111,16 +111,13 @@ public class PrintLabelHandler extends AbstractHandler implements IHandler
 
 	private void extract(final LabelFactory factory, final AddressGroupMember member)
 	{
-		if (member.isValid())
+		if (member.isValidAddressMember())
 		{
-			if (member.getLink() == null)
-			{
-				factory.addEntry(member.getAddress());
-			}
-			else
-			{
-				factory.addEntry(member.getLink());
-			}
+			factory.addEntry(member.getAddress());
+		}
+		else if (member.isValidLinkMember())
+		{
+			factory.addEntry(member.getLink());
 		}
 	}
 

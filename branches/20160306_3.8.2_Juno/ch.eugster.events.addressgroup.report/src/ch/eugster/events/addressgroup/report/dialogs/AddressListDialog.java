@@ -153,19 +153,13 @@ public class AddressListDialog extends TitleAreaDialog
 
 	private void computeAddressGroupMember(final Map<String, DataMap> map, final AddressGroupMember member)
 	{
-		if (!member.isDeleted())
+		if (member.isValidAddressMember())
 		{
-			if (member.getLink() == null || (!member.getLink().isDeleted() && !member.getLink().getPerson().isDeleted()))
+			AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, this.collectionSelector.getSelection());
+			DataMap existing = map.get(memberMap.getId());
+			if (existing == null)
 			{
-				if (!member.getAddress().isDeleted())
-				{
-					AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, this.collectionSelector.getSelection());
-					DataMap existing = map.get(memberMap.getId());
-					if (existing == null)
-					{
-						map.put(memberMap.getId(), memberMap);
-					}
-				}
+				map.put(memberMap.getId(), memberMap);
 			}
 		}
 	}

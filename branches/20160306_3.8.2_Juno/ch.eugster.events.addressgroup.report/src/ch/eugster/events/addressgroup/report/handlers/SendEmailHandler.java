@@ -102,26 +102,23 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 
 	private void extract(final AddressGroupMember member)
 	{
-		if (member.isValid())
+		if (member.isValidAddressMember())
 		{
-			if (member.getLink() == null)
+			addAddress(member.getAddress().getEmail());
+		}
+		else if (member.isValidLinkMember())
+		{
+			if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
 			{
-				addAddress(member.getAddress().getEmail());
+				addAddress(member.getLink().getPerson().getEmail());
 			}
-			else
+			else if (EmailHelper.getInstance().isValidAddress(member.getLink().getEmail()))
 			{
-				if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
-				{
-					addAddress(member.getLink().getPerson().getEmail());
-				}
-				else if (EmailHelper.getInstance().isValidAddress(member.getLink().getEmail()))
-				{
-					addAddress(member.getLink().getEmail());
-				}
-				else if (EmailHelper.getInstance().isValidAddress(member.getAddress().getEmail()))
-				{
-					addAddress(member.getAddress().getEmail());
-				}
+				addAddress(member.getLink().getEmail());
+			}
+			else if (EmailHelper.getInstance().isValidAddress(member.getLink().getAddress().getEmail()))
+			{
+				addAddress(member.getLink().getAddress().getEmail());
 			}
 		}
 	}
@@ -152,14 +149,14 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 
 	private boolean hasValidEmailAddress(final AddressGroupMember member)
 	{
-		if (member.getLink() == null)
+		if (member.isValidAddressMember())
 		{
 			if (EmailHelper.getInstance().isValidAddress(member.getAddress().getEmail()))
 			{
 				return true;
 			}
 		}
-		else
+		else if (member.isValidLinkMember())
 		{
 			if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
 			{
