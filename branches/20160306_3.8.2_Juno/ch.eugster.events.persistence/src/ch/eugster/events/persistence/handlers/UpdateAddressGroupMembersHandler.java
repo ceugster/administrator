@@ -146,7 +146,7 @@ public class UpdateAddressGroupMembersHandler extends AbstractHandler implements
 			Map<Long, AddressGroupMember> valids = new HashMap<Long, AddressGroupMember>();
 			for (AddressGroupMember member : members)
 			{
-				if (member.getLink() == null)
+				if (member.isValidAddressMember())
 				{
 					if (member.getAddress().getValidLinks().size() > 0)
 					{
@@ -162,7 +162,7 @@ public class UpdateAddressGroupMembersHandler extends AbstractHandler implements
 						doMerge = true;
 					}
 				}
-				else
+				else if (member.isValidLinkMember())
 				{
 					if (valids.containsKey(member.getLink().getId()))
 					{
