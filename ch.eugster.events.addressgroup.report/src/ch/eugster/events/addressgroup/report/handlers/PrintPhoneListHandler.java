@@ -188,14 +188,14 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 
 	private boolean hasValidEmailAddress(final AddressGroupMember member)
 	{
-		if (member.getLink() == null)
+		if (member.isValidAddressMember())
 		{
 			if (EmailHelper.getInstance().isValidAddress(member.getAddress().getEmail()))
 			{
 				return true;
 			}
 		}
-		else
+		else if (member.isValidLinkMember())
 		{
 			if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
 			{
