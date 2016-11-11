@@ -157,7 +157,7 @@ public class AddressGroup extends AbstractEntity
 		List<AddressGroupMember> validMembers = new ArrayList<AddressGroupMember>();
 		for (AddressGroupMember member : this.addressGroupMembers)
 		{
-			if (!member.isDeleted() && (member.getAddress() == null || !member.getAddress().isDeleted()) && (member.getLink() == null || !member.getLink().isDeleted()))
+			if (member.isValid())
 			{
 				validMembers.add(member);
 			}
@@ -233,7 +233,7 @@ public class AddressGroup extends AbstractEntity
 		List<AddressGroupMember> members = this.getValidAddressGroupMembers();
 		for (AddressGroupMember member : members)
 		{
-			if (member.getAddress() != null && member.getAddress().getId().equals(address.getId()))
+			if (member.isValidAddressMember() && member.getAddress().getId().equals(address.getId()))
 			{
 				return true;
 			}
@@ -246,7 +246,7 @@ public class AddressGroup extends AbstractEntity
 		List<AddressGroupMember> members = this.getValidAddressGroupMembers();
 		for (AddressGroupMember member : members)
 		{
-			if (member.getLink() != null && member.getLink().getId().equals(link.getId()))
+			if (member.isValidLinkMember() && member.getLink().getId().equals(link.getId()))
 			{
 				return true;
 			}

@@ -89,6 +89,21 @@ public class AddressGroupMember extends AbstractEntity
 		return !this.deleted && ((this.link == null) ? this.address.isValid() : this.link.isValid()) && this.addressGroup.isValid();
 	}
 	
+	public boolean isValidLinkMember()
+	{
+		return !this.deleted && this.link != null && this.link.isValid();
+	}
+	
+	public boolean isValidAddressMember()
+	{
+		return !this.deleted && this.address != null && this.address.isValid();
+	}
+	
+	public Long getAddressId()
+	{
+		return (this.address == null || !this.address.isValid()) ? ((this.link != null && this.link.isValid()) ? this.link.getAddress().getId() : null) : this.address.getId();
+	}
+	
 	public Address getAddress()
 	{
 		return address;
