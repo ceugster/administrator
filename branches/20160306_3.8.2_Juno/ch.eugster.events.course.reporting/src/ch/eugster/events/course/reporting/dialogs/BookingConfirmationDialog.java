@@ -38,7 +38,9 @@ import ch.eugster.events.documents.maps.BookingMap;
 import ch.eugster.events.documents.maps.DataMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.persistence.model.Booking;
+import ch.eugster.events.persistence.model.BookingForthcomingState;
 import ch.eugster.events.persistence.model.Course;
+import ch.eugster.events.persistence.model.CourseState;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.model.UserProperty;
 import ch.eugster.events.persistence.queries.UserQuery;
@@ -171,7 +173,7 @@ public class BookingConfirmationDialog extends TitleAreaDialog
 
 	private void createDataMap(final Booking booking, final Map<Long, DataMap> dataMaps)
 	{
-		if (!booking.isDeleted())
+		if (booking.isValid() && booking.getBookingState(CourseState.FORTHCOMING).equals(BookingForthcomingState.BOOKED))
 		{
 			dataMaps.put(booking.getId(), new BookingMap(booking, true));
 		}
