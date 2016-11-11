@@ -153,7 +153,7 @@ public class AddressListDialog extends TitleAreaDialog
 
 	private void computeAddressGroupMember(final Map<String, DataMap> map, final AddressGroupMember member)
 	{
-		if (member.isValidAddressMember())
+		if (member.isValid())
 		{
 			AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, this.collectionSelector.getSelection());
 			DataMap existing = map.get(memberMap.getId());
