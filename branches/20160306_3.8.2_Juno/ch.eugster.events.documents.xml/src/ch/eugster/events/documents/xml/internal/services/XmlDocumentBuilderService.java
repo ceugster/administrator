@@ -105,6 +105,7 @@ public class XmlDocumentBuilderService implements DocumentBuilderService
 			
 			Element courses = new Element("courses");
 			Document document = new Document(courses);
+			document.setProperty("encoding", "ISO-8859-1");
 			document.setRootElement(courses);
 
 			for (DataMap<?> map : maps)
@@ -123,8 +124,7 @@ public class XmlDocumentBuilderService implements DocumentBuilderService
 			}
 	 
 			XMLOutputter xmlOutput = new XMLOutputter();
-	 
-			xmlOutput.setFormat(Format.getPrettyFormat());
+			xmlOutput.setFormat(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
 			Writer writer = new BufferedWriter(new FileWriter(targetPath));
 			xmlOutput.output(document, writer);
 			writer.close();
