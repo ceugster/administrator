@@ -261,6 +261,7 @@ public class CourseListDialog extends TitleAreaDialog
 		keys.add(RubricMap.Key.NAME);
 		keys.add(CourseMap.Key.CODE);
 		keys.add(CourseMap.Key.TITLE);
+		keys.add(CourseMap.Key.DATE_RANGE_SORT);
 		keys.add(CourseMap.Key.DATE_RANGE_WITH_WEEKDAY_CODE);
 		keys.add(CourseMap.Key.GUIDE_WITH_PROFESSION);
 		keys.add(CourseMap.Key.ALL_LOCATIONS);

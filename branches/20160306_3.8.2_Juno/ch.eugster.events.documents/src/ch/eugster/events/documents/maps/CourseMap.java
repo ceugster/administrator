@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import ch.eugster.events.persistence.formatters.PersonFormatter;
@@ -19,12 +20,14 @@ import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.User;
 
-public class CourseMap extends AbstractDataMap
+public class CourseMap extends AbstractDataMap implements Comparable<CourseMap>
 {
 	private static DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
 
 	private static NumberFormat integerFormatter = DecimalFormat.getIntegerInstance();
 
+	private Course course;
+	
 	protected CourseMap() {
 		super();
 	}
@@ -36,6 +39,8 @@ public class CourseMap extends AbstractDataMap
 
 	public CourseMap(final Course course, final boolean loadTables)
 	{
+		this.course = course;
+		
 		for (Key key : Key.values())
 		{
 			setProperty(key.getKey(), key.getValue(course));
@@ -110,7 +115,7 @@ public class CourseMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, COST_NOTE, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM, PREREQUISITES, DATE_RANGE, DATE_RANGE_WITH_WEEKDAY_CODE, SUBSTITUTION_DATE_RANGE, SUBSTITUTION_DATE_RANGE_WITH_WEEKDAY_CODE, ALL_LOCATIONS, GUIDE_WITH_PROFESSION, ALL_BOOKING_TYPES, ADVANCE_NOTICE_DATE, ADVANCE_NOTICE_DONE_DATE;
+		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, COST_NOTE, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM, PREREQUISITES, DATE_RANGE_SORT, DATE_RANGE, DATE_RANGE_WITH_WEEKDAY_CODE, SUBSTITUTION_DATE_RANGE, SUBSTITUTION_DATE_RANGE_WITH_WEEKDAY_CODE, ALL_LOCATIONS, GUIDE_WITH_PROFESSION, ALL_BOOKING_TYPES, ADVANCE_NOTICE_DATE, ADVANCE_NOTICE_DONE_DATE;
 
 		@Override
 		public String getDescription()
@@ -144,6 +149,10 @@ public class CourseMap extends AbstractDataMap
 			case COST_NOTE:
 			{
 				return "Bemerkungen Kurskosten";
+			}
+			case DATE_RANGE_SORT:
+			{
+				return "Sortierdatum";
 			}
 			case DATE_RANGE:
 			{
@@ -438,6 +447,10 @@ public class CourseMap extends AbstractDataMap
 			{
 				return "course_prerequisites";
 			}
+			case DATE_RANGE_SORT:
+			{
+				return "course_date_range_sort";
+			}
 			case DATE_RANGE:
 			{
 				return "course_date_range";
@@ -613,6 +626,10 @@ public class CourseMap extends AbstractDataMap
 			case PREREQUISITES:
 			{
 				return "Voraussetzungen";
+			}
+			case DATE_RANGE_SORT:
+			{
+				return "Sortierdatum";
 			}
 			case DATE_RANGE:
 			{
@@ -851,6 +868,10 @@ public class CourseMap extends AbstractDataMap
 			{
 				return course.getPrerequisites();
 			}
+			case DATE_RANGE_SORT:
+			{
+				return SimpleDateFormat.getDateTimeInstance().format(course.getFirstDate().getTime());
+			}
 			case DATE_RANGE:
 			{
 				Calendar[] dates = getDates(course);
@@ -952,14 +973,14 @@ public class CourseMap extends AbstractDataMap
 				{
 					if (dates[0].get(Calendar.DAY_OF_MONTH) == dates[1].get(Calendar.DAY_OF_MONTH))
 					{
-						String start = getFormattedDate(dates[0], "dd. MMMM yyyy, HH:mm", weekdayType);
+						String start = getFormattedDate(dates[0], "dd.mm yyyy, HH:mm", weekdayType);
 						String end = getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
 						return start + " - " + end;
 					}
 					else
 					{
 						String start = getFormattedDate(dates[0], "dd.", weekdayType);
-						String end = getFormattedDate(dates[1], "dd. MMMM yyyy,", weekdayType);
+						String end = getFormattedDate(dates[1], "dd.mm.yyyy,", weekdayType);
 						String startTime = getFormattedDate(dates[0], "HH:mm", WeekdayType.NONE);
 						String endTime = getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
 						return start + " - " + end + " " + startTime + " - " + endTime;
@@ -967,8 +988,8 @@ public class CourseMap extends AbstractDataMap
 				}
 				else
 				{
-					String start = getFormattedDate(dates[0], "dd. MMMM", weekdayType);
-					String end = getFormattedDate(dates[1], "dd. MMMM yyyy,", weekdayType);
+					String start = getFormattedDate(dates[0], "dd.mm", weekdayType);
+					String end = getFormattedDate(dates[1], "dd.mm.yyyy,", weekdayType);
 					String startTime = getFormattedDate(dates[0], "HH:mm", WeekdayType.NONE);
 					String endTime = getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
 					return start + " - " + end + " " + startTime + " - " + endTime;
@@ -1159,5 +1180,27 @@ public class CourseMap extends AbstractDataMap
 	protected DataMapKey[] getKeys() 
 	{
 		return Key.values();
+	}
+
+	@Override
+	public int compareTo(CourseMap other) 
+	{
+		Calendar value1 =  this.course == null ? null :  this.course.getFirstDate();
+		Calendar value2 = other.course == null ? null : other.course.getFirstDate();
+		Date date1 = value1 == null ? null : value1.getTime();
+		Date date2 = value1 == null ? null : value2.getTime();
+		if (date1 == null && date2 == null)
+		{
+			return 0;
+		}
+		if (date1 == null)
+		{
+			return -1;
+		}
+		if (date2 == null)
+		{
+			return 1;
+		}
+		return date1.compareTo(date2);
 	}
 }
