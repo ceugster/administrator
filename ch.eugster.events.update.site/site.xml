@@ -159,6 +159,9 @@
    <feature url="features/ch.eugster.events.documents.feature_1.0.0.201611141502.jar" id="ch.eugster.events.documents.feature" version="1.0.0.201611141502">
       <category name="documents"/>
    </feature>
+   <feature url="features/ch.eugster.events.documents.feature_1.0.0.201611141523.jar" id="ch.eugster.events.documents.feature" version="1.0.0.201611141523">
+      <category name="documents"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>
