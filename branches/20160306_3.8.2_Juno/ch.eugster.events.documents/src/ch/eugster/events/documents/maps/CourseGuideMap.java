@@ -11,7 +11,7 @@ import ch.eugster.events.persistence.model.CourseDetail;
 import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.GuideType;
 
-public class CourseGuideMap extends AbstractDataMap
+public class CourseGuideMap extends AbstractDataMap<CourseGuide>
 {
 	protected CourseGuideMap() {
 		super();
@@ -335,9 +335,9 @@ public class CourseGuideMap extends AbstractDataMap
 			}
 		}
 
-		public List<DataMap> getTableMaps(final CourseGuide courseGuide)
+		public List<DataMap<?>> getTableMaps(final CourseGuide courseGuide)
 		{
-			List<DataMap> tableMaps = new ArrayList<DataMap>();
+			List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 			switch (this)
 			{
 			case COMPENSATIONS:

@@ -16,7 +16,7 @@ import ch.eugster.events.persistence.model.PersonExtendedField;
 import ch.eugster.events.persistence.queries.FieldExtensionQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
-public class PersonMap extends AbstractDataMap
+public class PersonMap extends AbstractDataMap<Person>
 {
 	private static final DateFormat dateFormatter = SimpleDateFormat.getDateInstance();
 

@@ -22,6 +22,7 @@ Bundle-ClassPath: lib/simple-odf-0.8.1-incubating.jar,
  .
 Import-Package: ch.eugster.events.documents.maps,
  ch.eugster.events.documents.services,
+ ch.eugster.events.persistence.model,
  org.eclipse.core.runtime;version="3.4.0",
  org.eclipse.core.runtime.preferences;version="3.3.0",
  org.eclipse.ui.plugin,

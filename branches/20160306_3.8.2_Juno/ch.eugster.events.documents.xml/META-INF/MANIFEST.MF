@@ -11,4 +11,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.eugster.events.documents.xml.internal.Activator
 Service-Component: OSGI-INF/service.xml
 Import-Package: ch.eugster.events.documents.maps,
- ch.eugster.events.documents.services
+ ch.eugster.events.documents.services,
+ ch.eugster.events.persistence.model

@@ -4,7 +4,7 @@ import java.io.Writer;
 
 import ch.eugster.events.persistence.model.AddressGroup;
 
-public class AddressGroupMap extends AbstractDataMap
+public class AddressGroupMap extends AbstractDataMap<AddressGroup>
 {
 	protected AddressGroupMap() {
 		super();

@@ -20,7 +20,7 @@ import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.User;
 
-public class CourseMap extends AbstractDataMap implements Comparable<CourseMap>
+public class CourseMap extends AbstractDataMap<Course>
 {
 	private static DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -115,7 +115,7 @@ public class CourseMap extends AbstractDataMap implements Comparable<CourseMap>
 
 	public enum Key implements DataMapKey
 	{
-		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, COST_NOTE, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM, PREREQUISITES, DATE_RANGE_SORT, DATE_RANGE, DATE_RANGE_WITH_WEEKDAY_CODE, SUBSTITUTION_DATE_RANGE, SUBSTITUTION_DATE_RANGE_WITH_WEEKDAY_CODE, ALL_LOCATIONS, GUIDE_WITH_PROFESSION, ALL_BOOKING_TYPES, ADVANCE_NOTICE_DATE, ADVANCE_NOTICE_DONE_DATE;
+		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, COST_NOTE, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM, PREREQUISITES, SORTABLE_DATE, DATE_RANGE, DATE_RANGE_WITH_WEEKDAY_CODE, SUBSTITUTION_DATE_RANGE, SUBSTITUTION_DATE_RANGE_WITH_WEEKDAY_CODE, ALL_LOCATIONS, GUIDE_WITH_PROFESSION, ALL_BOOKING_TYPES, ADVANCE_NOTICE_DATE, ADVANCE_NOTICE_DONE_DATE;
 
 		@Override
 		public String getDescription()
@@ -150,7 +150,7 @@ public class CourseMap extends AbstractDataMap implements Comparable<CourseMap>
 			{
 				return "Bemerkungen Kurskosten";
 			}
-			case DATE_RANGE_SORT:
+			case SORTABLE_DATE:
 			{
 				return "Sortierdatum";
 			}
@@ -447,7 +447,7 @@ public class CourseMap extends AbstractDataMap implements Comparable<CourseMap>
 			{
 				return "course_prerequisites";
 			}
-			case DATE_RANGE_SORT:
+			case SORTABLE_DATE:
 			{
 				return "course_date_range_sort";
 			}
@@ -627,7 +627,7 @@ public class CourseMap extends AbstractDataMap implements Comparable<CourseMap>
 			{
 				return "Voraussetzungen";
 			}
-			case DATE_RANGE_SORT:
+			case SORTABLE_DATE:
 			{
 				return "Sortierdatum";
 			}
@@ -868,7 +868,7 @@ public class CourseMap extends AbstractDataMap implements Comparable<CourseMap>
 			{
 				return course.getPrerequisites();
 			}
-			case DATE_RANGE_SORT:
+			case SORTABLE_DATE:
 			{
 				Date date = course.getFirstDate() == null ? null : course.getFirstDate().getTime();
 				return date == null ? "" : SimpleDateFormat.getDateTimeInstance().format(course.getFirstDate().getTime());
@@ -1112,13 +1112,13 @@ public class CourseMap extends AbstractDataMap implements Comparable<CourseMap>
 			}
 		}
 
-		public List<DataMap> getTableMaps(final Course course)
+		public List<DataMap<?>> getTableMaps(final Course course)
 		{
 			switch (this)
 			{
 				case BOOKINGS:
 				{
-					List<DataMap> tableMaps = new ArrayList<DataMap>();
+					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 					List<Booking> bookings = course.getBookings();
 					for (Booking booking : bookings)
 					{
@@ -1131,7 +1131,7 @@ public class CourseMap extends AbstractDataMap implements Comparable<CourseMap>
 				}
 				case BOOKING_TYPES:
 				{
-					List<DataMap> tableMaps = new ArrayList<DataMap>();
+					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 					List<BookingType> bookingTypes = course.getBookingTypes();
 					for (BookingType bookingType : bookingTypes)
 					{
@@ -1144,7 +1144,7 @@ public class CourseMap extends AbstractDataMap implements Comparable<CourseMap>
 				}
 				case DETAILS:
 				{
-					List<DataMap> tableMaps = new ArrayList<DataMap>();
+					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 					List<CourseDetail> details = course.getCourseDetails();
 					for (CourseDetail detail : details)
 					{
@@ -1157,7 +1157,7 @@ public class CourseMap extends AbstractDataMap implements Comparable<CourseMap>
 				}
 				case GUIDES:
 				{
-					List<DataMap> tableMaps = new ArrayList<DataMap>();
+					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 					List<CourseGuide> guides = course.getCourseGuides();
 					Collections.sort(guides);
 					for (CourseGuide guide : guides)
@@ -1184,10 +1184,11 @@ public class CourseMap extends AbstractDataMap implements Comparable<CourseMap>
 	}
 
 	@Override
-	public int compareTo(CourseMap other) 
+	public int compareTo(DataMap<Course> other) 
 	{
+		CourseMap otherMap = (CourseMap) other;
 		Calendar value1 =  this.course == null ? null :  this.course.getFirstDate();
-		Calendar value2 = other.course == null ? null : other.course.getFirstDate();
+		Calendar value2 = otherMap.course == null ? null : otherMap.course.getFirstDate();
 		Date date1 = value1 == null ? null : value1.getTime();
 		Date date2 = value2 == null ? null : value2.getTime();
 		if (date1 == null && date2 == null)

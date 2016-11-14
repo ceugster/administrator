@@ -15,7 +15,7 @@ import ch.eugster.events.persistence.model.Donation;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
 
-public class DonationMap extends AbstractDataMap
+public class DonationMap extends AbstractDataMap<Donation>
 {
 	private static final DateFormat dateFormatter = SimpleDateFormat.getDateInstance();
 

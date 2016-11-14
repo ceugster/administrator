@@ -5,7 +5,7 @@ import java.io.Writer;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.Guide;
 
-public class GuideMap extends AbstractDataMap
+public class GuideMap extends AbstractDataMap<Guide>
 {
 	protected GuideMap() {
 		super();

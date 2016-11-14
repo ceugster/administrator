@@ -1,7 +1,9 @@
 package ch.eugster.events.documents.maps;
 
+import ch.eugster.events.persistence.model.AbstractEntity;
 
-public final class EmptyDataMap extends AbstractDataMap
+
+public final class EmptyDataMap extends AbstractDataMap<AbstractEntity>
 {
 
 	@Override

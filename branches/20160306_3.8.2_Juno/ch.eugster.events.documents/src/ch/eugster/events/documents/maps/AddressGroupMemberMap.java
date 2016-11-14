@@ -11,7 +11,7 @@ import ch.eugster.events.persistence.model.AddressSalutation;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
 
-public class AddressGroupMemberMap extends AbstractDataMap implements Comparable<AddressGroupMemberMap>
+public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 {
 	protected AddressGroupMemberMap() {
 		super();
@@ -76,6 +76,12 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 			}
 		}
 		return false;
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
 	}
 
 	public String getId()
@@ -357,17 +363,4 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 			}
 		}
 	}
-
-	@Override
-	public int compareTo(AddressGroupMemberMap other)
-	{
-		return 0;
-	}
-
-	@Override
-	protected DataMapKey[] getKeys() 
-	{
-		return Key.values();
-	}
-
 }

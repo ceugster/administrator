@@ -16,7 +16,7 @@ import ch.eugster.events.persistence.model.Donation;
 import ch.eugster.events.persistence.model.DonationPurpose;
 import ch.eugster.events.persistence.model.Member;
 
-public class AddressMap extends AbstractDataMap
+public class AddressMap extends AbstractDataMap<Address>
 {
 	private static NumberFormat amountFormatter = null;
 
@@ -595,7 +595,7 @@ public class AddressMap extends AbstractDataMap
 			}
 		}
 
-		public List<DataMap> getTableMaps(final Address address)
+		public List<DataMap<?>> getTableMaps(final Address address)
 		{
 			switch (this)
 			{
@@ -610,14 +610,14 @@ public class AddressMap extends AbstractDataMap
 			}
 		}
 
-		public List<DataMap> getTableMaps(final Address address, final Integer year, DonationPurpose purpose,
+		public List<DataMap<?>> getTableMaps(final Address address, final Integer year, DonationPurpose purpose,
 				Domain domain)
 		{
 			switch (this)
 			{
 				case DONATIONS:
 				{
-					List<DataMap> tableMaps = new ArrayList<DataMap>();
+					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 					List<Donation> donations = address.getDonations();
 					for (Donation donation : donations)
 					{
@@ -632,7 +632,7 @@ public class AddressMap extends AbstractDataMap
 			}
 		}
 
-		private void addDonation(Donation donation, List<DataMap> tableMaps, Integer year, DonationPurpose purpose,
+		private void addDonation(Donation donation, List<DataMap<?>> tableMaps, Integer year, DonationPurpose purpose,
 				Domain domain)
 		{
 			if (printDonation(donation, purpose, domain))

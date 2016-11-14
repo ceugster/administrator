@@ -9,15 +9,17 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-public abstract class AbstractDataMap implements DataMap
+import ch.eugster.events.persistence.model.AbstractEntity;
+
+public abstract class AbstractDataMap<T extends AbstractEntity> implements DataMap<T>
 {
 	private Properties properties = new Properties();
 
-	private Map<String, List<DataMap>> tableMaps = new HashMap<String, List<DataMap>>();
+	private Map<String, List<DataMap<?>>> tableMaps = new HashMap<String, List<DataMap<?>>>();
 
-	public static DataMap getDataMap(Class<? extends AbstractDataMap> clazz)
+	public static DataMap<?> getDataMap(Class<? extends AbstractDataMap<?>> clazz)
 	{
-		DataMap map = null;
+		DataMap<?> map = null;
 		try 
 		{
 			map = clazz.newInstance();
@@ -36,7 +38,7 @@ public abstract class AbstractDataMap implements DataMap
 		
 	}
 	
-	protected void addTableMaps(final String key, final List<DataMap> dataMaps)
+	protected void addTableMaps(final String key, final List<DataMap<?>> dataMaps)
 	{
 		this.tableMaps.put(key, dataMaps);
 	}
@@ -60,10 +62,10 @@ public abstract class AbstractDataMap implements DataMap
 	}
 
 	@Override
-	public List<DataMap> getTableMaps(final String key)
+	public List<DataMap<?>> getTableMaps(final String key)
 	{
-		List<DataMap> list = tableMaps.get(key);
-		return list == null ? new ArrayList<DataMap>() : list;
+		List<DataMap<?>> list = tableMaps.get(key);
+		return list == null ? new ArrayList<DataMap<?>>() : list;
 	}
 
 	public void setProperties(final Properties properties)
@@ -78,6 +80,12 @@ public abstract class AbstractDataMap implements DataMap
 	public void setProperty(final String key, final String value)
 	{
 		properties.setProperty(key, value);
+	}
+
+	@Override
+	public int compareTo(DataMap<T> other) 
+	{
+		return 0;
 	}
 
 	protected abstract DataMapKey[] getKeys();
@@ -219,7 +227,7 @@ public abstract class AbstractDataMap implements DataMap
 
 		}
 	}
-	
+
 	public enum WeekdayType
 	{
 		NONE, SHORT, LONG;
