@@ -135,7 +135,7 @@ public class CourseListDialog extends TitleAreaDialog
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor)
 			{
-				DataMap[] courseMaps = createDataMaps();
+				DataMap<?>[] courseMaps = createDataMaps();
 				if (courseMaps.length == 0)
 				{
 					MessageDialog.openInformation(null, "Keine Kurse vorhanden", "Ihre Auswahl enthält keine Kurse.");
@@ -200,7 +200,7 @@ public class CourseListDialog extends TitleAreaDialog
 		super.setTitle("Kursliste generieren");
 	}
 
-	private void printSpreadsheet(final DataMap[] dataMaps)
+	private void printSpreadsheet(final DataMap<?>[] dataMaps)
 	{
 		setCurrentUser();
 		final DataMapKey[] keys = getKeys();
@@ -229,7 +229,7 @@ public class CourseListDialog extends TitleAreaDialog
 		super.okPressed();
 	}
 	
-	private IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap[] dataMaps)
+	private IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap<?>[] dataMaps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
 		final ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
@@ -261,7 +261,7 @@ public class CourseListDialog extends TitleAreaDialog
 		keys.add(RubricMap.Key.NAME);
 		keys.add(CourseMap.Key.CODE);
 		keys.add(CourseMap.Key.TITLE);
-		keys.add(CourseMap.Key.DATE_RANGE_SORT);
+		keys.add(CourseMap.Key.SORTABLE_DATE);
 		keys.add(CourseMap.Key.DATE_RANGE_WITH_WEEKDAY_CODE);
 		keys.add(CourseMap.Key.GUIDE_WITH_PROFESSION);
 		keys.add(CourseMap.Key.ALL_LOCATIONS);
@@ -269,7 +269,7 @@ public class CourseListDialog extends TitleAreaDialog
 		return keys.toArray(new DataMapKey[0]);
 	}
 
-	private DataMap[] createDataMaps()
+	private DataMap<?>[] createDataMaps()
 	{
 		Set<Course> courses = new HashSet<Course>();
 		Object[] objects = this.ssel.toArray();
@@ -290,7 +290,7 @@ public class CourseListDialog extends TitleAreaDialog
 			}
 		}
 
-		List<DataMap> courseMapList = new ArrayList<DataMap>();
+		List<DataMap<?>> courseMapList = new ArrayList<DataMap<?>>();
 		for (Course course : courses)
 		{
 			courseMapList.add(new CourseMap(course));

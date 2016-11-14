@@ -80,7 +80,7 @@ public class FormLetterDialog extends TitleAreaDialog
 		this.selection = selection;
 	}
 
-	private IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap[] dataMaps)
+	private IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap<?>[] dataMaps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
 		ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
@@ -109,7 +109,7 @@ public class FormLetterDialog extends TitleAreaDialog
 		return status;
 	}
 
-	private void computeAddressGroup(final Map<String, DataMap> map, final AddressGroup addressGroup)
+	private void computeAddressGroup(final Map<String, DataMap<?>> map, final AddressGroup addressGroup)
 	{
 		if (!addressGroup.isDeleted())
 		{
@@ -127,7 +127,7 @@ public class FormLetterDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeAddressGroupCategory(final Map<String, DataMap> map, final AddressGroupCategory category)
+	private void computeAddressGroupCategory(final Map<String, DataMap<?>> map, final AddressGroupCategory category)
 	{
 		if (!category.isDeleted())
 		{
@@ -139,12 +139,12 @@ public class FormLetterDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeAddressGroupMember(final Map<String, DataMap> map, final AddressGroupMember member)
+	private void computeAddressGroupMember(final Map<String, DataMap<?>> map, final AddressGroupMember member)
 	{
 		if (!member.isDeleted())
 		{
 			AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, this.useCollectionAddress.getSelection());
-			DataMap existing = map.get(memberMap.getId());
+			DataMap<?> existing = map.get(memberMap.getId());
 			if (existing == null)
 			{
 				map.put(memberMap.getId(), memberMap);
@@ -161,9 +161,9 @@ public class FormLetterDialog extends TitleAreaDialog
 		this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
 	}
 
-	private Collection<DataMap> createDataMaps(final StructuredSelection ssel)
+	private Collection<DataMap<?>> createDataMaps(final StructuredSelection ssel)
 	{
-		Map<String, DataMap> maps = new HashMap<String, DataMap>();
+		Map<String, DataMap<?>> maps = new HashMap<String, DataMap<?>>();
 		Object[] elements = ssel.toArray();
 		for (Object element : elements)
 		{
@@ -290,7 +290,7 @@ public class FormLetterDialog extends TitleAreaDialog
 	{
 		setCurrentUser();
 		final File template = setTemplateSetting(documentPath.getText());
-		final DataMap[] dataMaps = createDataMaps(selection).toArray(new DataMap[0]);
+		final DataMap<?>[] dataMaps = createDataMaps(selection).toArray(new DataMap<?>[0]);
 		super.okPressed();
 
 		UIJob job = new UIJob("Dokument wird generiert...")

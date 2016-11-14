@@ -101,7 +101,7 @@ public class AddressListDialog extends TitleAreaDialog
 		}
 	}
 
-	private IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap[] dataMaps)
+	private IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap<?>[] dataMaps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
 		final ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
@@ -127,7 +127,7 @@ public class AddressListDialog extends TitleAreaDialog
 		return status;
 	}
 
-	private void computeAddressGroup(final Map<String, DataMap> map, final AddressGroup addressGroup)
+	private void computeAddressGroup(final Map<String, DataMap<?>> map, final AddressGroup addressGroup)
 	{
 		if (!addressGroup.isDeleted())
 		{
@@ -139,7 +139,7 @@ public class AddressListDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeAddressGroupCategory(final Map<String, DataMap> map, final AddressGroupCategory category)
+	private void computeAddressGroupCategory(final Map<String, DataMap<?>> map, final AddressGroupCategory category)
 	{
 		if (!category.isDeleted())
 		{
@@ -151,12 +151,12 @@ public class AddressListDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeAddressGroupMember(final Map<String, DataMap> map, final AddressGroupMember member)
+	private void computeAddressGroupMember(final Map<String, DataMap<?>> map, final AddressGroupMember member)
 	{
 		if (member.isValid())
 		{
 			AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, this.collectionSelector.getSelection());
-			DataMap existing = map.get(memberMap.getId());
+			DataMap<?> existing = map.get(memberMap.getId());
 			if (existing == null)
 			{
 				map.put(memberMap.getId(), memberMap);
@@ -171,9 +171,9 @@ public class AddressListDialog extends TitleAreaDialog
 		this.createButton(parent, IDialogConstants.CANCEL_ID, "Abbrechen", false);
 	}
 
-	private Collection<DataMap> createDataMaps(final StructuredSelection ssel)
+	private Collection<DataMap<?>> createDataMaps(final StructuredSelection ssel)
 	{
-		Map<String, DataMap> maps = new HashMap<String, DataMap>();
+		Map<String, DataMap<?>> maps = new HashMap<String, DataMap<?>>();
 		Object[] elements = ssel.toArray();
 		for (Object element : elements)
 		{
@@ -377,11 +377,11 @@ public class AddressListDialog extends TitleAreaDialog
 	{
 		setCurrentUser();
 		final DataMapKey[] keys = getKeys();
-		final DataMap[] dataMaps = createDataMaps(selection).toArray(new DataMap[0]);
-		Arrays.sort(dataMaps, new Comparator<DataMap>()
+		final DataMap<?>[] dataMaps = createDataMaps(selection).toArray(new DataMap[0]);
+		Arrays.sort(dataMaps, new Comparator<DataMap<?>>()
 		{
 			@Override
-			public int compare(DataMap map1, DataMap map2)
+			public int compare(DataMap<?> map1, DataMap<?> map2)
 			{
 				if (sortViewer.getSelection() instanceof IStructuredSelection)
 				{

@@ -9,7 +9,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -33,6 +35,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -86,7 +89,7 @@ public class CourseInvitationDialog extends TitleAreaDialog
 		this.selection = selection;
 	}
 
-	private void buildDocument(final DataMap[] dataMaps)
+	private void buildDocument(final DataMap<?>[] dataMaps)
 	{
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
 		try
@@ -128,7 +131,16 @@ public class CourseInvitationDialog extends TitleAreaDialog
 						}
 						else
 						{
-							MessageDialog.openWarning(getShell(), "Service nicht aktiv", MSG_NO_SERVICE_AVAILABLE);
+							Job job = new UIJob("") 
+							{
+								@Override
+								public IStatus runInUIThread(IProgressMonitor monitor) 
+								{
+									MessageDialog.openWarning(getShell(), "Service nicht aktiv", MSG_NO_SERVICE_AVAILABLE);
+									return Status.OK_STATUS;
+								}
+							};
+							job.schedule();
 						}
 					}
 					finally
@@ -186,9 +198,9 @@ public class CourseInvitationDialog extends TitleAreaDialog
 		this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
 	}
 
-	private List<DataMap> createDataMaps()
+	private List<DataMap<?>> createDataMaps()
 	{
-		List<DataMap> dataMaps = new ArrayList<DataMap>();
+		List<DataMap<?>> dataMaps = new ArrayList<DataMap<?>>();
 		Object[] elements = selection.toArray();
 		for (int i = elements.length; i > 0; i--)
 		{
@@ -349,7 +361,7 @@ public class CourseInvitationDialog extends TitleAreaDialog
 	protected void okPressed()
 	{
 		setUserPath();
-		DataMap[] dataMaps = createDataMaps().toArray(new DataMap[0]);
+		DataMap<?>[] dataMaps = createDataMaps().toArray(new DataMap[0]);
 		if (dataMaps.length == 0)
 		{
 			MessageDialog.openConfirm(this.getShell(), MSG_TITLE_NO_COURSES, MSG_TITLE_NO_COURSES);

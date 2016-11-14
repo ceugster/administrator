@@ -405,7 +405,8 @@ public class BookingListDialog extends TitleAreaDialog
 	{
 		setCurrentUser();
 		final DataMapKey[] keys = getKeys();
-		final DataMap[] dataMaps = createDataMaps(factory).toArray(new DataMap[0]);
+		final DataMap<?>[] dataMaps = createDataMaps(factory).toArray(new DataMap<?>[0]);
+		Arrays.sort(dataMaps);
 
 		UIJob job = new UIJob("Dokument wird generiert...")
 		{
@@ -431,7 +432,7 @@ public class BookingListDialog extends TitleAreaDialog
 		super.okPressed();
 	}
 	
-	private IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap[] dataMaps)
+	private IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap<?>[] dataMaps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
 		final ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
@@ -465,6 +466,7 @@ public class BookingListDialog extends TitleAreaDialog
 		keys.add(CourseMap.Key.CODE);
 		keys.add(CourseMap.Key.TITLE);
 		keys.add(CourseMap.Key.STATE);
+		keys.add(CourseMap.Key.SORTABLE_DATE);
 		keys.add(CourseMap.Key.DATE_RANGE_WITH_WEEKDAY_CODE);
 		keys.add(CourseMap.Key.GUIDE_WITH_PROFESSION);
 		keys.add(CourseMap.Key.ALL_LOCATIONS);
@@ -478,9 +480,9 @@ public class BookingListDialog extends TitleAreaDialog
 		return keys.toArray(new DataMapKey[0]);
 	}
 
-	private Set<DataMap> createDataMaps(final BookingListFactory factory)
+	private Set<DataMap<?>> createDataMaps(final BookingListFactory factory)
 	{
-		Set<DataMap> maps = new HashSet<DataMap>();
+		Set<DataMap<?>> maps = new HashSet<DataMap<?>>();
 		BookingListItem[] items = factory.getBookingListItems();
 		for (BookingListItem item : items)
 		{

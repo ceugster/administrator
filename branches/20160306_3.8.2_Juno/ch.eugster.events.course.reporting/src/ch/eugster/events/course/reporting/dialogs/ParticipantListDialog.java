@@ -55,7 +55,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 		this.selection = selection;
 	}
 
-	private void buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap[] dataMaps)
+	private void buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap<?>[] dataMaps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
 		ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
@@ -98,7 +98,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeBooking(final List<DataMap> map, final Booking booking)
+	private void computeBooking(final List<DataMap<?>> map, final Booking booking)
 	{
 		if (!booking.isDeleted())
 		{
@@ -110,7 +110,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeSeason(final List<DataMap> map, final Season season)
+	private void computeSeason(final List<DataMap<?>> map, final Season season)
 	{
 		if (!season.isDeleted())
 		{
@@ -122,7 +122,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeCourse(final List<DataMap> map, final Course course)
+	private void computeCourse(final List<DataMap<?>> map, final Course course)
 	{
 		if (!course.isDeleted())
 		{
@@ -134,7 +134,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeParticipant(final List<DataMap> map, final Participant participant)
+	private void computeParticipant(final List<DataMap<?>> map, final Participant participant)
 	{
 		if (!participant.isDeleted())
 		{
@@ -149,9 +149,9 @@ public class ParticipantListDialog extends TitleAreaDialog
 		this.createButton(parent, IDialogConstants.CANCEL_ID, "Abbrechen", false);
 	}
 
-	private List<DataMap> createDataMaps(final StructuredSelection ssel)
+	private List<DataMap<?>> createDataMaps(final StructuredSelection ssel)
 	{
-		List<DataMap> maps = new ArrayList<DataMap>();
+		List<DataMap<?>> maps = new ArrayList<DataMap<?>>();
 		Object[] elements = ssel.toArray();
 		for (Object element : elements)
 		{
@@ -237,7 +237,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 	{
 		setCurrentUser();
 		final DataMapKey[] keys = getKeys();
-		final DataMap[] dataMaps = createDataMaps(selection).toArray(new DataMap[0]);
+		final DataMap<?>[] dataMaps = createDataMaps(selection).toArray(new DataMap<?>[0]);
 
 		super.okPressed();
 

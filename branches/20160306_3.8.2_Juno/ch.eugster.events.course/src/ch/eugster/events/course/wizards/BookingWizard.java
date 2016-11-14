@@ -132,7 +132,7 @@ public class BookingWizard extends Wizard implements IBookingWizard
 						if (service instanceof DocumentBuilderService)
 						{
 							File template = new File(bookingPage.getBookingConfirmationTemplatePath());
-							DataMap map = new BookingMap(BookingWizard.this.booking);
+							DataMap<?> map = new BookingMap(BookingWizard.this.booking);
 							DocumentBuilderService builderService = (DocumentBuilderService) service;
 							builderService.buildDocument(new SubProgressMonitor(monitor, 1), template, map);
 						}
@@ -192,7 +192,7 @@ public class BookingWizard extends Wizard implements IBookingWizard
 						if (service instanceof DocumentBuilderService)
 						{
 							File template = new File(bookingPage.getInvitationTemplatePath());
-							DataMap map = new BookingMap(BookingWizard.this.booking);
+							DataMap<?> map = new BookingMap(BookingWizard.this.booking);
 							DocumentBuilderService builderService = (DocumentBuilderService) service;
 							builderService.buildDocument(new SubProgressMonitor(monitor, 1), template, map);
 						}
