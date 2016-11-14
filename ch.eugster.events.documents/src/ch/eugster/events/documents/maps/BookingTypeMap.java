@@ -8,7 +8,7 @@ import java.util.Locale;
 import ch.eugster.events.persistence.model.BookingType;
 import ch.eugster.events.persistence.model.Membership;
 
-public class BookingTypeMap extends AbstractDataMap
+public class BookingTypeMap extends AbstractDataMap<BookingType>
 {
 	private static NumberFormat amountFormatter;
 

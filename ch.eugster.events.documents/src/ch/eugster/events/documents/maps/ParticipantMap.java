@@ -12,7 +12,7 @@ import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Person;
 
-public class ParticipantMap extends AbstractDataMap
+public class ParticipantMap extends AbstractDataMap<Participant>
 {
 	private static NumberFormat numberFormatter;
 

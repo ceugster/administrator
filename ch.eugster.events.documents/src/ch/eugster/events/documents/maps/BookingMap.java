@@ -18,7 +18,7 @@ import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.IBookingState;
 import ch.eugster.events.persistence.model.Participant;
 
-public class BookingMap extends AbstractDataMap
+public class BookingMap extends AbstractDataMap<Booking>
 {
 	private static NumberFormat amountFormatter = null;
 
@@ -532,13 +532,13 @@ public class BookingMap extends AbstractDataMap
 			}
 		}
 
-		public List<DataMap> getTableMaps(final Booking booking)
+		public List<DataMap<?>> getTableMaps(final Booking booking)
 		{
 			switch (this)
 			{
 				case PARTICIPANTS:
 				{
-					List<DataMap> tableMaps = new ArrayList<DataMap>();
+					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 					List<Participant> participants = booking.getParticipants();
 					for (Participant participant : participants)
 					{
@@ -548,7 +548,7 @@ public class BookingMap extends AbstractDataMap
 				}
 				case COURSE_DETAILS:
 				{
-					List<DataMap> tableMaps = new ArrayList<DataMap>();
+					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 					List<CourseDetail> courseDetails = booking.getCourse().getCourseDetails();
 					for (CourseDetail courseDetail : courseDetails)
 					{
@@ -558,7 +558,7 @@ public class BookingMap extends AbstractDataMap
 				}
 				case COURSE_GUIDES:
 				{
-					List<DataMap> tableMaps = new ArrayList<DataMap>();
+					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 					List<CourseGuide> courseGuides = booking.getCourse().getCourseGuides();
 					for (CourseGuide courseGuide : courseGuides)
 					{

@@ -2,7 +2,7 @@ package ch.eugster.events.documents.maps;
 
 import ch.eugster.events.persistence.model.AddressGroupCategory;
 
-public class AddressGroupCategoryMap extends AbstractDataMap
+public class AddressGroupCategoryMap extends AbstractDataMap<AddressGroupCategory>
 {
 	protected AddressGroupCategoryMap() {
 		super();
@@ -14,6 +14,18 @@ public class AddressGroupCategoryMap extends AbstractDataMap
 		{
 			this.setProperty(key.getKey(), key.getValue(category));
 		}
+	}
+
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
+	}
+
+	@Override
+	public int compareTo(DataMap<AddressGroupCategory> other) 
+	{
+		return 0;
 	}
 
 	public enum Key implements DataMapKey
@@ -114,11 +126,5 @@ public class AddressGroupCategoryMap extends AbstractDataMap
 				}
 			}
 		}
-	}
-
-	@Override
-	protected DataMapKey[] getKeys() 
-	{
-		return Key.values();
 	}
 }
