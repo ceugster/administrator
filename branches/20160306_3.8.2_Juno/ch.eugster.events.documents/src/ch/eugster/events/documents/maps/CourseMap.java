@@ -870,7 +870,8 @@ public class CourseMap extends AbstractDataMap implements Comparable<CourseMap>
 			}
 			case DATE_RANGE_SORT:
 			{
-				return SimpleDateFormat.getDateTimeInstance().format(course.getFirstDate().getTime());
+				Date date = course.getFirstDate() == null ? null : course.getFirstDate().getTime();
+				return date == null ? "" : SimpleDateFormat.getDateTimeInstance().format(course.getFirstDate().getTime());
 			}
 			case DATE_RANGE:
 			{
@@ -1188,7 +1189,7 @@ public class CourseMap extends AbstractDataMap implements Comparable<CourseMap>
 		Calendar value1 =  this.course == null ? null :  this.course.getFirstDate();
 		Calendar value2 = other.course == null ? null : other.course.getFirstDate();
 		Date date1 = value1 == null ? null : value1.getTime();
-		Date date2 = value1 == null ? null : value2.getTime();
+		Date date2 = value2 == null ? null : value2.getTime();
 		if (date1 == null && date2 == null)
 		{
 			return 0;
