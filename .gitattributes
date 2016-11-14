@@ -1563,7 +1563,7 @@ ch.eugster.events.visits.feature/build.properties -text
 ch.eugster.events.visits.feature/feature.xml -text
 ch.eugster.events.visits/.classpath -text
 ch.eugster.events.visits/.project -text
-ch.eugster.events.visits/.settings/org.eclipse.jdt.core.prefs -text
+ch.eugster.events.visits/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.visits/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.visits/META-INF/MANIFEST.MF -text
 ch.eugster.events.visits/OSGI-INF/registration-service.xml -text
