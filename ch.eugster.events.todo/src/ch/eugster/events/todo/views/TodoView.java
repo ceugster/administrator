@@ -643,7 +643,7 @@ public class TodoView extends AbstractEntityView implements EventHandler
 	{
 		TodoMap.Key.clearGuideTypes();
 		TableItem[] items = this.viewer.getTable().getItems();
-		final DataMap[] dataMaps = new DataMap[items.length];
+		final DataMap<?>[] dataMaps = new DataMap<?>[items.length];
 		for (int i = 0; i < items.length; i++)
 		{
 			TodoEntry entry = (TodoEntry) items[i].getData();

@@ -140,7 +140,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 
 	private void buildDocument()
 	{
-		final DataMap[] dataMaps = createDataMaps(selectionMode);
+		final DataMap<?>[] dataMaps = createDataMaps(selectionMode);
 		if (dataMaps.length == 0)
 		{
 			MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
@@ -150,10 +150,10 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		}
 		else
 		{
-			Arrays.sort(dataMaps, new Comparator<DataMap>()
+			Arrays.sort(dataMaps, new Comparator<DataMap<?>>()
 			{
 				@Override
-				public int compare(DataMap map1, DataMap map2)
+				public int compare(DataMap<?> map1, DataMap<?> map2)
 				{
 					String name1 = map1.getProperty("person_lastname");
 					String name2 = map2.getProperty("person_lastname");
@@ -259,9 +259,9 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
 	}
 
-	private DataMap[] createDataMaps(SelectionMode selectionMode)
+	private DataMap<?>[] createDataMaps(SelectionMode selectionMode)
 	{
-		Map<String, DataMap> dataMaps = new HashMap<String, DataMap>();
+		Map<String, DataMap<?>> dataMaps = new HashMap<String, DataMap<?>>();
 		if (selectionMode.equals(SelectionMode.PERSON))
 		{
 			Object[] elements = personSelection.toArray();
@@ -302,14 +302,14 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		{
 			createDataMaps(selectedDonationYear, selectedDonationPurpose, selectedDomain, dataMaps);
 		}
-		return dataMaps.values().toArray(new DataMap[0]);
+		return dataMaps.values().toArray(new DataMap<?>[0]);
 	}
 
 	private void createDataMaps(final Address address, final Integer year, DonationPurpose purpose, Domain domain,
-			final Map<String, DataMap> dataMaps)
+			final Map<String, DataMap<?>> dataMaps)
 	{
 		String key = "A" + address.getId().toString();
-		DataMap addressMap = dataMaps.get(key);
+		DataMap<?> addressMap = dataMaps.get(key);
 		if (addressMap == null)
 		{
 			if (year != null)
@@ -325,7 +325,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 	}
 
 	private void createDataMaps(final Donation donation, final Integer year, DonationPurpose purpose, Domain domain,
-			final Map<String, DataMap> dataMaps)
+			final Map<String, DataMap<?>> dataMaps)
 	{
 		if (!donation.isDeleted())
 		{
@@ -342,7 +342,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 	}
 
 	private void createDataMaps(final DonationYear donationYear, DonationPurpose purpose, Domain domain,
-			final Map<String, DataMap> dataMaps)
+			final Map<String, DataMap<?>> dataMaps)
 	{
 		for (Donation donation : donationYear.getDonations())
 		{
@@ -436,10 +436,10 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 	}
 
 	private void createDataMaps(final LinkPersonAddress link, final Integer year, DonationPurpose purpose,
-			Domain domain, final Map<String, DataMap> dataMaps)
+			Domain domain, final Map<String, DataMap<?>> dataMaps)
 	{
 		String key = "P" + link.getId().toString();
-		DataMap linkMap = dataMaps.get(key);
+		DataMap<?> linkMap = dataMaps.get(key);
 		if (linkMap == null)
 		{
 			if (year != null)

@@ -55,7 +55,7 @@ public class DonationListDialog extends TitleAreaDialog
 		this.selection = selection;
 	}
 
-	private void buildDocument(final DataMapKey[] keys, final DataMap[] dataMaps)
+	private void buildDocument(final DataMapKey[] keys, final DataMap<?>[] dataMaps)
 	{
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 		try
@@ -120,7 +120,7 @@ public class DonationListDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeDonation(final List<DataMap> maps, final Donation donation)
+	private void computeDonation(final List<DataMap<?>> maps, final Donation donation)
 	{
 		if (!donation.isDeleted())
 		{
@@ -128,7 +128,7 @@ public class DonationListDialog extends TitleAreaDialog
 		}
 	}
 
-	private void computeDonationYear(final List<DataMap> maps, final DonationYear year)
+	private void computeDonationYear(final List<DataMap<?>> maps, final DonationYear year)
 	{
 		if (!year.isDeleted())
 		{
@@ -147,9 +147,9 @@ public class DonationListDialog extends TitleAreaDialog
 		this.createButton(parent, IDialogConstants.CANCEL_ID, "Abbrechen", false);
 	}
 
-	private DataMap[] createDataMaps(final StructuredSelection ssel)
+	private DataMap<?>[] createDataMaps(final StructuredSelection ssel)
 	{
-		List<DataMap> maps = new ArrayList<DataMap>();
+		List<DataMap<?>> maps = new ArrayList<DataMap<?>>();
 		Object[] elements = ssel.toArray();
 		for (Object element : elements)
 		{
@@ -164,7 +164,7 @@ public class DonationListDialog extends TitleAreaDialog
 				computeDonation(maps, donation);
 			}
 		}
-		return maps.toArray(new DataMap[0]);
+		return maps.toArray(new DataMap<?>[0]);
 	}
 
 	@Override
@@ -237,7 +237,7 @@ public class DonationListDialog extends TitleAreaDialog
 	{
 		setCurrentUser();
 		final DataMapKey[] keys = getKeys();
-		final DataMap[] dataMaps = createDataMaps(selection);
+		final DataMap<?>[] dataMaps = createDataMaps(selection);
 
 		super.okPressed();
 
