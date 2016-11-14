@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -340,7 +341,16 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 				{
 					if (factory.size() == 0)
 					{
-						MessageDialog.openConfirm(getShell(), "Keine Kurse gefunden", "Es wurden keine Kurse in der gewählten Selection gefunden");
+						Job job = new UIJob("") 
+						{
+							@Override
+							public IStatus runInUIThread(IProgressMonitor monitor) 
+							{
+								MessageDialog.openConfirm(getShell(), "Keine Kurse gefunden", "Es wurden keine Kurse in der gewählten Selection gefunden");
+								return Status.OK_STATUS;
+							}
+						};
+						job.schedule();
 					}
 					else
 					{
@@ -376,7 +386,16 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 							}
 							else
 							{
-								MessageDialog.openWarning(getShell(), "Service nicht aktiv", "Der Service für die Verarbeitung der Daten ist nicht verfügbar.");
+								Job job = new UIJob("") 
+								{
+									@Override
+									public IStatus runInUIThread(IProgressMonitor monitor) 
+									{
+										MessageDialog.openWarning(getShell(), "Service nicht aktiv", "Der Service für die Verarbeitung der Daten ist nicht verfügbar.");
+										return Status.OK_STATUS;
+									}
+								};
+								job.schedule();
 							}
 						}
 						finally

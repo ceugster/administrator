@@ -9,7 +9,9 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -30,6 +32,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -100,10 +103,19 @@ public class ParticipationConfirmationDialog extends TitleAreaDialog
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 				{
-					DataMap[] maps = createDataMaps().toArray(new DataMap[0]);
+					DataMap<?>[] maps = createDataMaps().toArray(new DataMap[0]);
 					if (maps.length == 0)
 					{
-						MessageDialog.openConfirm(getShell(), MSG_TITLE_NO_BOOKINGS, MSG_NO_BOOKINGS);
+						Job job = new UIJob("") 
+						{
+							@Override
+							public IStatus runInUIThread(IProgressMonitor monitor) 
+							{
+								MessageDialog.openConfirm(getShell(), MSG_TITLE_NO_BOOKINGS, MSG_NO_BOOKINGS);
+								return Status.OK_STATUS;
+							}
+						};
+						job.schedule();
 					}
 					else
 					{
@@ -139,7 +151,16 @@ public class ParticipationConfirmationDialog extends TitleAreaDialog
 							}
 							else
 							{
-								MessageDialog.openWarning(getShell(), "Service nicht aktiv", MSG_NO_SERVICE_AVAILABLE);
+								Job job = new UIJob("") 
+								{
+									@Override
+									public IStatus runInUIThread(IProgressMonitor monitor) 
+									{
+										MessageDialog.openWarning(getShell(), "Service nicht aktiv", MSG_NO_SERVICE_AVAILABLE);
+										return Status.OK_STATUS;
+									}
+								};
+								job.schedule();
 							}
 						}
 						finally
@@ -169,7 +190,7 @@ public class ParticipationConfirmationDialog extends TitleAreaDialog
 		this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
 	}
 
-	private void createDataMap(final Booking booking, final Map<Long, DataMap> dataMaps)
+	private void createDataMap(final Booking booking, final Map<Long, DataMap<?>> dataMaps)
 	{
 		if (!booking.isDeleted())
 		{
@@ -180,9 +201,9 @@ public class ParticipationConfirmationDialog extends TitleAreaDialog
 		}
 	}
 
-	private Collection<DataMap> createDataMaps()
+	private Collection<DataMap<?>> createDataMaps()
 	{
-		Map<Long, DataMap> dataMaps = new HashMap<Long, DataMap>();
+		Map<Long, DataMap<?>> dataMaps = new HashMap<Long, DataMap<?>>();
 		Object[] elements = selection.toArray();
 		for (Object element : elements)
 		{
@@ -200,7 +221,7 @@ public class ParticipationConfirmationDialog extends TitleAreaDialog
 		return dataMaps.values();
 	}
 
-	private void createDataMaps(final Course course, final Map<Long, DataMap> dataMaps)
+	private void createDataMaps(final Course course, final Map<Long, DataMap<?>> dataMaps)
 	{
 		if (!course.isDeleted())
 		{

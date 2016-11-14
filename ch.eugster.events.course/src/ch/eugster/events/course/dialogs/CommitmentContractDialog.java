@@ -82,7 +82,7 @@ public class CommitmentContractDialog extends TitleAreaDialog
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 				{
-					DataMap[] maps = createDataMaps().toArray(new DataMap[0]);
+					DataMap<?>[] maps = createDataMaps().toArray(new DataMap[0]);
 					if (maps.length == 0)
 					{
 						MessageDialog.openConfirm(getShell(), MSG_TITLE_NO_COURSES, MSG_TITLE_NO_COURSES);
@@ -150,9 +150,9 @@ public class CommitmentContractDialog extends TitleAreaDialog
 		this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
 	}
 
-	private List<DataMap> createDataMaps()
+	private List<DataMap<?>> createDataMaps()
 	{
-		List<DataMap> dataMaps = new ArrayList<DataMap>();
+		List<DataMap<?>> dataMaps = new ArrayList<DataMap<?>>();
 		Object[] elements = selection.toArray();
 		for (Object element : elements)
 		{
