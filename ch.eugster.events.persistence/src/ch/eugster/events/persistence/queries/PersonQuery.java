@@ -180,10 +180,11 @@ public class PersonQuery extends AbstractEntityQuery<Person>
 
 	private Expression getCityExpression(final String value)
 	{
-		Expression city = new ExpressionBuilder().anyOf("links").get("address").get("zip")
+		Expression zip = new ExpressionBuilder().anyOf("links").get("address").get("zip")
 				.containsSubstringIgnoringCase(value);
-		city.or(new ExpressionBuilder().anyOf("links").get("address").get("city").containsSubstringIgnoringCase(value));
-		return city;
+		Expression city = new ExpressionBuilder().anyOf("links").get("address").get("city")
+				.containsSubstringIgnoringCase(value);
+		return city.or(zip);
 	}
 
 	private Expression getEmailExpression(final String value)
