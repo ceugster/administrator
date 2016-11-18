@@ -974,14 +974,14 @@ public class CourseMap extends AbstractDataMap<Course>
 				{
 					if (dates[0].get(Calendar.DAY_OF_MONTH) == dates[1].get(Calendar.DAY_OF_MONTH))
 					{
-						String start = getFormattedDate(dates[0], "dd.mm yyyy, HH:mm", weekdayType);
+						String start = getFormattedDate(dates[0], "dd. MMMM yyyy, HH:mm", weekdayType);
 						String end = getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
 						return start + " - " + end;
 					}
 					else
 					{
 						String start = getFormattedDate(dates[0], "dd.", weekdayType);
-						String end = getFormattedDate(dates[1], "dd.mm.yyyy,", weekdayType);
+						String end = getFormattedDate(dates[1], "dd. MMMM yyyy,", weekdayType);
 						String startTime = getFormattedDate(dates[0], "HH:mm", WeekdayType.NONE);
 						String endTime = getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
 						return start + " - " + end + " " + startTime + " - " + endTime;
@@ -989,8 +989,8 @@ public class CourseMap extends AbstractDataMap<Course>
 				}
 				else
 				{
-					String start = getFormattedDate(dates[0], "dd.mm", weekdayType);
-					String end = getFormattedDate(dates[1], "dd.mm.yyyy,", weekdayType);
+					String start = getFormattedDate(dates[0], "dd. MMMM", weekdayType);
+					String end = getFormattedDate(dates[1], "dd. MMMM yyyy,", weekdayType);
 					String startTime = getFormattedDate(dates[0], "HH:mm", WeekdayType.NONE);
 					String endTime = getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
 					return start + " - " + end + " " + startTime + " - " + endTime;
