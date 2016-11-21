@@ -38,6 +38,7 @@ import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.FieldExtension;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
+import ch.eugster.events.persistence.model.PersonSettings;
 import ch.eugster.events.persistence.queries.AddressQuery;
 import ch.eugster.events.persistence.queries.FieldExtensionQuery;
 import ch.eugster.events.persistence.queries.PersonQuery;
@@ -697,17 +698,11 @@ public class LinkSearcher extends Composite
 				if (entry.getKey().equals(ID))
 				{
 				}
-				else if (entry.getKey().equals(LASTNAME))
-				{
-				}
-				else if (entry.getKey().equals(PHONE))
-				{
-				}
 				else if (entry.getKey().equals(CITY))
 				{
 					if (!value.isEmpty())
 					{
-						if (value.contains("."))
+						if (value.contains(".") && !value.contains(".%"))
 						{
 							value = value.replace(".", ".%");
 						}
@@ -720,36 +715,6 @@ public class LinkSearcher extends Composite
 					{
 						criteria.put(entry.getKey(), value);
 					}
-				}
-			}
-			if (criteria.isEmpty())
-			{
-				text = (Text) widgets.get(LASTNAME);
-				String value = text.getText().trim();
-				if (value.length() > 3)
-				{
-					criteria.put(LASTNAME, value);
-				}
-				text = (Text) widgets.get(PHONE);
-				value = text.getText().trim();
-				if (value.length() > 6)
-				{
-					criteria.put(PHONE, value);
-				}
-			}
-			else
-			{
-				text = (Text) widgets.get(LASTNAME);
-				String value = text.getText().trim();
-				if (!value.isEmpty())
-				{
-					criteria.put(LASTNAME, value);
-				}
-				text = (Text) widgets.get(PHONE);
-				value = text.getText().trim();
-				if (!value.isEmpty())
-				{
-					criteria.put(PHONE, value);
 				}
 			}
 		}
@@ -902,7 +867,7 @@ public class LinkSearcher extends Composite
 //		return false;
 //	}
 
-	private boolean hasPersonCriteria(final Map<String, String> criteria)
+	private boolean searchPersons(final Map<String, String> criteria)
 	{
 		Iterator<String> keys = criteria.keySet().iterator();
 		while (keys.hasNext())
@@ -916,13 +881,39 @@ public class LinkSearcher extends Composite
 			{
 				return true;
 			}
+			if (key.equals(PHONE))
+			{
+				return true;
+			}
+			if (key.equals(EMAIL))
+			{
+				return true;
+			}
 		}
 		return false;
 	}
 
+	private boolean searchAddresses(final Map<String, String> criteria)
+	{
+		Iterator<String> keys = criteria.keySet().iterator();
+		while (keys.hasNext())
+		{
+			String key = keys.next();
+			if (key.equals(LASTNAME))
+			{
+				return false;
+			}
+			if (key.equals(FIRSTNAME))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public void initialize()
 	{
-		if (this.listen)
+		if (this.listen && checkCriteriaValuesForLength())
 		{
 			Map<String, String> criteria = createCriteria();
 			AbstractEntity[] entities = selectItems(criteria);
@@ -934,7 +925,27 @@ public class LinkSearcher extends Composite
 				}
 			}
 		}
-
+	}
+	
+	private boolean checkCriteriaValuesForLength()
+	{
+		Text text = (Text) widgets.get(ID);
+		String id = text.getText().trim();
+		if (!id.isEmpty())
+		{
+			return true;
+		}
+		int minLength = PersonSettings.getInstance().getCriteriaMinLength();
+		for (Entry<String, Widget> entry : widgets.entrySet())
+		{
+			text = (Text) entry.getValue();
+			String value = text.getText().trim();
+			if (!value.isEmpty() && value.length() < minLength)
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public void modifyText()
@@ -953,32 +964,35 @@ public class LinkSearcher extends Composite
 
 	public void schedule()
 	{
-		if (updateListJob == null)
+		if (checkCriteriaValuesForLength())
 		{
-			updateListJob = new UIJob("Starte Suchlauf...")
+			if (updateListJob == null)
 			{
-				@Override
-				public IStatus runInUIThread(final IProgressMonitor monitor)
+				updateListJob = new UIJob("Starte Suchlauf...")
 				{
-					AbstractEntity[] entities = new AbstractEntity[0];
-					final Map<String, String> criteria = createCriteria();
-					if (!criteria.isEmpty())
+					@Override
+					public IStatus runInUIThread(final IProgressMonitor monitor)
 					{
-						entities = LinkSearcher.this.selectItems(criteria);
+						AbstractEntity[] entities = new AbstractEntity[0];
+						final Map<String, String> criteria = createCriteria();
+						if (!criteria.isEmpty())
+						{
+							entities = LinkSearcher.this.selectItems(criteria);
+						}	
+						for (ICriteriaChangedListener listener : LinkSearcher.this.listeners)
+						{
+							listener.criteriaChanged(entities);
+						}
+						return Status.OK_STATUS;
 					}
-					for (ICriteriaChangedListener listener : LinkSearcher.this.listeners)
-					{
-						listener.criteriaChanged(entities);
-					}
-					return Status.OK_STATUS;
-				}
-			};
+				};
+			}
+			else
+			{
+				updateListJob.cancel();
+			}
+			updateListJob.schedule(500L);
 		}
-		else
-		{
-			updateListJob.cancel();
-		}
-		updateListJob.schedule(500L);
 	}
 
 	private AbstractEntity[] selectById(final String text)
@@ -1063,7 +1077,7 @@ public class LinkSearcher extends Composite
 					int maxRows = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID).getInt(
 							PreferenceInitializer.KEY_MAX_RECORDS, 0);
 
-					if (hasPersonCriteria(criteria))
+					if (searchPersons(criteria))
 					{
 						PersonQuery personQuery = (PersonQuery) connectionService.getQuery(Person.class);
 						selected.addAll(personQuery.selectByCriteria(criteria, extensions, maxRows));
@@ -1071,7 +1085,7 @@ public class LinkSearcher extends Composite
 //								.getQuery(LinkPersonAddress.class);
 //						selected.addAll(linkQuery.selectByCriteria(criteria, extensions, maxRows));
 					}
-					else
+					if (this.searchAddresses && searchAddresses(criteria))
 					{
 						AddressQuery addressQuery = (AddressQuery) connectionService.getQuery(Address.class);
 						List<Address> addresses = addressQuery.selectByCriteria(criteria,

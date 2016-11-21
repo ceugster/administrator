@@ -1318,7 +1318,6 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 		public ContentRoot(final AbstractEntity[] entities)
 		{
 			this.entities = entities;
-			System.out.println();
 		}
 
 		public AbstractEntity[] getEntities()

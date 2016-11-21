@@ -1761,6 +1761,22 @@ public abstract class DatabaseUpdater
 									"ALTER TABLE events_visit ADD COLUMN visit_notes " + this.getClobTypeName() + " NULL");
 						}
 					}
+					if (structureVersion == 43)
+					{
+						String tableName = "events_person_settings";
+						String columnName = "person_settings_criteria_min_length";
+						if (!columnExists(con, tableName, columnName))
+						{
+							ok = executeSqlQuery(con,
+									"ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " INTEGER DEFAULT 3");
+						}
+						columnName = "person_settings_max_records_listed";
+						if (!columnExists(con, tableName, columnName))
+						{
+							ok = executeSqlQuery(con,
+									"ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " INTEGER DEFAULT 100");
+						}
+					}
 					if (ok)
 					{
 						stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);

@@ -80,6 +80,14 @@ public class PersonSettings extends AbstractEntity
 	@Column(name = "person_settings_add_blank_after_point_in_city")
 	private boolean addBlankAfterPointInCity;
 
+	@Basic
+	@Column(name = "person_settings_criteria_min_length")
+	private int criteriaMinLength;
+
+	@Basic
+	@Column(name = "person_settings_max_records_listed")
+	private int maxRecordsListed;
+
 	@Override
 	public Object clone()
 	{
@@ -89,6 +97,7 @@ public class PersonSettings extends AbstractEntity
 		settings.setIdFormat(this.getIdFormat());
 		settings.setPersonLabelFormat(this.getPersonLabelFormat());
 		settings.setAddressLabelFormat(this.getAddressLabelFormat());
+		
 		return settings;
 	}
 
@@ -131,6 +140,16 @@ public class PersonSettings extends AbstractEntity
 	public boolean isAddBlankAfterPointInCity()
 	{
 		return addBlankAfterPointInCity;
+	}
+
+	public int getCriteriaMinLength()
+	{
+		return this.criteriaMinLength == 0 ? 3 : this.criteriaMinLength;
+	}
+
+	public int getMaxRecordListed()
+	{
+		return this.maxRecordsListed;
 	}
 
 	public boolean isPersonDomainMandatory()
@@ -185,6 +204,18 @@ public class PersonSettings extends AbstractEntity
 	{
 		this.propertyChangeSupport.firePropertyChange("personLabelFormat", this.personLabelFormat,
 				this.personLabelFormat = personLabelFormat);
+	}
+
+	public void setCriteriaMinLength(final int criteriaMinLength)
+	{
+		this.propertyChangeSupport.firePropertyChange("criteriaMinLength", this.criteriaMinLength,
+				this.criteriaMinLength = criteriaMinLength);
+	}
+
+	public void setMaxRecordsListed(final int maxRecordsListed)
+	{
+		this.propertyChangeSupport.firePropertyChange("maxRecordsListed", this.maxRecordsListed,
+				this.maxRecordsListed = maxRecordsListed);
 	}
 
 	public static PersonSettings getInstance()

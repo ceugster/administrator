@@ -33,6 +33,12 @@ public class PersonPreferenceStore extends ScopedPreferenceStore
 				Integer.toString(PersonSettings.getInstance().getEditorSectionBehaviour()));
 		this.setValue(PreferenceInitializer.KEY_EDITOR_ADD_BLANK_AFTER_DOT_IN_CITY,
 				Boolean.toString(PersonSettings.getInstance().isAddBlankAfterPointInCity()));
+		this.setValue(PreferenceInitializer.KEY_DOMAIN_MANDATORY,
+				Boolean.toString(PersonSettings.getInstance().isPersonDomainMandatory()));
+		this.setValue(PreferenceInitializer.KEY_CRITERIA_MIN_LENGTH,
+				Integer.toString(PersonSettings.getInstance().getCriteriaMinLength()));
+		this.setValue(PreferenceInitializer.KEY_MAX_RECORDS,
+				Integer.toString(PersonSettings.getInstance().getMaxRecordListed()));
 	}
 
 	@Override
@@ -55,6 +61,10 @@ public class PersonPreferenceStore extends ScopedPreferenceStore
 					this.getInt(PreferenceInitializer.KEY_EDITOR_SECTION_BEHAVIOUR));
 			PersonSettings.getInstance().setAddBlankAfterPointInCity(
 					this.getBoolean(PreferenceInitializer.KEY_EDITOR_ADD_BLANK_AFTER_DOT_IN_CITY));
+			PersonSettings.getInstance().setCriteriaMinLength(
+					this.getInt(PreferenceInitializer.KEY_CRITERIA_MIN_LENGTH));
+			PersonSettings.getInstance().setMaxRecordsListed(
+					this.getInt(PreferenceInitializer.KEY_MAX_RECORDS));
 			try
 			{
 				ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
