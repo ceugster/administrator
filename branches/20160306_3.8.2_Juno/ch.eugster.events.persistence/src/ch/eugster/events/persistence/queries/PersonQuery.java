@@ -189,9 +189,10 @@ public class PersonQuery extends AbstractEntityQuery<Person>
 
 	private Expression getEmailExpression(final String value)
 	{
-		Expression email = new ExpressionBuilder().get("email").containsSubstringIgnoringCase(value);
-		email.or(new ExpressionBuilder().anyOf("links").get("email").containsSubstringIgnoringCase(value));
-		return email;
+		Expression personEmail = new ExpressionBuilder().get("email").containsSubstringIgnoringCase(value);
+		Expression linkEmail = new ExpressionBuilder().anyOf("links").get("email").containsSubstringIgnoringCase(value);
+		Expression addressEmail = new ExpressionBuilder().anyOf("links").get("address").get("email").containsSubstringIgnoringCase(value);
+		return personEmail.or(linkEmail.or(addressEmail));
 	}
 
 	private Expression getFirstnameExpression(final String value)

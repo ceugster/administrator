@@ -3,8 +3,6 @@ package ch.eugster.events.persistence.formatters;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import ch.eugster.events.persistence.model.Visit;
-
 public class DateFormatter 
 {
 	public static DateFormatter getInstance()

@@ -28,6 +28,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 
 	public static final String KEY_MAX_RECORDS = "person.max.records";
 
+	public static final String KEY_CRITERIA_MIN_LENGTH = "criteria.minimal.length";
+
 	public static final String KEY_EDITOR_SECTION_BEHAVIOUR = "editor.section.behaviour";
 
 	public static final String KEY_EDITOR_ADD_BLANK_AFTER_DOT_IN_CITY = "editor.add.blank.after.dot.in.city";
@@ -60,6 +62,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 		prefs.put(KEY_USE_DOMAIN, Boolean.toString(PersonSettings.getInstance().getPersonHasDomain()));
 		prefs.put(KEY_DOMAIN_MANDATORY, Boolean.toString(PersonSettings.getInstance().isPersonDomainMandatory()));
 		prefs.putInt(KEY_MAX_RECORDS, 100);
+		prefs.putInt(KEY_CRITERIA_MIN_LENGTH, 3);
 		prefs.put(KEY_EDITOR_SECTION_BEHAVIOUR, EDITOR_SECTION_BEHAVIOUR_EDITOR);
 		prefs.put(KEY_EDITOR_SELECTOR, EditorSelector.SINGLE_PAGE_EDITOR.value());
 		prefs.put(KEY_EDITOR_ADD_BLANK_AFTER_DOT_IN_CITY, "0");
