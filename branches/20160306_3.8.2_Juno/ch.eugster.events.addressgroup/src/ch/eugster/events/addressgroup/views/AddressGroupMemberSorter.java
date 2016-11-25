@@ -105,7 +105,7 @@ public class AddressGroupMemberSorter extends ViewerSorter
 			}
 			case 3:
 			{
-				if (member1.isValidAddressMember() && member2.isValidLinkMember())
+				if (member1.isValidAddressMember() && member2.isValidAddressMember())
 				{
 					v1 = member1.getAddress().getCity();
 					v2 = member2.getAddress().getCity();
