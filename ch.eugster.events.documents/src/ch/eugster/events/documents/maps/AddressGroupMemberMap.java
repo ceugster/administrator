@@ -216,7 +216,7 @@ public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 					{
 						if (member.getAddress().getValidLinks().size() == 1)
 						{
-							return "P" + member.getAddress().getValidLinks().iterator().next().getId().toString();
+							return "P" + member.getAddress().getValidLinks().iterator().next().getPerson().getId().toString();
 						}
 						else
 						{
@@ -225,7 +225,7 @@ public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 					}
 					else if (member.isValidLinkMember())
 					{
-						return "P" + member.getLink().getId().toString();
+						return "P" + member.getLink().getPerson().getId().toString();
 					}
 					else
 					{
