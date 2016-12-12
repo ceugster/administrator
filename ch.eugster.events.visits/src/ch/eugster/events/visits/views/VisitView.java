@@ -225,7 +225,7 @@ public class VisitView extends AbstractEntityView implements IDoubleClickListene
 		});
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
-		tableColumn.setText("Durchführung");
+		tableColumn.setText("DurchfÃ¼hrung");
 
 		createContextMenu();
 
