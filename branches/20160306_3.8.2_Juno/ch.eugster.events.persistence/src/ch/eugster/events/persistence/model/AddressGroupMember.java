@@ -86,7 +86,21 @@ public class AddressGroupMember extends AbstractEntity
 
 	public boolean isValid()
 	{
-		return !this.deleted && ((this.link == null) ? this.address.isValid() : this.link.isValid()) && this.addressGroup.isValid();
+		if (!this.deleted)
+		{
+			if (this.link == null || this.link.deleted)
+			{
+				if (this.address != null && !this.address.deleted)
+				{
+					return this.address.isValid();
+				}
+			}
+			else
+			{
+				return this.link.isValid();
+			}
+		}
+		return false;
 	}
 	
 	public boolean isValidLinkMember()

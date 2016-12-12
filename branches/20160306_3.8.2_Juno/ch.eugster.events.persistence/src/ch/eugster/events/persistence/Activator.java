@@ -45,7 +45,7 @@ public class Activator extends AbstractUIPlugin
 	}
 
 	/**
-	 * Prüft, ob die Verbindung gültig ist und falls ja, ob die Datenbank gültig
+	 * PrÃ¼ft, ob die Verbindung gÃ¼ltig ist und falls ja, ob die Datenbank gÃ¼ltig
 	 * ist.
 	 * 
 	 * @return IStatus

@@ -24,7 +24,7 @@ import ch.eugster.events.persistence.wizards.DriverLabelProvider;
 
 public class ConnectionPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage
 {
-	private static final String HELP_MESSAGE = "Die Änderungen werden erst nach einem Neustart aktiviert.\n\n";
+	private static final String HELP_MESSAGE = "Die Ã„nderungen werden erst nach einem Neustart aktiviert.\n\n";
 	
 	private ComboFieldEditor databaseEditor;
 	
@@ -87,7 +87,7 @@ public class ConnectionPreferencePage extends FieldEditorPreferencePage implemen
 		
 		this.urlEditor = new StringFieldEditor(PersistenceUnitProperties.JDBC_URL, "URL", this.getFieldEditorParent());
 		this.urlEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_FOCUS_LOST);
-		this.urlEditor.setErrorMessage("Die URL muss einen gültige Form aufweisen.");
+		this.urlEditor.setErrorMessage("Die URL muss einen gÃ¼ltige Form aufweisen.");
 		this.urlEditor.setEmptyStringAllowed(false);
 		this.addField(this.urlEditor);
 		
@@ -101,7 +101,7 @@ public class ConnectionPreferencePage extends FieldEditorPreferencePage implemen
 		this.passwordEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		this.addField(this.passwordEditor);
 		
-		ButtonFieldEditor testEditor = new ButtonFieldEditor("", "Verbindung prüfen", SWT.PUSH, this
+		ButtonFieldEditor testEditor = new ButtonFieldEditor("", "Verbindung prÃ¼fen", SWT.PUSH, this
 						.getFieldEditorParent());
 		testEditor.getButtonControl().addSelectionListener(new SelectionListener()
 		{
@@ -119,8 +119,8 @@ public class ConnectionPreferencePage extends FieldEditorPreferencePage implemen
 				catch (ClassNotFoundException e)
 				{
 					MessageDialog
-									.openError(ConnectionPreferencePage.this.getShell(), "Ungültiger Datenbanktreiber",
-													"Die Verbindung konnte nicht hergestellt werden. Für die gewählte Datenbank fehlt der notwendige Treiber.");
+									.openError(ConnectionPreferencePage.this.getShell(), "UngÃ¼ltiger Datenbanktreiber",
+													"Die Verbindung konnte nicht hergestellt werden. FÃ¼r die gewÃ¤hlte Datenbank fehlt der notwendige Treiber.");
 					return;
 				}
 				catch (SQLException e)

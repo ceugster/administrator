@@ -34,7 +34,7 @@ public class PersonSettings extends AbstractEntity
 	private static PersonSettings instance;
 
 	/**
-	 * Kurse können Domänen festlegen
+	 * Kurse kÃ¶nnen DomÃ¤nen festlegen
 	 */
 	@Id
 	@Column(name = "person_settings_id")
