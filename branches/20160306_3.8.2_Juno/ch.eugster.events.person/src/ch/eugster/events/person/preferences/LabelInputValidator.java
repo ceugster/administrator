@@ -31,11 +31,11 @@ public class LabelInputValidator implements IInputValidator
 								return null;
 							}
 						}
-						return "Die Variable '" + var + "' ist ungültig.";
+						return "Die Variable '" + var + "' ist ungÃ¼ltig.";
 					}
 					else
 					{
-						return "Variablen müssen mit '}' abgeschlossen werden.";
+						return "Variablen mÃ¼ssen mit '}' abgeschlossen werden.";
 					}
 				}
 				else

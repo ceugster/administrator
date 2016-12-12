@@ -342,7 +342,7 @@ public class TodoView extends AbstractEntityView implements EventHandler
 		});
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
-		tableColumn.setText("Fällig");
+		tableColumn.setText("FÃ¤llig");
 
 		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()

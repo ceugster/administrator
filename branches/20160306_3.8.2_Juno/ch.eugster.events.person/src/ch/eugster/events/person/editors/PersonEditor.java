@@ -123,9 +123,9 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 	private static final String EMAIL_LINK = "Email (<a>senden</a>)";
 
-	private static final String WEBSITE_LABEL = "Webseite (öffnen)";
+	private static final String WEBSITE_LABEL = "Webseite (Ã¶ffnen)";
 
-	private static final String WEBSITE_LINK = "Webseite (<a>öffnen</a>)";
+	private static final String WEBSITE_LINK = "Webseite (<a>Ã¶ffnen</a>)";
 
 	private static final String CONTACT_SECTION_EXPANDED = "contacts.section.expanded";
 
@@ -1419,7 +1419,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 		if (PersonSettings.getInstance().getPersonHasDomain())
 		{
-			label = formToolkit.createLabel(composite, "Domäne");
+			label = formToolkit.createLabel(composite, "DomÃ¤ne");
 			label.setLayoutData(new GridData());
 
 			CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
@@ -1589,7 +1589,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 		if (this.addressCountryViewer.getSelection().isEmpty())
 		{
 			msg = new Message(this.city, "Fehler");
-			msg.setMessage("Der Ländercode fehlt.");
+			msg.setMessage("Der LÃ¤ndercode fehlt.");
 			FormToolkit.ensureVisible(this.addressCountryViewer.getControl());
 			this.addressCountryViewer.getControl().setFocus();
 		}
@@ -1861,7 +1861,7 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 	// if (this.address.getText().isEmpty() && this.pob.getText().isEmpty())
 	// {
 	// msg = new Message(this.city, "Fehler");
-	// msg.setMessage("Sie müssen entweder eine Strasse oder ein Postfach erfassen.");
+	// msg.setMessage("Sie mÃ¼ssen entweder eine Strasse oder ein Postfach erfassen.");
 	// FormToolkit.ensureVisible(this.address);
 	// this.address.setFocus();
 	// }

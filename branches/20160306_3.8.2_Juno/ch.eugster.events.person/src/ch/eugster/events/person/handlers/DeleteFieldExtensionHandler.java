@@ -30,7 +30,7 @@ public class DeleteFieldExtensionHandler extends ConnectionServiceDependentAbstr
 					Shell shell = (Shell) context.getParent().getVariable("activeShell");
 					String title = "Zusatzfeld entfernen";
 
-					String msg = "Soll das ausgew‰hlte Zusatzfeld entfernt werden?";
+					String msg = "Soll das ausgew√§hlte Zusatzfeld entfernt werden?";
 					int type = MessageDialog.QUESTION;
 					String[] buttons = new String[] { "Ja", "Nein" };
 					MessageDialog dialog = new MessageDialog(shell, title, null, msg, type, buttons, 0);

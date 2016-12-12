@@ -170,8 +170,8 @@ public class VisitThemeEditor extends AbstractEntityEditor<VisitTheme>
 				VisitThemeQuery query = (VisitThemeQuery) service.getQuery(VisitTheme.class);
 				if (!query.isNameUnique(name, visitTheme.getId()))
 				{
-					msg = new Message(this.name, "Ungültige Bezeichnung");
-					msg.setMessage("Die gewählte Bezeichnung wird bereits verwendet.");
+					msg = new Message(this.name, "UngÃ¼ltige Bezeichnung");
+					msg.setMessage("Die gewÃ¤hlte Bezeichnung wird bereits verwendet.");
 					return msg;
 				}
 			}

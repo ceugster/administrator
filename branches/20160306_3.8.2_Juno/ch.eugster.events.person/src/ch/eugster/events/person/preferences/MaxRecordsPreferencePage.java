@@ -34,13 +34,13 @@ public class MaxRecordsPreferencePage extends FieldEditorPreferencePage implemen
 	protected void createFieldEditors()
 	{
 		IntegerFieldEditor maxRowsEditor = new IntegerFieldEditor(PreferenceInitializer.KEY_MAX_RECORDS,
-				"Maximale Anzahl Datens‰tze laden", this.getFieldEditorParent());
+				"Maximale Anzahl Datens√§tze laden", this.getFieldEditorParent());
 		maxRowsEditor.setEmptyStringAllowed(false);
 		maxRowsEditor.setValidRange(-1, 100000);
 		this.addField(maxRowsEditor);
 
 		IntegerFieldEditor criteriaMinLengthEditor = new IntegerFieldEditor(PreferenceInitializer.KEY_CRITERIA_MIN_LENGTH,
-				"Mindestl‰nge Kriterien", this.getFieldEditorParent());
+				"Mindestl√§nge Kriterien", this.getFieldEditorParent());
 		criteriaMinLengthEditor.setEmptyStringAllowed(false);
 		criteriaMinLengthEditor.setValidRange(-1, 100000);
 		this.addField(criteriaMinLengthEditor);

@@ -163,7 +163,7 @@ public class UserEditor extends AbstractEntityEditor<User>
 		});
 		this.stateViewer.setInput(User.UserStatus.values());
 
-		label = this.formToolkit.createLabel(composite, "Standarddomäne", SWT.NONE);
+		label = this.formToolkit.createLabel(composite, "StandarddomÃ¤ne", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		combo = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.FLAT);
@@ -237,8 +237,8 @@ public class UserEditor extends AbstractEntityEditor<User>
 
 		if (this.username.getText().isEmpty())
 		{
-			msg = new Message(this.username, "Ungültiger Anmeldename");
-			msg.setMessage("Sie müssen einen Anmeldenamen festlegen.");
+			msg = new Message(this.username, "UngÃ¼ltiger Anmeldename");
+			msg.setMessage("Sie mÃ¼ssen einen Anmeldenamen festlegen.");
 			return msg;
 		}
 
@@ -291,8 +291,8 @@ public class UserEditor extends AbstractEntityEditor<User>
 				UserQuery query = (UserQuery) service.getQuery(User.class);
 				if (!query.isUsernameUnique(code, user.getId()))
 				{
-					msg = new Message(this.username, "Ungültiger Benutzername");
-					msg.setMessage("Der gewählte Benutzername wird bereits verwendet.");
+					msg = new Message(this.username, "UngÃ¼ltiger Benutzername");
+					msg.setMessage("Der gewÃ¤hlte Benutzername wird bereits verwendet.");
 					return msg;
 				}
 			}

@@ -52,9 +52,9 @@ public class SectionExpanderBehaviourPreferencePage extends FieldEditorPreferenc
 		this.addField(selectEditor);
 
 		labelsAndValues = new String[][] {
-				{ "Auf Editorenebene (gilt für alle Editoren gleichen Typs)",
+				{ "Auf Editorenebene (gilt fÃ¼r alle Editoren gleichen Typs)",
 						PreferenceInitializer.EDITOR_SECTION_BEHAVIOUR_EDITOR },
-				{ "Auf Objektebene (individuell für jedes Objekt)",
+				{ "Auf Objektebene (individuell fÃ¼r jedes Objekt)",
 						PreferenceInitializer.EDITOR_SECTION_BEHAVIOUR_OBJECT } };
 		selectEditor = new RadioGroupFieldEditor(PreferenceInitializer.KEY_EDITOR_SECTION_BEHAVIOUR,
 				"Verhalten der Bereiche in den Editoren", 1, labelsAndValues, getFieldEditorParent());

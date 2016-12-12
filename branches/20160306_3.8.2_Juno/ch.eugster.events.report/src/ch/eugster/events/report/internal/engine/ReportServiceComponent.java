@@ -74,7 +74,7 @@ public class ReportServiceComponent implements ReportService
 				@Override
 				public void run()
 				{
-					MessageDialog.openWarning(null, "Ungültiger Report", "Der gewählte Report ist ungültig.");
+					MessageDialog.openWarning(null, "UngÃ¼ltiger Report", "Der gewÃ¤hlte Report ist ungÃ¼ltig.");
 				}
 			});
 		}
@@ -106,7 +106,7 @@ public class ReportServiceComponent implements ReportService
 				@Override
 				public void run()
 				{
-					MessageDialog.openWarning(null, "Ungültiger Report", "Der gewählte Report ist ungültig.");
+					MessageDialog.openWarning(null, "UngÃ¼ltiger Report", "Der gewÃ¤hlte Report ist ungÃ¼ltig.");
 				}
 			});
 		}
@@ -145,7 +145,7 @@ public class ReportServiceComponent implements ReportService
 					}
 					else
 					{
-						MessageDialog.openWarning(null, "Ungültiger Report", "Der gewählte Report ist ungültig.");
+						MessageDialog.openWarning(null, "UngÃ¼ltiger Report", "Der gewÃ¤hlte Report ist ungÃ¼ltig.");
 					}
 				}
 			}
@@ -191,7 +191,7 @@ public class ReportServiceComponent implements ReportService
 				@Override
 				public void run()
 				{
-					MessageDialog.openWarning(null, "Ungültiger Report", "Der gewählte Report ist ungültig.");
+					MessageDialog.openWarning(null, "UngÃ¼ltiger Report", "Der gewÃ¤hlte Report ist ungÃ¼ltig.");
 				}
 			});
 		}

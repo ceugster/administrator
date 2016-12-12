@@ -101,7 +101,7 @@ public class StatusContributionItem extends ContributionItem implements IReportV
 	@Override
 	public final void fill(final Menu parent, final int index)
 	{
-		Assert.isTrue(false, "Seitennummer kann nicht zu Menu hinzugefügt werden"); //$NON-NLS-1$
+		Assert.isTrue(false, "Seitennummer kann nicht zu Menu hinzugefÃ¼gt werden"); //$NON-NLS-1$
 	}
 
 	/**

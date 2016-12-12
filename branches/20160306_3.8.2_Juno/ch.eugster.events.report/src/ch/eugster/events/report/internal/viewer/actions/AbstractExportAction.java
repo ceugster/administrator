@@ -115,8 +115,8 @@ public abstract class AbstractExportAction extends AbstractReportViewerAction
 								@Override
 								public void run()
 								{
-									MessageDialog.openInformation(new Shell(), "Export nicht möglich",
-											"Diese Exportart ist nicht verfügbar.");
+									MessageDialog.openInformation(new Shell(), "Export nicht mÃ¶glich",
+											"Diese Exportart ist nicht verfÃ¼gbar.");
 								}
 							});
 						}

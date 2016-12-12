@@ -124,7 +124,7 @@ public class PersonSexEditor extends AbstractEntityEditor<PersonSex>
 		gridData.horizontalSpan = 2;
 
 		Label label = this.formToolkit.createLabel(composite,
-				"Sie können folgende Variablen verwenden, um die Anreden zu personalisieren:", SWT.NONE);
+				"Sie kÃ¶nnen folgende Variablen verwenden, um die Anreden zu personalisieren:", SWT.NONE);
 		label.setLayoutData(gridData);
 
 		String[] variables = PersonFormatter.getInstance().getPersonVisibleVariables();
@@ -165,7 +165,7 @@ public class PersonSexEditor extends AbstractEntityEditor<PersonSex>
 		label = this.formToolkit.createLabel(composite, "", SWT.NONE);
 		label.setLayoutData(gridData);
 
-		label = this.formToolkit.createLabel(composite, "Briefanrede höflich", SWT.NONE);
+		label = this.formToolkit.createLabel(composite, "Briefanrede hÃ¶flich", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		this.polite = this.formToolkit.createText(composite, "");
@@ -188,7 +188,7 @@ public class PersonSexEditor extends AbstractEntityEditor<PersonSex>
 			}
 		});
 
-		label = this.formToolkit.createLabel(composite, "Briefanrede persönlich", SWT.NONE);
+		label = this.formToolkit.createLabel(composite, "Briefanrede persÃ¶nlich", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		this.personal = this.formToolkit.createText(composite, "");

@@ -36,7 +36,7 @@ public class DeleteTitleHandler extends ConnectionServiceDependentAbstractHandle
 					long count = query.countByTitle(personTitle);
 					if (count == 0)
 					{
-						String msg = "Soll der ausgew‰hlte Titel entfernt werden?";
+						String msg = "Soll der ausgew√§hlte Titel entfernt werden?";
 						int type = MessageDialog.QUESTION;
 						String[] buttons = new String[] { "Ja", "Nein" };
 						MessageDialog dialog = new MessageDialog(shell, title, null, msg, type, buttons, 0);
@@ -60,7 +60,7 @@ public class DeleteTitleHandler extends ConnectionServiceDependentAbstractHandle
 					}
 					else
 					{
-						String msg = "Der ausgew‰hlte Titel kann nicht entfernt werden, da er noch verwendet wird.";
+						String msg = "Der ausgew√§hlte Titel kann nicht entfernt werden, da er noch verwendet wird.";
 						int type = MessageDialog.INFORMATION;
 						String[] buttons = new String[] { "OK" };
 						MessageDialog dialog = new MessageDialog(shell, title, null, msg, type, buttons, 0);

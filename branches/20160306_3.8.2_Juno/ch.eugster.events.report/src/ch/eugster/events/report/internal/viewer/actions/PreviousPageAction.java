@@ -35,8 +35,8 @@ public class PreviousPageAction extends AbstractReportViewerAction
 	{
 		super(viewer);
 
-		setText("Seite zurück"); //$NON-NLS-1$
-		setToolTipText("Seite zurück"); //$NON-NLS-1$
+		setText("Seite zurÃ¼ck"); //$NON-NLS-1$
+		setToolTipText("Seite zurÃ¼ck"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("previous"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("previousd"));
 	}

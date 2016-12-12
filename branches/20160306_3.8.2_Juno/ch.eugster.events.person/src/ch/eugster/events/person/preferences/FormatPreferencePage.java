@@ -39,7 +39,7 @@ public class FormatPreferencePage extends FieldEditorPreferencePage implements I
 				"Formatierung Id", this.getFieldEditorParent());
 		this.addField(idFormatEditor);
 
-		StringBuilder description = new StringBuilder("Mögliche Variablen:\n");
+		StringBuilder description = new StringBuilder("MÃ¶gliche Variablen:\n");
 		String[] variables = PersonFormatter.getInstance().getPersonLabelVisibleVariables();
 		for (String variable : variables)
 		{
@@ -50,7 +50,7 @@ public class FormatPreferencePage extends FieldEditorPreferencePage implements I
 				variables, this.getFieldEditorParent());
 		this.addField(personFormatEditor);
 
-		description = new StringBuilder("Mögliche Variablen:\n");
+		description = new StringBuilder("MÃ¶gliche Variablen:\n");
 		variables = AddressFormatter.getInstance().getAddressLabelVisibleVariables();
 		for (String variable : variables)
 		{
