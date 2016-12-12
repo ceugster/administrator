@@ -40,10 +40,10 @@ implements IWorkbenchPreferencePage
 	@Override
 	protected void createFieldEditors()
 	{
-		FileFieldEditor bookingEditor = new FileFieldEditor(PreferenceInitializer.KEY_DONATION_TEMPLATE, "Vorlage Spendenbest‰tigung", this.getFieldEditorParent());
+		FileFieldEditor bookingEditor = new FileFieldEditor(PreferenceInitializer.KEY_DONATION_TEMPLATE, "Vorlage Spendenbest√§tigung", this.getFieldEditorParent());
 		bookingEditor.setChangeButtonText("...");
 		bookingEditor.setFileExtensions(new String[] { "*.odt" });
-		bookingEditor.setErrorMessage("Die Vorlage f¸r die Spendenbest‰tigungen existiert nicht im angegebenen Pfad.");
+		bookingEditor.setErrorMessage("Die Vorlage f√ºr die Spendenbest√§tigungen existiert nicht im angegebenen Pfad.");
 		this.addField(bookingEditor);
 	}
 

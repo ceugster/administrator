@@ -90,7 +90,7 @@ public class OdfDomPreferencePage extends FieldEditorPreferencePage implements I
 		writerEditor.setEmptyStringAllowed(true);
 		writerEditor.setFileExtensions(new String[] { "*.exe" });
 		writerEditor.setChangeButtonText("...");
-		writerEditor.setErrorMessage("Der Pfad ist ungültig.");
+		writerEditor.setErrorMessage("Der Pfad ist ungÃ¼ltig.");
 		this.addField(writerEditor);
 
 	}

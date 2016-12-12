@@ -108,7 +108,7 @@ public class DecollatePersonsHandler extends AbstractHandler implements IHandler
 
 					InputDialog dialog = new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 							.getShell(), "Anzahl Personen",
-							"Wieviele zusätzliche Personen sollen aus der ausgewählten Adresse generiert werden?",
+							"Wieviele zusÃ¤tzliche Personen sollen aus der ausgewÃ¤hlten Adresse generiert werden?",
 							Integer.valueOf(1).toString(), new IInputValidator()
 							{
 								@Override
@@ -118,11 +118,11 @@ public class DecollatePersonsHandler extends AbstractHandler implements IHandler
 									{
 										int val = Integer.valueOf(value).intValue();
 										return (val > 0 && val <= Integer.MAX_VALUE) ? null
-												: "Der eingegebene Wert liegt nicht im gültigen Zahlenbereich";
+												: "Der eingegebene Wert liegt nicht im gÃ¼ltigen Zahlenbereich";
 									}
 									catch (NumberFormatException e)
 									{
-										return "Der eingegebene Wert ist keine gültige Zahl";
+										return "Der eingegebene Wert ist keine gÃ¼ltige Zahl";
 									}
 								}
 

@@ -89,9 +89,9 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 
 	private String selectedName;
 
-	private final String message = "Wählen Sie das Dokument, das als Vorlage verwendet werden soll.";
+	private final String message = "WÃ¤hlen Sie das Dokument, das als Vorlage verwendet werden soll.";
 
-	private static final String MSG_NO_SERVICE_AVAILABLE = "Es ist kein Service für die Verarbeitung des Dokuments verfügbar.";
+	private static final String MSG_NO_SERVICE_AVAILABLE = "Es ist kein Service fÃ¼r die Verarbeitung des Dokuments verfÃ¼gbar.";
 
 	private static final String MSG_TITLE_NO_BOOKINGS = "Keine Spenden vorhanden";
 
@@ -99,7 +99,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 
 	private static final String CANCEL_BUTTON_TEXT = "Abbrechen";
 
-	private static final String DIALOG_TITLE = "Vorlage Spendenbestätigung";
+	private static final String DIALOG_TITLE = "Vorlage SpendenbestÃ¤tigung";
 
 	private boolean isPageComplete = false;
 
@@ -144,7 +144,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		if (dataMaps.length == 0)
 		{
 			MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-					MSG_TITLE_NO_BOOKINGS, null, "Die Auswahl enthält keine auswertbaren Elemente.",
+					MSG_TITLE_NO_BOOKINGS, null, "Die Auswahl enthÃ¤lt keine auswertbaren Elemente.",
 					MessageDialog.INFORMATION, new String[] { "OK" }, 0);
 			dialog.open();
 		}

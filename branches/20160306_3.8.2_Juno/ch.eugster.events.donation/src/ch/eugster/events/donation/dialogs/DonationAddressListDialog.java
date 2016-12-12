@@ -88,9 +88,9 @@ public class DonationAddressListDialog extends TitleAreaDialog
 	 * Common
 	 */
 
-	private final String message = "Wählen Sie die gewünschten Optionen.";
+	private final String message = "WÃ¤hlen Sie die gewÃ¼nschten Optionen.";
 
-	private static final String MSG_NO_SERVICE_AVAILABLE = "Es ist kein Service für die Verarbeitung des Dokuments verfügbar.";
+	private static final String MSG_NO_SERVICE_AVAILABLE = "Es ist kein Service fÃ¼r die Verarbeitung des Dokuments verfÃ¼gbar.";
 
 	private static final String MSG_TITLE_NO_BOOKINGS = "Keine Spenden vorhanden";
 
@@ -186,7 +186,7 @@ public class DonationAddressListDialog extends TitleAreaDialog
 		if (dataMaps.length == 0)
 		{
 			MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-					MSG_TITLE_NO_BOOKINGS, null, "Die Auswahl enthält keine auswertbaren Elemente.",
+					MSG_TITLE_NO_BOOKINGS, null, "Die Auswahl enthÃ¤lt keine auswertbaren Elemente.",
 					MessageDialog.INFORMATION, new String[] { "OK" }, 0);
 			dialog.open();
 		}
@@ -605,7 +605,7 @@ public class DonationAddressListDialog extends TitleAreaDialog
 
 			printAllDonations = new Button(composite, SWT.CHECK);
 			printAllDonations.setLayoutData(gridData);
-			printAllDonations.setText("Sämtliche Spender auflisten (wenn nicht aktiviert, wird die aktuelle Selektion gelistet).");
+			printAllDonations.setText("SÃ¤mtliche Spender auflisten (wenn nicht aktiviert, wird die aktuelle Selektion gelistet).");
 			printAllDonations.addSelectionListener(new SelectionListener()
 			{
 				@Override

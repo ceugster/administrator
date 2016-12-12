@@ -393,12 +393,12 @@ public class SelectSourceWizardPage extends WizardPage implements ISelectionProv
 						catch (EmptyFileException e)
 						{
 							Toolkit.getDefaultToolkit().beep();
-							MessageDialog.openConfirm(this.getShell(), "Ungültige Datei", "Die ausgewählte Datei ist leer und kann deshalb nicht verarbeitet werden.");
+							MessageDialog.openConfirm(this.getShell(), "UngÃ¼ltige Datei", "Die ausgewÃ¤hlte Datei ist leer und kann deshalb nicht verarbeitet werden.");
 						}
 						catch (IllegalArgumentException e)
 						{
 							Toolkit.getDefaultToolkit().beep();
-							MessageDialog.openConfirm(this.getShell(), "Ungültiges Dateiformat", "Die ausgewählte Datei ist keine Excel-Datei und kann deshalb nicht verarbeitet werden.");
+							MessageDialog.openConfirm(this.getShell(), "UngÃ¼ltiges Dateiformat", "Die ausgewÃ¤hlte Datei ist keine Excel-Datei und kann deshalb nicht verarbeitet werden.");
 						}
 						finally
 						{

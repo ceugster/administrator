@@ -162,8 +162,8 @@ public class DonationPurposeEditor extends AbstractEntityEditor<DonationPurpose>
 				DonationPurposeQuery query = (DonationPurposeQuery) service.getQuery(DonationPurpose.class);
 				if (!query.isCodeUnique(code, purpose.getId()))
 				{
-					msg = new Message(this.code, "Ung¸ltiger Code");
-					msg.setMessage("Der gew‰hlte Code wird bereits verwendet.");
+					msg = new Message(this.code, "Ung√ºltiger Code");
+					msg.setMessage("Der gew√§hlte Code wird bereits verwendet.");
 					return msg;
 				}
 			}
@@ -182,7 +182,7 @@ public class DonationPurposeEditor extends AbstractEntityEditor<DonationPurpose>
 		if (this.name.getText().isEmpty())
 		{
 			msg = new Message(this.name, "Fehler");
-			msg.setMessage("Die Dom‰ne muss eine Bezeichnung haben.");
+			msg.setMessage("Die Dom√§ne muss eine Bezeichnung haben.");
 		}
 
 		return msg;

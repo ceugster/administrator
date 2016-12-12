@@ -236,7 +236,7 @@ public enum MappingNames
 				int sexIndex = getIndexOf(targetNames, MappingNames.SEX);
 				if (sexIndex == -1)
 				{
-					return "Der Wert für " + this.label() + " ist nicht gültig. Ändern Sie den Wert in der Importdatei auf einen gültigen Wert.";
+					return "Der Wert fÃ¼r " + this.label() + " ist nicht gÃ¼ltig. Ã„ndern Sie den Wert in der Importdatei auf einen gÃ¼ltigen Wert.";
 				}
 				else
 				{
@@ -259,7 +259,7 @@ public enum MappingNames
 				}
 				else
 				{
-					return "Der Wert '" + value + "' für " + this.label() + " ist nicht gültig. Ändern Sie den Wert in der Importdatei auf einen gültigen Wert.";
+					return "Der Wert '" + value + "' fÃ¼r " + this.label() + " ist nicht gÃ¼ltig. Ã„ndern Sie den Wert in der Importdatei auf einen gÃ¼ltigen Wert.";
 				}
 			}
 		}
@@ -270,7 +270,7 @@ public enum MappingNames
 				int salutationIndex = getIndexOf(targetNames, MappingNames.SALUTATION);
 				if (salutationIndex == -1)
 				{
-					return "Der Wert '" + value + "' für " + this.label() + " ist nicht gültig. Ändern Sie den Wert in der Importdatei auf einen gültigen Wert.";
+					return "Der Wert '" + value + "' fÃ¼r " + this.label() + " ist nicht gÃ¼ltig. Ã„ndern Sie den Wert in der Importdatei auf einen gÃ¼ltigen Wert.";
 				}
 				else
 				{
@@ -289,7 +289,7 @@ public enum MappingNames
 			}
 			else
 			{
-				return "Der Wert '" + value + "' für " + this.label() + " ist nicht gültig. Ändern Sie den Wert in der Importdatei auf einen gültigen Wert.";
+				return "Der Wert '" + value + "' fÃ¼r " + this.label() + " ist nicht gÃ¼ltig. Ã„ndern Sie den Wert in der Importdatei auf einen gÃ¼ltigen Wert.";
 			}
 		}
 		case COUNTRY:
@@ -307,7 +307,7 @@ public enum MappingNames
 			CountryQuery query = (CountryQuery) connectionService.getQuery(Country.class);
 			List<Country> countries = query.selectByIso3166alpha2Code(value);
 			return countries.isEmpty() 
-							? ("Der Wert '" + value + "' für " + this.label() + " ist nicht gültig. Ändern Sie den Wert in der Importdatei auf einen gültigen Wert.")
+							? ("Der Wert '" + value + "' fÃ¼r " + this.label() + " ist nicht gÃ¼ltig. Ã„ndern Sie den Wert in der Importdatei auf einen gÃ¼ltigen Wert.")
 							: "";
 		}
 		case TITLE:
@@ -324,7 +324,7 @@ public enum MappingNames
 			}
 			else
 			{
-				return "Der Wert '" + value + "' für " + this.label() + " ist nicht gültig. Ändern Sie den Wert in der Importdatei auf einen gültigen Wert.";
+				return "Der Wert '" + value + "' fÃ¼r " + this.label() + " ist nicht gÃ¼ltig. Ã„ndern Sie den Wert in der Importdatei auf einen gÃ¼ltigen Wert.";
 			}
 		}
 		default:

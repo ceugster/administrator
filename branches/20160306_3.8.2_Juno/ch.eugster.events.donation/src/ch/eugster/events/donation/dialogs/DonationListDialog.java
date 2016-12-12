@@ -45,7 +45,7 @@ public class DonationListDialog extends TitleAreaDialog
 
 	private final StructuredSelection selection;
 
-	private final String message = "Erstellen einer Adressliste der ausgew‰hlten Spenden.";
+	private final String message = "Erstellen einer Adressliste der ausgew√§hlten Spenden.";
 
 	private boolean isPageComplete = false;
 

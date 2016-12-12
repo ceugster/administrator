@@ -71,7 +71,7 @@ public class ImportMemberSelectSourceFileWizardPage extends WizardPage implement
 			public void widgetSelected(final SelectionEvent e)
 			{
 				FileDialog dialog = new FileDialog(ImportMemberSelectSourceFileWizardPage.this.getShell(), SWT.NONE);
-				dialog.setText("Datei für den Mitgliedernummernabgleich");
+				dialog.setText("Datei fÃ¼r den Mitgliedernummernabgleich");
 				dialog.setFilterExtensions(new String[] { "*.xls" });
 				dialog.setFilterIndex(0);
 				dialog.setFilterNames(new String[] { "Excel Arbeitsmappe (*.xls)" });

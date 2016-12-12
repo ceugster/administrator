@@ -259,7 +259,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 				else
 				{
 					status = new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(),
-							"Das generierte Dokument kann nicht angezeigt werden (Das System unterstützt die Anzeige nicht).");
+							"Das generierte Dokument kann nicht angezeigt werden (Das System unterstÃ¼tzt die Anzeige nicht).");
 				}
 			}
 			else
