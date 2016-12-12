@@ -427,7 +427,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 	{
 		if (this.dirty)
 		{
-			if (MessageDialog.openQuestion(this.getSite().getShell(), "Änderungen speichern", "Sie haben Änderungen an den aktuellen Adressgruppen vorgenommen. Sollen diese Änderungen gespeichert werden?"))
+			if (MessageDialog.openQuestion(this.getSite().getShell(), "Ã„nderungen speichern", "Sie haben Ã„nderungen an den aktuellen Adressgruppen vorgenommen. Sollen diese Ã„nderungen gespeichert werden?"))
 			{
 				this.updateAddressGroupMembers();
 			}

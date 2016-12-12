@@ -56,7 +56,7 @@ public class FormLetterDialog extends TitleAreaDialog
 
 	private final StructuredSelection selection;
 
-	private final String message = "Wählen Sie das Dokument, das als Serienbriefvorlage verwendet werden soll.";
+	private final String message = "WÃ¤hlen Sie das Dokument, das als Serienbriefvorlage verwendet werden soll.";
 
 	private boolean isPageComplete = false;
 
@@ -67,11 +67,11 @@ public class FormLetterDialog extends TitleAreaDialog
 	 *            ch.eugster.events.data.objects.Customer
 	 * @param addressGroup
 	 *            Falls eine neue Adressgruppe erfasst wird, muss diese bereit
-	 *            vor der Übergabe an den Konstruktor von
+	 *            vor der Ãœbergabe an den Konstruktor von
 	 *            <code>AddressGroupDialog</code> instantiiert sein und der
 	 *            Parent <code>Domain</code> muss - falls ein solcher gesetzt
 	 *            werden soll, ebenfalls dem Konstruktur von
-	 *            <code>AddressGroup</code> übergeben worden sein.
+	 *            <code>AddressGroup</code> Ã¼bergeben worden sein.
 	 * 
 	 */
 	public FormLetterDialog(final Shell parentShell, final StructuredSelection selection)

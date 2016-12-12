@@ -103,7 +103,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 			}
 		};
 
-		action.setText("Hinzufügen");
+		action.setText("HinzufÃ¼gen");
 		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("ADD"));
 		return action;
 	}
@@ -135,7 +135,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 			}
 		};
 
-		action.setText("Hinzufügen");
+		action.setText("HinzufÃ¼gen");
 		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("ADD"));
 		return action;
 	}
@@ -167,7 +167,7 @@ public class CourseEditorContentOutlinePage extends ContentOutlinePage implement
 			}
 		};
 
-		action.setText("Hinzufügen");
+		action.setText("HinzufÃ¼gen");
 		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("ADD"));
 		return action;
 	}

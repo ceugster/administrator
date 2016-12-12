@@ -22,7 +22,7 @@ public class DeleteBookingHandler extends ConnectionServiceDependentAbstractHand
 		{
 			Shell shell = (Shell) context.getParent().getVariable("activeShell");
 			MessageDialog dialog = new MessageDialog(shell, "Buchung entfernen", null,
-					"Soll die ausgew‰hlte Buchung entfernt werden?", MessageDialog.QUESTION, new String[] { "Ja",
+					"Soll die ausgew√§hlte Buchung entfernt werden?", MessageDialog.QUESTION, new String[] { "Ja",
 							"Nein" }, 0);
 			if (dialog.open() == 0)
 			{

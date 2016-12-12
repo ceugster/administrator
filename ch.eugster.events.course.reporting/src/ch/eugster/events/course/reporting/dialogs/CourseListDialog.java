@@ -138,7 +138,7 @@ public class CourseListDialog extends TitleAreaDialog
 				DataMap<?>[] courseMaps = createDataMaps();
 				if (courseMaps.length == 0)
 				{
-					MessageDialog.openInformation(null, "Keine Kurse vorhanden", "Ihre Auswahl enth‰lt keine Kurse.");
+					MessageDialog.openInformation(null, "Keine Kurse vorhanden", "Ihre Auswahl enth√§lt keine Kurse.");
 				}
 				else
 				{

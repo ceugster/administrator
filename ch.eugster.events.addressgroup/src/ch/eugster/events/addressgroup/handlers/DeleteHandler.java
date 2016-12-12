@@ -27,8 +27,8 @@ public class DeleteHandler extends ConnectionServiceDependentAbstractHandler
 
 	public boolean confirmed(final IViewPart view)
 	{
-		return MessageDialog.openQuestion(view.getViewSite().getShell(), "Lˆschbest‰tigung",
-				"Sollen die ausgew‰hlten Elemente entfernt werden?");
+		return MessageDialog.openQuestion(view.getViewSite().getShell(), "L√∂schbest√§tigung",
+				"Sollen die ausgew√§hlten Elemente entfernt werden?");
 	}
 
 	@Override
@@ -62,14 +62,14 @@ public class DeleteHandler extends ConnectionServiceDependentAbstractHandler
 	{
 		if (connectionService != null)
 		{
-			UIJob job = new UIJob("Entferne gew‰hlte Elemente...")
+			UIJob job = new UIJob("Entferne gew√§hlte Elemente...")
 			{
 				@Override
 				public IStatus runInUIThread(final IProgressMonitor monitor)
 				{
 					IStatus status = Status.OK_STATUS;
 					StructuredSelection ssel = (StructuredSelection) viewer.getSelection();
-					monitor.beginTask("Entferne ausgew‰hlte Elemente...", ssel.size());
+					monitor.beginTask("Entferne ausgew√§hlte Elemente...", ssel.size());
 					Object[] elements = ssel.toArray();
 					for (Object element : elements)
 					{

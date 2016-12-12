@@ -65,9 +65,9 @@ public class CommitmentContractDialog extends TitleAreaDialog
 
 	private UserProperty userPropertyTemplatePath;
 
-	private final String message = "Wählen Sie das Dokument, das als Vorlage verwendet werden soll.";
+	private final String message = "WÃ¤hlen Sie das Dokument, das als Vorlage verwendet werden soll.";
 
-	private static final String MSG_NO_SERVICE_AVAILABLE = "Es ist kein Service für die Verarbeitung des Dokuments verfügbar.";
+	private static final String MSG_NO_SERVICE_AVAILABLE = "Es ist kein Service fÃ¼r die Verarbeitung des Dokuments verfÃ¼gbar.";
 
 	private static final String MSG_TITLE_NO_COURSES = "Keine Kurse vorhanden";
 

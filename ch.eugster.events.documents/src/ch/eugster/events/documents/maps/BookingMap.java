@@ -118,7 +118,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case BOOKING_CONFIRMATION_SENT_DATE:
 				{
-					return "Datum Buchungsbestätigung gesendet";
+					return "Datum BuchungsbestÃ¤tigung gesendet";
 				}
 				case BOOKING_STATE:
 				{
@@ -130,7 +130,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case DONE_STATE:
 				{
-					return "Durchführungsstatus";
+					return "DurchfÃ¼hrungsstatus";
 				}
 				case FORTHCOMING_STATE:
 				{
@@ -150,7 +150,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case PARTICIPATION_CONFIRMATION_SENT_DATE:
 				{
-					return "Datum Teilnahmebestätigungen versendet";
+					return "Datum TeilnahmebestÃ¤tigungen versendet";
 				}
 				case PAYED_AMOUNT:
 				{
@@ -158,7 +158,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case PAYED_BACK_AMOUNT:
 				{
-					return "Betrag Rückzahlung";
+					return "Betrag RÃ¼ckzahlung";
 				}
 				case PAYED_DATE:
 				{
@@ -166,7 +166,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case PAYED_BACK_DATE:
 				{
-					return "Datum erfolgte Rückzahlung";
+					return "Datum erfolgte RÃ¼ckzahlung";
 				}
 				case STATE:
 				{
@@ -286,7 +286,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case BOOKING_CONFIRMATION_SENT_DATE:
 				{
-					return "Buchungsbestätigung";
+					return "BuchungsbestÃ¤tigung";
 				}
 				case BOOKING_STATE:
 				{
@@ -298,7 +298,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case DONE_STATE:
 				{
-					return "Durchführungsstatus";
+					return "DurchfÃ¼hrungsstatus";
 				}
 				case FORTHCOMING_STATE:
 				{
@@ -318,7 +318,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case PARTICIPATION_CONFIRMATION_SENT_DATE:
 				{
-					return "Teilnahmebestätigungen";
+					return "TeilnahmebestÃ¤tigungen";
 				}
 				case PAYED_AMOUNT:
 				{
@@ -326,7 +326,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case PAYED_BACK_AMOUNT:
 				{
-					return "Rückzahlung";
+					return "RÃ¼ckzahlung";
 				}
 				case PAYED_DATE:
 				{
@@ -334,7 +334,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case PAYED_BACK_DATE:
 				{
-					return "Rückzahlung";
+					return "RÃ¼ckzahlung";
 				}
 				case STATE:
 				{
@@ -364,7 +364,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 						int participantCount = booking.countParticipants(bookingType);
 						if (participantCount > 0)
 						{
-							amount = amount + ", " + participantCount + " x " + bookingType.getName() + " à " + amountFormatter.format(bookingType.getPrice());
+							amount = amount + ", " + participantCount + " x " + bookingType.getName() + " Ã  " + amountFormatter.format(bookingType.getPrice());
 						}
 					}
 					return amount;

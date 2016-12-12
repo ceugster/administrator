@@ -31,8 +31,8 @@ public class DeleteAddressGroupHandler extends ConnectionServiceDependentAbstrac
 					{
 						AddressGroup addressGroup = (AddressGroup) ssel.getFirstElement();
 						Shell shell = part.getSite().getShell();
-						String title = "Löschbestätigung";
-						StringBuilder msg = new StringBuilder("Soll die ausgewählte Adressgruppe ");
+						String title = "LÃ¶schbestÃ¤tigung";
+						StringBuilder msg = new StringBuilder("Soll die ausgewÃ¤hlte Adressgruppe ");
 						msg = msg.append(addressGroup.getCode().equals("") ? addressGroup.getName() : addressGroup
 								.getCode() + " - " + addressGroup.getName());
 						msg = msg.append(" entfernt werden?");

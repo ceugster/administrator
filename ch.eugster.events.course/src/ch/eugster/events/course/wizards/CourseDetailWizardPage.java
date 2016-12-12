@@ -66,8 +66,8 @@ public class CourseDetailWizardPage extends WizardPage implements SelectionListe
 		String course = CourseFormatter.getInstance().formatComboEntry(wizard.getCourseDetail().getCourse());
 		if (wizard.getCourseDetail().getId() == null)
 		{
-			this.setTitle("Kursdaten hinzufügen");
-			this.setDescription("Hinzufügen von Kursdaten zu '" + course + "'.");
+			this.setTitle("Kursdaten hinzufÃ¼gen");
+			this.setDescription("HinzufÃ¼gen von Kursdaten zu '" + course + "'.");
 		}
 		else
 		{
@@ -112,7 +112,7 @@ public class CourseDetailWizardPage extends WizardPage implements SelectionListe
 		this.meetingPoint.setLayoutData(layoutData);
 
 		label = new Label(composite, SWT.NONE);
-		label.setText("An- und Rückreise");
+		label.setText("An- und RÃ¼ckreise");
 		label.setLayoutData(new GridData());
 
 		layoutData = new GridData(GridData.FILL_HORIZONTAL);

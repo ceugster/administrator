@@ -47,8 +47,8 @@ public class DeleteCountryHandler extends ConnectionServiceDependentAbstractHand
 							Shell shell = part.getSite().getShell();
 							if (count == 0L)
 							{
-								String title = "Lˆschbest‰tigung";
-								StringBuilder msg = new StringBuilder("Soll das ausgew‰hlte Land " + country.getName()
+								String title = "L√∂schbest√§tigung";
+								StringBuilder msg = new StringBuilder("Soll das ausgew√§hlte Land " + country.getName()
 										+ " entfernt werden?");
 								int icon = MessageDialog.QUESTION;
 								String[] buttons = new String[] { "Ja", "Nein" };
@@ -67,7 +67,7 @@ public class DeleteCountryHandler extends ConnectionServiceDependentAbstractHand
 							else
 							{
 								String title = country.getName();
-								StringBuilder msg = new StringBuilder("Das ausgew‰hlte Land " + country.getName()
+								StringBuilder msg = new StringBuilder("Das ausgew√§hlte Land " + country.getName()
 										+ " kann nicht entfernt werden");
 								int icon = MessageDialog.INFORMATION;
 								String[] buttons = new String[] { "OK" };

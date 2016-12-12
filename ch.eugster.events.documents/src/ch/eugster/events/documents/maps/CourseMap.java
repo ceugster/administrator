@@ -85,7 +85,7 @@ public class CourseMap extends AbstractDataMap<Course>
 		printCell(writer, "#rubric", "Kursrubriken");
 		endTableRow(writer);
 		startTableRow(writer);
-		printCell(writer, "#domain", "Domänen");
+		printCell(writer, "#domain", "DomÃ¤nen");
 		endTableRow(writer);
 		endTable(writer);
 	}
@@ -128,7 +128,7 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case ALL_LOCATIONS:
 			{
-				return "Alle Durchführungsorte";
+				return "Alle DurchfÃ¼hrungsorte";
 			}
 			case ANNULATION_DATE:
 			{
@@ -156,11 +156,11 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case DATE_RANGE:
 			{
-				return "Durchführungsdatum";
+				return "DurchfÃ¼hrungsdatum";
 			}
 			case DATE_RANGE_WITH_WEEKDAY_CODE:
 			{
-				return "Durchführungsdatum mit Wochentagkürzel";
+				return "DurchfÃ¼hrungsdatum mit WochentagkÃ¼rzel";
 			}
 			case DESCRIPTION:
 			{
@@ -201,11 +201,11 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case LAST_ANNULATION_DATE:
 			{
-				return "Spätestes Kursannulationsdatum";
+				return "SpÃ¤testes Kursannulationsdatum";
 			}
 			case LAST_BOOKING_DATE:
 			{
-				return "Letztes mögliche Buchungsdatum";
+				return "Letztes mÃ¶gliche Buchungsdatum";
 			}
 			case LAST_DATE:
 			{
@@ -257,7 +257,7 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case REALIZATION:
 			{
-				return "Durchführung";
+				return "DurchfÃ¼hrung";
 			}
 			case RESPONSIBLE_USER:
 			{
@@ -633,11 +633,11 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case DATE_RANGE:
 			{
-				return "Durchführungsdatum";
+				return "DurchfÃ¼hrungsdatum";
 			}
 			case DATE_RANGE_WITH_WEEKDAY_CODE:
 			{
-				return "Durchführungsdatum mit Wochentagkürzel";
+				return "DurchfÃ¼hrungsdatum mit WochentagkÃ¼rzel";
 			}
 			case SUBSTITUTION_DATE_RANGE:
 			{
@@ -649,7 +649,7 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case ALL_LOCATIONS:
 			{
-				return "Alle Durchführungsorte";
+				return "Alle DurchfÃ¼hrungsorte";
 			}
 			default:
 			{

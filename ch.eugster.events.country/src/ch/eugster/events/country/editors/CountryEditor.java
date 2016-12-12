@@ -304,7 +304,7 @@ public class CountryEditor extends AbstractEntityEditor<Country>
 		label = this.formToolkit.createLabel(composite, "Beliebige Ziffer = #", SWT.WRAP);
 		label.setLayoutData(new GridData());
 
-		label = this.formToolkit.createLabel(composite, "Muster prüfen", SWT.NONE);
+		label = this.formToolkit.createLabel(composite, "Muster prÃ¼fen", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		final Text text = this.formToolkit.createText(composite, "", SWT.FLAT);
@@ -395,22 +395,22 @@ public class CountryEditor extends AbstractEntityEditor<Country>
 				CountryQuery query = (CountryQuery) service.getQuery(Country.class);
 				if (!query.isIso3166alpha2Unique(code, country.getId()))
 				{
-					msg = new Message(this.iso3166alpha2, "Ungültiger Code");
-					msg.setMessage("Der gewählte ISO 3166 Code wird bereits verwendet.");
+					msg = new Message(this.iso3166alpha2, "UngÃ¼ltiger Code");
+					msg.setMessage("Der gewÃ¤hlte ISO 3166 Code wird bereits verwendet.");
 					return msg;
 				}
 	
 				if (!query.isIso3166alpha3Unique(code, country.getId()))
 				{
-					msg = new Message(this.iso3166alpha3, "Ungültiger Code");
-					msg.setMessage("Der gewählte ISO 3166 Code wird bereits verwendet.");
+					msg = new Message(this.iso3166alpha3, "UngÃ¼ltiger Code");
+					msg.setMessage("Der gewÃ¤hlte ISO 3166 Code wird bereits verwendet.");
 					return msg;
 				}
 	
 				if (!query.isIso31662numericUnique(code, country.getId()))
 				{
-					msg = new Message(this.iso31662numeric, "Ungültiger Code");
-					msg.setMessage("Der gewählte numerische ISO 31662 Code wird bereits verwendet.");
+					msg = new Message(this.iso31662numeric, "UngÃ¼ltiger Code");
+					msg.setMessage("Der gewÃ¤hlte numerische ISO 31662 Code wird bereits verwendet.");
 					return msg;
 				}
 			}
@@ -429,7 +429,7 @@ public class CountryEditor extends AbstractEntityEditor<Country>
 		if (this.name.getText().isEmpty())
 		{
 			msg = new Message(this.name, "Fehler");
-			msg.setMessage("Die Domäne muss eine Bezeichnung haben.");
+			msg.setMessage("Die DomÃ¤ne muss eine Bezeichnung haben.");
 		}
 
 		return msg;
