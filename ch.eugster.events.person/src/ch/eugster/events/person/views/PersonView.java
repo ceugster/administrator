@@ -765,7 +765,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 		info.setLayout(new GridLayout(3, true));
 
 		this.showDeleted = new Button(info, SWT.CHECK);
-		this.showDeleted.setText("Gelˆschte Objekte zeigen");
+		this.showDeleted.setText("Gel√∂schte Objekte zeigen");
 		this.showDeleted.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.showDeleted.addSelectionListener(new SelectionListener()
 		{
@@ -790,7 +790,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				}
 				refreshViewer();
 				PersonView.this.found.setText("Gefunden: " + PersonView.this.viewer.getTree().getItemCount());
-				PersonView.this.selected.setText("Ausgew‰hlt: "
+				PersonView.this.selected.setText("Ausgew√§hlt: "
 						+ ((StructuredSelection) PersonView.this.viewer.getSelection()).size());
 				PersonView.this.dialogSettings.put("show.deleted", PersonView.this.showDeleted.getSelection());
 			}
@@ -811,7 +811,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				// IStructuredSelection ssel = (IStructuredSelection)
 				// event.getSelection();
 				// Object object = ssel.getFirstElement();
-				PersonView.this.selected.setText("Ausgew‰hlt: " + ((StructuredSelection) event.getSelection()).size());
+				PersonView.this.selected.setText("Ausgew√§hlt: " + ((StructuredSelection) event.getSelection()).size());
 			}
 		});
 

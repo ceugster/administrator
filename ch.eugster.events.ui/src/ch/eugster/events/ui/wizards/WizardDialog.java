@@ -19,9 +19,9 @@ public class WizardDialog extends org.eclipse.jface.wizard.WizardDialog
 	{
 		super.createButtonsForButtonBar(parent);
 		if (this.getButton(IDialogConstants.FINISH_ID) != null)
-			this.getButton(IDialogConstants.FINISH_ID).setText("Ausführen");
+			this.getButton(IDialogConstants.FINISH_ID).setText("AusfÃ¼hren");
 		if (this.getButton(IDialogConstants.BACK_ID) != null)
-			this.getButton(IDialogConstants.BACK_ID).setText("Zurück");
+			this.getButton(IDialogConstants.BACK_ID).setText("ZurÃ¼ck");
 		if (this.getButton(IDialogConstants.NEXT_ID) != null)
 			this.getButton(IDialogConstants.NEXT_ID).setText("Weiter");
 		if (this.getButton(IDialogConstants.CANCEL_ID) != null)

@@ -95,9 +95,9 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 
 	private static final String EMAIL_LINK = "Email (<a>senden</a>)";
 
-	private static final String WEBSITE_LABEL = "Webseite (öffnen)";
+	private static final String WEBSITE_LABEL = "Webseite (Ã¶ffnen)";
 
-	private static final String WEBSITE_LINK = "Webseite (<a>öffnen</a>)";
+	private static final String WEBSITE_LINK = "Webseite (<a>Ã¶ffnen</a>)";
 
 	private static final String CONTACT_SECTION_EXPANDED = "contacts.section.expanded";
 
@@ -1099,7 +1099,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 		if (this.countryViewer.getSelection().isEmpty())
 		{
 			msg = new Message(this.city, "Fehler");
-			msg.setMessage("Der Ländercode fehlt.");
+			msg.setMessage("Der LÃ¤ndercode fehlt.");
 			FormToolkit.ensureVisible(this.countryViewer.getControl());
 			this.countryViewer.getControl().setFocus();
 		}
@@ -1334,7 +1334,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	// if (this.address.getText().isEmpty() && this.pob.getText().isEmpty())
 	// {
 	// msg = new Message(this.city, "Fehler");
-	// msg.setMessage("Sie müssen entweder eine Strasse oder ein Postfach erfassen.");
+	// msg.setMessage("Sie mÃ¼ssen entweder eine Strasse oder ein Postfach erfassen.");
 	// FormToolkit.ensureVisible(this.address);
 	// this.address.setFocus();
 	// }

@@ -93,7 +93,7 @@ public class FieldExtensionEditor extends AbstractEntityEditor<FieldExtension>
 	{
 		if (targetViewer.getSelection().isEmpty())
 		{
-			this.showWarningMessage("Eingabefehler", "Sie haben keine Zieltabelle ausgewählt.",
+			this.showWarningMessage("Eingabefehler", "Sie haben keine Zieltabelle ausgewÃ¤hlt.",
 					targetViewer.getControl());
 			return false;
 		}
@@ -104,7 +104,7 @@ public class FieldExtensionEditor extends AbstractEntityEditor<FieldExtension>
 	{
 		if (typeViewer.getSelection().isEmpty())
 		{
-			this.showWarningMessage("Eingabefehler", "Sie haben keinen Feldtyp ausgewählt.", targetViewer.getControl());
+			this.showWarningMessage("Eingabefehler", "Sie haben keinen Feldtyp ausgewÃ¤hlt.", targetViewer.getControl());
 			return false;
 		}
 		return true;
@@ -146,7 +146,7 @@ public class FieldExtensionEditor extends AbstractEntityEditor<FieldExtension>
 				| ExpandableComposite.COMPACT | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
 		this.section.setLayoutData(layoutData);
 		this.section.setLayout(sectionLayout);
-		this.section.setText("Eigenschaften für numerisches Feld");
+		this.section.setText("Eigenschaften fÃ¼r numerisches Feld");
 		this.section.setClient(this.fillNumericSection(this.section));
 		this.section.addExpansionListener(new ExpansionAdapter()
 		{
@@ -427,7 +427,7 @@ public class FieldExtensionEditor extends AbstractEntityEditor<FieldExtension>
 		this.widthHint.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
 		formToolkit.adapt(widthHint);
 
-		label = this.formToolkit.createLabel(composite, "Feldhöhe", SWT.NONE);
+		label = this.formToolkit.createLabel(composite, "FeldhÃ¶he", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData();

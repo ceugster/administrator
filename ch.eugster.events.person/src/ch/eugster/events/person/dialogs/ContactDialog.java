@@ -100,7 +100,7 @@ public class ContactDialog extends TitleAreaDialog implements ISelectionChangedL
 			Address address = ((AddressContact) this.contact).getAddress();
 			owner = address.getName() + ", " + AddressFormatter.getInstance().formatAddressLine(address) + ", " + AddressFormatter.getInstance().formatCityLine(address);
 		}
-		this.setTitle("Kontakt f¸r " + owner);
+		this.setTitle("Kontakt f√ºr " + owner);
 		this.setMessage(msg);
 
 		composite = new Composite(parent, SWT.NONE);
@@ -136,7 +136,7 @@ public class ContactDialog extends TitleAreaDialog implements ISelectionChangedL
 
 		label = new Label(composite, SWT.None);
 		label.setLayoutData(new GridData());
-		label.setText("L‰ndervorwahl");
+		label.setText("L√§ndervorwahl");
 
 		combo = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN);
 		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -219,7 +219,7 @@ public class ContactDialog extends TitleAreaDialog implements ISelectionChangedL
 		{
 			if (countryViewer.getSelection().isEmpty())
 			{
-				this.setErrorMessage("Sie haben keine Vorwahl ausgew‰hlt.");
+				this.setErrorMessage("Sie haben keine Vorwahl ausgew√§hlt.");
 				return;
 			}
 		}
@@ -328,7 +328,7 @@ public class ContactDialog extends TitleAreaDialog implements ISelectionChangedL
 				ContactDialog.this.valueLabel.setText("Wert");
 				ContactDialog.this.value.setText("");
 				ContactDialog.this.countryViewer.getCombo().setVisible(false);
-				ContactDialog.this.setErrorMessage("Sie haben keine Kontaktart ausgew‰hlt.");
+				ContactDialog.this.setErrorMessage("Sie haben keine Kontaktart ausgew√§hlt.");
 			}
 			else
 			{
@@ -354,7 +354,7 @@ public class ContactDialog extends TitleAreaDialog implements ISelectionChangedL
 					}
 					if (this.countryViewer.getSelection().isEmpty())
 					{
-						ContactDialog.this.setErrorMessage("Sie haben keine Vorwahl ausgew‰hlt.");
+						ContactDialog.this.setErrorMessage("Sie haben keine Vorwahl ausgew√§hlt.");
 						ContactDialog.this.getButton(IDialogConstants.OK_ID).setEnabled(false);
 						return;
 					}
@@ -377,7 +377,7 @@ public class ContactDialog extends TitleAreaDialog implements ISelectionChangedL
 				}
 				if (this.countryViewer.getSelection().isEmpty())
 				{
-					ContactDialog.this.setErrorMessage("Sie haben keine Vorwahl ausgew‰hlt.");
+					ContactDialog.this.setErrorMessage("Sie haben keine Vorwahl ausgew√§hlt.");
 					ContactDialog.this.getButton(IDialogConstants.OK_ID).setEnabled(false);
 					return;
 				}

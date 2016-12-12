@@ -146,7 +146,7 @@ public class UserView extends AbstractEntityView implements IDoubleClickListener
 		});
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
-		tableColumn.setText("Zugeordnete Dom‰ne");
+		tableColumn.setText("Zugeordnete Dom√§ne");
 
 		this.createContextMenu();
 
