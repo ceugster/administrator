@@ -9,13 +9,13 @@ public enum PersonForm
 	{
 		if (this.equals(POLITE))
 		{
-			return "höflich";
+			return "hÃ¶flich";
 		}
 		else if (this.equals(PERSONAL))
 		{
-			return "persönlich";
+			return "persÃ¶nlich";
 		}
 		else
-			throw new RuntimeException("Ungültige Anredeform");
+			throw new RuntimeException("UngÃ¼ltige Anredeform");
 	}
 }

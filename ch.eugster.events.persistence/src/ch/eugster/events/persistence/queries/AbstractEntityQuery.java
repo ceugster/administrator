@@ -127,7 +127,7 @@ public abstract class AbstractEntityQuery<T extends AbstractEntity>
 				e.printStackTrace();
 				this.connectionService.log(LogService.LOG_ERROR, e.getLocalizedMessage());
 				MessageDialog dialog = new MessageDialog(null, "Fehler beim Speichern", null,
-						"Beim Versuch, die Änderungen zu speichern, ist ein Fehler aufgetreten.", MessageDialog.ERROR,
+						"Beim Versuch, die Ã„nderungen zu speichern, ist ein Fehler aufgetreten.", MessageDialog.ERROR,
 						new String[] { "OK" }, 0);
 				dialog.open();
 			}

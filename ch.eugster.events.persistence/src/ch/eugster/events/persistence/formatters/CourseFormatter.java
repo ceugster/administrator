@@ -102,10 +102,10 @@ public class CourseFormatter
 				text = text.append(" -");
 		}
 		if (name.length() > 0)
-			text.append(" " + name);
+			text = text.append(" " + name);
 
 		if (text.length() > 0)
-			text.append(" à ");
+			text = text.append(" Ã  ");
 
 		text.append(NumberFormat.getCurrencyInstance().format(participant.getPrice()));
 		return text.toString();
