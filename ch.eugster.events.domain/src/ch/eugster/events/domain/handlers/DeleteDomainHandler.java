@@ -68,8 +68,8 @@ public class DeleteDomainHandler extends AbstractHandler
 					{
 						Domain domain = (Domain) ssel.getFirstElement();
 						Shell shell = part.getSite().getShell();
-						String title = "Lˆschbest‰tigung";
-						StringBuilder msg = new StringBuilder("Soll die ausgew‰hlte Dom‰ne ");
+						String title = "L√∂schbest√§tigung";
+						StringBuilder msg = new StringBuilder("Soll die ausgew√§hlte Dom√§ne ");
 						msg = msg.append(domain.getCode().equals("") ? domain.getName() : domain.getCode() + " - "
 								+ domain.getName());
 						msg = msg.append(" entfernt werden?");

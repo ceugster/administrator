@@ -188,7 +188,7 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 				}
 			});
 	
-			label = this.formToolkit.createLabel(composite, "Domäne");
+			label = this.formToolkit.createLabel(composite, "DomÃ¤ne");
 			label.setLayoutData(new GridData());
 	
 			combo = new CCombo(composite, SWT.FLAT | SWT.READ_ONLY);
@@ -388,7 +388,7 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 					|| this.date.getSelection().after(GregorianCalendar.getInstance().getTime()))
 			{
 				MessageDialog
-						.openError(this.getSite().getShell(), "Ungültiges Datum", "Das Spendendatum ist ungültig.");
+						.openError(this.getSite().getShell(), "UngÃ¼ltiges Datum", "Das Spendendatum ist ungÃ¼ltig.");
 				return false;
 			}
 		}
@@ -402,7 +402,7 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 		if (this.purposeViewer.getSelection().isEmpty())
 		{
 			MessageDialog.openError(this.getSite().getShell(), "Fehlender Spendenzweck",
-					"Sie haben keinen Spendenzweck ausgewählt.");
+					"Sie haben keinen Spendenzweck ausgewÃ¤hlt.");
 			return false;
 		}
 		return true;

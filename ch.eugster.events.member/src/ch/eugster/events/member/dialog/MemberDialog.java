@@ -55,7 +55,7 @@ public class MemberDialog extends TitleAreaDialog implements ICheckStateListener
 
 	private final Hashtable<Long, Member> current = new Hashtable<Long, Member>();
 
-	private final String message = "Selektieren oder Deselektieren Sie die Mitgliedschaften und speichern Sie die Änderungen.\nSie können die Änderungen jederzeit mit 'Abbrechen' widerrufen.";
+	private final String message = "Selektieren oder Deselektieren Sie die Mitgliedschaften und speichern Sie die Ã„nderungen.\nSie kÃ¶nnen die Ã„nderungen jederzeit mit 'Abbrechen' widerrufen.";
 
 	private boolean isPageComplete = false;
 
@@ -66,11 +66,11 @@ public class MemberDialog extends TitleAreaDialog implements ICheckStateListener
 	 *            ch.eugster.events.data.objects.Customer
 	 * @param addressGroup
 	 *            Falls eine neue Adressgruppe erfasst wird, muss diese bereit
-	 *            vor der Übergabe an den Konstruktor von
+	 *            vor der Ãœbergabe an den Konstruktor von
 	 *            <code>AddressGroupDialog</code> instantiiert sein und der
 	 *            Parent <code>Domain</code> muss - falls ein solcher gesetzt
 	 *            werden soll, ebenfalls dem Konstruktur von
-	 *            <code>AddressGroup</code> übergeben worden sein.
+	 *            <code>AddressGroup</code> Ã¼bergeben worden sein.
 	 * 
 	 */
 	public MemberDialog(final Shell parentShell, final AbstractEntity entity)
@@ -299,7 +299,7 @@ public class MemberDialog extends TitleAreaDialog implements ICheckStateListener
 				}
 			}
 		};
-		action.setText("Mitgliedernummer ändern");
+		action.setText("Mitgliedernummer Ã¤ndern");
 		menuManager.add(action);
 	}
 

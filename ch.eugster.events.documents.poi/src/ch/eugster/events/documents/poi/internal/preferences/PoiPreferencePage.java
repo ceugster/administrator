@@ -52,7 +52,7 @@ public class PoiPreferencePage extends FieldEditorPreferencePage implements IWor
 		spreadsheetEditor.setEmptyStringAllowed(true);
 		spreadsheetEditor.setFileExtensions(new String[] { "*.exe" });
 		spreadsheetEditor.setChangeButtonText("...");
-		spreadsheetEditor.setErrorMessage("Der Pfad ist ungültig.");
+		spreadsheetEditor.setErrorMessage("Der Pfad ist ungÃ¼ltig.");
 		this.addField(spreadsheetEditor);
 
 	}

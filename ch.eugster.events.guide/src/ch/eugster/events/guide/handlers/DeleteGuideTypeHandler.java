@@ -31,8 +31,8 @@ public class DeleteGuideTypeHandler extends ConnectionServiceDependentAbstractHa
 					{
 						GuideType type = (GuideType) ssel.getFirstElement();
 						Shell shell = part.getSite().getShell();
-						String title = "Löschbestätigung";
-						StringBuilder msg = new StringBuilder("Soll die ausgewählte Funktion ");
+						String title = "LÃ¶schbestÃ¤tigung";
+						StringBuilder msg = new StringBuilder("Soll die ausgewÃ¤hlte Funktion ");
 						msg = msg.append(type.getCode().equals("") ? type.getName() : type.getCode() + " - "
 								+ type.getName());
 						msg = msg.append(" entfernt werden?");

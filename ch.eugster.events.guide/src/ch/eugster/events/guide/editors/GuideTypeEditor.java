@@ -170,7 +170,7 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 				FileDialog dialog = new FileDialog(GuideTypeEditor.this.getSite().getShell());
 				dialog.setFilterExtensions(new String[] { "*.odt"});
 				dialog.setFilterIndex(0);
-				dialog.setText("Vertragsvorlage wählen");
+				dialog.setText("Vertragsvorlage wÃ¤hlen");
 				String path = dialog.open();
 				if (path != null)
 				{
@@ -238,8 +238,8 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 				GuideTypeQuery query = (GuideTypeQuery) service.getQuery(GuideType.class);
 				if (!query.isCodeUnique(code, guideType.getId()))
 				{
-					msg = new Message(this.code, "Ungültiger Code");
-					msg.setMessage("Der gewählte Code wird bereits verwendet.");
+					msg = new Message(this.code, "UngÃ¼ltiger Code");
+					msg.setMessage("Der gewÃ¤hlte Code wird bereits verwendet.");
 					return msg;
 				}
 			}
@@ -274,7 +274,7 @@ public class GuideTypeEditor extends AbstractEntityEditor<GuideType>
 			if (!path.isFile() || !path.getName().endsWith(".odt"))
 			{
 				msg = new Message(this.template, "Fehler");
-				msg.setMessage("Die angegebene Vertragsvorlage ist ungültig.");
+				msg.setMessage("Die angegebene Vertragsvorlage ist ungÃ¼ltig.");
 			}
 		}
 

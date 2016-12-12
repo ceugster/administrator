@@ -27,7 +27,7 @@ public class DeleteDonationHandler extends ConnectionServiceDependentAbstractHan
 			{
 				Shell shell = (Shell) context.getParent().getVariable("activeShell");
 				String title = "Spende entfernen";
-				String msg = "Soll die ausgew‰hlte Spende entfernt werden?";
+				String msg = "Soll die ausgew√§hlte Spende entfernt werden?";
 				int type = MessageDialog.QUESTION;
 				String[] buttons = new String[] { "Ja", "Nein" };
 				MessageDialog dialog = new MessageDialog(shell, title, null, msg, type, buttons, 0);
