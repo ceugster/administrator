@@ -28,15 +28,15 @@ public class DomainMap extends AbstractDataMap<Domain>
 			{
 				case CODE:
 				{
-					return "Code der Dom‰ne";
+					return "Code der Dom√§ne";
 				}
 				case NAME:
 				{
-					return "Bezeichnung der Dom‰ne";
+					return "Bezeichnung der Dom√§ne";
 				}
 				case DESCRIPTION:
 				{
-					return "Beschreibung der Dom‰ne";
+					return "Beschreibung der Dom√§ne";
 				}
 				default:
 				{

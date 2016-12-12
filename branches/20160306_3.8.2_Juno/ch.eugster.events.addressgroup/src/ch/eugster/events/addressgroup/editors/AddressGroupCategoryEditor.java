@@ -166,8 +166,8 @@ public class AddressGroupCategoryEditor extends AbstractEntityEditor<AddressGrou
 				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) con.getQuery(AddressGroupCategory.class);
 				if (!query.isCodeUnique(code, addressGroupCategory.getId()))
 				{
-					msg = new Message(this.name, "Ungültiger Code");
-					msg.setMessage("Der gewählte Code wird bereits verwendet.");
+					msg = new Message(this.name, "UngÃ¼ltiger Code");
+					msg.setMessage("Der gewÃ¤hlte Code wird bereits verwendet.");
 					return msg;
 				}
 			}

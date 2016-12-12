@@ -31,8 +31,8 @@ public class DeleteAddressTypeHandler extends ConnectionServiceDependentAbstract
 					{
 						AddressType addressType = (AddressType) ssel.getFirstElement();
 						Shell shell = part.getSite().getShell();
-						String title = "Löschbestätigung";
-						StringBuilder msg = new StringBuilder("Soll die ausgewählte Adressart ");
+						String title = "LÃ¶schbestÃ¤tigung";
+						StringBuilder msg = new StringBuilder("Soll die ausgewÃ¤hlte Adressart ");
 						msg = msg.append(addressType.getName().equals("") ? "???" : addressType.getName());
 						msg = msg.append(" entfernt werden?");
 						int icon = MessageDialog.QUESTION;

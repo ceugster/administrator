@@ -55,11 +55,11 @@ public class PrintLabelDialog extends TitleAreaDialog
 
 	private IDialogSettings settings;
 
-	private final String message = "Wählen Sie die Optionen für den Etikettendruck.";
+	private final String message = "WÃ¤hlen Sie die Optionen fÃ¼r den Etikettendruck.";
 
 	private static final String MSG_NO_BOOKINGS = "Es sind keine Buchungen zu verarbeiten.";
 
-	private static final String MSG_NO_SERVICE_AVAILABLE = "Es ist kein Service für die Verarbeitung des Dokuments verfügbar.";
+	private static final String MSG_NO_SERVICE_AVAILABLE = "Es ist kein Service fÃ¼r die Verarbeitung des Dokuments verfÃ¼gbar.";
 
 	private static final String MSG_TITLE_NO_BOOKINGS = "Keine Buchungen vorhanden";
 
@@ -78,11 +78,11 @@ public class PrintLabelDialog extends TitleAreaDialog
 	 *            ch.eugster.events.data.objects.Customer
 	 * @param addressGroup
 	 *            Falls eine neue Adressgruppe erfasst wird, muss diese bereit
-	 *            vor der Übergabe an den Konstruktor von
+	 *            vor der Ãœbergabe an den Konstruktor von
 	 *            <code>AddressGroupDialog</code> instantiiert sein und der
 	 *            Parent <code>Domain</code> muss - falls ein solcher gesetzt
 	 *            werden soll, ebenfalls dem Konstruktur von
-	 *            <code>AddressGroup</code> übergeben worden sein.
+	 *            <code>AddressGroup</code> Ã¼bergeben worden sein.
 	 * 
 	 */
 	public PrintLabelDialog(final Shell parentShell, final IStructuredSelection selection)

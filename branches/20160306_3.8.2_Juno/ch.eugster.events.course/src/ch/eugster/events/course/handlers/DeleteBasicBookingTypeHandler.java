@@ -33,8 +33,8 @@ public class DeleteBasicBookingTypeHandler extends ConnectionServiceDependentAbs
 					{
 						BookingTypeProposition basicBookingType = (BookingTypeProposition) ssel.getFirstElement();
 						Shell shell = part.getSite().getShell();
-						String title = "Löschbestätigung";
-						StringBuilder msg = new StringBuilder("Soll die ausgewählte Buchungsart entfernt werden?");
+						String title = "LÃ¶schbestÃ¤tigung";
+						StringBuilder msg = new StringBuilder("Soll die ausgewÃ¤hlte Buchungsart entfernt werden?");
 						int icon = MessageDialog.QUESTION;
 						String[] buttons = new String[] { "Ja", "Nein" };
 						MessageDialog dialog = new MessageDialog(shell, title, null, msg.toString(), icon, buttons, 0);

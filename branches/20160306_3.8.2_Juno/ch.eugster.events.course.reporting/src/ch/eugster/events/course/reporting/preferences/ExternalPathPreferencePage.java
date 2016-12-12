@@ -38,25 +38,25 @@ public class ExternalPathPreferencePage extends FieldEditorPreferencePage implem
 	protected void createFieldEditors()
 	{
 		FileFieldEditor bookingEditor = new FileFieldEditor(PreferenceConstants.KEY_BOOKING_TEMPLATE,
-				"Vorlage Anmeldebest‰tigung", this.getFieldEditorParent());
+				"Vorlage Anmeldebest√§tigung", this.getFieldEditorParent());
 		bookingEditor.setChangeButtonText("...");
 		bookingEditor.setFileExtensions(new String[] { "*.odt" });
-		bookingEditor.setErrorMessage("Die Vorlage f¸r die Anmeldebest‰tigungen existiert nicht im angegebenen Pfad.");
+		bookingEditor.setErrorMessage("Die Vorlage f√ºr die Anmeldebest√§tigungen existiert nicht im angegebenen Pfad.");
 		this.addField(bookingEditor);
 
 		FileFieldEditor invitationEditor = new FileFieldEditor(PreferenceConstants.KEY_INVITATION_TEMPLATE,
 				"Vorlage Kurseinladung", this.getFieldEditorParent());
 		invitationEditor.setChangeButtonText("...");
 		invitationEditor.setFileExtensions(new String[] { "*.odt" });
-		invitationEditor.setErrorMessage("Die Vorlage f¸r die Kurseinladungen existiert nicht im angegebenen Pfad.");
+		invitationEditor.setErrorMessage("Die Vorlage f√ºr die Kurseinladungen existiert nicht im angegebenen Pfad.");
 		this.addField(invitationEditor);
 
 		FileFieldEditor participationEditor = new FileFieldEditor(PreferenceConstants.KEY_PARTICIPATION_TEMPLATE,
-				"Vorlage Teilnahmebest‰tigung", this.getFieldEditorParent());
+				"Vorlage Teilnahmebest√§tigung", this.getFieldEditorParent());
 		participationEditor.setChangeButtonText("...");
 		participationEditor.setFileExtensions(new String[] { "*.odt" });
 		participationEditor
-				.setErrorMessage("Die Vorlage f¸r die Teilnahmebest‰tigungen existiert nicht im angegebenen Pfad.");
+				.setErrorMessage("Die Vorlage f√ºr die Teilnahmebest√§tigungen existiert nicht im angegebenen Pfad.");
 		this.addField(participationEditor);
 	}
 

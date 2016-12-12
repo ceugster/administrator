@@ -70,9 +70,9 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 		CourseGuideWizard wizard = (CourseGuideWizard) this.getWizard();
 		if (wizard.getCourseGuide().getId() == null)
 		{
-			this.setTitle("Leitungsperson hinzuf¸gen");
+			this.setTitle("Leitungsperson hinzuf√ºgen");
 			String course = CourseFormatter.getInstance().formatComboEntry(wizard.getCourseGuide().getCourse());
-			this.setDescription("Hinzuf¸gen einer Leitungsperson zu '" + course + "'.");
+			this.setDescription("Hinzuf√ºgen einer Leitungsperson zu '" + course + "'.");
 		}
 		else
 		{
@@ -203,7 +203,7 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(gridData);
-		label.setText("Entsch‰digungen");
+		label.setText("Entsch√§digungen");
 
 		this.compensationTableComposite = new CompensationTableViewerComposite(composite, SWT.NULL);
 
@@ -255,12 +255,12 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 	{
 		if (this.guideViewer.getSelection().isEmpty())
 		{
-			this.setErrorMessage("Sie haben keine Leitungsperson ausgew‰hlt.");
+			this.setErrorMessage("Sie haben keine Leitungsperson ausgew√§hlt.");
 			return false;
 		}
 		if (this.guideTypeViewer.getSelection().isEmpty())
 		{
-			this.setErrorMessage("Sie haben keine Leitungsfunktion ausgew‰hlt");
+			this.setErrorMessage("Sie haben keine Leitungsfunktion ausgew√§hlt");
 			return false;
 		}
 
@@ -272,7 +272,7 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 	{
 		CourseGuideWizard wizard = (CourseGuideWizard) this.getWizard();
 		/*
-		 * Setzen des Guides: Die Entsch‰digungen werden von dort geholt
+		 * Setzen des Guides: Die Entsch√§digungen werden von dort geholt
 		 */
 		this.compensationTableComposite.setCourseGuide(wizard.getCourseGuide());
 	}

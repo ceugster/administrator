@@ -124,7 +124,7 @@ public class PaymentTermEditor extends AbstractEntityEditor<PaymentTerm>
 				if (!query.isTextUnique(code, paymentTerm.getId()))
 				{
 					msg = new Message();
-					msg.setMessage("Die gew‰hlte Zahlungsbedingung existiert bereits.");
+					msg.setMessage("Die gew√§hlte Zahlungsbedingung existiert bereits.");
 					return msg;
 				}
 			}

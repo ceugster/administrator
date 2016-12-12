@@ -31,7 +31,7 @@ public class GenerateCourseListSpreadsheetHandler extends AbstractHandler implem
 				IStructuredSelection ssel = (IStructuredSelection) selection;
 				if (ssel.isEmpty())
 				{
-					MessageDialog.openConfirm(shell, "Ungültige Auswahl", "Die vorgenommene Auswahl ist ungültig.");
+					MessageDialog.openConfirm(shell, "UngÃ¼ltige Auswahl", "Die vorgenommene Auswahl ist ungÃ¼ltig.");
 				}
 				else
 				{

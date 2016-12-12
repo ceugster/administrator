@@ -41,11 +41,11 @@ public class PrintPreferencePage extends FieldEditorPreferencePage implements IW
 	@Override
 	public void createFieldEditors()
 	{
-		this.setTitle("Einstellungen Empf‰ngerlisten");
+		this.setTitle("Einstellungen Empf√§ngerlisten");
 
 		BooleanFieldEditor printRecipientListEditor = new BooleanFieldEditor(
 				PreferenceConstants.P_PRINT_RECIPIENT_LIST_AUTOMATICALLY,
-				"Empf‰ngerliste bei Emailversand aus Adressgruppen automatisch erstellen", getFieldEditorParent());
+				"Empf√§ngerliste bei Emailversand aus Adressgruppen automatisch erstellen", getFieldEditorParent());
 		addField(printRecipientListEditor);
 
 		String[][] values = new String[Destination.values().length][2];
@@ -97,7 +97,7 @@ public class PrintPreferencePage extends FieldEditorPreferencePage implements IW
 	public void init(final IWorkbench workbench)
 	{
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setDescription("Hier legen Sie die Einstellungen f¸r die Erstellung von Empf‰ngerlisten fest.");
+		setDescription("Hier legen Sie die Einstellungen f√ºr die Erstellung von Empf√§ngerlisten fest.");
 	}
 
 }

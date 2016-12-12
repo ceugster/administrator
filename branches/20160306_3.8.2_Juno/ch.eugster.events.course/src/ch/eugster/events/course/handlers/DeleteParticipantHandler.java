@@ -28,7 +28,7 @@ public class DeleteParticipantHandler extends ConnectionServiceDependentAbstract
 			{
 				Shell shell = (Shell) context.getParent().getVariable("activeShell");
 				MessageDialog dialog = new MessageDialog(shell, "Teilnehmer entfernen", null,
-						"Soll der gew‰hlte Teilnehmer entfernt werden?", MessageDialog.QUESTION, new String[] { "Ja",
+						"Soll der gew√§hlte Teilnehmer entfernt werden?", MessageDialog.QUESTION, new String[] { "Ja",
 								"Nein" }, 0);
 				if (dialog.open() == 0)
 				{

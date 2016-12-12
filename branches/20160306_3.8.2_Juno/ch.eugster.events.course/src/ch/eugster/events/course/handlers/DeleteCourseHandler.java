@@ -31,8 +31,8 @@ public class DeleteCourseHandler extends ConnectionServiceDependentAbstractHandl
 					{
 						Course course = (Course) ssel.getFirstElement();
 						Shell shell = part.getSite().getShell();
-						String title = "Löschbestätigung";
-						StringBuilder msg = new StringBuilder("Soll der ausgewählte Kurs ");
+						String title = "LÃ¶schbestÃ¤tigung";
+						StringBuilder msg = new StringBuilder("Soll der ausgewÃ¤hlte Kurs ");
 						msg = msg.append(course.getCode().equals("") ? course.getTitle() : course.getCode() + " - "
 								+ course.getTitle());
 						msg = msg.append(" entfernt werden?");

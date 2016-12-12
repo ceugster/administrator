@@ -202,7 +202,7 @@ public class BookingListDialog extends TitleAreaDialog
 				BookingListFactory factory = BookingListFactory.create(User.getCurrent(), ssel, selectedStates, bookingTypeKeys);
 				if (factory.size() == 0)
 				{
-					MessageDialog.openInformation(null, "Keine Kurse vorhanden", "Ihre Auswahl enth‰lt keine Kurse.");
+					MessageDialog.openInformation(null, "Keine Kurse vorhanden", "Ihre Auswahl enth√§lt keine Kurse.");
 				}
 				else
 				{

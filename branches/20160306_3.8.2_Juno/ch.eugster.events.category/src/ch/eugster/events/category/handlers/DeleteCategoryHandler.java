@@ -30,8 +30,8 @@ public class DeleteCategoryHandler extends ConnectionServiceDependentAbstractHan
 					{
 						Category category = (Category) ssel.getFirstElement();
 						Shell shell = part.getSite().getShell();
-						String title = "Löschbestätigung";
-						StringBuilder msg = new StringBuilder("Soll die ausgewählte Kategorie ");
+						String title = "LÃ¶schbestÃ¤tigung";
+						StringBuilder msg = new StringBuilder("Soll die ausgewÃ¤hlte Kategorie ");
 						msg = msg.append(category.getCode().equals("") ? category.getName() : category.getCode()
 								+ " - " + category.getName());
 						msg = msg.append(" entfernt werden?");
