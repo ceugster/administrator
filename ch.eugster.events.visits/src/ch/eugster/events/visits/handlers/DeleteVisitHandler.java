@@ -64,8 +64,8 @@ public class DeleteVisitHandler extends AbstractHandler implements IHandler
 					{
 						IWorkbenchPart part = (IWorkbenchPart) context.getParent().getVariable("activePart");
 						Shell shell = part.getSite().getShell();
-						String title = "Löschbestätigung";
-						StringBuilder msg = new StringBuilder("Soll der ausgewählte Besuch " + visit.getTheme().getName()
+						String title = "LÃ¶schbestÃ¤tigung";
+						StringBuilder msg = new StringBuilder("Soll der ausgewÃ¤hlte Besuch " + visit.getTheme().getName()
 								+ " entfernt werden?");
 						int icon = MessageDialog.QUESTION;
 						String[] buttons = new String[] { "Ja", "Nein" };

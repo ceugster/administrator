@@ -227,7 +227,7 @@ public class ThemeView extends AbstractGanttView<Visit>
 			{
 				content = content.append("\n\n");
 				content = content
-						.append("Klasse: " + visit.getClassName() + " (").append(NumberFormat.getIntegerInstance().format(visit.getPupils()) + " Schüler/innen)");
+						.append("Klasse: " + visit.getClassName() + " (").append(NumberFormat.getIntegerInstance().format(visit.getPupils()) + " SchÃ¼ler/innen)");
 			}
 			if (visit.getTeacher() != null)
 			{

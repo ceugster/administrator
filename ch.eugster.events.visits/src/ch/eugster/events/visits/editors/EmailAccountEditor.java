@@ -85,7 +85,7 @@ public class EmailAccountEditor extends AbstractEntityEditor<EmailAccount>
 		if (typeViewer.getSelection().isEmpty())
 		{
 			MessageDialog.openWarning(this.getSite().getShell(), "Angabe des Kontotyps fehlt",
-					"Sie haben keinen Kontotyp ausgew‰hlt.");
+					"Sie haben keinen Kontotyp ausgew√§hlt.");
 			return;
 		}
 		if (this.host.getText().isEmpty())

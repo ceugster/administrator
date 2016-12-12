@@ -125,7 +125,7 @@ public class SchoolLevelEditor extends AbstractEntityEditor<SchoolLevel>
 				if (!query.isNameUnique(name.getText(), schoolLevel.getId()))
 				{
 					msg = new Message(this.name, "Bezeichnung vorhanden", "Die Bezeichnung " + name.getText()
-							+ " ist bereits vorhanden. Bitte w‰hlen Sie eine Bezeichnung, die noch nicht vorhanden ist.");
+							+ " ist bereits vorhanden. Bitte w√§hlen Sie eine Bezeichnung, die noch nicht vorhanden ist.");
 				}
 			}
 		}
