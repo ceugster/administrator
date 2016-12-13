@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -26,6 +27,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -46,6 +48,8 @@ import ch.eugster.events.domain.views.DomainSorter;
 import ch.eugster.events.persistence.events.EntityAdapter;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
+import ch.eugster.events.persistence.formatters.AddressFormatter;
+import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressGroup;
@@ -210,22 +214,40 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 	@Override
 	public void checkStateChanged(final CheckStateChangedEvent event)
 	{
+		boolean dirty = true;
 		Object object = event.getElement();
 		if (object instanceof AddressGroupCategory)
 		{
+			String message = null;
 			AddressGroupCategory category = (AddressGroupCategory) object;
 			List<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
 			{
-				this.updateMonitor(addressGroup, event.getChecked());
+				String msg = this.updateMonitor(addressGroup, event.getChecked());
+				if (msg != null)
+				{
+					message = msg;
+				}
+			}
+			if (message != null)
+			{
+				Display.getCurrent().beep();
+				MessageDialog.openInformation(this.getShell(), "Bereits vorhanden", "Eine oder mehrere der neu gewählten Adressgruppen enthalten bereits die Person. Diese Adressgruppen wurden nicht aktualisiert.");
 			}
 		}
 		else if (object instanceof AddressGroup)
 		{
 			AddressGroup addressGroup = (AddressGroup) object;
-			this.updateMonitor(addressGroup, event.getChecked());
+			String message = this.updateMonitor(addressGroup, event.getChecked());
+			if (message != null)
+			{
+				dirty = false;
+				this.addressGroupViewer.setChecked(addressGroup, !event.getChecked());
+				Display.getCurrent().beep();
+				MessageDialog.openInformation(this.getShell(), "Bereits vorhanden", message);
+			}
 		}
-		setDirty(true);
+		setDirty(dirty);
 	}
 
 	@Override
@@ -597,17 +619,6 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		}
 	}
 
-	private void updateMonitor(final AddressGroup addressGroup, final boolean checked)
-	{
-		Monitor monitor = this.monitors.get(addressGroup.getId());
-		if (monitor == null)
-		{
-			monitor = new Monitor(addressGroup, checked);
-			this.monitors.put(addressGroup.getId(), monitor);
-		}
-		monitor.checked = checked;
-	}
-
 	private void updateViewer(final Object object)
 	{
 		UIJob updateViewer = new UIJob("")
@@ -630,4 +641,59 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		updateViewer.schedule();
 	}
 	
+	private String updateMonitor(final AddressGroup addressGroup, final boolean checked)
+	{
+		String message = null;
+		if (checked)
+		{
+			LinkPersonAddress link = alreadyChecked(addressGroup);
+			if (link instanceof LinkPersonAddress)
+			{
+				Person person = link.getPerson();
+				String name = PersonFormatter.getInstance().formatFirstnameLastname(person);
+				String address = AddressFormatter.getInstance().formatAddressLine(link.getAddress());
+				String city = AddressFormatter.getInstance().formatCityLine(link.getAddress());
+				message = name + " ist bereits mit der Adresse " + address + ", " + city + " in der Adressgruppe vorhanden.";
+			}
+		}
+		if (message == null)
+		{
+			Monitor monitor = this.monitors.get(addressGroup.getId());
+			if (monitor == null)
+			{
+				monitor = new Monitor(addressGroup, checked);
+				this.monitors.put(addressGroup.getId(), monitor);
+			}
+			monitor.checked = checked;
+		}
+		return message;
+	}
+
+	private LinkPersonAddress alreadyChecked(AddressGroup addressGroup)
+	{
+		Long id = null;
+		if (this.parent instanceof LinkPersonAddress)
+		{
+			id = ((LinkPersonAddress) this.parent).getPerson().getId();
+		}
+		else if (this.parent instanceof Person)
+		{
+			id = ((Person) this.parent).getId();
+		}
+		if (id != null)
+		{
+			List<AddressGroupMember> members = addressGroup.getValidAddressGroupMembers();
+			for (AddressGroupMember member : members)
+			{
+				if (member.isValidLinkMember())
+				{
+					if (member.getLink().getPerson().getId().equals(id))
+					{
+						return member.getLink();
+					}
+				}
+			}
+		}
+		return null;
+	}
 }
