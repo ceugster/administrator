@@ -212,7 +212,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		purposeViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
 
 		label = new Label(selectorComposite, SWT.None);
-		label.setText("Dom√§nenfilter");
+		label.setText("Dom‰nenfilter");
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -374,7 +374,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 			}
 
 		});
-		this.configureColumn("Dom√§ne", order++, tableViewerColumn.getColumn(), sorter);
+		this.configureColumn("Dom‰ne", order++, tableViewerColumn.getColumn(), sorter);
 
 		tableViewerColumn = new TableViewerColumn(donationViewer, SWT.LEFT);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
@@ -403,7 +403,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		actionComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		printConfirmation = new Button(actionComposite, SWT.PUSH);
-		printConfirmation.setToolTipText("Spendenbest√§tigung drucken");
+		printConfirmation.setToolTipText("Spendenbest‰tigung drucken");
 		printConfirmation.setImage(Activator.getDefault().getImageRegistry().get("PRINT"));
 		printConfirmation.setLayoutData(new GridData());
 		printConfirmation.addSelectionListener(new SelectionListener()

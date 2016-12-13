@@ -261,10 +261,10 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		{
 			if (condition.contains("person_form EQ 1") || condition.contains("person_form == 1")
 					|| condition.contains("person_form EQ \"1\"") || condition.contains("person_form == \"1\"")
-					|| condition.contains("person_form EQ persÃ¶nlich")
-					|| condition.contains("person_form == persÃ¶nlich")
-					|| condition.contains("person_form EQ \"persÃ¶nlich\"")
-					|| condition.contains("person_form == \"persÃ¶nlich\""))
+					|| condition.contains("person_form EQ persönlich")
+					|| condition.contains("person_form == persönlich")
+					|| condition.contains("person_form EQ \"persönlich\"")
+					|| condition.contains("person_form == \"persönlich\""))
 			{
 				if (map.getProperty("person_form") == null)
 				{
@@ -273,8 +273,8 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 				}
 				else
 				{
-					String property = map.getProperty("person_form", "hÃ¶flich");
-					if (property.equals("persÃ¶nlich"))
+					String property = map.getProperty("person_form", "höflich");
+					if (property.equals("persönlich"))
 					{
 						conditionalText.setTextCurrentValueAttribute(Boolean.TRUE);
 						conditionalText.setTextContent(conditionalText.getTextStringValueIfTrueAttribute());

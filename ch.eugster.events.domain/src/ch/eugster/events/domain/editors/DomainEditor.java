@@ -64,7 +64,7 @@ public class DomainEditor extends AbstractEntityEditor<Domain>
 				| ExpandableComposite.COMPACT | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
 		section.setLayoutData(layoutData);
 		section.setLayout(sectionLayout);
-		section.setText("Dom√§ne");
+		section.setText("Dom‰ne");
 		section.setClient(this.fillDomainSection(section));
 		section.addExpansionListener(new ExpansionAdapter()
 		{
@@ -290,7 +290,7 @@ public class DomainEditor extends AbstractEntityEditor<Domain>
 		if (this.name.getText().isEmpty())
 		{
 			msg = new Message(this.name, "Fehler");
-			msg.setMessage("Die Dom√§ne muss eine Bezeichnung haben.");
+			msg.setMessage("Die Dom‰ne muss eine Bezeichnung haben.");
 		}
 
 		return msg;
@@ -321,7 +321,7 @@ public class DomainEditor extends AbstractEntityEditor<Domain>
 	{
 		DomainEditorInput input = (DomainEditorInput) this.getEditorInput();
 		Domain domain = (Domain) input.getAdapter(Domain.class);
-		return domain.getId() == null ? "Neue Dom√§ne" : "Dom√§ne "
+		return domain.getId() == null ? "Neue Dom‰ne" : "Dom‰ne "
 				+ (domain.getCode().length() == 0 ? domain.getName() : domain.getCode());
 	}
 
@@ -343,8 +343,8 @@ public class DomainEditor extends AbstractEntityEditor<Domain>
 				DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
 				if (!query.isCodeUnique(code, domain.getId()))
 				{
-					msg = new Message(this.code, "Ung√ºltiger Code");
-					msg.setMessage("Der gewÔøΩhlte Code wird bereits verwendet.");
+					msg = new Message(this.code, "Ung¸ltiger Code");
+					msg.setMessage("Der gew‰hlte Code wird bereits verwendet.");
 					return msg;
 				}
 			}
