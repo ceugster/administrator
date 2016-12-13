@@ -35,8 +35,8 @@ public class ZoomInAction extends AbstractReportViewerAction
 	{
 		super(viewer);
 
-		setText("VergrÃ¶ssern"); //$NON-NLS-1$
-		setToolTipText("VergrÃ¶ssern"); //$NON-NLS-1$
+		setText("Vergrössern"); //$NON-NLS-1$
+		setToolTipText("Vergrössern"); //$NON-NLS-1$
 		setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("zoomplus"));
 		setDisabledImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("zoomplusd"));
 	}

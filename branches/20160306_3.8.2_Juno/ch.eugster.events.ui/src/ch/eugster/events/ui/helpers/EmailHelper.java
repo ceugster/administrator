@@ -51,7 +51,7 @@ public class EmailHelper
 		if (address.isEmpty() || !this.isValidAddress(address))
 		{
 			MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-					"UngÃ¼ltige Emailadresse", "Die Emailadresse ist ungÃ¼ltig.");
+					"Ungültige Emailadresse", "Die Emailadresse ist ungültig.");
 		}
 		else
 		{
@@ -65,8 +65,8 @@ public class EmailHelper
 			{
 				MessageDialog
 						.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-								"UngÃ¼ltige URI",
-								"Eine Emailadresse scheint ungÃ¼ltig zu sein. Bitte Ã¼berprÃ¼fen Sie die fraglichen Emailadressen.");
+								"Ungültige URI",
+								"Eine Emailadresse scheint ungültig zu sein. Bitte überprüfen Sie die fraglichen Emailadressen.");
 			}
 			catch (IOException e)
 			{
@@ -113,8 +113,8 @@ public class EmailHelper
 		catch (URISyntaxException se)
 		{
 			MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-					"UngÃ¼ltige URI",
-					"Eine Emailadresse scheint ungÃ¼ltig zu sein. Bitte Ã¼berprÃ¼fen Sie die fraglichen Emailadressen.");
+					"Ungültige URI",
+					"Eine Emailadresse scheint ungültig zu sein. Bitte überprüfen Sie die fraglichen Emailadressen.");
 		}
 		catch (IOException e)
 		{

@@ -121,9 +121,9 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 
 	private static final String EMAIL_LINK = "Email (<a>senden</a>)";
 
-	private static final String WEBSITE_LABEL = "Webseite (Ã¶ffnen)";
+	private static final String WEBSITE_LABEL = "Webseite (öffnen)";
 
-	private static final String WEBSITE_LINK = "Webseite (<a>Ã¶ffnen</a>)";
+	private static final String WEBSITE_LINK = "Webseite (<a>öffnen</a>)";
 
 	private boolean dirty;
 
@@ -632,8 +632,8 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 		layout.minNumColumns = User.getCurrent().getMinEditorColumns();
 		scrolledForm.getBody().setLayout(layout);
 
-		createButtons(managedForm, "Adressen", "Adressen hinzufÃ¼gen und bearbeiten");
-		createIdentitySectionPart(managedForm, "IdentitÃ¤t", "", 2);
+		createButtons(managedForm, "Adressen", "Adressen hinzufügen und bearbeiten");
+		createIdentitySectionPart(managedForm, "Identität", "", 2);
 		createContactsSectionPart(managedForm, "Kontakt", "", 3);
 
 		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
@@ -747,7 +747,7 @@ public class FormEditorPersonPage extends FormPage implements IPersonFormEditorP
 
 		if (PersonSettings.getInstance().getPersonHasDomain())
 		{
-			label = toolkit.createLabel(client, "DomÃ¤ne");
+			label = toolkit.createLabel(client, "Domäne");
 			label.setLayoutData(new GridData());
 
 			gridData = new GridData(GridData.FILL_HORIZONTAL);

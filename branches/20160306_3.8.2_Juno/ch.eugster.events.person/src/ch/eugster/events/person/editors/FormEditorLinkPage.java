@@ -120,9 +120,9 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	private static final String EMAIL_LINK = "Email (<a>senden</a>)";
 
-	private static final String WEBSITE_LABEL = "Webseite (Ã¶ffnen)";
+	private static final String WEBSITE_LABEL = "Webseite (öffnen)";
 
-	private static final String WEBSITE_LINK = "Webseite (<a>Ã¶ffnen</a>)";
+	private static final String WEBSITE_LINK = "Webseite (<a>öffnen</a>)";
 
 	private static final String LINK_SECTION_EXPANDED = "link.section.expanded";
 
@@ -976,7 +976,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 				{
 					Hyperlink hlink = toolkit.createHyperlink(composite, addressType.getName(), SWT.NONE);
 					hlink.setToolTipText("zur Seite " + addressType.getName()
-							+ " wechseln (falls noch nicht vorhanden, wird sie eingefÃ¼gt).");
+							+ " wechseln (falls noch nicht vorhanden, wird sie eingefügt).");
 					hlink.addHyperlinkListener(new HyperlinkAdapter()
 					{
 						@Override
@@ -1000,7 +1000,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 					hyperlink = toolkit.createImageHyperlink(composite, SWT.NONE);
 					hyperlink.setImage(addressType.getImage());
 					hyperlink.setToolTipText("zur Seite " + addressType.getName()
-							+ " wechseln (falls noch nicht vorhanden, wird sie eingefÃ¼gt).");
+							+ " wechseln (falls noch nicht vorhanden, wird sie eingefügt).");
 					hyperlink.addHyperlinkListener(new HyperlinkAdapter()
 					{
 						@Override
@@ -1023,7 +1023,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		}
 
 		changeAddressTypeHyperlink = toolkit.createImageHyperlink(composite, SWT.NONE);
-		changeAddressTypeHyperlink.setToolTipText("Adresstyp Ã¤ndern");
+		changeAddressTypeHyperlink.setToolTipText("Adresstyp ändern");
 		changeAddressTypeHyperlink.addHyperlinkListener(new HyperlinkAdapter()
 		{
 			@Override
@@ -1130,9 +1130,9 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		createAddressSectionPart(
 				managedForm,
 				"Anschrift",
-				"Geben Sie hier die gewÃ¼nschten Adressdaten ein. Im Feld Strasse kÃ¶nnen Sie CTRL+Space verwenden, um aus bestehenden Adressen auszuwÃ¤hlen.",
+				"Geben Sie hier die gewünschten Adressdaten ein. Im Feld Strasse können Sie CTRL+Space verwenden, um aus bestehenden Adressen auszuwählen.",
 				5);
-		createAddressContactsSectionPart(managedForm, "Kontakte", "Adressenbezogene KontaktmÃ¶glichkeiten", 3);
+		createAddressContactsSectionPart(managedForm, "Kontakte", "Adressenbezogene Kontaktmöglichkeiten", 3);
 		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class, null);
 		tracker.open();
@@ -1154,11 +1154,11 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			tracker.close();
 		}
 		createLinkSectionPart(managedForm, "Zusatzinformationen",
-				"Hier kÃ¶nnen zusÃ¤tzliche Informationen zu " + this.getText()
+				"Hier können zusätzliche Informationen zu " + this.getText()
 						+ " erfasst werden, die sich auf diese Adresse beziehen.", 3);
 		createNotesSectionPart(managedForm, "Bemerkungen", "Weitere Bemerkungen", 1);
 		createAddressLabelExampleSectionPart(managedForm, "Vorschau Adressetikette",
-				"Vorschau der Adressetiketten fÃ¼r Einzel- und, falls gegeben, Sammeladresse.", 2);
+				"Vorschau der Adressetiketten für Einzel- und, falls gegeben, Sammeladresse.", 2);
 
 		IEditorInput input = this.getEditor().getEditorInput();
 		if (input instanceof Initializable)
@@ -1440,7 +1440,7 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		if (this.countryViewer.getSelection().isEmpty())
 		{
 			msg = new Message(this.city, "Fehler");
-			msg.setMessage("Der LÃ¤ndercode fehlt.");
+			msg.setMessage("Der Ländercode fehlt.");
 			FormToolkit.ensureVisible(this.countryViewer.getControl());
 			this.countryViewer.getControl().setFocus();
 		}

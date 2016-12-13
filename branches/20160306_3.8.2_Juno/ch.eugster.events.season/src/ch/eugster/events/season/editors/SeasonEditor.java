@@ -260,8 +260,8 @@ public class SeasonEditor extends AbstractEntityEditor<Season>
 				SeasonQuery query = (SeasonQuery) service.getQuery(Season.class);
 				if (!query.isCodeUnique(code, season.getId()))
 				{
-					msg = new Message(this.code, "Ung√ºltiger Code");
-					msg.setMessage("Der gew√§hlte Code wird bereits verwendet.");
+					msg = new Message(this.code, "Ung¸ltiger Code");
+					msg.setMessage("Der gew‰hlte Code wird bereits verwendet.");
 					return msg;
 				}
 			}
@@ -280,7 +280,7 @@ public class SeasonEditor extends AbstractEntityEditor<Season>
 		if (this.title.getText().isEmpty())
 		{
 			msg = new Message(this.title, "Fehler");
-			msg.setMessage("Die Dom√§ne muss eine Bezeichnung haben.");
+			msg.setMessage("Die Dom‰ne muss eine Bezeichnung haben.");
 		}
 
 		return msg;

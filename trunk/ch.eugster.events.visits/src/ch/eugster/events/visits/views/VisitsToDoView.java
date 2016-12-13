@@ -311,7 +311,7 @@ public class VisitsToDoView extends AbstractEntityView implements IDoubleClickLi
 		});
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
-		tableColumn.setText("KlassengrÃ¶sse");
+		tableColumn.setText("Klassengrösse");
 
 		tableViewerColumn = new TableViewerColumn(viewer, SWT.NONE);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()

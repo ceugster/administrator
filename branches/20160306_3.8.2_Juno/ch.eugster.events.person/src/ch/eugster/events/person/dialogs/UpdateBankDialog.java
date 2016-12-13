@@ -56,7 +56,7 @@ public class UpdateBankDialog extends TitleAreaDialog
 	protected Control createDialogArea(Composite parent)
 	{
 		this.setTitle("Banken aktualisieren");
-		this.setMessage("WÃ¤hlen Sie eine Importdatei zum Aktualisieren der Bankendaten aus.");
+		this.setMessage("Wählen Sie eine Importdatei zum Aktualisieren der Bankendaten aus.");
 		
 		this.settings = Activator.getDefault().getDialogSettings().getSection("update.bank.dialog");
 		if (this.settings == null)
@@ -159,7 +159,7 @@ public class UpdateBankDialog extends TitleAreaDialog
 				} 
 			    catch (InterruptedException e) 
 			    {
-			    	MessageDialog.openInformation(this.getShell(), "Abbruch", "Die Aktualisierung wurde durch den Benutzer abgebrochen. Die Aktualisierung wurde daher nicht vollstÃ¤ndig durchgefÃ¼hrt.");
+			    	MessageDialog.openInformation(this.getShell(), "Abbruch", "Die Aktualisierung wurde durch den Benutzer abgebrochen. Die Aktualisierung wurde daher nicht vollständig durchgeführt.");
 				}
 			}
 		}

@@ -36,7 +36,7 @@ public class LabelSelectionDialog extends TitleAreaDialog
 
 	private IDialogSettings settings;
 
-	private final String message = "WÃ¤hlen Sie das Etikettenformat, das verwendet werden soll.";
+	private final String message = "Wählen Sie das Etikettenformat, das verwendet werden soll.";
 
 	private Destination selectedDestination;
 
@@ -51,11 +51,11 @@ public class LabelSelectionDialog extends TitleAreaDialog
 	 *            ch.eugster.events.data.objects.Customer
 	 * @param addressGroup
 	 *            Falls eine neue Adressgruppe erfasst wird, muss diese bereit
-	 *            vor der Ãœbergabe an den Konstruktor von
+	 *            vor der Übergabe an den Konstruktor von
 	 *            <code>AddressGroupDialog</code> instantiiert sein und der
 	 *            Parent <code>Domain</code> muss - falls ein solcher gesetzt
 	 *            werden soll, ebenfalls dem Konstruktur von
-	 *            <code>AddressGroup</code> Ã¼bergeben worden sein.
+	 *            <code>AddressGroup</code> übergeben worden sein.
 	 * 
 	 */
 	public LabelSelectionDialog(final Shell parentShell)
@@ -73,7 +73,7 @@ public class LabelSelectionDialog extends TitleAreaDialog
 	@Override
 	protected void createButtonsForButtonBar(final Composite parent)
 	{
-		this.createButton(parent, IDialogConstants.OK_ID, "AuswÃ¤hlen", true);
+		this.createButton(parent, IDialogConstants.OK_ID, "Auswählen", true);
 		this.createButton(parent, IDialogConstants.CANCEL_ID, "Abbrechen", false);
 		// File file = new File(documentPath.getText());
 		// this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());

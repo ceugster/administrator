@@ -263,8 +263,8 @@ public abstract class AbstractEntityEditor<T extends AbstractEntity> extends Edi
 			boolean reset = true;
 			if (ask)
 			{
-				reset = MessageDialog.openQuestion(this.getEditorSite().getShell(), "Ã„nderungen verwerfen",
-						"Sollen die Ã„nderungen verworfen werden?");
+				reset = MessageDialog.openQuestion(this.getEditorSite().getShell(), "Änderungen verwerfen",
+						"Sollen die Änderungen verworfen werden?");
 			}
 			if (reset)
 			{

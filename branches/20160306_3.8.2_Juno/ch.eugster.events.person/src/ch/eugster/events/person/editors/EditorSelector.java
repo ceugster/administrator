@@ -79,7 +79,7 @@ public enum EditorSelector
 		{
 			case SINGLE_PAGE_EDITOR:
 			{
-				return "Einseitiger Editor (mit eingeschr√§nkter Funktionalit√§t)";
+				return "Einseitiger Editor (mit eingeschr‰nkter Funktionalit‰t)";
 			}
 			case MULTI_PAGE_EDITOR:
 			{

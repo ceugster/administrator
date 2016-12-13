@@ -107,7 +107,7 @@ public class PersonSorter extends ViewerSorter
 				}
 				case DOMAIN:
 				{
-					return "Dom√§ne";
+					return "Dom‰ne";
 				}
 				default:
 					return "";

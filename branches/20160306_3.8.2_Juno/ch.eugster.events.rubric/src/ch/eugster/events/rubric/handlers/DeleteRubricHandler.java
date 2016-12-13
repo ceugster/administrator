@@ -31,8 +31,8 @@ public class DeleteRubricHandler extends ConnectionServiceDependentAbstractHandl
 					{
 						Rubric rubric = (Rubric) ssel.getFirstElement();
 						Shell shell = part.getSite().getShell();
-						String title = "LÃ¶schbestÃ¤tigung";
-						StringBuilder msg = new StringBuilder("Soll die ausgewÃ¤hlte Rubrik ");
+						String title = "Löschbestätigung";
+						StringBuilder msg = new StringBuilder("Soll die ausgewählte Rubrik ");
 						msg = msg.append(rubric.getCode().equals("") ? rubric.getName() : rubric.getCode() + " - "
 								+ rubric.getName());
 						msg = msg.append(" entfernt werden?");
