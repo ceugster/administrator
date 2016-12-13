@@ -142,15 +142,15 @@ public class PersistenceException extends Exception
 			// return
 			// "Falscher Benutzername oder falsches Passwort. Der Zugriff auf die Datenbank wurde verweigert.";
 			if (equals(ErrorCode.UNKNOWN))
-				return "Ein nicht nÃ¤her spezifizierter Datenbankfehler ist aufgetreten.";
+				return "Ein nicht näher spezifizierter Datenbankfehler ist aufgetreten.";
 			if (equals(ErrorCode.DRIVER_NOT_FOUND))
-				return "Der Treiber fÃ¼r die Datenbankverbindung konnte nicht gefunden werden.";
+				return "Der Treiber für die Datenbankverbindung konnte nicht gefunden werden.";
 			if (equals(ErrorCode.DRIVER_NOT_VALID))
-				return "Der verwendete Treiber ist fÃ¼r die gewÃ¤hlte Datenbankverbindung unbrauchbar.";
+				return "Der verwendete Treiber ist für die gewählte Datenbankverbindung unbrauchbar.";
 			if (equals(ErrorCode.CONNECTION_FAILOR))
 				return "Es konnte keine Verbindung zur Datenbank hergestellt werden.";
 			if (equals(ErrorCode.DATABASE_NOT_INITIALIZED))
-				return "Die Datenbank ist nicht fÃ¼r den Administrator eingerichtet.";
+				return "Die Datenbank ist nicht für ColibriTS eingerichtet.";
 			if (equals(ErrorCode.DATABASE_VERSION_ERROR))
 				return "Die Datenbank ist aktueller als das Programm. Bitte aktualisieren Sie das Programm.";
 			return "";

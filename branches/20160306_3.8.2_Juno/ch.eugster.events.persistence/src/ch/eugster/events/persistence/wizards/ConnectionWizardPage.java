@@ -56,15 +56,15 @@ public class ConnectionWizardPage extends WizardPage implements ModifyListener, 
 
 	private Label helpLabel;
 
-	private static final String MESSAGE = "Legen Sie die Eigenschaften fÃ¼r die gewÃ¼nschte Datenbankverbindung fest.";
+	private static final String MESSAGE = "Legen Sie die Eigenschaften für die gewünschte Datenbankverbindung fest.";
 
 	private static final String URL_ERROR = "Sie haben keine URL angegeben.";
 
 	private static final String USER_ERROR = "Sie haben keinen Benutzernamen angegeben.";
 
-	private static final String PASSWORD_ERROR = "Die PasswortbestÃ¤tigung entspricht nicht dem Passwort.";
+	private static final String PASSWORD_ERROR = "Die Passwortbestätigung entspricht nicht dem Passwort.";
 
-	private static final String DRIVER_ERROR = "Sie haben kein Datenbanksystem ausgewÃ¤hlt.";
+	private static final String DRIVER_ERROR = "Sie haben kein Datenbanksystem ausgewählt.";
 
 	public ConnectionWizardPage(String name)
 	{
@@ -77,7 +77,7 @@ public class ConnectionWizardPage extends WizardPage implements ModifyListener, 
 		setTitle("Verbindungseigenschaften");
 		this.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("WIZARD"));
 		this.setMessage(ConnectionWizardPage.MESSAGE);
-		setDescription("Geben Sie die benÃ¶tigten Verbindungsdaten ein und prÃ¼fen Sie ggf. die Verbindung.");
+		setDescription("Geben Sie die benötigten Verbindungsdaten ein und prüfen Sie ggf. die Verbindung.");
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -131,7 +131,7 @@ public class ConnectionWizardPage extends WizardPage implements ModifyListener, 
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
-		label.setText("Passwort bestÃ¤tigen");
+		label.setText("Passwort bestätigen");
 
 		confirm = new Text(composite, SWT.BORDER | SWT.SINGLE);
 		confirm.setEchoChar('*');
@@ -144,7 +144,7 @@ public class ConnectionWizardPage extends WizardPage implements ModifyListener, 
 
 		testConnection = new Button(composite, SWT.PUSH);
 		testConnection.setLayoutData(new GridData());
-		testConnection.setText("Verbindung prÃ¼fen");
+		testConnection.setText("Verbindung prüfen");
 		testConnection.addSelectionListener(new SelectionListener()
 		{
 			public void widgetSelected(SelectionEvent e)
@@ -157,14 +157,14 @@ public class ConnectionWizardPage extends WizardPage implements ModifyListener, 
 					{
 						String message = "Die Verbindung zur Datenbank wurde erfolgreich hergestellt.";
 						MessageDialog dialog = new MessageDialog(ConnectionWizardPage.this.getShell(),
-								"UngÃ¼ltige Verbindung", null, message, MessageDialog.INFORMATION,
+								"Ungültige Verbindung", null, message, MessageDialog.INFORMATION,
 								new String[] { "OK" }, 0);
 						dialog.open();
 						break;
 					}
 					case 1:
 					{
-						String message = "Der gewÃ¤hlte Treiber konnte nicht gefunden werden. Bitte setzen Sie sich mit dem Lieferanten in Verbindung.";
+						String message = "Der gewählte Treiber konnte nicht gefunden werden. Bitte setzen Sie sich mit dem Lieferanten in Verbindung.";
 						MessageDialog dialog = new MessageDialog(ConnectionWizardPage.this.getShell(),
 								"Treiber nicht gefunden", null, message, MessageDialog.ERROR, new String[] { "OK" }, 0);
 						dialog.open();
@@ -174,7 +174,7 @@ public class ConnectionWizardPage extends WizardPage implements ModifyListener, 
 					{
 						String message = "Entweder sind die Verbindungsangaben falsch oder die Datenbank ist nicht richtig konfiguriert. Bitte vergewissern Sie sich, dass Verbindungsdaten richtig sind und die Datenbank und der Benutzer existieren und dass der Benutzer die notwendigen Zugriffsberechtigungen besitzt.";
 						MessageDialog dialog = new MessageDialog(ConnectionWizardPage.this.getShell(),
-								"UngÃ¼ltige Verbindung", null, message, MessageDialog.ERROR, new String[] { "OK" }, 0);
+								"Ungültige Verbindung", null, message, MessageDialog.ERROR, new String[] { "OK" }, 0);
 						dialog.open();
 						break;
 					}

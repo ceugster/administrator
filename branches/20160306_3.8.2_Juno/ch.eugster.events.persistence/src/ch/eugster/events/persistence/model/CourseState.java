@@ -4,7 +4,7 @@ public enum CourseState
 {
 	FORTHCOMING, DONE, ANNULATED;
 
-	String[] states = new String[] { "Bevorstehend", "DurchgefÃ¼hrt", "Annuliert" };
+	String[] states = new String[] { "Bevorstehend", "Durchgeführt", "Annuliert" };
 
 	String[] codes = new String[] { "B", "D", "A" };
 
@@ -23,7 +23,7 @@ public enum CourseState
 			return BookingAnnulatedState.values();
 		}
 		else
-			throw new RuntimeException("UngÃ¼ltiger Kursstatus");
+			throw new RuntimeException("Ungültiger Kursstatus");
 	}
 
 	public String imageKey()
@@ -35,7 +35,7 @@ public enum CourseState
 		else if (this.equals(CourseState.ANNULATED))
 			return "COURSE_ANNULATED";
 		else
-			throw new RuntimeException("UngÃ¼ltiger Kursstatus");
+			throw new RuntimeException("Ungültiger Kursstatus");
 	}
 
 	@Override

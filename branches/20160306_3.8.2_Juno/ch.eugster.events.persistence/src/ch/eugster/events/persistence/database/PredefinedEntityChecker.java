@@ -19,7 +19,7 @@ public class PredefinedEntityChecker
 	}
 
 	/*
-	 * Der Check soll nur durchgefÃ¼hrt werden, wenn der Server zum laufen
+	 * Der Check soll nur durchgeführt werden, wenn der Server zum laufen
 	 * gebracht wurde
 	 */
 	public IStatus check()
