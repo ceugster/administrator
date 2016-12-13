@@ -136,7 +136,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 				| ExpandableComposite.COMPACT | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
 		this.dateSection.setLayoutData(layoutData);
 		this.dateSection.setLayout(sectionLayout);
-		this.dateSection.setText("Aktivit√§ten");
+		this.dateSection.setText("Aktivit‰ten");
 		this.dateSection.setClient(this.fillDateSection(this.dateSection));
 		this.dateSection.addExpansionListener(new ExpansionAdapter()
 		{
@@ -223,7 +223,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		composite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		composite.setLayout(new GridLayout(2, false));
 
-		Label label = this.formToolkit.createLabel(composite, "Buchungsbest√§tigung verschickt", SWT.NONE);
+		Label label = this.formToolkit.createLabel(composite, "Buchungsbest‰tigung verschickt", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		this.bookingConfirmationSentDate = new CDateTime(composite, CDT.DROP_DOWN | CDT.DATE_MEDIUM);
@@ -257,7 +257,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 			}
 		});
 
-		label = this.formToolkit.createLabel(composite, "Teilnahmebest√§tigung verschickt", SWT.NONE);
+		label = this.formToolkit.createLabel(composite, "Teilnahmebest‰tigung verschickt", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		this.participationConfirmationSentDate = new CDateTime(composite, CDT.DROP_DOWN | CDT.DATE_MEDIUM);
@@ -453,7 +453,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 			}
 		});
 
-		label = this.formToolkit.createLabel(composite, "Datum R√ºckzahlung", SWT.NONE);
+		label = this.formToolkit.createLabel(composite, "Datum R¸ckzahlung", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		this.payBackDate = new CDateTime(composite, CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
@@ -469,7 +469,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 			}
 		});
 
-		label = this.formToolkit.createLabel(composite, "Betrag R√ºckzahlung", SWT.NONE);
+		label = this.formToolkit.createLabel(composite, "Betrag R¸ckzahlung", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		layoutData = new GridData();
@@ -904,8 +904,8 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		// if (ssel.isEmpty() || ((Domain) ssel.getFirstElement()).getId() ==
 		// null)
 		// {
-		// msg = new Message(this.code, "Fehlende Dom√§ne");
-		// msg.setMessage("Sie haben keine Dom√§ne ausgew√§hlt.");
+		// msg = new Message(this.code, "Fehlende Dom‰ne");
+		// msg.setMessage("Sie haben keine Dom‰ne ausgew‰hlt.");
 		// FormToolkit.ensureVisible(this.domainViewer.getCCombo());
 		// this.domainViewer.getCCombo().setFocus();
 		// }
@@ -921,7 +921,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		// null)
 		// {
 		// msg = new Message(this.code, "Fehlende Kategorie");
-		// msg.setMessage("Sie haben keine Kategorie ausgew√§hlt.");
+		// msg.setMessage("Sie haben keine Kategorie ausgew‰hlt.");
 		// FormToolkit.ensureVisible(this.categoryViewer.getCCombo());
 		// this.categoryViewer.getCCombo().setFocus();
 		// }
@@ -937,7 +937,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		// null)
 		// {
 		// msg = new Message(this.code, "Fehlende Rubrik");
-		// msg.setMessage("Sie haben keine Rubrik ausgew√§hlt.");
+		// msg.setMessage("Sie haben keine Rubrik ausgew‰hlt.");
 		// FormToolkit.ensureVisible(this.rubricViewer.getCCombo());
 		// this.rubricViewer.getCCombo().setFocus();
 		// }
@@ -953,7 +953,7 @@ public class BookingEditor extends AbstractEntityEditor<Booking> implements Prop
 		// null)
 		// {
 		// msg = new Message(this.code, "Fehlende kursverantwortliche Person");
-		// msg.setMessage("Sie haben keine f√ºr den Kurs verantwortliche Person ausgew√§hlt.");
+		// msg.setMessage("Sie haben keine f¸r den Kurs verantwortliche Person ausgew‰hlt.");
 		// FormToolkit.ensureVisible(this.userViewer.getCCombo());
 		// this.userViewer.getCCombo().setFocus();
 		// }

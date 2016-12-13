@@ -67,9 +67,9 @@ public class CourseInvitationDialog extends TitleAreaDialog
 
 	private UserProperty userPropertyTemplatePath;
 
-	private final String message = "WÃ¤hlen Sie das Dokument, das als Vorlage verwendet werden soll.";
+	private final String message = "Wählen Sie das Dokument, das als Vorlage verwendet werden soll.";
 
-	private static final String MSG_NO_SERVICE_AVAILABLE = "Es ist kein Service fÃ¼r die Verarbeitung des Dokuments verfÃ¼gbar.";
+	private static final String MSG_NO_SERVICE_AVAILABLE = "Es ist kein Service für die Verarbeitung des Dokuments verfügbar.";
 
 	private static final String MSG_TITLE_NO_COURSES = "Keine Buchungen vorhanden";
 
@@ -79,7 +79,7 @@ public class CourseInvitationDialog extends TitleAreaDialog
 
 	private static final String DIALOG_TITLE = "Vorlage Kurseinladung";
 
-	private static final String DIALOG_MSG = "Die Einladungen werden nur fÃ¼r angemeldete Personen erstellt.";
+	private static final String DIALOG_MSG = "Die Einladungen werden nur für angemeldete Personen erstellt.";
 	
 	private boolean isPageComplete = false;
 

@@ -44,7 +44,7 @@ public class FormLetterFolderPreferencePage extends FieldEditorPreferencePage im
 				PreferenceInitializer.KEY_FORM_LETTER_FOLDER, "Verzeichnis Serienbriefe", this.getFieldEditorParent());
 		formLetterFolderEditor.setChangeButtonText("...");
 		formLetterFolderEditor.setFilterPath(userHome == null ? new File("") : new File(userHome));
-		formLetterFolderEditor.setErrorMessage("Das Verzeichnis ist ungÃ¼ltig.");
+		formLetterFolderEditor.setErrorMessage("Das Verzeichnis ist ungültig.");
 		this.addField(formLetterFolderEditor);
 
 	}

@@ -29,7 +29,7 @@ public class UpdateBookingStateQueryDialog extends TitleAreaDialog
 	{
 		this.getShell().setText("Drucken");
 		this.setTitle("Drucken mit automatischer Aktualisierung");
-		this.setMessage("Best√§tigung f√ºr ausgew√§hlte Buchungen drucken und Datum aktualisieren.");
+		this.setMessage("Best‰tigung f¸r ausgew‰hlte Buchungen drucken und Datum aktualisieren.");
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));

@@ -48,7 +48,7 @@ public class CompensationMap extends AbstractDataMap<Compensation>
 				}
 				case TYPE:
 				{
-					return "EntschÃ¤digungsart";
+					return "Entschädigungsart";
 				}
 				default:
 				{

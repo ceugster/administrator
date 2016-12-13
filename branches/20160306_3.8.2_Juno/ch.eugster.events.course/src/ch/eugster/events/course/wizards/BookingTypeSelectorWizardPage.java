@@ -132,7 +132,7 @@ public class BookingTypeSelectorWizardPage extends WizardPage implements ISelect
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
-		label.setText("BuchungsbestÃ¤tigung verschickt");
+		label.setText("Buchungsbestätigung verschickt");
 
 		this.bookingConfirmationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.bookingConfirmationSentDate.setLayoutData(new GridData());
@@ -148,7 +148,7 @@ public class BookingTypeSelectorWizardPage extends WizardPage implements ISelect
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
-		label.setText("TeilnahmebestÃ¤tigung verschickt");
+		label.setText("Teilnahmebestätigung verschickt");
 
 		this.participationConfirmationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.participationConfirmationSentDate.setLayoutData(new GridData());
@@ -177,7 +177,7 @@ public class BookingTypeSelectorWizardPage extends WizardPage implements ISelect
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
-		label.setText("RÃ¼ckzahlungsdatum");
+		label.setText("Rückzahlungsdatum");
 
 		this.payBackDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.payBackDate.setLayoutData(new GridData());
@@ -185,7 +185,7 @@ public class BookingTypeSelectorWizardPage extends WizardPage implements ISelect
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
-		label.setText("RÃ¼ckzahlungsbetrag");
+		label.setText("Rückzahlungsbetrag");
 
 		layoutData = new GridData();
 		layoutData.widthHint = 64;

@@ -32,8 +32,8 @@ public class DeletePaymentTermHandler extends ConnectionServiceDependentAbstract
 					{
 						PaymentTerm paymentTerm = (PaymentTerm) ssel.getFirstElement();
 						Shell shell = part.getSite().getShell();
-						String title = "LÃ¶schbestÃ¤tigung";
-						StringBuilder msg = new StringBuilder("Soll die ausgewÃ¤hlte Zahlungsbedingung entfernt werden?");
+						String title = "Löschbestätigung";
+						StringBuilder msg = new StringBuilder("Soll die ausgewählte Zahlungsbedingung entfernt werden?");
 						int icon = MessageDialog.QUESTION;
 						String[] buttons = new String[] { "Ja", "Nein" };
 						MessageDialog dialog = new MessageDialog(shell, title, null, msg.toString(), icon, buttons, 0);

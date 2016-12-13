@@ -79,8 +79,8 @@ public class BookingTypeWizardPage extends WizardPage implements Listener, Selec
 		String course = CourseFormatter.getInstance().formatComboEntry(wizard.getBookingType().getCourse());
 		if (wizard.getBookingType().getId() == null)
 		{
-			this.setTitle("Buchungsart hinzufÃ¼gen");
-			this.setMessage("HinzufÃ¼gen einer Buchungsart zu '" + course + "'.");
+			this.setTitle("Buchungsart hinzufügen");
+			this.setMessage("Hinzufügen einer Buchungsart zu '" + course + "'.");
 		}
 		else
 		{

@@ -126,7 +126,7 @@ public class BookingWizard extends Wizard implements IBookingWizard
 					tracker.open();
 					try
 					{
-						monitor.beginTask("Buchungsbest√§tigung wird gedruckt...", 1);
+						monitor.beginTask("Buchungsbest‰tigung wird gedruckt...", 1);
 
 						Object service = tracker.getService();
 						if (service instanceof DocumentBuilderService)
@@ -142,14 +142,14 @@ public class BookingWizard extends Wizard implements IBookingWizard
 									.openError(
 											getShell(),
 											"Service nicht aktiv",
-											"Der Service f√ºr die Aufbereitung der Buchungsbest√§tigung ist nicht aktiv. Die Buchungsbest√§tigung kann nicht gedruckt werden.");
+											"Der Service f¸r die Aufbereitung der Buchungsbest‰tigung ist nicht aktiv. Die Buchungsbest‰tigung kann nicht gedruckt werden.");
 						}
 						monitor.worked(1);
 					}
 					catch (Exception e)
 					{
 						MessageDialog.openError(getShell(), "Fehler",
-								"Beim Aufbereiten der Buchungsbest√§tigung ist ist ein Fehler aufgetreten.");
+								"Beim Aufbereiten der Buchungsbest‰tigung ist ist ein Fehler aufgetreten.");
 					}
 					finally
 					{
@@ -202,7 +202,7 @@ public class BookingWizard extends Wizard implements IBookingWizard
 									.openError(
 											getShell(),
 											"Service nicht aktiv",
-											"Der Service f√ºr die Aufbereitung der Buchungsbest√§tigung ist nicht aktiv. Die Kurseinladung kann nicht gedruckt werden.");
+											"Der Service f¸r die Aufbereitung der Buchungsbest‰tigung ist nicht aktiv. Die Kurseinladung kann nicht gedruckt werden.");
 						}
 						monitor.worked(1);
 					}

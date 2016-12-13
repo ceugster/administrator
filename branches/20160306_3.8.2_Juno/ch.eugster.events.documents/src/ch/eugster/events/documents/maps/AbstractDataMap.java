@@ -102,7 +102,7 @@ public abstract class AbstractDataMap<T extends AbstractEntity> implements DataM
 	
 	protected void printKeys(Writer writer)
 	{
-		this.printHeader(writer, 2, "SchlÃ¼sselwÃ¶rter");
+		this.printHeader(writer, 2, "Schlüsselwörter");
 		startTable(writer, 0);
 		startTableRow(writer);
 		printHeaderCell(writer, "Bezeichnung");
@@ -397,7 +397,7 @@ public abstract class AbstractDataMap<T extends AbstractEntity> implements DataM
 			}
 			case MARCH:
 			{
-				return "MÃ¤r";
+				return "Mär";
 			}
 			case APRIL:
 			{
@@ -456,7 +456,7 @@ public abstract class AbstractDataMap<T extends AbstractEntity> implements DataM
 			}
 			case MARCH:
 			{
-				return "MÃ¤rz";
+				return "März";
 			}
 			case APRIL:
 			{

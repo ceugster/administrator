@@ -61,7 +61,7 @@ public class FilePathEditor extends ListEditor
 		this.init(name, labelText);
 		this.dirChooserLabelText = dirChooserLabelText;
 		this.createControl(parent);
-		this.getAddButton().setText("HinzufÃ¼gen");
+		this.getAddButton().setText("Hinzufügen");
 		this.getRemoveButton().setText("Entfernen");
 		this.getUpButton().setText("Auf");
 		this.getDownButton().setText("Ab");

@@ -294,6 +294,18 @@ public class PasteHandler extends ConnectionServiceDependentAbstractHandler
 	// return bookings;
 	// }
 
+	private boolean found(final AddressGroup target, final AddressGroupMember member)
+	{
+		if (member.isValidAddressMember())
+		{
+			return found(target, member.getAddress());
+		}
+		else
+		{
+			return found(target, member.getLink());
+		}
+	}
+
 	private boolean found(final AddressGroup target, final LinkPersonAddress link)
 	{
 		boolean found = false;
@@ -310,18 +322,6 @@ public class PasteHandler extends ConnectionServiceDependentAbstractHandler
 			}
 		}
 		return found;
-	}
-
-	private boolean found(final AddressGroup target, final AddressGroupMember member)
-	{
-		if (member.isValidAddressMember())
-		{
-			return found(target, member.getAddress());
-		}
-		else
-		{
-			return found(target, member.getLink());
-		}
 	}
 
 	private boolean found(final AddressGroup target, final Address address)
@@ -459,7 +459,7 @@ public class PasteHandler extends ConnectionServiceDependentAbstractHandler
 			final int type)
 	{
 		boolean inserted = false;
-		if (!sourceMember.isDeleted())
+		if (sourceMember.isValid())
 		{
 			if (!found(target, sourceMember))
 			{
@@ -497,7 +497,7 @@ public class PasteHandler extends ConnectionServiceDependentAbstractHandler
 		List<AddressGroupCategory> categoriesToUpdate = new ArrayList<AddressGroupCategory>();
 		for (AddressGroupMember member : members)
 		{
-			if (!member.isDeleted())
+			if (member.isValid())
 			{
 				if (insertAddressGroupMember(target, member, type))
 				{

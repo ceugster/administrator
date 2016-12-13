@@ -49,7 +49,7 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class CompensationTableViewerComposite extends Composite
 {
-	private static final String[] COLUMN_NAMES = new String[] { "EntschÃ¤digungsart", "Betrag" };
+	private static final String[] COLUMN_NAMES = new String[] { "Entschädigungsart", "Betrag" };
 
 	private static final int[] COLUMN_WIDTHS = new int[] { 200, 30 };
 
@@ -139,7 +139,7 @@ public class CompensationTableViewerComposite extends Composite
 		{
 			this.addButton = new Button(composite, SWT.PUSH);
 			this.addButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			this.addButton.setText("HinzufÃ¼gen");
+			this.addButton.setText("Hinzufügen");
 			this.addButton.addSelectionListener(new SelectionListener()
 			{
 				@Override

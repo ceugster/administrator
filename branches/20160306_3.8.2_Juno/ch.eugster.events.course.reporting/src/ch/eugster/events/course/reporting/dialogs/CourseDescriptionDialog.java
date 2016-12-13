@@ -230,7 +230,7 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 				}
 				if (exportType.equals(ExportType.TYPE_OPENOFFICE) && !(new File(result).isFile()))
 				{
-					MessageDialog.openWarning(CourseDescriptionDialog.this.getShell(), "Vorlage nicht vorhanden", "Die ausgewÃ¤hlte Vorlage ist ungÃ¼ltig oder nicht vorhanden.");
+					MessageDialog.openWarning(CourseDescriptionDialog.this.getShell(), "Vorlage nicht vorhanden", "Die ausgewählte Vorlage ist ungültig oder nicht vorhanden.");
 				}
 			}
 
@@ -262,7 +262,7 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 				CourseDescriptionFactory factory = CourseDescriptionFactory.create(ssel, selectedStates);
 				if (factory.size() == 0)
 				{
-					MessageDialog.openInformation(null, "Keine Kurse vorhanden", "Ihre Auswahl enthÃ¤lt keine Kurse.");
+					MessageDialog.openInformation(null, "Keine Kurse vorhanden", "Ihre Auswahl enthält keine Kurse.");
 				}
 				else
 				{
@@ -346,7 +346,7 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 							@Override
 							public IStatus runInUIThread(IProgressMonitor monitor) 
 							{
-								MessageDialog.openConfirm(getShell(), "Keine Kurse gefunden", "Es wurden keine Kurse in der gewÃ¤hlten Selection gefunden");
+								MessageDialog.openConfirm(getShell(), "Keine Kurse gefunden", "Es wurden keine Kurse in der gewählten Selection gefunden");
 								return Status.OK_STATUS;
 							}
 						};
@@ -391,7 +391,7 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 									@Override
 									public IStatus runInUIThread(IProgressMonitor monitor) 
 									{
-										MessageDialog.openWarning(getShell(), "Service nicht aktiv", "Der Service fÃ¼r die Verarbeitung der Daten ist nicht verfÃ¼gbar.");
+										MessageDialog.openWarning(getShell(), "Service nicht aktiv", "Der Service für die Verarbeitung der Daten ist nicht verfügbar.");
 										return Status.OK_STATUS;
 									}
 								};
@@ -552,7 +552,7 @@ public class CourseDescriptionDialog extends TitleAreaDialog
 			}
 			case TYPE_OPENOFFICE:
 			{
-				return "Ã–ffnen";
+				return "Öffnen";
 			}
 			default:
 			{

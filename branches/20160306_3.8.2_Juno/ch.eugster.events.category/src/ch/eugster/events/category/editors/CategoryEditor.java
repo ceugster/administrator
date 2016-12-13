@@ -161,8 +161,8 @@ public class CategoryEditor extends AbstractEntityEditor<Category>
 				CategoryQuery query = (CategoryQuery) service.getQuery(Category.class);
 				if (!query.isCodeUnique(code, category.getId()))
 				{
-					msg = new Message(this.code, "UngÃ¼ltiger Code");
-					msg.setMessage("Der gewÃ¤hlte Code wird bereits verwendet.");
+					msg = new Message(this.code, "Ungültiger Code");
+					msg.setMessage("Der gewählte Code wird bereits verwendet.");
 					return msg;
 				}
 			}

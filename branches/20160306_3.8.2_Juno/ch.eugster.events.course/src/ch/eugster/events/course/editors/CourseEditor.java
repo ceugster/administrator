@@ -227,7 +227,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 						| ExpandableComposite.TWISTIE);
 		this.constraintsSection.setLayoutData(layoutData);
 		this.constraintsSection.setLayout(sectionLayout);
-		this.constraintsSection.setText("Teilnahmebeschr√§nkungen");
+		this.constraintsSection.setText("Teilnahmebeschr‰nkungen");
 		this.constraintsSection.setClient(this.fillConstraintsSection(this.constraintsSection));
 		this.constraintsSection.addExpansionListener(new ExpansionAdapter()
 		{
@@ -380,7 +380,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 	
 			if (GlobalSettings.getInstance().getCourseHasDomain())
 			{
-				Label label = this.formToolkit.createLabel(composite, "Dom√§ne");
+				Label label = this.formToolkit.createLabel(composite, "Dom‰ne");
 				label.setLayoutData(new GridData());
 	
 				CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
@@ -951,7 +951,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			}
 		});
 
-		label = this.formToolkit.createLabel(composite, "Durchf√ºhrung", SWT.NONE);
+		label = this.formToolkit.createLabel(composite, "Durchf¸hrung", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		layoutData = new GridData(GridData.FILL_HORIZONTAL);
@@ -1210,7 +1210,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			}
 		});
 
-		label = this.formToolkit.createLabel(composite, "Letztm√∂gliche Annulation", SWT.TRAIL);
+		label = this.formToolkit.createLabel(composite, "Letztmˆgliche Annulation", SWT.TRAIL);
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData();
@@ -1335,8 +1335,8 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 				CourseQuery query = (CourseQuery) service.getQuery(Course.class);
 				if (!query.isCodeUnique(code, course.getId()))
 				{
-					msg = new Message(this.code, "Ung√ºltiger Code");
-					msg.setMessage("Der gew√§hlte Code wird bereits verwendet.");
+					msg = new Message(this.code, "Ung¸ltiger Code");
+					msg.setMessage("Der gew‰hlte Code wird bereits verwendet.");
 					return msg;
 				}
 			}
@@ -1687,8 +1687,8 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 					ssel = (StructuredSelection) this.domainViewer.getSelection();
 					if (ssel.isEmpty() || ((Domain) ssel.getFirstElement()).getId() == null)
 					{
-						msg = new Message(this.code, "Fehlende Dom√§ne");
-						msg.setMessage("Sie haben keine Dom√§ne ausgew√§hlt.");
+						msg = new Message(this.code, "Fehlende Dom‰ne");
+						msg.setMessage("Sie haben keine Dom‰ne ausgew‰hlt.");
 						FormToolkit.ensureVisible(this.domainViewer.getCCombo());
 						this.domainViewer.getCCombo().setFocus();
 					}
@@ -1706,7 +1706,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 					if (ssel.isEmpty() || ((Category) ssel.getFirstElement()).getId() == null)
 					{
 						msg = new Message(this.code, "Fehlende Kategorie");
-						msg.setMessage("Sie haben keine Kategorie ausgew√§hlt.");
+						msg.setMessage("Sie haben keine Kategorie ausgew‰hlt.");
 						FormToolkit.ensureVisible(this.categoryViewer.getCCombo());
 						this.categoryViewer.getCCombo().setFocus();
 					}
@@ -1724,7 +1724,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 					if (ssel.isEmpty() || ((Rubric) ssel.getFirstElement()).getId() == null)
 					{
 						msg = new Message(this.code, "Fehlende Rubrik");
-						msg.setMessage("Sie haben keine Rubrik ausgew√§hlt.");
+						msg.setMessage("Sie haben keine Rubrik ausgew‰hlt.");
 						FormToolkit.ensureVisible(this.rubricViewer.getCCombo());
 						this.rubricViewer.getCCombo().setFocus();
 					}
@@ -1740,7 +1740,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 				if (ssel.isEmpty() || ((User) ssel.getFirstElement()).getId() == null)
 				{
 					msg = new Message(this.code, "Fehlende kursverantwortliche Person");
-					msg.setMessage("Sie haben keine f√ºr den Kurs verantwortliche Person ausgew√§hlt.");
+					msg.setMessage("Sie haben keine f¸r den Kurs verantwortliche Person ausgew‰hlt.");
 					FormToolkit.ensureVisible(this.userViewer.getCCombo());
 					this.userViewer.getCCombo().setFocus();
 				}

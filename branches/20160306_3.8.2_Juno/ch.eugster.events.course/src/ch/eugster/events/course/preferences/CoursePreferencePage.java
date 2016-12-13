@@ -45,13 +45,13 @@ public class CoursePreferencePage extends FieldEditorPreferencePage implements I
 	@Override
 	protected void createFieldEditors()
 	{
-		useDomains = new BooleanFieldEditor(PreferenceInitializer.KEY_USE_DOMAINS, "Dom√§nen verwenden",
+		useDomains = new BooleanFieldEditor(PreferenceInitializer.KEY_USE_DOMAINS, "Dom‰nen verwenden",
 				getFieldEditorParent());
 		useDomains.setPropertyChangeListener(this);
 		addField(useDomains);
 
 		domainsMandatory = new BooleanFieldEditor(PreferenceInitializer.KEY_MANDATORY_DOMAINS,
-				"Verwendung der Dom√§nen ist zwingend", getFieldEditorParent());
+				"Verwendung der Dom‰nen ist zwingend", getFieldEditorParent());
 		domainsMandatory.setEnabled(this.getPreferenceStore().getBoolean(PreferenceInitializer.KEY_USE_DOMAINS),
 				getFieldEditorParent());
 		addField(domainsMandatory);
