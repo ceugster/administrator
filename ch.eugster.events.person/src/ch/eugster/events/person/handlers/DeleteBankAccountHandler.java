@@ -28,7 +28,7 @@ public class DeleteBankAccountHandler extends ConnectionServiceDependentAbstract
 			{
 				if (ssel.getFirstElement() instanceof BankAccount)
 				{
-					if (MessageDialog.openQuestion(shell, "Bankverbindung entfernen", "Soll die ausgew√§hlte Bankverbindung entfernt werden?"))
+					if (MessageDialog.openQuestion(shell, "Bankverbindung entfernen", "Soll die ausgew‰hlte Bankverbindung entfernt werden?"))
 					{
 						BankAccount account = (BankAccount) ssel.getFirstElement();
 						BankAccountQuery deleteQuery = (BankAccountQuery) connectionService

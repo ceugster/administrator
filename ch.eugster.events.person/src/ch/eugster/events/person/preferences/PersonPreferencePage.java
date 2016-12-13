@@ -36,12 +36,12 @@ public class PersonPreferencePage extends FieldEditorPreferencePage implements I
 	@Override
 	protected void createFieldEditors()
 	{
-		BooleanFieldEditor domainEditor = new BooleanFieldEditor(PreferenceInitializer.KEY_USE_DOMAIN, "Mit Dom√§ne",
+		BooleanFieldEditor domainEditor = new BooleanFieldEditor(PreferenceInitializer.KEY_USE_DOMAIN, "Mit Dom‰ne",
 				SWT.CHECK, this.getFieldEditorParent());
 		domainEditor.setPropertyChangeListener(this);
 		this.addField(domainEditor);
 
-		this.mandatoryEditor = new BooleanFieldEditor(PreferenceInitializer.KEY_DOMAIN_MANDATORY, "Dom√§ne zwingend",
+		this.mandatoryEditor = new BooleanFieldEditor(PreferenceInitializer.KEY_DOMAIN_MANDATORY, "Dom‰ne zwingend",
 				SWT.CHECK, this.getFieldEditorParent());
 		this.addField(mandatoryEditor);
 	}

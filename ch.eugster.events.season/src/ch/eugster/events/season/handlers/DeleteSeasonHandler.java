@@ -33,8 +33,8 @@ public class DeleteSeasonHandler extends ConnectionServiceDependentAbstractHandl
 						if (season.isClosed())
 						{
 							Shell shell = part.getSite().getShell();
-							String title = "LÃ¶schbestÃ¤tigung";
-							StringBuilder msg = new StringBuilder("Soll die ausgewÃ¤hlte Saison ");
+							String title = "Löschbestätigung";
+							StringBuilder msg = new StringBuilder("Soll die ausgewählte Saison ");
 							msg = msg.append(season.getCode().equals("") ? season.getTitle() : season.getCode() + " - "
 									+ season.getTitle());
 							msg = msg.append(" entfernt werden?");
@@ -56,12 +56,12 @@ public class DeleteSeasonHandler extends ConnectionServiceDependentAbstractHandl
 						else
 						{
 							Shell shell = part.getSite().getShell();
-							String title = "LÃ¶schmeldung";
-							StringBuilder msg = new StringBuilder("Die ausgewÃ¤hlte Saison ");
+							String title = "Löschmeldung";
+							StringBuilder msg = new StringBuilder("Die ausgewählte Saison ");
 							msg = msg.append(season.getCode().equals("") ? season.getTitle() : season.getCode() + " - "
 									+ season.getTitle());
 							msg = msg.append(" ist aktiv und kann deshalb nicht entfernt werden.");
-							msg = msg.append(" Es kÃ¶nnen nur abgeschlossene Saisons entfernt werden.");
+							msg = msg.append(" Es können nur abgeschlossene Saisons entfernt werden.");
 							int icon = MessageDialog.INFORMATION;
 							String[] buttons = new String[] { "OK" };
 							MessageDialog dialog = new MessageDialog(shell, title, null, msg.toString(), icon, buttons,

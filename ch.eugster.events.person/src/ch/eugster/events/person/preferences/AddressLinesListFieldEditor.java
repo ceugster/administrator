@@ -17,9 +17,9 @@ public class AddressLinesListFieldEditor extends ListEditor
 		this.description = description;
 		this.variables = variables;
 		this.getRemoveButton().setText("Zeile entfernen");
-		this.getAddButton().setText("Zeile hinzuf√ºgen");
-		this.getDownButton().setText("Zeile abw√§rts");
-		this.getUpButton().setText("Zeile aufw√§rts");
+		this.getAddButton().setText("Zeile hinzuf¸gen");
+		this.getDownButton().setText("Zeile abw‰rts");
+		this.getUpButton().setText("Zeile aufw‰rts");
 	}
 
 	@Override

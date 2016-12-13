@@ -36,7 +36,7 @@ public class DeleteSexHandler extends ConnectionServiceDependentAbstractHandler
 					long count = query.countBySex(personSex);
 					if (count == 0)
 					{
-						String msg = "Soll die ausgew√§hlte Anrede entfernt werden?";
+						String msg = "Soll die ausgew‰hlte Anrede entfernt werden?";
 						int type = MessageDialog.QUESTION;
 						String[] buttons = new String[] { "Ja", "Nein" };
 						MessageDialog dialog = new MessageDialog(shell, title, null, msg, type, buttons, 0);
@@ -60,7 +60,7 @@ public class DeleteSexHandler extends ConnectionServiceDependentAbstractHandler
 					}
 					else
 					{
-						String msg = "Die ausgew√§hlte Anrede kann nicht entfernt werden, da sie noch verwendet wird.";
+						String msg = "Die ausgew‰hlte Anrede kann nicht entfernt werden, da sie noch verwendet wird.";
 						int type = MessageDialog.INFORMATION;
 						String[] buttons = new String[] { "OK" };
 						MessageDialog dialog = new MessageDialog(shell, title, null, msg, type, buttons, 0);

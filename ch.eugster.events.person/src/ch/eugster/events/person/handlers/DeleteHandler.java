@@ -61,12 +61,12 @@ public class DeleteHandler extends ConnectionServiceDependentAbstractHandler
 		String msg = null;
 		if (items == 1)
 		{
-			msg = addresses == 1 ? "Soll die ausgewÃ¤hlte Adresse entfernt werden?"
-					: "Soll die ausgewÃ¤hlte Person entfernt werden?";
+			msg = addresses == 1 ? "Soll die ausgewählte Adresse entfernt werden?"
+					: "Soll die ausgewählte Person entfernt werden?";
 		}
 		else
 		{
-			msg = "Sollen die ausgewÃ¤hlten Objekte entfernt werden?";
+			msg = "Sollen die ausgewählten Objekte entfernt werden?";
 		}
 		String title = " Auswahl entfernen";
 
@@ -103,7 +103,7 @@ public class DeleteHandler extends ConnectionServiceDependentAbstractHandler
 						return new Status(IStatus.CANCEL, Activator.PLUGIN_ID, PersonFormatter.getInstance()
 								.formatFirstnameLastname(person)
 								+ " hat eine Mitgliedschaft bei "
-								+ member.getMembership().getName() + " und kann nicht gelÃ¶scht werden.");
+								+ member.getMembership().getName() + " und kann nicht gelöscht werden.");
 					}
 				}
 
@@ -122,7 +122,7 @@ public class DeleteHandler extends ConnectionServiceDependentAbstractHandler
 				{
 					return new Status(IStatus.CANCEL, Activator.PLUGIN_ID, PersonFormatter.getInstance()
 							.formatFirstnameLastname(person)
-							+ " hat innerhalb des letzten Jahres gespendet und kann nicht gelÃ¶scht werden.");
+							+ " hat innerhalb des letzten Jahres gespendet und kann nicht gelöscht werden.");
 				}
 
 				for (LinkPersonAddress link : person.getLinks())
@@ -134,7 +134,7 @@ public class DeleteHandler extends ConnectionServiceDependentAbstractHandler
 						{
 							return new Status(IStatus.CANCEL, Activator.PLUGIN_ID, PersonFormatter.getInstance()
 									.formatFirstnameLastname(person)
-									+ " hat sich fÃ¼r den bevorstehenden Kurs "
+									+ " hat sich für den bevorstehenden Kurs "
 									+ participant.getBooking().getCourse().getTitle()
 									+ " angemeldet und kann nicht entfernt werden.");
 						}
@@ -209,11 +209,11 @@ public class DeleteHandler extends ConnectionServiceDependentAbstractHandler
 						{
 							/*
 							 * Es handelt sich um den DefaultLink (der wird auf
-							 * Person-Ebene fÃ¼r das Anzeigen der Adressdaten
-							 * verwendet. Wenn weitere Adressen fÃ¼r die gleiche
+							 * Person-Ebene für das Anzeigen der Adressdaten
+							 * verwendet. Wenn weitere Adressen für die gleiche
 							 * Person vorhanden sind, dann muss zuerst die
-							 * Default-Adresse geÃ¤ndert werden, bevor der Link
-							 * gelÃ¶scht werden kann.
+							 * Default-Adresse geändert werden, bevor der Link
+							 * gelöscht werden kann.
 							 */
 							Person person = (Person) sel;
 							if (person.getActiveLinks().size() > 1)

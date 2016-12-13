@@ -123,7 +123,7 @@ public class PersonSexView extends AbstractEntityView implements IDoubleClickLis
 		});
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
-		tableColumn.setText("Briefanrede hÃ¶flich");
+		tableColumn.setText("Briefanrede höflich");
 
 		tableViewerColumn = new TableViewerColumn(viewer, SWT.NONE);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
@@ -142,7 +142,7 @@ public class PersonSexView extends AbstractEntityView implements IDoubleClickLis
 		});
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
-		tableColumn.setText("Briefanrede persÃ¶nlich");
+		tableColumn.setText("Briefanrede persönlich");
 
 		createContextMenu();
 

@@ -307,7 +307,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				}
 			}
 		};
-		action.setText("HinzufÃ¼gen");
+		action.setText("Hinzufügen");
 		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("ADD"));
 		return action;
 	}
@@ -344,7 +344,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				}
 			}
 		};
-		action.setText("HinzufÃ¼gen");
+		action.setText("Hinzufügen");
 		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("ADD"));
 		return action;
 	}
@@ -391,7 +391,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			public void run()
 			{
 				Shell shell = PersonFormEditorContentOutlinePage.this.getSite().getShell();
-				if (MessageDialog.openConfirm(shell, "Kontakt entfernen", "Wollen Sie den ausgewÃ¤hlten Kontakt entfernen?"))
+				if (MessageDialog.openConfirm(shell, "Kontakt entfernen", "Wollen Sie den ausgewählten Kontakt entfernen?"))
 				{
 					ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class, null);
 					tracker.open();
@@ -530,7 +530,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public String getName()
 		{
-			return "GruppenzugehÃ¶rigkeiten";
+			return "Gruppenzugehörigkeiten";
 		}
 
 		@Override
@@ -708,7 +708,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public String getName()
 		{
-			return "ZugehÃ¶rende Personen (" + getChildren().length + ")";
+			return "Zugehörende Personen (" + getChildren().length + ")";
 		}
 
 		@Override
@@ -966,7 +966,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			if (parentElement instanceof FormEditorPersonPage)
 			{
 				/*
-				 * Es wurde der PersonenEditor ausgwÃ¤hlt
+				 * Es wurde der PersonenEditor ausgwählt
 				 */
 				FormEditorPersonPage page = (FormEditorPersonPage) parentElement;
 				List<Root> roots = new ArrayList<Root>();
@@ -981,7 +981,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			else if (parentElement instanceof FormEditorLinkPage)
 			{
 				/*
-				 * Es wurde ein AdressEditor ausgewÃ¤hlt
+				 * Es wurde ein AdressEditor ausgewählt
 				 */
 				FormEditorLinkPage page = (FormEditorLinkPage) parentElement;
 				List<Root> roots = new ArrayList<Root>();

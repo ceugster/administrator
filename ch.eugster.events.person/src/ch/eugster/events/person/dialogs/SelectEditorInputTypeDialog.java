@@ -85,7 +85,7 @@ public class SelectEditorInputTypeDialog extends TitleAreaDialog
 	protected Control createDialogArea(Composite parent)
 	{
 		this.setTitle("Auswahl");
-		this.setMessage("WÃ¤hlen Sie die Art des Objekts, das Sie neu erfassen wollen.");
+		this.setMessage("Wählen Sie die Art des Objekts, das Sie neu erfassen wollen.");
 		
 		final Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
@@ -240,8 +240,8 @@ public class SelectEditorInputTypeDialog extends TitleAreaDialog
 			else
 			{
 				MessageDialog
-				.openWarning(this.getShell(), "Kein Adresstyp ausgewÃ¤hlt",
-						"Bevor Sie Personen erfassen kÃ¶nnen, muss mindestens ein Adresstyp vorhanden sein.");
+				.openWarning(this.getShell(), "Kein Adresstyp ausgewählt",
+						"Bevor Sie Personen erfassen können, muss mindestens ein Adresstyp vorhanden sein.");
 				return;
 			}
 			break;

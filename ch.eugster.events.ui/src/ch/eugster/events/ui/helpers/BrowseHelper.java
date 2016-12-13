@@ -32,8 +32,8 @@ public class BrowseHelper
 					getWorkbench().
 					getActiveWorkbenchWindow().
 					getShell(), 
-					"UngÃ¼ltige Emailadresse", 
-			"Die Syntax der Emailadresse ist ungÃ¼ltig.");
+					"Ungültige Emailadresse", 
+			"Die Syntax der Emailadresse ist ungültig.");
 		}
 	}
 

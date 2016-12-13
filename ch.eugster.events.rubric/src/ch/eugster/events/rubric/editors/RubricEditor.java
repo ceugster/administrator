@@ -161,8 +161,8 @@ public class RubricEditor extends AbstractEntityEditor<Rubric>
 				RubricQuery query = (RubricQuery) service.getQuery(Rubric.class);
 				if (!query.isCodeUnique(code, rubric.getId()))
 				{
-					msg = new Message(this.code, "UngÃ¼ltiger Code");
-					msg.setMessage("Der gewÃ¤hlte Code wird bereits verwendet.");
+					msg = new Message(this.code, "Ungültiger Code");
+					msg.setMessage("Der gewählte Code wird bereits verwendet.");
 					return msg;
 				}
 			}

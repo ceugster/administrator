@@ -31,8 +31,8 @@ public class DeleteUserHandler extends ConnectionServiceDependentAbstractHandler
 					{
 						User user = (User) ssel.getFirstElement();
 						Shell shell = part.getSite().getShell();
-						String title = "LÃ¶schbestÃ¤tigung";
-						StringBuilder msg = new StringBuilder("Soll der ausgewÃ¤hlte Benutzer ");
+						String title = "Löschbestätigung";
+						StringBuilder msg = new StringBuilder("Soll der ausgewählte Benutzer ");
 						msg = msg.append(user.getFullname().equals("") ? user.getUsername() : user.getFullname());
 						msg = msg.append(" entfernt werden?");
 						int icon = MessageDialog.QUESTION;

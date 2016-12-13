@@ -98,7 +98,7 @@ public class ChangeAddressTypeDialog extends TitleAreaDialog
 	@Override
 	protected Control createDialogArea(final Composite parent)
 	{
-		this.setTitle("Ã„ndern des Adresstyps");
+		this.setTitle("Ändern des Adresstyps");
 
 		final Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));

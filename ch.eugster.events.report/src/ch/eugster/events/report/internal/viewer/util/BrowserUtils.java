@@ -118,7 +118,7 @@ public class BrowserUtils
 			public void run()
 			{
 				MessageDialog.openError(Display.getCurrent().getActiveShell(),
-						"Fehler", "Browser kann nicht geÃ¶ffnet werden"); //$NON-NLS-1$ //$NON-NLS-2$
+						"Fehler", "Browser kann nicht geöffnet werden"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
 	}
