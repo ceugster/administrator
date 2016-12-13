@@ -163,7 +163,7 @@ public class Course extends AbstractEntity
 	private String prerequisites;
 
 	/*
-	 * Mindestanzahl Teilnehmer (Buchungen kÃ¶nnen mehrere Teilnehmer enthalten)
+	 * Mindestanzahl Teilnehmer (Buchungen können mehrere Teilnehmer enthalten)
 	 */
 	@Basic
 	@Column(name = "course_min_participants")
@@ -191,7 +191,7 @@ public class Course extends AbstractEntity
 	private int maxAge;
 
 	/*
-	 * EinschrÃ¤nkung des Geschlechts
+	 * Einschränkung des Geschlechts
 	 */
 	@Basic
 	@Column(name = "course_sex")
@@ -232,7 +232,7 @@ public class Course extends AbstractEntity
 	private String costNote;
 	/*
 	 * --------------------------------------------------------------------------
-	 * -------- DurchfÃ¼hrungsbedingungen
+	 * -------- Durchführungsbedingungen
 	 * ----------------------------------------
 	 * ------------------------------------------
 	 */
@@ -287,7 +287,7 @@ public class Course extends AbstractEntity
 	private Calendar invitationDoneDate;
 
 	/*
-	 * Letzter Termin fÃ¼r Annulation durch Kunden
+	 * Letzter Termin für Annulation durch Kunden
 	 */
 	@Basic
 	@Temporal(TemporalType.TIMESTAMP)
@@ -295,7 +295,7 @@ public class Course extends AbstractEntity
 	private Calendar lastAnnulationDate;
 
 	/*
-	 * Termin, an dem die Annulation durch den Organisator durchgefÃ¼hrt wurde
+	 * Termin, an dem die Annulation durch den Organisator durchgeführt wurde
 	 */
 	@Basic
 	@Temporal(TemporalType.TIMESTAMP)

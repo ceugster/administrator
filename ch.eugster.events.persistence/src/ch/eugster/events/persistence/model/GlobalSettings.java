@@ -35,7 +35,7 @@ public class GlobalSettings extends AbstractEntity
 	private static GlobalSettings instance;
 
 	/**
-	 * Kurse kï¿½nnen DomÃ¤nen festlegen
+	 * Kurse können Domänen festlegen
 	 */
 	@Id
 	@Column(name = "global_settings_id")

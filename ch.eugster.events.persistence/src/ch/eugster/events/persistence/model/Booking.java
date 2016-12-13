@@ -75,7 +75,7 @@ public class Booking extends AbstractEntity
 	private Calendar date;
 
 	/*
-	 * Datum des Versands der BestÃ¤tigung fÃ¼r den aktuellen Status
+	 * Datum des Versands der Bestätigung für den aktuellen Status
 	 */
 	@Basic
 	@Temporal(TemporalType.TIMESTAMP)
@@ -83,7 +83,7 @@ public class Booking extends AbstractEntity
 	private Calendar bookingConfirmationSentDate;
 
 	/*
-	 * Datum des Versands der BestÃ¤tigung fÃ¼r den aktuellen Status
+	 * Datum des Versands der Bestätigung für den aktuellen Status
 	 */
 	@Basic
 	@Temporal(TemporalType.TIMESTAMP)
@@ -91,7 +91,7 @@ public class Booking extends AbstractEntity
 	private Calendar invitationSentDate;
 
 	/*
-	 * Datum des Versands der BestÃ¤tigung fÃ¼r den aktuellen Status
+	 * Datum des Versands der Bestätigung für den aktuellen Status
 	 */
 	@Basic
 	@Temporal(TemporalType.TIMESTAMP)
@@ -107,7 +107,7 @@ public class Booking extends AbstractEntity
 	private BookingForthcomingState forthcomingState;
 
 	/*
-	 * Buchungsstatus DurchgefÃ¼hrter Kurs
+	 * Buchungsstatus Durchgeführter Kurs
 	 */
 	@Basic
 	@Column(name = "booking_done_state")
@@ -138,7 +138,7 @@ public class Booking extends AbstractEntity
 	private double payAmount;
 
 	/*
-	 * Datum der RÃ¼ckzahlung (im Falle von Annulationen)
+	 * Datum der Rückzahlung (im Falle von Annulationen)
 	 */
 	@Basic
 	@Temporal(TemporalType.TIMESTAMP)
@@ -146,8 +146,8 @@ public class Booking extends AbstractEntity
 	private Calendar payBackDate;
 
 	/*
-	 * RÃ¼ckzahlungsbetrag (muss nicht dem Zahlungsbetrag entsprechen, wenn z.B.
-	 * nur ein Teil zurÃ¼ckbezahlt wird.
+	 * Rückzahlungsbetrag (muss nicht dem Zahlungsbetrag entsprechen, wenn z.B.
+	 * nur ein Teil zurückbezahlt wird.
 	 */
 	@Basic
 	@Column(name = "booking_pay_back_amount")
@@ -466,7 +466,7 @@ public class Booking extends AbstractEntity
 		else if (this.course.getState().equals(CourseState.ANNULATED))
 			return this.getAnnulatedState();
 		else
-			throw new RuntimeException("UngÃ¼ltiger Kursstatus");
+			throw new RuntimeException("Ungültiger Kursstatus");
 	}
 
 	public boolean hasCorrespondent()

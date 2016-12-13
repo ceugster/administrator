@@ -86,31 +86,28 @@ public class AddressGroupMember extends AbstractEntity
 
 	public boolean isValid()
 	{
-		if (!this.deleted)
-		{
-			if (this.link == null || this.link.deleted)
-			{
-				if (this.address != null && !this.address.deleted)
-				{
-					return this.address.isValid();
-				}
-			}
-			else
-			{
-				return this.link.isValid();
-			}
-		}
-		return false;
+		return !this.deleted && ((this.link == null) ? this.address.isValid() : this.link.isValid()) && this.addressGroup.isValid();
 	}
 	
 	public boolean isValidLinkMember()
 	{
-		return !this.deleted && this.link != null && this.link.isValid();
+		if (!this.deleted)
+		{
+			return this.link != null && this.link.isValid();
+		}
+		return false;
 	}
 	
 	public boolean isValidAddressMember()
 	{
-		return !this.deleted && this.address != null && this.address.isValid();
+		if (!this.deleted)
+		{
+			if (this.link == null || !this.link.isValid())
+			{
+				return this.address != null && this.address.isValid();
+			}
+		}
+		return false;
 	}
 	
 	public Long getAddressId()
