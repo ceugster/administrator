@@ -505,7 +505,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				| ExpandableComposite.COMPACT | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
 		section.setLayoutData(layoutData);
 		section.setLayout(sectionLayout);
-		section.setText("GerÃ¤te");
+		section.setText("Geräte");
 		section.setClient(this.fillApplianceSection(section));
 		section.addExpansionListener(new ExpansionAdapter()
 		{
@@ -945,7 +945,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		});
 		this.schoolLevelViewer.addFilter(new DeletedEntityFilter());
 
-		label = this.formToolkit.createLabel(composite, "Anzahl SchÃ¼ler/innen", SWT.NONE);
+		label = this.formToolkit.createLabel(composite, "Anzahl Schüler/innen", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		GridData gridData = new GridData();
@@ -1980,8 +1980,8 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 					MessageDialog
 							.openWarning(
 									this.getSite().getShell(),
-									"UngÃ¼ltige Email-Adresse",
-									"Die gewÃ¤hlte Emailadresse ist ungÃ¼ltig. Korrigieren Sie die Adresse im Personen-Editor der Lehrperson und versuchen Sie es erneut.");
+									"Ungültige Email-Adresse",
+									"Die gewählte Emailadresse ist ungültig. Korrigieren Sie die Adresse im Personen-Editor der Lehrperson und versuchen Sie es erneut.");
 				}
 				catch (IOException e2)
 				{

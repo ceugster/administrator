@@ -70,8 +70,8 @@ public class DeleteApplianceHandler extends AbstractHandler
 								.getQuery(VisitAppliance.class);
 						if (visitApplianceQuery.count() == 0L)
 						{
-							String title = "L√∂schbest√§tigung";
-							StringBuilder msg = new StringBuilder("Soll das ausgew√§hlte Ger√§t " + appliance.getName()
+							String title = "Lˆschbest‰tigung";
+							StringBuilder msg = new StringBuilder("Soll das ausgew‰hlte Ger‰t " + appliance.getName()
 									+ " entfernt werden?");
 							int icon = MessageDialog.QUESTION;
 							String[] buttons = new String[] { "Ja", "Nein" };
@@ -90,7 +90,7 @@ public class DeleteApplianceHandler extends AbstractHandler
 						else
 						{
 							String title = appliance.getName();
-							StringBuilder msg = new StringBuilder("Das ausgew√§hlte Ger√§t " + appliance.getName()
+							StringBuilder msg = new StringBuilder("Das ausgew‰hlte Ger‰t " + appliance.getName()
 									+ " kann nicht entfernt werden, da in Verwendung ist.");
 							int icon = MessageDialog.INFORMATION;
 							String[] buttons = new String[] { "OK" };

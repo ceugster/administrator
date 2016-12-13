@@ -58,7 +58,7 @@ public class ApplianceEditor extends AbstractEntityEditor<Appliance>
 				| ExpandableComposite.COMPACT | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
 		section.setLayoutData(layoutData);
 		section.setLayout(sectionLayout);
-		section.setText("Ger√§t");
+		section.setText("Ger‰t");
 		section.setClient(this.fillSection(section));
 		section.addExpansionListener(new ExpansionAdapter()
 		{
@@ -144,7 +144,7 @@ public class ApplianceEditor extends AbstractEntityEditor<Appliance>
 				if (!query.isNameUnique(name.getText(), appliance.getId()))
 				{
 					msg = new Message(this.name, "Bezeichnung vorhanden", "Die Bezeichnung " + name.getText()
-							+ " ist bereits vorhanden. Bitte w√§hlen Sie eine Bezeichnung, die noch nicht vorhanden ist.");
+							+ " ist bereits vorhanden. Bitte w‰hlen Sie eine Bezeichnung, die noch nicht vorhanden ist.");
 				}
 			}
 		}

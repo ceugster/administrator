@@ -65,8 +65,8 @@ public class DeleteVisitThemeHandler extends AbstractHandler
 						Shell shell = part.getSite().getShell();
 						if (visitTheme.getVisits(false).size() == 0)
 						{
-							String title = "L√∂schbest√§tigung";
-							StringBuilder msg = new StringBuilder("Soll das ausgew√§hlte Thema " + visitTheme.getName()
+							String title = "Lˆschbest‰tigung";
+							StringBuilder msg = new StringBuilder("Soll das ausgew‰hlte Thema " + visitTheme.getName()
 									+ " entfernt werden?");
 							int icon = MessageDialog.QUESTION;
 							String[] buttons = new String[] { "Ja", "Nein" };
@@ -85,7 +85,7 @@ public class DeleteVisitThemeHandler extends AbstractHandler
 						else
 						{
 							String title = visitTheme.getName();
-							StringBuilder msg = new StringBuilder("Das ausgew√§hlte Thema " + visitTheme.getName()
+							StringBuilder msg = new StringBuilder("Das ausgew‰hlte Thema " + visitTheme.getName()
 									+ " kann nicht entfernt werden");
 							int icon = MessageDialog.INFORMATION;
 							String[] buttons = new String[] { "OK" };

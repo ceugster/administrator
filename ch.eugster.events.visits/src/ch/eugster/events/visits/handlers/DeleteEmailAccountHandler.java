@@ -70,8 +70,8 @@ public class DeleteEmailAccountHandler extends AbstractHandler
 						IWorkbenchPart part = (IWorkbenchPart) context.getParent().getVariable("activePart");
 						Shell shell = part.getSite().getShell();
 
-						String title = "LÃ¶schbestÃ¤tigung";
-						StringBuilder msg = new StringBuilder("Soll das ausgewÃ¤hlte Emailkonto "
+						String title = "Löschbestätigung";
+						StringBuilder msg = new StringBuilder("Soll das ausgewählte Emailkonto "
 								+ EmailAccount.getUsername() + " entfernt werden?");
 						int icon = MessageDialog.QUESTION;
 						String[] buttons = new String[] { "Ja", "Nein" };

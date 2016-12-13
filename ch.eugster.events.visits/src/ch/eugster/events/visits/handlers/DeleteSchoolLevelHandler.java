@@ -70,8 +70,8 @@ public class DeleteSchoolLevelHandler extends AbstractHandler
 						VisitQuery visitQuery = (VisitQuery) connectionService.getQuery(Visit.class);
 						if (visitQuery.countSchoolLevels(schoolLevel) == 0L)
 						{
-							String title = "L√∂schbest√§tigung";
-							StringBuilder msg = new StringBuilder("Soll die ausgew√§hlte Schulklasse "
+							String title = "Lˆschbest‰tigung";
+							StringBuilder msg = new StringBuilder("Soll die ausgew‰hlte Schulklasse "
 									+ schoolLevel.getName() + " entfernt werden?");
 							int icon = MessageDialog.QUESTION;
 							String[] buttons = new String[] { "Ja", "Nein" };
@@ -90,7 +90,7 @@ public class DeleteSchoolLevelHandler extends AbstractHandler
 						else
 						{
 							String title = schoolLevel.getName();
-							StringBuilder msg = new StringBuilder("Die ausgew√§hlte Schulklasse "
+							StringBuilder msg = new StringBuilder("Die ausgew‰hlte Schulklasse "
 									+ schoolLevel.getName() + " kann nicht entfernt werden, da sie in Verwendung ist.");
 							int icon = MessageDialog.INFORMATION;
 							String[] buttons = new String[] { "OK" };
