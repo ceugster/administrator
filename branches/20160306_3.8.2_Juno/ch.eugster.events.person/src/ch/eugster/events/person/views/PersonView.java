@@ -156,7 +156,6 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 		DeletedPersonAndAddressFilter filter = new DeletedPersonAndAddressFilter();
 		filter.setShowDeleted(this.dialogSettings.getBoolean("show.deleted"));
 		this.viewer.setFilters(new ViewerFilter[] { filter });
-		this.viewer.addDoubleClickListener(this);
 
 		Transfer[] transfers = new Transfer[] { EntityTransfer.getTransfer() };
 		int ops = DND.DROP_MOVE | DND.DROP_COPY;
@@ -814,6 +813,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 				PersonView.this.selected.setText("Ausgewählt: " + ((StructuredSelection) event.getSelection()).size());
 			}
 		});
+		this.viewer.addDoubleClickListener(this);
 
 		this.createContextMenu();
 
@@ -821,80 +821,6 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 
 		this.searcher.initialize();
 	}
-
-	// private Person refresh(Person person)
-	// {
-	// ServiceTracker tracker = new
-	// ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-	// ConnectionService.class.getName(), null);
-	// tracker.open();
-	// try
-	// {
-	// ConnectionService service = (ConnectionService) tracker.getService();
-	// PersonQuery query = (PersonQuery) service.getQuery(Person.class);
-	// return (Person) query.refresh(person);
-	// }
-	// catch (Exception e)
-	// {
-	// ConnectionService service = (ConnectionService) tracker.getService();
-	// PersonQuery query = (PersonQuery) service.getQuery(Person.class);
-	// return query.find(Person.class, person.getId());
-	// }
-	// finally
-	// {
-	// tracker.close();
-	// }
-	// }
-
-	// private Address refresh(Address address)
-	// {
-	// ServiceTracker tracker = new
-	// ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-	// ConnectionService.class.getName(), null);
-	// tracker.open();
-	// try
-	// {
-	// ConnectionService service = (ConnectionService) tracker.getService();
-	// AddressQuery query = (AddressQuery) service.getQuery(Address.class);
-	// return (Address) query.refresh(address);
-	// }
-	// catch (Exception e)
-	// {
-	// ConnectionService service = (ConnectionService) tracker.getService();
-	// AddressQuery query = (AddressQuery) service.getQuery(Address.class);
-	// return query.find(Address.class, address.getId());
-	// }
-	// finally
-	// {
-	// tracker.close();
-	// }
-	// }
-
-	// private LinkPersonAddress refresh(LinkPersonAddress link)
-	// {
-	// ServiceTracker tracker = new
-	// ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-	// ConnectionService.class.getName(), null);
-	// tracker.open();
-	// try
-	// {
-	// ConnectionService service = (ConnectionService) tracker.getService();
-	// LinkPersonAddressQuery query = (LinkPersonAddressQuery)
-	// service.getQuery(LinkPersonAddress.class);
-	// return (LinkPersonAddress) query.refresh(link);
-	// }
-	// catch (Exception e)
-	// {
-	// ConnectionService service = (ConnectionService) tracker.getService();
-	// LinkPersonAddressQuery query = (LinkPersonAddressQuery)
-	// service.getQuery(LinkPersonAddress.class);
-	// return query.find(LinkPersonAddress.class, link.getId());
-	// }
-	// finally
-	// {
-	// tracker.close();
-	// }
-	// }
 
 	@Override
 	public void dispose()
