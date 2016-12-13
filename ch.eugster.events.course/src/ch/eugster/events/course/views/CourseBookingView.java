@@ -489,7 +489,7 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 	// BookingConfirmationGenerator.getInstance().execute(ssel);
 	// }
 	// };
-	// action.setText("Anmeldebest√§tigung");
+	// action.setText("Anmeldebest‰tigung");
 	// action.setAccelerator(SWT.MOD1 | 'A');
 	// action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("GENERATE"));
 	// action.setEnabled(BookingConfirmationGenerator.getInstance().getTemplate()
@@ -531,7 +531,7 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 	// ParticipationConfirmationGenerator.getInstance().execute(ssel);
 	// }
 	// };
-	// action.setText("Teilnahmebest√§tigung");
+	// action.setText("Teilnahmebest‰tigung");
 	// action.setAccelerator(SWT.MOD1 | 'T');
 	// action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("GENERATE"));
 	// action.setEnabled(ParticipationConfirmationGenerator.getInstance().getTemplate()

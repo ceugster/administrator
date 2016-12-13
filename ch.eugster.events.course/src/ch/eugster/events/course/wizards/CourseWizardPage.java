@@ -484,7 +484,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 			}
 			if (course.getBookingTypes().size() == 0)
 			{
-				messageLabel.setText("FÃ¼r den Kurs sind keine Buchungsarten definiert.");
+				messageLabel.setText("Für den Kurs sind keine Buchungsarten definiert.");
 				imageLabel.setImage(Activator.getDefault().getImageRegistry().get("error"));
 				this.setPageComplete(false);
 				return;
@@ -505,7 +505,7 @@ public class CourseWizardPage extends WizardPage implements IDoubleClickListener
 		}
 		else
 		{
-			messageLabel.setText("Kein Kurs ausgewÃ¤hlt.");
+			messageLabel.setText("Kein Kurs ausgewählt.");
 			imageLabel.setImage(null);
 			this.setPageComplete(false);
 			return;

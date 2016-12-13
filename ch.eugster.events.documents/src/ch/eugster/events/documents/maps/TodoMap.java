@@ -162,7 +162,7 @@ public class TodoMap extends AbstractDataMap<AbstractEntity> {
 			{
 			case DUE_DATE:
 			{
-				return "FÃ¤llig";
+				return "Fällig";
 			}
 			case TODO_TYPE:
 			{
@@ -250,7 +250,7 @@ public class TodoMap extends AbstractDataMap<AbstractEntity> {
 			{
 			case DUE_DATE:
 			{
-				return "FÃ¤llig";
+				return "Fällig";
 			}
 			case TODO_TYPE:
 			{

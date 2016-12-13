@@ -168,8 +168,8 @@ public class AddressGroupEditor extends AbstractEntityEditor<AddressGroup>
 				AddressGroupQuery query = (AddressGroupQuery) con.getQuery(AddressGroup.class);
 				if (!query.isCodeUnique(code, addressGroup.getId()))
 				{
-					msg = new Message(this.name, "UngÃ¼ltiger Code");
-					msg.setMessage("Der gewÃ¤hlte Code wird bereits verwendet.");
+					msg = new Message(this.name, "Ungültiger Code");
+					msg.setMessage("Der gewählte Code wird bereits verwendet.");
 					return msg;
 				}
 			}

@@ -127,7 +127,7 @@ public class PersonMap extends AbstractDataMap<Person>
 				}
 				case FORM:
 				{
-					return "Anredeform (persÃ¶nlich oder hÃ¶flich)";
+					return "Anredeform (persönlich oder höflich)";
 				}
 				case POLITE:
 				{

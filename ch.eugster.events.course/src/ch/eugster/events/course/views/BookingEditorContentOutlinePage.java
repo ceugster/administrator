@@ -170,7 +170,7 @@ public class BookingEditorContentOutlinePage extends ContentOutlinePage implemen
 			}
 		};
 
-		action.setText("HinzufÃ¼gen");
+		action.setText("Hinzufügen");
 		action.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("ADD"));
 		manager.add(action);
 	}
@@ -233,7 +233,7 @@ public class BookingEditorContentOutlinePage extends ContentOutlinePage implemen
 					Course course = BookingEditorContentOutlinePage.this.root.getBooking().getCourse();
 					if (course.getBookingTypes().size() > 1)
 					{
-						IMenuManager subMenu = new MenuManager("Buchungsart Ã¤ndern");
+						IMenuManager subMenu = new MenuManager("Buchungsart ändern");
 						List<BookingType> bookingTypes = course.getBookingTypes();
 						for (BookingType bookingType : bookingTypes)
 						{

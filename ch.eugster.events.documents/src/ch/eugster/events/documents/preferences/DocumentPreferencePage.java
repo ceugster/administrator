@@ -71,14 +71,14 @@ public class DocumentPreferencePage extends FieldEditorPreferencePage implements
 	protected void createFieldEditors()
 	{
 		final SaveFileFieldEditor outFileEditor = new SaveFileFieldEditor(PreferenceConstants.KEY_PRINT_OUT_KEYS,
-				"Ausdruck der SchlÃ¼ssel/Wert-Paare", this.getFieldEditorParent());
+				"Ausdruck der Schlüssel/Wert-Paare", this.getFieldEditorParent());
 		outFileEditor.setFileExtensions(new String[] { ".html" });
 		outFileEditor.setPropertyChangeListener(this);
 		outFileEditor.setChangeButtonText("...");
 		this.addField(outFileEditor);
 
 		Button button = new Button(this.getFieldEditorParent(), SWT.PUSH);
-		button.setText("SchlÃ¼sselwÃ¶rter drucken");
+		button.setText("Schlüsselwörter drucken");
 		button.addSelectionListener(new SelectionListener()
 		{
 
@@ -100,7 +100,7 @@ public class DocumentPreferencePage extends FieldEditorPreferencePage implements
 					Writer writer = new FileWriter(path);
 
 					startBody(writer);
-					AbstractDataMap.getDataMap(DomainMap.class).printHTML(writer, "domain", "DomÃ¤nen");
+					AbstractDataMap.getDataMap(DomainMap.class).printHTML(writer, "domain", "Domänen");
 					AbstractDataMap.getDataMap(PersonMap.class).printHTML(writer, "person", "Personen");
 					AbstractDataMap.getDataMap(LinkMap.class).printHTML(writer, "link", "Link Personen/Adressen");
 					AbstractDataMap.getDataMap(AddressMap.class).printHTML(writer, "address", "Adressen");
@@ -112,7 +112,7 @@ public class DocumentPreferencePage extends FieldEditorPreferencePage implements
 					AbstractDataMap.getDataMap(RubricMap.class).printHTML(writer, "rubric", "Kursrubriken");
 					AbstractDataMap.getDataMap(CourseMap.class).printHTML(writer, "course", "Kurse");
 					AbstractDataMap.getDataMap(CourseGuideMap.class).printHTML(writer, "course_guide", "Kursleitungen");
-					AbstractDataMap.getDataMap(CompensationMap.class).printHTML(writer, "#compensation", "EntschÃ¤digungen");
+					AbstractDataMap.getDataMap(CompensationMap.class).printHTML(writer, "#compensation", "Entschädigungen");
 					AbstractDataMap.getDataMap(GuideMap.class).printHTML(writer, "guide", "Leitungspersonen");
 					AbstractDataMap.getDataMap(BookingMap.class).printHTML(writer, "booking", "Kursbuchungen");
 					AbstractDataMap.getDataMap(BookingTypeMap.class).printHTML(writer, "booking_type", "Buchungsarten");
@@ -123,7 +123,7 @@ public class DocumentPreferencePage extends FieldEditorPreferencePage implements
 					writer.close();
 
 					MessageDialog.openConfirm(DocumentPreferencePage.this.getFieldEditorParent().getShell(),
-							"Liste gedruckt", "Der Ausdruck der SchlÃ¼ssel/Wert-Paare wurde erfolgreich ausgedruckt.");
+							"Liste gedruckt", "Der Ausdruck der Schlüssel/Wert-Paare wurde erfolgreich ausgedruckt.");
 				}
 				catch (IOException e1)
 				{
@@ -190,7 +190,7 @@ public class DocumentPreferencePage extends FieldEditorPreferencePage implements
 			writer.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n");
 			writer.write("<html>\n");
 			writer.write("\t<head>\n");
-			writer.write("\t\t<title>Liste der SchlÃ¼ssel</title>\n");
+			writer.write("\t\t<title>Liste der Schlüssel</title>\n");
 			writer.write("\t</head>\n");
 			writer.write("\t<body>\n");
 		}

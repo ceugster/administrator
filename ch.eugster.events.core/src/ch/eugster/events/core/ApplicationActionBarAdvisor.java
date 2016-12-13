@@ -63,7 +63,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor
 	protected void makeEditActions(IWorkbenchWindow window)
 	{
 		this.undoAction = ActionFactory.UNDO.create(window);
-		this.undoAction.setText("RÃ¼ckgÃ¤ngig");
+		this.undoAction.setText("Rückgängig");
 		this.register(this.undoAction);
 
 		this.redoAction = ActionFactory.REDO.create(window);
@@ -79,7 +79,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor
 		this.register(this.copyAction);
 
 		this.pasteAction = ActionFactory.PASTE.create(window);
-		this.pasteAction.setText("EinfÃ¼gen");
+		this.pasteAction.setText("Einfügen");
 		this.register(this.pasteAction);
 
 		this.deleteAction = ActionFactory.DELETE.create(window);
@@ -87,7 +87,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor
 		this.register(this.deleteAction);
 
 		this.selectAllAction = ActionFactory.SELECT_ALL.create(window);
-		this.selectAllAction.setText("Alles auswÃ¤hlen");
+		this.selectAllAction.setText("Alles auswählen");
 		this.register(this.selectAllAction);
 	}
 
@@ -108,7 +108,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor
 		this.introAction.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("INTRO"));
 
 		this.aboutAction = ActionFactory.ABOUT.create(window);
-		this.aboutAction.setText("Ãœber den Administrator");
+		this.aboutAction.setText("Über den Administrator");
 		// this.aboutAction.setImageDescriptor(Activator.getDefault().getImageRegistry().getDescriptor("INTRO"));
 	}
 

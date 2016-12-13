@@ -214,14 +214,14 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
-		label.setText("Versand BuchungsbestÃ¤tigung");
+		label.setText("Versand Buchungsbestätigung");
 
 		this.bookingConfirmationSentDate = new CDateTime(composite, CDT.BORDER | CDT.DATE_MEDIUM | CDT.DROP_DOWN);
 		this.bookingConfirmationSentDate.setLayoutData(new GridData());
 		this.bookingConfirmationSentDate.setNullText("");
 
 		this.printBookingConfirmation = new Button(composite, SWT.CHECK);
-		this.printBookingConfirmation.setText("BuchungsbestÃ¤tigung jetzt drucken");
+		this.printBookingConfirmation.setText("Buchungsbestätigung jetzt drucken");
 		this.printBookingConfirmation.setLayoutData(new GridData());
 		this.printBookingConfirmation.addSelectionListener(new SelectionListener()
 		{
@@ -266,7 +266,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
-		label.setText("Versand TeilnahmebestÃ¤tigung");
+		label.setText("Versand Teilnahmebestätigung");
 
 		layoutData = new GridData();
 		layoutData.horizontalSpan = 2;
@@ -311,7 +311,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
-		label.setText("RÃ¼ckzahlungsdatum");
+		label.setText("Rückzahlungsdatum");
 
 		layoutData = new GridData();
 		layoutData.horizontalSpan = 2;
@@ -322,7 +322,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
-		label.setText("RÃ¼ckzahlungsbetrag");
+		label.setText("Rückzahlungsbetrag");
 
 		layoutData = new GridData();
 		layoutData.widthHint = 64;
@@ -345,7 +345,7 @@ public class BookingWizardPage extends WizardPage implements ISelectionChangedLi
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
-		label.setText("Vorlage BuchungsbestÃ¤tigung");
+		label.setText("Vorlage Buchungsbestätigung");
 
 		bookingConfirmationTemplatePath = new Text(composite, SWT.BORDER | SWT.SINGLE | SWT.RIGHT);
 		bookingConfirmationTemplatePath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

@@ -57,11 +57,11 @@ public class ParticipationConfirmationDialog extends TitleAreaDialog
 
 	private UserProperty userPropertyTemplatePath;
 
-	private final String message = "WÃ¤hlen Sie das Dokument, das als Vorlage verwendet werden soll.";
+	private final String message = "Wählen Sie das Dokument, das als Vorlage verwendet werden soll.";
 
 	private static final String MSG_NO_BOOKINGS = "Es sind keine Buchungen zu verarbeiten.";
 
-	private static final String MSG_NO_SERVICE_AVAILABLE = "Es ist kein Service fÃ¼r die Verarbeitung des Dokuments verfÃ¼gbar.";
+	private static final String MSG_NO_SERVICE_AVAILABLE = "Es ist kein Service für die Verarbeitung des Dokuments verfügbar.";
 
 	private static final String MSG_TITLE_NO_BOOKINGS = "Keine Buchungen vorhanden";
 
@@ -69,7 +69,7 @@ public class ParticipationConfirmationDialog extends TitleAreaDialog
 
 	private static final String CANCEL_BUTTON_TEXT = "Abbrechen";
 
-	private static final String DIALOG_TITLE = "Vorlage TeilnahmebestÃ¤tigung";
+	private static final String DIALOG_TITLE = "Vorlage Teilnahmebestätigung";
 
 	private boolean isPageComplete = false;
 
@@ -80,11 +80,11 @@ public class ParticipationConfirmationDialog extends TitleAreaDialog
 	 *            ch.eugster.events.data.objects.Customer
 	 * @param addressGroup
 	 *            Falls eine neue Adressgruppe erfasst wird, muss diese bereit
-	 *            vor der Ãœbergabe an den Konstruktor von
+	 *            vor der Übergabe an den Konstruktor von
 	 *            <code>AddressGroupDialog</code> instantiiert sein und der
 	 *            Parent <code>Domain</code> muss - falls ein solcher gesetzt
 	 *            werden soll, ebenfalls dem Konstruktur von
-	 *            <code>AddressGroup</code> Ã¼bergeben worden sein.
+	 *            <code>AddressGroup</code> übergeben worden sein.
 	 * 
 	 */
 	public ParticipationConfirmationDialog(final Shell parentShell, final StructuredSelection selection)

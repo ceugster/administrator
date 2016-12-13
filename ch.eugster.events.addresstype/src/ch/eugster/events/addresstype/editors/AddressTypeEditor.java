@@ -201,8 +201,8 @@ public class AddressTypeEditor extends AbstractEntityEditor<AddressType>
 				AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
 				if (!query.isNameUnique(name, addressType.getId()))
 				{
-					msg = new Message(this.name, "UngÃ¼ltige Bezeichnung");
-					msg.setMessage("Die gewÃ¤hlte Bezeichnung wird bereits verwendet.");
+					msg = new Message(this.name, "Ungültige Bezeichnung");
+					msg.setMessage("Die gewählte Bezeichnung wird bereits verwendet.");
 					return msg;
 				}
 			}

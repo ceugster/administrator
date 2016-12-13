@@ -45,7 +45,7 @@ public class SelectBookingTypeDialog extends TitleAreaDialog
 	@Override
 	protected void createButtonsForButtonBar(final Composite parent)
 	{
-		this.createButton(parent, Dialog.OK, "Ãœbernehmen", true);
+		this.createButton(parent, Dialog.OK, "Übernehmen", true);
 		this.createButton(parent, Dialog.CANCEL, "Abbrechen", false);
 	}
 
@@ -57,7 +57,7 @@ public class SelectBookingTypeDialog extends TitleAreaDialog
 						"Teilnehmer: "
 								+ PersonFormatter.getInstance().formatLastnameFirstname(
 										this.participant.getLink().getPerson()));
-		this.setTitle("Buchungsart Ã¤ndern");
+		this.setTitle("Buchungsart ändern");
 		this.setMessage("Auswahl Buchungsarten zum Kurs "
 				+ CourseFormatter.getInstance().formatComboEntry(this.participant.getBooking().getCourse()));
 

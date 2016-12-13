@@ -196,7 +196,7 @@ public class BasicBookingTypeView extends AbstractEntityView implements IDoubleC
 		});
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
-		tableColumn.setText("AnnulationsgebÃ¼hr");
+		tableColumn.setText("Annulationsgebühr");
 
 		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()

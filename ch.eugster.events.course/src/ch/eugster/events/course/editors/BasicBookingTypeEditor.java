@@ -169,7 +169,7 @@ public class BasicBookingTypeEditor extends AbstractEntityEditor<BookingTypeProp
 			}
 		});
 
-		label = this.formToolkit.createLabel(composite, "HÃ¶chstalter", SWT.NONE);
+		label = this.formToolkit.createLabel(composite, "Höchstalter", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		GridData layoutData = new GridData();

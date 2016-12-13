@@ -85,7 +85,7 @@ public class CourseMap extends AbstractDataMap<Course>
 		printCell(writer, "#rubric", "Kursrubriken");
 		endTableRow(writer);
 		startTableRow(writer);
-		printCell(writer, "#domain", "DomÃ¤nen");
+		printCell(writer, "#domain", "Domänen");
 		endTableRow(writer);
 		endTable(writer);
 	}
@@ -128,7 +128,7 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case ALL_LOCATIONS:
 			{
-				return "Alle DurchfÃ¼hrungsorte";
+				return "Alle Durchführungsorte";
 			}
 			case ANNULATION_DATE:
 			{
@@ -156,11 +156,11 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case DATE_RANGE:
 			{
-				return "DurchfÃ¼hrungsdatum";
+				return "Durchführungsdatum";
 			}
 			case DATE_RANGE_WITH_WEEKDAY_CODE:
 			{
-				return "DurchfÃ¼hrungsdatum mit WochentagkÃ¼rzel";
+				return "Durchführungsdatum mit Wochentagkürzel";
 			}
 			case DESCRIPTION:
 			{
@@ -201,11 +201,11 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case LAST_ANNULATION_DATE:
 			{
-				return "SpÃ¤testes Kursannulationsdatum";
+				return "Spätestes Kursannulationsdatum";
 			}
 			case LAST_BOOKING_DATE:
 			{
-				return "Letztes mÃ¶gliche Buchungsdatum";
+				return "Letztes mögliche Buchungsdatum";
 			}
 			case LAST_DATE:
 			{
@@ -257,7 +257,7 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case REALIZATION:
 			{
-				return "DurchfÃ¼hrung";
+				return "Durchführung";
 			}
 			case RESPONSIBLE_USER:
 			{
@@ -633,11 +633,11 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case DATE_RANGE:
 			{
-				return "DurchfÃ¼hrungsdatum";
+				return "Durchführungsdatum";
 			}
 			case DATE_RANGE_WITH_WEEKDAY_CODE:
 			{
-				return "DurchfÃ¼hrungsdatum mit WochentagkÃ¼rzel";
+				return "Durchführungsdatum mit Wochentagkürzel";
 			}
 			case SUBSTITUTION_DATE_RANGE:
 			{
@@ -649,7 +649,7 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case ALL_LOCATIONS:
 			{
-				return "Alle DurchfÃ¼hrungsorte";
+				return "Alle Durchführungsorte";
 			}
 			default:
 			{

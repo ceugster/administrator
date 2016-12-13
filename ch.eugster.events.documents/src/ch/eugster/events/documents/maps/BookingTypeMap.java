@@ -54,7 +54,7 @@ public class BookingTypeMap extends AbstractDataMap<BookingType>
 				}
 				case ANNULATION_CHARGE:
 				{
-					return "AnnulationsgebÃ¼hren";
+					return "Annulationsgebühren";
 				}
 				case MAX_AGE:
 				{
@@ -134,7 +134,7 @@ public class BookingTypeMap extends AbstractDataMap<BookingType>
 				}
 				case ANNULATION_CHARGE:
 				{
-					return "AnnulationsgebÃ¼hren";
+					return "Annulationsgebühren";
 				}
 				case MAX_AGE:
 				{

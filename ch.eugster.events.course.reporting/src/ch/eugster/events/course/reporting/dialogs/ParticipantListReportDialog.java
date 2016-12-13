@@ -237,7 +237,7 @@ public class ParticipantListReportDialog extends TitleAreaDialog
 				if (factory.size() == 0)
 				{
 					MessageDialog.openInformation(null, "Keine Buchungen vorhanden",
-							"FÃ¼r den gewÃ¤hlten Kurs wurden noch keine Buchungen erfasst.");
+							"Für den gewählten Kurs wurden noch keine Buchungen erfasst.");
 				}
 				else
 				{

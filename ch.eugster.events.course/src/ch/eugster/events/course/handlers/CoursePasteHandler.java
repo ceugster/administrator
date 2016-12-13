@@ -145,15 +145,15 @@ public class CoursePasteHandler extends ConnectionServiceDependentAbstractHandle
 			{
 			case COPY_GUIDES:
 			{
-				return "Kursleitung Ã¼bernehmen";
+				return "Kursleitung übernehmen";
 			}
 			case COPY_DETAILS:
 			{
-				return "Kursdetails Ã¼bernehmen";
+				return "Kursdetails übernehmen";
 			}
 			case COPY_BOOKING_TYPES:
 			{
-				return "Buchungsarten Ã¼bernehmen";
+				return "Buchungsarten übernehmen";
 			}
 			default:
 			{

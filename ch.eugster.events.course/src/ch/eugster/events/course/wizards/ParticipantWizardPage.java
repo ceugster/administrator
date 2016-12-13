@@ -156,8 +156,8 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			}
 			else
 			{
-				MessageDialog.openWarning(this.getShell(), "Teilnehmerzahl Ã¼berschritten",
-						"Es kÃ¶nnen keine weiteren Teilnehmer erfasst werden, da die maximale Anzahl erreicht ist.");
+				MessageDialog.openWarning(this.getShell(), "Teilnehmerzahl überschritten",
+						"Es können keine weiteren Teilnehmer erfasst werden, da die maximale Anzahl erreicht ist.");
 			}
 		}
 	}
@@ -339,7 +339,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
 				int size = ((StructuredSelection) event.getSelection()).size();
-				ParticipantWizardPage.this.selected.setText("AusgewÃ¤hlt: " + size);
+				ParticipantWizardPage.this.selected.setText("Ausgewählt: " + size);
 			}
 		});
 
@@ -365,7 +365,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 				ParticipantWizardPage.this.selectionViewer.setInput(revisedLinks.toArray(new LinkPersonAddress[0]));
 				ParticipantWizardPage.this.found.setText("Gefunden: " + revisedLinks.size());
 				int size = ((StructuredSelection) ParticipantWizardPage.this.selectionViewer.getSelection()).size();
-				ParticipantWizardPage.this.selected.setText("AusgewÃ¤hlt: " + size);
+				ParticipantWizardPage.this.selected.setText("Ausgewählt: " + size);
 				ParticipantWizardPage.this.packColumns(ParticipantWizardPage.this.selectionViewer);
 			}
 		});
@@ -735,7 +735,7 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
-				ParticipantWizardPage.this.selected.setText("AusgewÃ¤hlt: "
+				ParticipantWizardPage.this.selected.setText("Ausgewählt: "
 						+ ((StructuredSelection) event.getSelection()).size());
 			}
 		});
@@ -1153,12 +1153,12 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 							Integer count = Integer.valueOf(val);
 							if (!canAdd(participant, count.intValue()))
 							{
-								return "Die Teilnehmerzahl ist Ã¼berschritten.";
+								return "Die Teilnehmerzahl ist überschritten.";
 							}
 						}
 						catch (NumberFormatException e)
 						{
-							return "UngÃ¼ltige Eingabe";
+							return "Ungültige Eingabe";
 						}
 						return null;
 					}
