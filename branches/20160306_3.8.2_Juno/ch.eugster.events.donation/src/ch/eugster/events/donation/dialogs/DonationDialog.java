@@ -54,9 +54,9 @@ public class DonationDialog extends TitleAreaDialog
 
 	private Composite composite;
 
-	private final String addMessage = "Erfassen sie die gewÃ¼nschten Angaben und speichern Sie sie mit 'Speichern'\noder schliessen Sie das Fenster mit 'Abbrechen' ohne die Daten zu speichern.";
+	private final String addMessage = "Erfassen sie die gewünschten Angaben und speichern Sie sie mit 'Speichern'\noder schliessen Sie das Fenster mit 'Abbrechen' ohne die Daten zu speichern.";
 
-	private final String editMessage = "Bearbeiten Sie die gewÃ¼nschten Angaben und speichern Sie sie mit 'Speichern'.\nSchliessen Sie das Fenster mit 'Abbrechen' ohne die Ã„nderungen zu Ã¼bernehmen.";
+	private final String editMessage = "Bearbeiten Sie die gewünschten Angaben und speichern Sie sie mit 'Speichern'.\nSchliessen Sie das Fenster mit 'Abbrechen' ohne die Änderungen zu übernehmen.";
 
 	private boolean pageComplete = false;
 
@@ -65,11 +65,11 @@ public class DonationDialog extends TitleAreaDialog
 	 * @param parent
 	 * @param addressGroup
 	 *            Falls eine neue Adressgruppe erfasst wird, muss diese bereit
-	 *            vor der Ãœbergabe an den Konstruktor von
+	 *            vor der Übergabe an den Konstruktor von
 	 *            <code>AddressGroupDialog</code> instantiiert sein und der
 	 *            Parent <code>Domain</code> muss - falls ein solcher gesetzt
 	 *            werden soll, ebenfalls dem Konstruktur von
-	 *            <code>AddressGroup</code> Ã¼bergeben worden sein.
+	 *            <code>AddressGroup</code> übergeben worden sein.
 	 * 
 	 */
 	public DonationDialog(final Shell parentShell, final Donation donation)

@@ -113,7 +113,7 @@ public class ShowSourceWizardPage extends WizardPage implements IPageChangedList
 		gridData.horizontalSpan = 2;
 
 		withHeader = new Button(composite, SWT.CHECK);
-		withHeader.setText("Erste Zeile enth√§lt Spaltentitel");
+		withHeader.setText("Erste Zeile enth‰lt Spaltentitel");
 		withHeader.setLayoutData(gridData);
 		withHeader.setSelection(settings.getBoolean("with.header"));
 		withHeader.addSelectionListener(new SelectionListener()

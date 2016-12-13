@@ -59,7 +59,7 @@ public class DeleteMembershipHandler extends AbstractHandler implements IHandler
 			{
 				Shell shell = (Shell) context.getParent().getVariable("activeShell");
 				String title = "Mitgliedschaft entfernen";
-				String msg = "Soll die ausgew√§hlte Mitgliedschaft entfernt werden?";
+				String msg = "Soll die ausgew‰hlte Mitgliedschaft entfernt werden?";
 				int type = MessageDialog.QUESTION;
 				String[] buttons = new String[] { "Ja", "Nein" };
 				MessageDialog dialog = new MessageDialog(shell, title, null, msg, type, buttons, 0);

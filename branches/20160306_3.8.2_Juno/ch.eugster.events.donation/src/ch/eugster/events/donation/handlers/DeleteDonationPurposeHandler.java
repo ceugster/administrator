@@ -31,8 +31,8 @@ public class DeleteDonationPurposeHandler extends ConnectionServiceDependentAbst
 					{
 						DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
 						Shell shell = part.getSite().getShell();
-						String title = "L√∂schbest√§tigung";
-						StringBuilder msg = new StringBuilder("Soll die ausgew√§hlte Dom√§ne ");
+						String title = "Lˆschbest‰tigung";
+						StringBuilder msg = new StringBuilder("Soll die ausgew‰hlte Dom‰ne ");
 						msg = msg.append(purpose.getCode().equals("") ? purpose.getName() : purpose.getCode() + " - "
 								+ purpose.getName());
 						msg = msg.append(" entfernt werden?");

@@ -99,7 +99,7 @@ public class CompensationTypeEditor extends AbstractEntityEditor<CompensationTyp
 		composite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		composite.setLayout(layout);
 
-		Label label = this.formToolkit.createLabel(composite, "EntschÃ¤Ã¤digungsart", SWT.NONE);
+		Label label = this.formToolkit.createLabel(composite, "Entschädigungsart", SWT.NONE);
 		label.setLayoutData(new GridData());
 
 		CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
@@ -203,8 +203,8 @@ public class CompensationTypeEditor extends AbstractEntityEditor<CompensationTyp
 				CompensationTypeQuery query = (CompensationTypeQuery) service.getQuery(CompensationType.class);
 				if (!query.isCodeUnique(code, compensationType.getId()))
 				{
-					msg = new Message(this.code, "UngÃ¼ltiger Code");
-					msg.setMessage("Der gewÃ¤hlte Code wird bereits verwendet.");
+					msg = new Message(this.code, "Ungültiger Code");
+					msg.setMessage("Der gewählte Code wird bereits verwendet.");
 					return msg;
 				}
 			}
@@ -237,7 +237,7 @@ public class CompensationTypeEditor extends AbstractEntityEditor<CompensationTyp
 		if (!(ssel.getFirstElement() instanceof CompensationType.Type))
 		{
 			msg = new Message(this.name, "Fehler");
-			msg.setMessage("Es muss eine EntschÃ¤digungsart festgelegt werden.");
+			msg.setMessage("Es muss eine Entschädigungsart festgelegt werden.");
 		}
 
 		return msg;
