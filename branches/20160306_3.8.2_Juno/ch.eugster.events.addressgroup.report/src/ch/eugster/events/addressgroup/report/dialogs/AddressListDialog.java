@@ -5,8 +5,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -23,6 +26,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -31,7 +35,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.util.tracker.ServiceTracker;
@@ -66,6 +72,10 @@ public class AddressListDialog extends TitleAreaDialog
 
 	private IDialogSettings settings;
 
+	private List<AddressGroupLine> addressGroupLines = null;
+	
+	private Set<AddressGroupMember> addressGroupMembers = new HashSet<AddressGroupMember>();
+	
 	private ComboViewer sortViewer;
 
 	private Button shortList;
@@ -101,6 +111,137 @@ public class AddressListDialog extends TitleAreaDialog
 		}
 	}
 
+	private void extractAddressGroupMembers() 
+	{
+		if (this.addressGroupLines == null)
+		{
+			Iterator<?> iter = selection.iterator();
+			while (iter.hasNext())
+			{
+				Object object = iter.next();
+				if (object instanceof AddressGroupMember)
+				{
+					AddressGroupMember member = (AddressGroupMember) object;
+					if (!this.addressGroupMembers.contains(member))
+					{
+						this.addressGroupMembers.add(member);
+					}
+				}
+				else if (object instanceof AddressGroupCategory)
+				{
+					AddressGroupCategory category = (AddressGroupCategory) object;
+					List<AddressGroup> addressGroups = category.getValidAddressGroups();
+					for (AddressGroup addressGroup : addressGroups)
+					{
+						extractAddressGroupMembers(addressGroup);
+					}
+				}
+				else if (object instanceof AddressGroup)
+				{
+					extractAddressGroupMembers((AddressGroup) object);
+				}
+			}
+		}
+		else
+		{
+			for (AddressGroupLine addressGroupLine : this.addressGroupLines)
+			{
+				if (addressGroupLine.doAdd())
+				{
+					extractAddressGroupMembers(addressGroupLine);
+				}
+			}
+			for (AddressGroupLine addressGroupLine : this.addressGroupLines)
+			{
+				if (addressGroupLine.doRemove())
+				{
+					removeAddressGroupMembers(addressGroupLine);
+				}
+			}
+		}
+	}
+
+	private void extractAddressGroupMembers(AddressGroup addressGroup)
+	{
+		List<AddressGroupMember> members = addressGroup.getValidAddressGroupMembers();
+		for (AddressGroupMember member : members)
+		{
+			if (!this.addressGroupMembers.contains(member))
+			{
+				this.addressGroupMembers.add(member);
+			}
+		}
+	}
+	
+	private void extractAddressGroupMembers(AddressGroupLine addressGroupLine)
+	{
+		List<AddressGroupMember> members = addressGroupLine.getAddressGroup().getValidAddressGroupMembers();
+		for (AddressGroupMember member : members)
+		{
+			if (!this.addressGroupMembers.contains(member))
+			{
+				this.addressGroupMembers.add(member);
+			}
+		}
+	}
+	
+	private void removeAddressGroupMembers(AddressGroupLine addressGroupLine)
+	{
+		List<AddressGroupMember> members = addressGroupLine.getAddressGroup().getValidAddressGroupMembers();
+		for (AddressGroupMember member : members)
+		{
+			AddressGroupMember[] existingMembers = this.addressGroupMembers.toArray(new AddressGroupMember[0]);
+			for (AddressGroupMember existingMember : existingMembers)
+			{
+				if (existingMember.getLink() != null && member.getLink() != null)
+				{
+					if (existingMember.getLink().getPerson().getId().equals(member.getLink().getPerson().getId()))
+					{
+						this.addressGroupMembers.remove(existingMember);
+					}
+				}
+				else if (existingMember.getAddress() != null && member.getAddress() != null)
+				{
+					if (existingMember.getAddress().getId().equals(member.getAddress().getId()))
+					{
+						this.addressGroupMembers.remove(existingMember);
+					}
+				}
+			}
+		}
+	}
+	
+	private Set<AddressGroup> extractAddressGroups(StructuredSelection selection) 
+	{
+		Set<AddressGroup> addressGroups = new HashSet<AddressGroup>();
+		Iterator<?> iter = selection.iterator();
+		while (iter.hasNext())
+		{
+			Object object = iter.next();
+			if (object instanceof AddressGroupCategory)
+			{
+				AddressGroupCategory category = (AddressGroupCategory) object;
+				List<AddressGroup> groups = category.getValidAddressGroups();
+				for (AddressGroup group : groups)
+				{
+					if (!addressGroups.contains(group))
+					{
+						addressGroups.add(group);
+					}
+				}
+			}
+			else if (object instanceof AddressGroup)
+			{
+				AddressGroup group = (AddressGroup) object;
+				if (!addressGroups.contains(group))
+				{
+					addressGroups.add(group);
+				}
+			}
+		}
+		return addressGroups;
+	}
+
 	private IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap<?>[] dataMaps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
@@ -127,29 +268,36 @@ public class AddressListDialog extends TitleAreaDialog
 		return status;
 	}
 
-	private void computeAddressGroup(final Map<String, DataMap<?>> map, final AddressGroup addressGroup)
+	private void computeAddressGroupLine(final Map<String, DataMap<?>> map, final AddressGroupLine addressGroupLine)
 	{
-		if (!addressGroup.isDeleted())
+		if (!addressGroupLine.getAddressGroup().isDeleted())
 		{
-			List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
-			for (AddressGroupMember member : members)
+			List<AddressGroupMember> members = addressGroupLine.getAddressGroup().getValidAddressGroupMembers();
+			if (addressGroupLine.doAdd())
 			{
-				computeAddressGroupMember(map, member);
+				for (AddressGroupMember member : members)
+				{
+					computeAddressGroupMember(map, member);
+				}
+			}
+			else if (addressGroupLine.doRemove())
+			{
+				
 			}
 		}
 	}
 
-	private void computeAddressGroupCategory(final Map<String, DataMap<?>> map, final AddressGroupCategory category)
-	{
-		if (!category.isDeleted())
-		{
-			List<AddressGroup> addressGroups = category.getAddressGroups();
-			for (AddressGroup addressGroup : addressGroups)
-			{
-				computeAddressGroup(map, addressGroup);
-			}
-		}
-	}
+//	private void computeAddressGroupCategory(final Map<String, DataMap<?>> map, final AddressGroupCategory category)
+//	{
+//		if (!category.isDeleted())
+//		{
+//			List<AddressGroup> addressGroups = category.getAddressGroups();
+//			for (AddressGroup addressGroup : addressGroups)
+//			{
+//				computeAddressGroup(map, addressGroup);
+//			}
+//		}
+//	}
 
 	private void computeAddressGroupMember(final Map<String, DataMap<?>> map, final AddressGroupMember member)
 	{
@@ -171,26 +319,21 @@ public class AddressListDialog extends TitleAreaDialog
 		this.createButton(parent, IDialogConstants.CANCEL_ID, "Abbrechen", false);
 	}
 
-	private Collection<DataMap<?>> createDataMaps(final StructuredSelection ssel)
+	private Collection<DataMap<?>> createDataMaps()
 	{
 		Map<String, DataMap<?>> maps = new HashMap<String, DataMap<?>>();
-		Object[] elements = ssel.toArray();
-		for (Object element : elements)
+		if (this.addressGroupMembers != null)
 		{
-			if (element instanceof AddressGroupCategory)
+			for (AddressGroupMember member : this.addressGroupMembers)
 			{
-				AddressGroupCategory category = (AddressGroupCategory) element;
-				computeAddressGroupCategory(maps, category);
-			}
-			else if (element instanceof AddressGroup)
-			{
-				AddressGroup addressGroup = (AddressGroup) element;
-				computeAddressGroup(maps, addressGroup);
-			}
-			else if (element instanceof AddressGroupMember)
-			{
-				AddressGroupMember member = (AddressGroupMember) element;
 				computeAddressGroupMember(maps, member);
+			}
+		}
+		else if (this.addressGroupLines != null)
+		{
+			for (AddressGroupLine line : this.addressGroupLines)
+			{
+				computeAddressGroupLine(maps, line);
 			}
 		}
 		return maps.values();
@@ -202,10 +345,58 @@ public class AddressListDialog extends TitleAreaDialog
 		this.setTitle();
 		this.setMessage();
 
-		Composite composite = new Composite(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.BORDER);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setLayout(new GridLayout(2, false));
+		composite.setLayout(new GridLayout());
 
+		Set<AddressGroup> extractedAddressGroups = extractAddressGroups(selection);
+		if (extractedAddressGroups.size() > 1)
+		{
+			GridLayout layout = new GridLayout();
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			layout.verticalSpacing = 0;
+
+			GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+			gridData.heightHint = 100;
+			
+			final ScrolledComposite scrolledComposite = new ScrolledComposite(composite, SWT.BORDER | SWT.SHADOW_ETCHED_IN | SWT.V_SCROLL);
+			scrolledComposite.addListener(SWT.Resize, new Listener() 
+			{
+				@Override
+				public void handleEvent(Event event) 
+				{
+					int width = scrolledComposite.getClientArea().width;
+					scrolledComposite.setMinSize( parent.computeSize( width, SWT.DEFAULT ) );
+				}
+			});
+			scrolledComposite.setLayout(layout);
+			scrolledComposite.setLayoutData(gridData);
+
+			layout = new GridLayout();
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			layout.verticalSpacing = 0;
+
+			Composite mainAddressGroupComposite = new Composite(scrolledComposite, SWT.BORDER);
+			mainAddressGroupComposite.setLayout(layout);
+			mainAddressGroupComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+			AddressGroup[] addressGroups = extractedAddressGroups.toArray(new AddressGroup[0]);
+			this.addressGroupLines = new ArrayList<AddressGroupLine>();
+			for (int i = 0; i < addressGroups.length; i++)
+			{
+				Composite addressGroupComposite = new Composite(mainAddressGroupComposite, SWT.None);
+				addressGroupComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				addressGroupComposite.setLayout(new GridLayout(3, false));
+				this.addressGroupLines.add(new AddressGroupLine(i, addressGroupComposite, addressGroups[i]));
+			}
+			scrolledComposite.setContent(mainAddressGroupComposite);
+			scrolledComposite.setExpandHorizontal(true);
+			scrolledComposite.setExpandVertical(true);
+			scrolledComposite.pack();
+		}
+		
 		if (EditorSelector.values()[PersonSettings.getInstance().getEditorSelector()]
 				.equals(EditorSelector.MULTI_PAGE_EDITOR))
 		{
@@ -376,8 +567,9 @@ public class AddressListDialog extends TitleAreaDialog
 	protected void okPressed()
 	{
 		setCurrentUser();
+		extractAddressGroupMembers();
 		final DataMapKey[] keys = getKeys();
-		final DataMap<?>[] dataMaps = createDataMaps(selection).toArray(new DataMap[0]);
+		final DataMap<?>[] dataMaps = createDataMaps().toArray(new DataMap[0]);
 		Arrays.sort(dataMaps, new Comparator<DataMap<?>>()
 		{
 			@Override
@@ -481,5 +673,54 @@ public class AddressListDialog extends TitleAreaDialog
 	public void setTitle()
 	{
 		super.setTitle("Adressliste generieren");
+	}
+
+	private class AddressGroupLine
+	{
+		private AddressGroup addressGroup;
+		private Button add;
+		private Button remove;
+		private Label name;
+		
+		public AddressGroupLine(int number, Composite parent, AddressGroup addressGroup)
+		{
+			this.addressGroup = addressGroup;
+			if (number == 0)
+			{
+				Label label = new Label(parent, SWT.None);
+				label.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, false, false));
+				label.setText("+");
+				label = new Label(parent, SWT.None);
+				label.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, false, false));
+				label.setText("-");
+				label = new Label(parent, SWT.None);
+				label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				label.setText("Adressgruppe");
+			}
+			this.add = new Button(parent, SWT.RADIO);
+			this.add.setLayoutData(new GridData());
+			this.add.setSelection(true);
+			this.remove = new Button(parent, SWT.RADIO);
+			this.remove.setLayoutData(new GridData());
+			this.remove.setSelection(false);
+			this.name = new Label(parent, SWT.None);
+			this.name.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			this.name.setText((addressGroup.getCode().isEmpty() ? addressGroup.getName() : (addressGroup.getCode() + (addressGroup.getName().isEmpty() ? "" : " - " + addressGroup.getName()))));
+		}
+		
+		public AddressGroup getAddressGroup()
+		{
+			return this.addressGroup;
+		}
+		
+		public boolean doAdd()
+		{
+			return add.getSelection();
+		}
+		
+		public boolean doRemove()
+		{
+			return remove.getSelection();
+		}
 	}
 }
