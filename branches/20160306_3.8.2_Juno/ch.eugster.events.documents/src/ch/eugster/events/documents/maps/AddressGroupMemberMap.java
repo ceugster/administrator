@@ -49,29 +49,22 @@ public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 	private boolean isGroup(AddressGroupMember member, boolean isGroup)
 	{
 		if (!isGroup) return false;
-		List<AddressGroupMember> ms = member.getAddressGroup().getAddressGroupMembers();
-		for (AddressGroupMember m : ms)
+		if (member.isValidAddressMember())
 		{
-			if (m.isValidAddressMember() && member.isValidAddressMember() && m.getAddress().getId().equals(member.getAddress().getId()))
+			return true;
+		}
+		List<AddressGroupMember> ms = member.getAddressGroup().getAddressGroupMembers();
+		if (member.isValidLinkMember())
+		{
+			for (AddressGroupMember m : ms)
 			{
-				if (m.getAddressGroup().getId().equals(member.getAddressGroup().getId()) && !m.getId().equals(member.getId()))
+				if (m.isValidAddressMember() && m.getAddress().getId().equals(member.getLink().getAddress().getId()))
 				{
 					return true;
 				}
-			}
-		}
-		if (member.isValidAddressMember())
-		{
-			List<LinkPersonAddress> links = member.getAddress().getValidLinks();
-			for (LinkPersonAddress link : links)
-			{
-				ms = link.getAddressGroupMembers();
-				for (AddressGroupMember m : ms)
+				else if (m.isValidLinkMember() && m.getLink().getAddress().getId().equals(member.getLink().getAddress().getId()))
 				{
-					if (m.isValidAddressMember() && m.getAddressGroup().getId().equals(member.getAddressGroup().getId()) && !m.getId().equals(member.getId()) && m.getAddress().getId().equals(member.getAddress().getId()))
-					{
-						return true;
-					}
+					return true;
 				}
 			}
 		}
@@ -214,14 +207,11 @@ public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 				{
 					if (member.isValidAddressMember())
 					{
-						if (member.getAddress().getValidLinks().size() == 1)
-						{
-							return "P" + member.getAddress().getValidLinks().iterator().next().getPerson().getId().toString();
-						}
-						else
-						{
-							return "A" + member.getAddress().getId().toString();
-						}
+						return "A" + member.getAddress().getId().toString();
+					}
+					else if (isGroup)
+					{
+						return "A" + member.getLink().getAddress().getId().toString();
 					}
 					else if (member.isValidLinkMember())
 					{
@@ -235,50 +225,28 @@ public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 				case ANOTHER_LINE:
 				{
 					String anotherLine = "";
-					if (member.getLink() == null)
+					if (member.isValidAddressMember())
 					{
-						if (member.getAddress().getValidLinks().size() == 1)
-						{
-							anotherLine = member.getAddress().getValidLinks().iterator().next().getAddress().getAnotherLine();
-						}
-						else
-						{
-							anotherLine = member.getAddress().getAnotherLine();
-						}
+						anotherLine = member.getAddress().getAnotherLine();
 					}
-					else
+					else if (member.isValidLinkMember())
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
-						{
-							anotherLine = member.getAddress().getAnotherLine();
-						}
-						else
-						{
-							anotherLine = member.getLink().getAddress().getAnotherLine();
-						}
+						anotherLine = member.getLink().getAddress().getAnotherLine();
 					}
 					return anotherLine;
 				}
 				case SALUTATION:
 				{
-					if (member.getLink() == null)
+					if (member.isValidAddressMember())
 					{
-						if (member.getAddress().getValidLinks().size() == 1)
-						{
-							Person person = member.getAddress().getValidLinks().iterator().next().getPerson();
-							return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
-						}
-						else
-						{
-							return member.getAddress().getSalutation() == null ? "" : member.getAddress().getSalutation()
+						return member.getAddress().getSalutation() == null ? "" : member.getAddress().getSalutation()
 									.getSalutation();
-						}
 					}
-					else
+					else if (member.isValidLinkMember())
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
+						if (isGroup && member.getLink().getAddress().getValidLinks().size() > 1)
 						{
-							return member.getAddress().getSalutation() == null ? "" : member.getAddress().getSalutation()
+							return member.getLink().getAddress().getSalutation() == null ? "" : member.getLink().getAddress().getSalutation()
 								.getSalutation();
 						}
 						else
@@ -291,7 +259,7 @@ public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 				case POLITE:
 				{
 					String polite = null;
-					if (member.getLink() == null)
+					if (member.isValidAddressMember())
 					{
 						if (member.getAddress().getValidLinks().size() == 1)
 						{
@@ -309,11 +277,11 @@ public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 							}
 						}
 					}
-					else
+					else if (member.isValidLinkMember())
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
+						if (isGroup && member.getLink().getAddress().getValidLinks().size() > 1)
 						{
-							AddressSalutation salutation = member.getAddress().getSalutation();
+							AddressSalutation salutation = member.getLink().getAddress().getSalutation();
 							polite = salutation == null ? "" : salutation.getPolite();
 							if (polite.isEmpty())
 							{
@@ -331,7 +299,7 @@ public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 				}
 				case MAILING_ADDRESS:
 				{
-					if (member.getLink() == null)
+					if (member.isValidAddressMember())
 					{
 						if (member.getAddress().getValidLinks().size() == 1)
 						{
@@ -343,11 +311,11 @@ public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 							return AddressFormatter.getInstance().formatAddressLabel(member.getAddress());
 						}
 					}
-					else
+					else if (member.isValidLinkMember())
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
+						if (isGroup && member.getLink().getAddress().getValidLinks().size() > 1)
 						{
-							return AddressFormatter.getInstance().formatAddressLabel(member.getAddress());
+							return AddressFormatter.getInstance().formatAddressLabel(member.getLink().getAddress());
 						}
 						else
 						{
