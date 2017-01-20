@@ -81,7 +81,11 @@ public class AddressListDialog extends TitleAreaDialog
 	private Button shortList;
 	
 	private Button courseVisits;
+
+	private Map<Long, AddressGroupMember> groupMembers = new HashMap<Long, AddressGroupMember>();
 	
+	private DataMap<?>[] dataMaps = null;
+
 	/**
 	 * @param parentShell
 	 * @param parent
@@ -119,15 +123,7 @@ public class AddressListDialog extends TitleAreaDialog
 			while (iter.hasNext())
 			{
 				Object object = iter.next();
-				if (object instanceof AddressGroupMember)
-				{
-					AddressGroupMember member = (AddressGroupMember) object;
-					if (!this.addressGroupMembers.contains(member))
-					{
-						this.addressGroupMembers.add(member);
-					}
-				}
-				else if (object instanceof AddressGroupCategory)
+				if (object instanceof AddressGroupCategory)
 				{
 					AddressGroupCategory category = (AddressGroupCategory) object;
 					List<AddressGroup> addressGroups = category.getValidAddressGroups();
@@ -139,6 +135,14 @@ public class AddressListDialog extends TitleAreaDialog
 				else if (object instanceof AddressGroup)
 				{
 					extractAddressGroupMembers((AddressGroup) object);
+				}
+				else if (object instanceof AddressGroupMember)
+				{
+					AddressGroupMember member = (AddressGroupMember) object;
+					if (!this.addressGroupMembers.contains(member))
+					{
+						this.addressGroupMembers.add(member);
+					}
 				}
 			}
 		}
@@ -312,6 +316,20 @@ public class AddressListDialog extends TitleAreaDialog
 		}
 	}
 
+	private void computeGroupedAddressGroupMember(final Map<String, DataMap<?>> map, final AddressGroupMember member)
+	{
+		
+		if (member.isValid())
+		{
+			AddressGroupMemberMap memberMap = new AddressGroupMemberMap(member, this.collectionSelector.getSelection());
+			DataMap<?> existing = map.get(memberMap.getId());
+			if (existing == null)
+			{
+				map.put(memberMap.getId(), memberMap);
+			}
+		}
+	}
+
 	@Override
 	protected void createButtonsForButtonBar(final Composite parent)
 	{
@@ -320,6 +338,26 @@ public class AddressListDialog extends TitleAreaDialog
 	}
 
 	private Collection<DataMap<?>> createDataMaps()
+	{
+		Map<String, DataMap<?>> maps = new HashMap<String, DataMap<?>>();
+		if (this.addressGroupMembers != null)
+		{
+			for (AddressGroupMember member : this.addressGroupMembers)
+			{
+				computeAddressGroupMember(maps, member);
+			}
+		}
+		else if (this.addressGroupLines != null)
+		{
+			for (AddressGroupLine line : this.addressGroupLines)
+			{
+				computeAddressGroupLine(maps, line);
+			}
+		}
+		return maps.values();
+	}
+
+	private Collection<DataMap<?>> createGroupedDataMaps()
 	{
 		Map<String, DataMap<?>> maps = new HashMap<String, DataMap<?>>();
 		if (this.addressGroupMembers != null)
@@ -569,7 +607,7 @@ public class AddressListDialog extends TitleAreaDialog
 		setCurrentUser();
 		extractAddressGroupMembers();
 		final DataMapKey[] keys = getKeys();
-		final DataMap<?>[] dataMaps = createDataMaps().toArray(new DataMap[0]);
+		dataMaps = createDataMaps().toArray(new DataMap[0]);
 		Arrays.sort(dataMaps, new Comparator<DataMap<?>>()
 		{
 			@Override
