@@ -21,8 +21,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -272,7 +272,7 @@ public class BookingConfirmationDialog extends TitleAreaDialog
 		documentSelector = new Button(composite, SWT.PUSH);
 		documentSelector.setText("...");
 		documentSelector.setLayoutData(new GridData());
-		documentSelector.addSelectionListener(new SelectionAdapter()
+		documentSelector.addSelectionListener(new SelectionListener()
 		{
 			@Override
 			public void widgetSelected(final SelectionEvent e)
@@ -294,6 +294,12 @@ public class BookingConfirmationDialog extends TitleAreaDialog
 					userPropertyTemplatePath.setValue(file.getAbsolutePath());
 				}
 				BookingConfirmationDialog.this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e)
+			{
+				widgetSelected(e);
 			}
 		});
 

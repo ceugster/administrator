@@ -138,7 +138,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 						text.appendChild(clonedStylableElement);
 						stylableElement = OdfElement.findNextChildNode(OdfStylableElement.class, stylableElement);
 					}
-					document.addPageBreak();
+//					document.addPageBreak();
 					monitor.worked(1);
 				}
 
