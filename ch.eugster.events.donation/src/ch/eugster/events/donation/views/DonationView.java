@@ -529,8 +529,12 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 							domainViewer.setSelection(new StructuredSelection(new Domain[] { domain }));
 						}
 						yearViewer.setInput(connectionService);
-						DonationYear year = new DonationYear(GregorianCalendar.getInstance().get(Calendar.YEAR));
-						yearViewer.setSelection(new StructuredSelection(new DonationYear[] { year }));
+						if (yearViewer.getCombo().getItemCount() > 0)
+						{
+							DonationYear year = (DonationYear) yearViewer.getElementAt(0);
+							yearViewer.setSelection(new StructuredSelection(new DonationYear[] { year }));
+						}
+						printConfirmation.setEnabled(!yearViewer.getSelection().isEmpty());
 						packColumns();
 						return Status.OK_STATUS;
 					}
