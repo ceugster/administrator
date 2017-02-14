@@ -19,6 +19,14 @@ public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 
 	public AddressGroupMemberMap(final AddressGroupMember member, boolean isGroup)
 	{
+//		if (member.isValidLinkMember() && member.getLink().getPerson().getLastname().equals("Amsler") && member.getLink().getPerson().getFirstname().equals("Ursula"))
+//		{
+//			System.out.println();
+//		}
+//		if (member.isValidAddressMember() && member.getAddress().getAddress().equals("Platz 10") && member.getAddress().getCity().equals("Herisau"))
+//		{
+//			System.out.println();
+//		}
 		isGroup = isGroup(member, isGroup);
 		for (Key key : Key.values())
 		{
@@ -27,14 +35,14 @@ public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 		this.setProperties(new AddressGroupMap(member.getAddressGroup()).getProperties());
 		if (member.isValidAddressMember())
 		{
-			if (member.getAddress().getValidLinks().size() == 1)
-			{
-				this.setProperties(new LinkMap(member.getAddress().getValidLinks().iterator().next()).getProperties());
-			}
-			else
-			{
+//			if (member.getAddress().getValidLinks().size() == 1)
+//			{
+//				this.setProperties(new LinkMap(member.getAddress().getValidLinks().iterator().next()).getProperties());
+//			}
+//			else
+//			{
 				this.setProperties(new AddressMap(member.getAddress(), isGroup).getProperties());
-			}
+//			}
 		}
 		else if (isGroup && member.isValidLinkMember() && member.getLink().getAddress().getValidLinks().size() > 1)
 		{
@@ -261,21 +269,21 @@ public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 					String polite = null;
 					if (member.isValidAddressMember())
 					{
-						if (member.getAddress().getValidLinks().size() == 1)
-						{
-							Person person = member.getAddress().getValidLinks().iterator().next().getPerson();
-							polite = person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
-									.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
-						}
-						else
-						{
+//						if (member.getAddress().getValidLinks().size() == 1)
+//						{
+//							Person person = member.getAddress().getValidLinks().iterator().next().getPerson();
+//							polite = person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
+//									.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
+//						}
+//						else
+//						{
 							AddressSalutation salutation = member.getAddress().getSalutation();
 							polite = salutation == null ? "" : salutation.getPolite();
 							if (polite.isEmpty())
 							{
 								polite = "Sehr geehrte Damen und Herren";
 							}
-						}
+//						}
 					}
 					else if (member.isValidLinkMember())
 					{
