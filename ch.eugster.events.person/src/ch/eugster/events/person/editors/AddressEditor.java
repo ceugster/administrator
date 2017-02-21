@@ -481,24 +481,11 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 			@Override
 			public void focusLost(final FocusEvent e)
 			{
-				Text address = (Text) e.getSource();
-				String value = address.getText();
-				if (value.toLowerCase().trim().endsWith("str."))
-				{
-					value = value.substring(0, value.length() - "str.".length());
-					if (value.endsWith(" "))
-						value = value.concat("Strasse");
-					else
-						value = value.concat("strasse");
-				}
-				else if (value.toLowerCase().indexOf("strasse ") < value.length() - "strasse ".length())
-				{
-					value = value.replace("trasse ", "tr. ");
-				}
-				if (!address.getText().equals(value))
+				String street = PersonSettings.getInstance().updateStreet(address.getText());
+				if (!address.getText().equals(street))
 				{
 					setDirty(true);
-					address.setText(value);
+					address.setText(street);
 				}
 			}
 

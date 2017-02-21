@@ -716,24 +716,11 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			@Override
 			public void focusLost(final FocusEvent e)
 			{
-				Text address = (Text) e.getSource();
-				String value = address.getText();
-				if (value.toLowerCase().trim().endsWith("str."))
-				{
-					value = value.substring(0, value.length() - "str.".length());
-					if (value.endsWith(" "))
-						value = value.concat("Strasse");
-					else
-						value = value.concat("strasse");
-				}
-				else if (value.toLowerCase().indexOf("strasse ") < value.length() - "strasse ".length())
-				{
-					value = value.replace("trasse ", "tr. ");
-				}
-				if (!address.getText().equals(value))
+				String street = PersonSettings.getInstance().updateStreet(address.getText());
+				if (!address.getText().equals(street))
 				{
 					setDirty(true);
-					address.setText(value);
+					address.setText(street);
 				}
 			}
 
@@ -1915,12 +1902,12 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	{
 		if (this.originalAddress != null && this.originalAddress.getId() != null && !this.originalAddress.getId().equals(this.getLink().getAddress().getId()))
 		{
-			if (!this.originalAddress.isDeleted() && this.originalAddress.getValidLinks().size() == 1 && this.originalAddress.getValidLinks().get(0).getId().equals(this.getLink().getId()))
+			this.originalAddress.removeLink(this.getLink());
+			if (this.originalAddress.getValidLinks().size() == 0)
 			{
-				this.originalAddress.removeLink(this.getLink());
 				this.originalAddress.setDeleted(true);
-				this.getLink().getAddress().addLink(getLink());
 			}
+			this.getLink().getAddress().addLink(getLink());
 		}
 
 		saveAddressValues();

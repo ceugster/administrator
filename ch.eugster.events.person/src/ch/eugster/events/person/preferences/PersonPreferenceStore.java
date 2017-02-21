@@ -39,6 +39,8 @@ public class PersonPreferenceStore extends ScopedPreferenceStore
 				Integer.toString(PersonSettings.getInstance().getCriteriaMinLength()));
 		this.setValue(PreferenceInitializer.KEY_MAX_RECORDS,
 				Integer.toString(PersonSettings.getInstance().getMaxRecordListed()));
+		this.setValue(PreferenceInitializer.KEY_STREET_ABBREVIATION,
+				PersonSettings.getInstance().getStreetAbbreviation());
 	}
 
 	@Override
@@ -65,6 +67,8 @@ public class PersonPreferenceStore extends ScopedPreferenceStore
 					this.getInt(PreferenceInitializer.KEY_CRITERIA_MIN_LENGTH));
 			PersonSettings.getInstance().setMaxRecordsListed(
 					this.getInt(PreferenceInitializer.KEY_MAX_RECORDS));
+			PersonSettings.getInstance().setStreetAbbreviation(
+					this.getString(PreferenceInitializer.KEY_STREET_ABBREVIATION));
 			try
 			{
 				ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),

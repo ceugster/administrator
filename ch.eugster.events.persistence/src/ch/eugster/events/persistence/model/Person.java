@@ -231,14 +231,13 @@ public class Person extends AbstractEntity
 
 	public Date getBirthday()
 	{
-		Long birthdate = getBirthdate();
-		if (birthdate == null)
+		if (this.birthdate == null)
 		{
 			return null;
 		}
 
 		Calendar calendar = Calendar.getInstance();
-		long birth = birthdate.longValue();
+		long birth = this.birthdate.longValue();
 		int year = calendar.get(Calendar.YEAR);
 		if (birth < 1900 || year < birth)
 		{

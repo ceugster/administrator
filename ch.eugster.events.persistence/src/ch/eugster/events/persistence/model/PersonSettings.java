@@ -88,6 +88,10 @@ public class PersonSettings extends AbstractEntity
 	@Column(name = "person_settings_max_records_listed")
 	private int maxRecordsListed;
 
+	@Basic
+	@Column(name = "person_settings_street_abbreviation")
+	private String streetAbbreviation;
+			
 	@Override
 	public Object clone()
 	{
@@ -214,10 +218,43 @@ public class PersonSettings extends AbstractEntity
 
 	public void setMaxRecordsListed(final int maxRecordsListed)
 	{
-		this.propertyChangeSupport.firePropertyChange("maxRecordsListed", this.maxRecordsListed,
-				this.maxRecordsListed = maxRecordsListed);
+	}
+	
+	public void setStreetAbbreviation(String streetAbbreviation)
+	{
+		this.propertyChangeSupport.firePropertyChange("streetAbbreviation", this.streetAbbreviation,
+						this.streetAbbreviation = streetAbbreviation);
+	}
+	
+	public String getStreetAbbreviation()
+	{
+		return stringValueOf(this.streetAbbreviation);
 	}
 
+	public String updateStreet(String value)
+	{
+		if (value.toLowerCase().trim().endsWith("str."))
+		{
+			value = value.substring(0, value.length() - "str.".length());
+			if (value.endsWith(" "))
+				value = value.concat("Strasse");
+			else
+				value = value.concat("strasse");
+		}
+		if (getStreetAbbreviation().isEmpty())
+		{
+			return value;
+		}
+		else
+		{
+			if (value.toLowerCase().indexOf("strasse ") < value.length() - "strasse ".length())
+			{
+				value = value.replace("trasse ", "tr. ");
+			}
+		}
+		return value;
+	}
+	
 	public static PersonSettings getInstance()
 	{
 		if (PersonSettings.instance == null)
