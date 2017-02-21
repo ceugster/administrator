@@ -70,7 +70,7 @@ public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 				{
 					return true;
 				}
-				else if (m.isValidLinkMember() && m.getLink().getAddress().getId().equals(member.getLink().getAddress().getId()))
+				else if (m.isValidLinkMember() && !m.getLink().getId().equals(member.getLink().getId()) && m.getLink().getAddress().getId().equals(member.getLink().getAddress().getId()))
 				{
 					return true;
 				}

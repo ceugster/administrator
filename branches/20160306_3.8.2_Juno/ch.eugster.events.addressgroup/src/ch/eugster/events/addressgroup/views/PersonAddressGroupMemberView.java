@@ -50,7 +50,6 @@ import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
-import ch.eugster.events.persistence.queries.AddressGroupCategoryQuery;
 import ch.eugster.events.persistence.queries.AddressGroupMemberQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.person.views.PersonView;
@@ -76,52 +75,62 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 	private void checkParents()
 	{
 		this.addressGroupViewer.expandAll();
-		TreeItem[] items = this.addressGroupViewer.getTree().getItems();
-		for (TreeItem item : items)
+		TreeItem[] domainItems = this.addressGroupViewer.getTree().getItems();
+		for (TreeItem domainItem : domainItems)
 		{
-			Object element = item.getData();
+			Object element = domainItem.getData();
 			if (element instanceof Domain)
 			{
-				this.addressGroupViewer.setSubtreeChecked(element, false);
-				ConnectionService service = (ConnectionService) connectionServiceTracker.getService();
-				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) service.getQuery(AddressGroupCategory.class);
-				List<AddressGroupCategory> categories = query.selectValidsByDomain((Domain)element);
+				Domain domain = (Domain) element;
+				this.addressGroupViewer.setSubtreeChecked(domain, false);
+
 				int checkedCategories = 0;
 				int grayCheckedCategories = 0;
-				for (AddressGroupCategory category : categories)
+				TreeItem[] categoryItems = domainItem.getItems();
+				for (TreeItem categoryItem : categoryItems)
 				{
-					List<AddressGroup> addressGroups = category.getValidAddressGroups();
-					int checked = 0;
-					for (AddressGroup addressGroup : addressGroups)
+					element = categoryItem.getData();
+					if (element instanceof AddressGroupCategory)
 					{
-						Monitor monitor = this.monitors.get(addressGroup.getId());
-						if (monitor != null && monitor.isValid())
+						AddressGroupCategory category = (AddressGroupCategory) element;
+						int checked = 0;
+						TreeItem[] addressGroupItems = categoryItem.getItems();
+						for (TreeItem addressGroupItem : addressGroupItems)
 						{
-							if (monitor.checked)
+							element = addressGroupItem.getData();
+							if (element instanceof AddressGroup)
 							{
-								checked++;
+								AddressGroup addressGroup = (AddressGroup) element;
+								Monitor monitor = this.monitors.get(addressGroup.getId());
+								if (monitor != null && monitor.isValid())
+								{
+									if (monitor.checked)
+									{
+										checked++;
+									}
+								}
+								this.addressGroupViewer.setChecked(addressGroup, monitor != null &&  monitor.isValid() && monitor.checked);
 							}
 						}
-						this.addressGroupViewer.setChecked(addressGroup, monitor != null &&  monitor.isValid() && monitor.checked);
-					}
-					if (checked == addressGroups.size())
-					{
-						checkedCategories++;
-						this.addressGroupViewer.setChecked(category, true);
-					}
-					else if (checked > 0)
-					{
-						grayCheckedCategories++;
-						this.addressGroupViewer.setGrayChecked(category, true);
+						if (checked == addressGroupItems.length)
+						{
+							checkedCategories++;
+							this.addressGroupViewer.setChecked(category, true);
+						}
+						else if (checked > 0)
+						{
+							grayCheckedCategories++;
+							this.addressGroupViewer.setGrayChecked(category, true);
+						}
 					}
 				}
-				if (checkedCategories > 0 && checkedCategories == categories.size())
+				if (checkedCategories > 0 && checkedCategories == categoryItems.length)
 				{
-					this.addressGroupViewer.setChecked(element, true);
+					this.addressGroupViewer.setChecked(domain, true);
 				}
 				else if (grayCheckedCategories > 0)
 				{
-					this.addressGroupViewer.setGrayChecked(element, true);
+					this.addressGroupViewer.setGrayChecked(domain, true);
 				}
 			}
 		}
@@ -182,7 +191,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setLayout(new GridLayout());
+		composite.setLayout(gridLayout);
 
 		final Tree tree = new Tree(composite, SWT.BORDER | SWT.SINGLE | SWT.CHECK | SWT.HIDE_SELECTION);
 		tree.setHeaderVisible(false);
@@ -407,16 +416,15 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		ConnectionService service = (ConnectionService) connectionServiceTracker.getService();
 		if (service != null)
 		{
+			AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
 			if (this.parent instanceof LinkPersonAddress)
 			{
 				LinkPersonAddress link = (LinkPersonAddress) this.parent;
-				AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
 				members = query.selectByLink(link);
 			}
 			else if (this.parent instanceof Address)
 			{
 				Address address = (Address) this.parent;
-				AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
 				members = query.selectByAddress(address);
 			}
 		}
@@ -569,6 +577,10 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 							AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
 									.getQuery(AddressGroupMember.class);
 							member = query.merge(member);
+							if (!member.getAddressGroup().getAddressGroupMembers().contains(member)) 
+							{
+								member.getAddressGroup().addAddressGroupMember(member);
+							}
 							this.current.put(addressGroupId, member);
 							service.refresh(this.parent);
 							monitor.addressGroupMember = member;

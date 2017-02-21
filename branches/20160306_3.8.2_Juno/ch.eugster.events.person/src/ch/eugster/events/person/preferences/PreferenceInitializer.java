@@ -18,6 +18,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 
 	public static final String KEY_ADDRESS_LABEL_FORMAT = "address.label.format";
 
+	public static final String KEY_STREET_ABBREVIATION = "street.abbreviation";
+	
 	public static final String KEY_DOMAIN_MANDATORY = "person.domain.mandatory";
 
 	public static final String KEY_USE_DOMAIN = "person.use.domain";
@@ -66,6 +68,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 		prefs.put(KEY_EDITOR_SECTION_BEHAVIOUR, EDITOR_SECTION_BEHAVIOUR_EDITOR);
 		prefs.put(KEY_EDITOR_SELECTOR, EditorSelector.SINGLE_PAGE_EDITOR.value());
 		prefs.put(KEY_EDITOR_ADD_BLANK_AFTER_DOT_IN_CITY, "0");
+		prefs.put(KEY_STREET_ABBREVIATION, "str.");
 	}
 
 }

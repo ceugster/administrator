@@ -8,14 +8,10 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -29,7 +25,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -49,9 +44,6 @@ import ch.eugster.events.addressgroup.dnd.AddressGroupTransfer;
 import ch.eugster.events.addressgroup.dnd.AddressGroupViewerDropAdapter;
 import ch.eugster.events.addressgroup.editors.AddressGroupEditor;
 import ch.eugster.events.addressgroup.editors.AddressGroupEditorInput;
-import ch.eugster.events.domain.views.DomainContentProvider;
-import ch.eugster.events.domain.views.DomainLabelProvider;
-import ch.eugster.events.domain.views.DomainSorter;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.model.AbstractEntity;
@@ -59,9 +51,6 @@ import ch.eugster.events.persistence.model.AddressGroup;
 import ch.eugster.events.persistence.model.AddressGroupCategory;
 import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.Domain;
-import ch.eugster.events.persistence.model.PersonSettings;
-import ch.eugster.events.persistence.model.User;
-import ch.eugster.events.persistence.queries.DomainQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.dnd.CourseTransfer;
 import ch.eugster.events.ui.dnd.EntityTransfer;
@@ -77,10 +66,6 @@ public class AddressGroupView extends AbstractEntityView implements IDoubleClick
 	
 	private Button clearFilterExpression;
 	
-	private ComboViewer domainViewer;
-
-	private Domain singleDomain;
-
 	private TreeViewer addressGroupViewer;
 
 	private IContextActivation ctxActivation;
@@ -92,7 +77,6 @@ public class AddressGroupView extends AbstractEntityView implements IDoubleClick
 		EntityMediator.addListener(Domain.class, this);
 		EntityMediator.addListener(AddressGroupCategory.class, this);
 		EntityMediator.addListener(AddressGroup.class, this);
-		// EntityMediator.addListener(AddressGroupLink.class, this);
 		EntityMediator.addListener(AddressGroupMember.class, this);
 		
 		settings = Activator.getDefault().getDialogSettings().getSection("addressgroup.view");
@@ -149,37 +133,6 @@ public class AddressGroupView extends AbstractEntityView implements IDoubleClick
 		ctxActivation = ctxService.activateContext("ch.eugster.events.addressgroup.context");
 
 		parent.setLayout(new GridLayout(3, false));
-
-		if (PersonSettings.getInstance() != null && PersonSettings.getInstance().getPersonHasDomain())
-		{
-			GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-			gridData.horizontalSpan = 3;
-
-			Combo combo = new Combo(parent, SWT.READ_ONLY | SWT.DROP_DOWN);
-			combo.setLayoutData(gridData);
-
-			this.domainViewer = new ComboViewer(combo);
-			this.domainViewer.setContentProvider(new DomainContentProvider());
-			this.domainViewer.setLabelProvider(new DomainLabelProvider());
-			this.domainViewer.setSorter(new DomainSorter());
-			this.domainViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
-			this.domainViewer.addSelectionChangedListener(new ISelectionChangedListener()
-			{
-				@Override
-				public void selectionChanged(final SelectionChangedEvent event)
-				{
-					StructuredSelection ssel = (StructuredSelection) event.getSelection();
-					if (ssel.isEmpty())
-					{
-						AddressGroupView.this.addressGroupViewer.setInput(null);
-					}
-					else
-					{
-						AddressGroupView.this.addressGroupViewer.setInput(ssel.getFirstElement());
-					}
-				}
-			});
-		}
 
 		Label label = new Label(parent, SWT.None);
 		label.setLayoutData(new GridData());
@@ -260,24 +213,25 @@ public class AddressGroupView extends AbstractEntityView implements IDoubleClick
 					@Override
 					public void run()
 					{
-						if (domainViewer == null)
-						{
-							DomainQuery query = (DomainQuery) connectionService.getQuery(Domain.class);
-							Domain[] domains = query.selectAll().toArray(new Domain[0]);
-							if (domains.length > 0)
-							{
-								AddressGroupView.this.singleDomain = domains[0];
-								AddressGroupView.this.addressGroupViewer.setInput(singleDomain);
-							}
-						}
-						else
-						{
-							domainViewer.setInput(connectionService);
-							if (User.getCurrent().getDomain() != null)
-							{
-								domainViewer.setSelection(new StructuredSelection(User.getCurrent().getDomain()));
-							}
-						}
+//						if (domainViewer == null)
+//						{
+//							DomainQuery query = (DomainQuery) connectionService.getQuery(Domain.class);
+//							Domain[] domains = query.selectAll().toArray(new Domain[0]);
+//							if (domains.length > 0)
+//							{
+//								AddressGroupView.this.singleDomain = domains[0];
+//								AddressGroupView.this.addressGroupViewer.setInput(singleDomain);
+//							}
+//						}
+//						else
+//						{
+//							domainViewer.setInput(connectionService);
+//							if (User.getCurrent().getDomain() != null)
+//							{
+//								domainViewer.setSelection(new StructuredSelection(User.getCurrent().getDomain()));
+//							}
+//						}
+						AddressGroupView.this.addressGroupViewer.setInput(connectionService);
 					}
 				});
 				return connectionService;
@@ -286,21 +240,21 @@ public class AddressGroupView extends AbstractEntityView implements IDoubleClick
 			@Override
 			public void removedService(final ServiceReference<ConnectionService> reference, final ConnectionService service)
 			{
-				if (domainViewer == null)
-				{
-					AddressGroupView.this.singleDomain = null;
-					if (AddressGroupView.this.addressGroupViewer.getContentProvider() != null)
-					{
-						AddressGroupView.this.addressGroupViewer.setInput(singleDomain);
-					}
-				}
-				else
-				{
-					if (domainViewer.getContentProvider() != null)
-					{
-						domainViewer.setInput(null);
-					}
-				}
+//				if (domainViewer == null)
+//				{
+//					AddressGroupView.this.singleDomain = null;
+//					if (AddressGroupView.this.addressGroupViewer.getContentProvider() != null)
+//					{
+//						AddressGroupView.this.addressGroupViewer.setInput(singleDomain);
+//					}
+//				}
+//				else
+//				{
+//					if (domainViewer.getContentProvider() != null)
+//					{
+//						domainViewer.setInput(null);
+//					}
+//				}
 				super.removedService(reference, service);
 			}
 
@@ -352,125 +306,44 @@ public class AddressGroupView extends AbstractEntityView implements IDoubleClick
 		return this.addressGroupViewer;
 	}
 
-	private boolean isVisible(final Domain domain, final AddressGroupCategory category)
-	{
-		if (category.getDomain() == null)
-		{
-			if (domain instanceof Domain)
-			{
-				if (category.getDomain().getId().equals(domain.getId()))
-				{
-					return true;
-				}
-			}
-		}
-		else
-		{
-			if (domain instanceof Domain)
-			{
-				if (category.getDomain().getId().equals(domain.getId()))
-				{
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 	@Override
 	public void postDelete(final AbstractEntity entity)
 	{
-		if (entity instanceof AddressGroupCategory)
-		{
-			refreshViewer();
-		}
-		else if (entity instanceof AddressGroup)
-		{
-			refreshViewer();
-		}
+		refreshViewer();
 	}
 
 	@Override
 	public void postPersist(final AbstractEntity entity)
 	{
-		Domain domain = (Domain) addressGroupViewer.getInput();
-		if (entity instanceof AddressGroupCategory)
+		UIJob job = new UIJob("Aktualisiere Sicht...")
 		{
-			AddressGroupCategory category = (AddressGroupCategory) entity;
-			if (category.getDomain() == null)
+			@Override
+			public IStatus runInUIThread(final IProgressMonitor monitor)
 			{
-				if (domain instanceof Domain)
+				if (entity instanceof Domain)
 				{
-					if (category.getDomain().getId().equals(domain.getId()))
-					{
-						refreshViewer();
-					}
+					AddressGroupView.this.addressGroupViewer.add(null, entity);
 				}
-			}
-			else
-			{
-				if (domain instanceof Domain)
+				else if (entity instanceof AddressGroupCategory)
 				{
-					if (category.getDomain().getId().equals(domain.getId()))
-					{
-						refreshViewer();
-					}
+					AddressGroupCategory category = (AddressGroupCategory) entity;
+					AddressGroupView.this.addressGroupViewer.add(category.getDomain(), category);
 				}
-			}
-		}
-		else if (entity instanceof AddressGroup)
-		{
-			AddressGroup addressGroup = (AddressGroup) entity;
-			if (addressGroup.getAddressGroupCategory().getDomain() == null)
-			{
-				if (domain instanceof Domain)
+				else if (entity instanceof AddressGroup)
 				{
-					if (addressGroup.getAddressGroupCategory().getDomain().getId().equals(domain.getId()))
-					{
-						refreshViewer();
-					}
+					AddressGroup group = (AddressGroup) entity;
+					AddressGroupView.this.addressGroupViewer.add(group.getAddressGroupCategory(), group);
 				}
+				return Status.OK_STATUS;
 			}
-			else
-			{
-				if (domain instanceof Domain)
-				{
-					if (addressGroup.getAddressGroupCategory().getDomain().getId().equals(domain.getId()))
-					{
-						refreshViewer();
-					}
-				}
-			}
-		}
+		};
+		job.schedule();
 	}
 
 	@Override
 	public void postUpdate(final AbstractEntity entity)
 	{
-		Domain domain = (Domain) addressGroupViewer.getInput();
-		if (entity instanceof Domain)
-		{
-			if (domainViewer != null)
-			{
-				this.domainViewer.refresh(entity);
-			}
-		}
-		else if (entity instanceof AddressGroupCategory)
-		{
-			AddressGroupCategory category = (AddressGroupCategory) entity;
-			if (isVisible(domain, category))
-			{
-				refreshViewer(category);
-			}
-		}
-		else if (entity instanceof AddressGroup)
-		{
-			AddressGroup addressGroup = (AddressGroup) entity;
-			if (isVisible(domain, addressGroup.getAddressGroupCategory()))
-			{
-				refreshViewer(addressGroup);
-			}
-		}
+		this.refreshViewer(entity);
 	}
 
 	private void refreshViewer()

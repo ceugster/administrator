@@ -411,7 +411,14 @@ public class Address extends AbstractEntity implements Donator
 
 	public void removeLink(final LinkPersonAddress link)
 	{
-		this.propertyChangeSupport.firePropertyChange("links", this.links, this.links.remove(link));
+		LinkPersonAddress[] links = this.links.toArray(new LinkPersonAddress[0]);
+		for (LinkPersonAddress linkInList : links)
+		{
+			if (linkInList.getId() != null && link.getId() != null && linkInList.getId().equals(link.getId()))
+			{
+				this.propertyChangeSupport.firePropertyChange("links", this.links, this.links.remove(link));
+			}
+		}
 	}
 
 	public void removeDonation(final Donation donation)
