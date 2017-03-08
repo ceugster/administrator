@@ -149,10 +149,14 @@ public class ImportMemberSelectSourceFileWizardPage extends WizardPage implement
 		this.silentInsertIfSingleResult.setText("Wenn die Suche eine einzige Person/Adresse ergibt, die noch nicht Mitglied ist, automatisch als Mitglied setzen");
 		this.silentInsertIfSingleResult.setLayoutData(gridData);
 		
-		File file = new File(getWizard().getDialogSettings().get("file.path"));
-		if (file.isFile())
+		String path = getWizard().getDialogSettings().get("file.path");
+		if (path != null && !path.isEmpty())
 		{
-			this.initializeWorkbook(file);
+			File file = new File(path);
+			if (file.isFile())
+			{
+				this.initializeWorkbook(file);
+			}
 		}
 		
 		this.setControl(composite);
