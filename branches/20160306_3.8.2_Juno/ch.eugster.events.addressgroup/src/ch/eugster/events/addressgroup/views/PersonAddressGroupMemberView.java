@@ -542,65 +542,73 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 
 	public void updateAddressGroupMembers()
 	{
-		Long[] addressGroupIds = this.monitors.keySet().toArray(new Long[0]);
-		for (Long addressGroupId : addressGroupIds)
+		this.addressGroupViewer.getTree().setEnabled(false);
+		try
 		{
-			ConnectionService service = (ConnectionService) connectionServiceTracker.getService();
-			if (service != null)
+			Long[] addressGroupIds = this.monitors.keySet().toArray(new Long[0]);
+			for (Long addressGroupId : addressGroupIds)
 			{
-				AddressGroupMember member = this.current.get(addressGroupId);
-				Monitor monitor = this.monitors.get(addressGroupId);
-				if (member == null)
+				ConnectionService service = (ConnectionService) connectionServiceTracker.getService();
+				if (service != null)
 				{
-					if (monitor.checked)
+					AddressGroupMember member = this.current.get(addressGroupId);
+					Monitor monitor = this.monitors.get(addressGroupId);
+					if (member == null)
 					{
-						if (parent instanceof LinkPersonAddress)
+						if (monitor.checked)
 						{
-							member = getMember(monitor.addressGroup, (LinkPersonAddress) parent);
-							if (member == null)
+							if (parent instanceof LinkPersonAddress)
 							{
-								member = AddressGroupMember.newInstance(monitor.addressGroup,
-										(LinkPersonAddress) this.parent);
+								member = getMember(monitor.addressGroup, (LinkPersonAddress) parent);
+								if (member == null)
+								{
+									member = AddressGroupMember.newInstance(monitor.addressGroup,
+											(LinkPersonAddress) this.parent);
+								}
 							}
-						}
-						else if (this.parent instanceof Address)
-						{
-							member = getMember(monitor.addressGroup, (Address) this.parent);
-							if (member == null)
+							else if (this.parent instanceof Address)
 							{
-								member = AddressGroupMember.newInstance(monitor.addressGroup, (Address) this.parent);
+								member = getMember(monitor.addressGroup, (Address) this.parent);
+								if (member == null)
+								{
+									member = AddressGroupMember.newInstance(monitor.addressGroup, (Address) this.parent);
+								}
 							}
-						}
-						if (member != null)
-						{
-							member.setDeleted(false);
-							AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
-									.getQuery(AddressGroupMember.class);
-							member = query.merge(member);
-							if (!member.getAddressGroup().getAddressGroupMembers().contains(member)) 
+							if (member != null)
 							{
-								member.getAddressGroup().addAddressGroupMember(member);
+								member.setDeleted(false);
+								AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
+										.getQuery(AddressGroupMember.class);
+								member = query.merge(member);
+								if (!member.getAddressGroup().getAddressGroupMembers().contains(member)) 
+								{
+									member.getAddressGroup().addAddressGroupMember(member);
+								}
+								this.current.put(addressGroupId, member);
+								service.refresh(this.parent);
+								monitor.addressGroupMember = member;
 							}
-							this.current.put(addressGroupId, member);
-							service.refresh(this.parent);
-							monitor.addressGroupMember = member;
 						}
 					}
-				}
-				else
-				{
-					if (monitor.checked == member.isDeleted())
+					else
 					{
-						member.setDeleted(!monitor.checked);
-						AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
-								.getQuery(AddressGroupMember.class);
-						this.current.put(addressGroupId, query.merge(member));
-						service.refresh(this.parent);
+						if (monitor.checked == member.isDeleted())
+						{
+							member.setDeleted(!monitor.checked);
+							AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
+									.getQuery(AddressGroupMember.class);
+							this.current.put(addressGroupId, query.merge(member));
+							service.refresh(this.parent);
+						}
 					}
 				}
 			}
 		}
-		this.setDirty(false);
+		finally
+		{
+			this.addressGroupViewer.getTree().setEnabled(true);
+			this.setDirty(false);
+		}
 	}
 
 	private String updateMonitor(final AddressGroup addressGroup, final boolean checked)

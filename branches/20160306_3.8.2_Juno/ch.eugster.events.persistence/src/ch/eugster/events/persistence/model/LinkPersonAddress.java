@@ -246,7 +246,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 	
 	public boolean isValid()
 	{
-		return !this.isDeleted() && !this.getPerson().isDeleted() && !this.getAddress().isDeleted();
+		return !this.isDeleted() && !this.getPerson().isDeleted();
 	}
 	
 	public String getEmail()
