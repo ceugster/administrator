@@ -26,7 +26,7 @@ public class Monitor
 	
 	public boolean isValid()
 	{
-		return this.addressGroupMember != null && this.addressGroupMember.isValid();
+		return this.addressGroupMember != null && !this.addressGroupMember.isDeleted();
 				
 	}
 }
