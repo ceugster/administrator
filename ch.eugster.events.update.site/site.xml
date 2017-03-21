@@ -387,6 +387,12 @@
    <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201703082044.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201703082044">
       <category name="persistence"/>
    </feature>
+   <feature url="features/ch.eugster.events.persistence.feature_1.0.0.201703211854.jar" id="ch.eugster.events.persistence.feature" version="1.0.0.201703211854">
+      <category name="persistence"/>
+   </feature>
+   <feature url="features/ch.eugster.events.person.feature_1.0.0.201703211854.jar" id="ch.eugster.events.person.feature" version="1.0.0.201703211854">
+      <category name="person"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>

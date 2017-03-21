@@ -186,30 +186,30 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void update(final ViewerCell cell)
 			{
-				boolean deleted = false;
+				boolean valid = false;
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
 					cell.setText(ViewerColumn.CODE.value(person));
 					cell.setImage(Activator.getDefault().getImageRegistry().get(person.getDefaultLink().getValidMembers().size() == 0 ? Activator.KEY_PERSON_BLUE : Activator.KEY_PERSON_BLUE_WITH_STAR));
-					deleted = person.isDeleted();
+					valid = person.isValid();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
 					cell.setText(ViewerColumn.CODE.value(link));
 					cell.setImage(Activator.getDefault().getImageRegistry().get(link.getValidMembers().size() == 0 ? Activator.KEY_PERSON_BLUE : Activator.KEY_PERSON_BLUE_WITH_STAR));
-					deleted = link.isDeleted();
+					valid = link.isValid();
 				}
 				else if (object instanceof Address)
 				{
 					Address address = (Address) object;
 					cell.setText(ViewerColumn.CODE.value(address));
 					cell.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_ADDRESS_MAIN));
-					deleted = address.isDeleted();
+					valid = address.isValid();
 				}
-				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+				cell.setBackground(valid ? Display.getCurrent().getSystemColor(SWT.COLOR_WHITE) : deletedColor);
 			}
 		});
 		TreeColumn treeColumn = treeViewerColumn.getColumn();
@@ -240,28 +240,28 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void update(final ViewerCell cell)
 			{
-				boolean deleted = false;
+				boolean valid = false;
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
 					cell.setText(ViewerColumn.LASTNAME.value(person));
-					deleted = person.isDeleted();
+					valid = person.isValid();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
 					cell.setText(ViewerColumn.LASTNAME.value(link));
-					deleted = link.isDeleted();
+					valid = link.isValid();
 				}
 				else if (object instanceof Address)
 				{
 					Address address = (Address) object;
 					cell.setText(ViewerColumn.LASTNAME.value(address));
-					deleted = address.isDeleted();
+					valid = address.isValid();
 				}
 				cell.setImage(null);
-				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+				cell.setBackground(valid ? Display.getCurrent().getSystemColor(SWT.COLOR_WHITE) : deletedColor);
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
@@ -292,28 +292,28 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void update(final ViewerCell cell)
 			{
-				boolean deleted = false;
+				boolean valid = false;
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
 					cell.setText(ViewerColumn.FIRSTNAME.value(person));
-					deleted = person.isDeleted();
+					valid = person.isValid();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
 					cell.setText(ViewerColumn.FIRSTNAME.value(link));
-					deleted = link.isDeleted();
+					valid = link.isValid();
 				}
 				else if (object instanceof Address)
 				{
 					Address address = (Address) object;
 					cell.setText("");
-					deleted = address.isDeleted();
+					valid = address.isValid();
 				}
 				cell.setImage(null);
-				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+				cell.setBackground(valid ? Display.getCurrent().getSystemColor(SWT.COLOR_WHITE) : deletedColor);
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
@@ -344,7 +344,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void update(final ViewerCell cell)
 			{
-				boolean deleted = false;
+				boolean valid = false;
 				Address address = null;
 				Image image = null;
 				Object object = cell.getElement();
@@ -353,24 +353,24 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					Person person = (Person) object;
 					cell.setText(ViewerColumn.ADDRESS_ID.value(person));
 					image = person.getDefaultLink().getAddressType().getImage();
-					deleted = person.isDeleted();
+					valid = person.isValid();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
 					cell.setText(ViewerColumn.ADDRESS_ID.value(link));
 					image = link.getAddressType().getImage();
-					deleted = link.isDeleted();
+					valid = link.isValid();
 				}
 				else if (object instanceof Address)
 				{
 					address = (Address) object;
 					cell.setText(ViewerColumn.ADDRESS_ID.value(address));
 					image = Activator.getDefault().getImageRegistry().get(Activator.KEY_ADDRESS_MAIN);
-					deleted = address.isDeleted();
+					valid = address.isValid();
 				}
 				cell.setImage(image);
-				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+				cell.setBackground(valid ? Display.getCurrent().getSystemColor(SWT.COLOR_WHITE) : deletedColor);
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
@@ -401,28 +401,28 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void update(final ViewerCell cell)
 			{
-				boolean deleted = false;
+				boolean valid = false;
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
 					cell.setText(ViewerColumn.ORGANISATION.value(person));
-					deleted = person.isDeleted();
+					valid = person.isValid();
 				}
 				else if (object instanceof Address)
 				{
 					Address address = (Address) object;
 					cell.setText(ViewerColumn.ORGANISATION.value(address));
-					deleted = address.isDeleted();
+					valid = address.isValid();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
 					cell.setText(ViewerColumn.ORGANISATION.value(link));
-					deleted = link.isDeleted();
+					valid = link.isValid();
 				}
 				cell.setImage(null);
-				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+				cell.setBackground(valid ? Display.getCurrent().getSystemColor(SWT.COLOR_WHITE) : deletedColor);
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
@@ -453,28 +453,28 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void update(final ViewerCell cell)
 			{
-				boolean deleted = false;
+				boolean valid = false;
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
 					cell.setText(ViewerColumn.ADDRESS.value(person));
-					deleted = person.isDeleted();
+					valid = person.isValid();
 				}
 				else if (object instanceof Address)
 				{
 					Address address = (Address) object;
 					cell.setText(ViewerColumn.ADDRESS.value(address));
-					deleted = address.isDeleted();
+					valid = address.isValid();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
 					cell.setText(ViewerColumn.ADDRESS.value(link));
-					deleted = link.isDeleted();
+					valid = link.isValid();
 				}
 				cell.setImage(null);
-				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+				cell.setBackground(valid ? Display.getCurrent().getSystemColor(SWT.COLOR_WHITE) : deletedColor);
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
@@ -505,28 +505,28 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void update(final ViewerCell cell)
 			{
-				boolean deleted = false;
+				boolean valid = false;
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
 					cell.setText(ViewerColumn.CITY.value(person));
-					deleted = person.isDeleted();
+					valid = person.isValid();
 				}
 				else if (object instanceof Address)
 				{
 					Address address = (Address) object;
 					cell.setText(ViewerColumn.CITY.value(address));
-					deleted = address.isDeleted();
+					valid = address.isValid();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
 					cell.setText(ViewerColumn.CITY.value(link));
-					deleted = link.isDeleted();
+					valid = link.isValid();
 				}
 				cell.setImage(null);
-				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+				cell.setBackground(valid ? Display.getCurrent().getSystemColor(SWT.COLOR_WHITE) : deletedColor);
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
@@ -557,28 +557,28 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void update(final ViewerCell cell)
 			{
-				boolean deleted = false;
+				boolean valid = false;
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
 					cell.setText(ViewerColumn.PHONE.value(person));
-					deleted = person.isDeleted();
+					valid = person.isValid();
 				}
 				else if (object instanceof Address)
 				{
 					Address address = (Address) object;
 					cell.setText(ViewerColumn.PHONE.value(address));
-					deleted = address.isDeleted();
+					valid = address.isValid();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
 					cell.setText(ViewerColumn.PHONE.value(link));
-					deleted = link.isDeleted();
+					valid = link.isValid();
 				}
 				cell.setImage(null);
-				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+				cell.setBackground(valid ? Display.getCurrent().getSystemColor(SWT.COLOR_WHITE) : deletedColor);
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
@@ -609,28 +609,28 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void update(final ViewerCell cell)
 			{
-				boolean deleted = false;
+				boolean valid = false;
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
 					cell.setText(ViewerColumn.MOBILE.value(person));
-					deleted = person.isDeleted();
+					valid = person.isValid();
 				}
 				else if (object instanceof Address)
 				{
 					Address address = (Address) object;
 					cell.setText(ViewerColumn.MOBILE.value(address));
-					deleted = address.isDeleted();
+					valid = address.isValid();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
 					cell.setText(ViewerColumn.MOBILE.value(link));
-					deleted = link.isDeleted();
+					valid = link.isValid();
 				}
 				cell.setImage(null);
-				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+				cell.setBackground(valid ? Display.getCurrent().getSystemColor(SWT.COLOR_WHITE) : deletedColor);
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
@@ -661,28 +661,28 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void update(final ViewerCell cell)
 			{
-				boolean deleted = false;
+				boolean valid = false;
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
 					cell.setText(ViewerColumn.EMAIL.value(person));
-					deleted = person.isDeleted();
+					valid = person.isValid();
 				}
 				else if (object instanceof Address)
 				{
 					Address address = (Address) object;
 					cell.setText(ViewerColumn.EMAIL.value(address));
-					deleted = address.isDeleted();
+					valid = address.isValid();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
 					cell.setText(ViewerColumn.EMAIL.value(link));
-					deleted = link.isDeleted();
+					valid = link.isValid();
 				}
 				cell.setImage(null);
-				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+				cell.setBackground(valid ? Display.getCurrent().getSystemColor(SWT.COLOR_WHITE) : deletedColor);
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
@@ -713,28 +713,28 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void update(final ViewerCell cell)
 			{
-				boolean deleted = false;
+				boolean valid = false;
 				Object object = cell.getElement();
 				if (object instanceof Person)
 				{
 					Person person = (Person) object;
 					cell.setText(ViewerColumn.DOMAIN.value(person));
-					deleted = person.isDeleted();
+					valid = person.isValid();
 				}
 				else if (object instanceof Address)
 				{
 					Address address = (Address) object;
 					cell.setText(ViewerColumn.DOMAIN.value(address));
-					deleted = address.isDeleted();
+					valid = address.isValid();
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
 					LinkPersonAddress link = (LinkPersonAddress) object;
 					cell.setText(ViewerColumn.DOMAIN.value(link));
-					deleted = link.isDeleted();
+					valid = link.isValid();
 				}
 				cell.setImage(null);
-				cell.setBackground(deleted ? deletedColor : Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+				cell.setBackground(valid ? Display.getCurrent().getSystemColor(SWT.COLOR_WHITE) : deletedColor);
 			}
 		});
 		treeColumn = treeViewerColumn.getColumn();
@@ -914,16 +914,7 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 
 	private void editLink(final LinkPersonAddress link)
 	{
-		if (link.getPerson().isDeleted() || link.isDeleted())
-		{
-			String title = "Entfernte Person";
-			String message = "Eine entfernte Person kann nicht bearbeitet werden.";
-			Shell shell = this.getSite().getShell();
-			MessageDialog dialog = new MessageDialog(shell, title, null, message, MessageDialog.INFORMATION,
-					new String[] { "OK" }, 0);
-			dialog.open();
-		}
-		else
+		if (link.isValid())
 		{
 			for (EditorSelector editorSelector : EditorSelector.values())
 			{
@@ -941,6 +932,15 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 					}
 				}
 			}
+		}
+		else
+		{
+			String title = "Entfernte Person";
+			String message = "Eine entfernte Person kann nicht bearbeitet werden.";
+			Shell shell = this.getSite().getShell();
+			MessageDialog dialog = new MessageDialog(shell, title, null, message, MessageDialog.INFORMATION,
+					new String[] { "OK" }, 0);
+			dialog.open();
 		}
 	}
 
