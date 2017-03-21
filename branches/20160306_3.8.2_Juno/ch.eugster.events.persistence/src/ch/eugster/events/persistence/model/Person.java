@@ -482,6 +482,11 @@ public class Person extends AbstractEntity
 		}
 		return false;
 	}
+	
+	public boolean isValid()
+	{
+		return this.getDefaultLink().isValid();
+	}
 
 	public void removeExtendedFields(final PersonExtendedField extendedField)
 	{

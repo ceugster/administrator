@@ -9,9 +9,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
+import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
+import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.queries.AddressQuery;
+import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
 import ch.eugster.events.persistence.queries.PersonQuery;
 import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 
@@ -52,6 +55,16 @@ public class ReactivateHandler extends ConnectionServiceDependentAbstractHandler
 										person = query.merge(person);
 									}
 								}
+								if (person.getDefaultLink().isDeleted())
+								{
+									if (connectionService != null)
+									{
+										LinkPersonAddress link = person.getDefaultLink();
+										LinkPersonAddressQuery query = (LinkPersonAddressQuery) connectionService.getQuery(LinkPersonAddress.class);
+										link.setDeleted(false);
+										person.setDefaultLink(query.merge(link));
+									}
+								}
 							}
 							else if (object instanceof Address)
 							{
@@ -77,6 +90,21 @@ public class ReactivateHandler extends ConnectionServiceDependentAbstractHandler
 	@Override
 	public void setEnabled(final Object evaluationContext)
 	{
-		super.setBaseEnabled(false);
+		if (evaluationContext instanceof EvaluationContext)
+		{
+			EvaluationContext context = (EvaluationContext) evaluationContext;
+			if (context.getParent().getVariable("selection") instanceof StructuredSelection)
+			{
+				StructuredSelection ssel = (StructuredSelection) context.getParent().getVariable("selection");
+				if (ssel.getFirstElement() instanceof AbstractEntity)
+				{
+					this.setBaseEnabled(!((AbstractEntity)ssel.getFirstElement()).isValid());
+				}
+				else 
+				{
+					this.setBaseEnabled(false);
+				}
+			}
+		}
 	}
 }
