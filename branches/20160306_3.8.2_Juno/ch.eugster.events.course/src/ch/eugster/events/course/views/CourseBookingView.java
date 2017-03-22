@@ -197,9 +197,14 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 					cell.setText(CourseFormatter.getInstance().formatBookingId(booking)
 							+ " - " + booking.getState().toString() + " ("
 							+ Integer.valueOf(booking.getParticipantCount()).toString() + ")");
-//					TreeItem item = (TreeItem) cell.getItem();
-//					item.setGrayed(booking.getPayAmount() > 0D);
-//					item.setChecked(booking.getAmount() <= booking.getPayAmount());
+//					if (booking.getAmount() <= booking.getPayAmount())
+//					{
+//						((TreeItem)cell.getItem()).setChecked(true);
+//					}
+//					else if (booking.getPayAmount() > 0D)
+//					{
+//						((TreeItem)cell.getItem()).setGrayed(true);
+//					}
 				}
 				else if (cell.getElement() instanceof Participant)
 				{
@@ -436,13 +441,11 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 	
 	private Image getDoneStateImage(Booking booking)
 	{
-		if (booking.getState().equals(BookingForthcomingState.BOOKED))
+		if (booking.getState().equals(BookingDoneState.PARTICIPATED))
 			return selectImageForPayedOrUnpayed(booking, "BOOKING_GREEN", "BOOKING_GREEN_EXCLAMATION");
-		else if (booking.getState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
-			return Activator.getDefault().getImageRegistry().get("BOOKING_BLUE");
-		else if (booking.getState().equals(BookingForthcomingState.WAITING_LIST))
+		else if (booking.getState().equals(BookingDoneState.PARTICIPATION_BROKE_OFF))
 			return Activator.getDefault().getImageRegistry().get("BOOKING_RED");
-		else if (booking.getState().equals(BookingForthcomingState.BOOKING_CANCELED))
+		else if (booking.getState().equals(BookingDoneState.NOT_PARTICIPATED))
 			return Activator.getDefault().getImageRegistry().get("BOOKING_GREY");
 		else return null;
 	}
