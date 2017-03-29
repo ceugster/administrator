@@ -62,7 +62,7 @@ import ch.eugster.events.persistence.model.DonationYear;
 import ch.eugster.events.persistence.queries.DonationQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
-public class DonationListDialog extends TitleAreaDialog
+public class DonatorListDialog extends TitleAreaDialog
 {
 	private ConnectionService connectionService;
 	
@@ -71,9 +71,9 @@ public class DonationListDialog extends TitleAreaDialog
 	private ComboViewer purposeViewer;
 
 	private ComboViewer domainViewer;
-	
-	private Text name;
 
+	private Text name;
+	
 	private DonationPurpose allPurposes = DonationPurpose.newInstance("Alle");
 	
 	private List<Domain> allAndEmptyDomains = new ArrayList<Domain>();
@@ -91,7 +91,6 @@ public class DonationListDialog extends TitleAreaDialog
 	private Domain selectedDomain;
 
 	private String selectedName;
-	
 	/*
 	 * Common
 	 */
@@ -106,11 +105,11 @@ public class DonationListDialog extends TitleAreaDialog
 
 	private static final String CANCEL_BUTTON_TEXT = "Abbrechen";
 
-	private static final String DIALOG_TITLE = "Spendenliste";
+	private static final String DIALOG_TITLE = "Spenderliste";
 
 	private boolean isPageComplete = false;
 
-	public DonationListDialog(final Shell parentShell, final ConnectionService connectionService, final DonationYear[] donationYears, final DonationYear selectedDonationYear, final DonationPurpose[] donationPurposes, final DonationPurpose selectedDonationPurpose, final Domain[] domains, final Domain selectedDomain, String selectedName)
+	public DonatorListDialog(final Shell parentShell, final ConnectionService connectionService, final DonationYear[] donationYears, final DonationYear selectedDonationYear, final DonationPurpose[] donationPurposes, final DonationPurpose selectedDonationPurpose, final Domain[] domains, final Domain selectedDomain, String selectedName)
 	{
 		super(parentShell);
 		this.connectionService = connectionService;
@@ -188,11 +187,11 @@ public class DonationListDialog extends TitleAreaDialog
 				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
 				if (ssel.isEmpty() || ((DonationPurpose) ssel.getFirstElement()).getId() == null)
 				{
-					DonationListDialog.this.selectedDonationPurpose= null;
+					DonatorListDialog.this.selectedDonationPurpose= null;
 				}
 				else
 				{
-					DonationListDialog.this.selectedDonationPurpose = (DonationPurpose) ssel.getFirstElement();
+					DonatorListDialog.this.selectedDonationPurpose = (DonationPurpose) ssel.getFirstElement();
 				}
 			}
 		});
@@ -224,11 +223,11 @@ public class DonationListDialog extends TitleAreaDialog
 				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
 				if (ssel.isEmpty() || ((Domain) ssel.getFirstElement()).getName().equals("Alle"))
 				{
-					DonationListDialog.this.selectedDomain= null;
+					DonatorListDialog.this.selectedDomain= null;
 				}
 				else
 				{
-					DonationListDialog.this.selectedDomain = (Domain) ssel.getFirstElement();
+					DonatorListDialog.this.selectedDomain = (Domain) ssel.getFirstElement();
 				}
 			}
 		});
@@ -426,16 +425,16 @@ public class DonationListDialog extends TitleAreaDialog
 		{
 			if (printDonation(donation))
 			{
-				DonationMap map = new DonationMap(donation);
 				if (donation.getLink() == null || !donation.getLink().isValid())
 				{
-					map.setProperties(new AddressMap(donation.getAddress()).getProperties());
+					DataMap<?> map = new AddressMap(donation.getAddress());
+					dataMaps.put("A" + donation.getAddress().getId(), map);
 				}
 				else
 				{
-					map.setProperties(new LinkMap(donation.getLink()).getProperties());
+					DataMap<?> map = new LinkMap(donation.getLink());
+					dataMaps.put("P" + donation.getLink().getId(), map);
 				}
-				dataMaps.put(donation.getId().toString(), map);
 			}
 		}
 		return dataMaps.values().toArray(new DataMap<?>[0]);

@@ -12,8 +12,10 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.donation.Activator;
-import ch.eugster.events.donation.dialogs.DonationListDialog;
-import ch.eugster.events.persistence.model.Course;
+import ch.eugster.events.donation.dialogs.SelectedDonationListDialog;
+import ch.eugster.events.persistence.model.Address;
+import ch.eugster.events.persistence.model.LinkPersonAddress;
+import ch.eugster.events.persistence.model.Person;
 
 public class GenerateDonationListHandler extends AbstractHandler implements IHandler
 {
@@ -28,7 +30,7 @@ public class GenerateDonationListHandler extends AbstractHandler implements IHan
 			{
 				StructuredSelection ssel = (StructuredSelection) context.getParent().getVariable("selection");
 				Shell shell = (Shell) context.getParent().getVariable("activeShell");
-				DonationListDialog dialog = new DonationListDialog(shell, ssel);
+				SelectedDonationListDialog dialog = new SelectedDonationListDialog(shell, ssel);
 				dialog.open();
 			}
 		}
@@ -38,7 +40,7 @@ public class GenerateDonationListHandler extends AbstractHandler implements IHan
 	@Override
 	public void setEnabled(final Object object)
 	{
-		boolean enabled = false;
+		boolean enabled = true;
 		ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
 				DocumentBuilderService.class, null);
 		tracker.open();
@@ -56,7 +58,7 @@ public class GenerateDonationListHandler extends AbstractHandler implements IHan
 						Object[] elements = ssel.toArray();
 						for (Object element : elements)
 						{
-							if (element instanceof Course)
+							if (element instanceof Person || element instanceof Address || element instanceof LinkPersonAddress)
 							{
 
 							}

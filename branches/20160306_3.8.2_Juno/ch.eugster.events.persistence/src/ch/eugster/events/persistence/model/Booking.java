@@ -302,6 +302,10 @@ public class Booking extends AbstractEntity
 					{
 						return BookingDoneState.PARTICIPATED;
 					}
+					else if (state.equals(BookingForthcomingState.BOOKING_CANCELED))
+					{
+						return BookingDoneState.NOT_PARTICIPATED;
+					}
 					else
 					{
 						return state;
