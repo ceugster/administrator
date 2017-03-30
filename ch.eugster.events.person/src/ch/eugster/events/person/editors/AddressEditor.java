@@ -52,6 +52,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.events.EntityAdapter;
@@ -75,6 +76,7 @@ import ch.eugster.events.persistence.queries.ZipCodeQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.person.Activator;
 import ch.eugster.events.person.preferences.PreferenceInitializer;
+import ch.eugster.events.person.views.AddressEditorContentOutlinePage;
 import ch.eugster.events.ui.dialogs.Message;
 import ch.eugster.events.ui.editors.AbstractEntityEditor;
 import ch.eugster.events.ui.editors.AbstractEntityEditorInput;
@@ -1061,6 +1063,12 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	@Override
 	public Object getAdapter(final Class adapter)
 	{
+		if (IContentOutlinePage.class.equals(adapter))
+		{
+			if (this.contentOutlinePage == null)
+				this.contentOutlinePage = new AddressEditorContentOutlinePage(this);
+			return this.contentOutlinePage;
+		}
 		return null;
 	}
 
