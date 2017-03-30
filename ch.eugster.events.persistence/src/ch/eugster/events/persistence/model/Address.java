@@ -160,6 +160,11 @@ public class Address extends AbstractEntity implements Donator
 		this.propertyChangeSupport.firePropertyChange("addContact", this.contacts, this.contacts.add(contact));
 	}
 
+	public void removeContact(AddressContact contact)
+	{
+		this.propertyChangeSupport.firePropertyChange("removeContact", this.contacts, this.contacts.remove(contact));
+	}
+
 	// public boolean isManualMailingAddress()
 	// {
 	// return this.manualMailingAddress;
@@ -213,7 +218,7 @@ public class Address extends AbstractEntity implements Donator
 		AddressGroupMember[] members = this.addressGroupMembers.toArray(new AddressGroupMember[0]);
 		for (AddressGroupMember member : members)
 		{
-			if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
+			if (member.isValidAddressMember())
 			{
 				addressGroupMembers.add(member);
 			}
@@ -275,6 +280,19 @@ public class Address extends AbstractEntity implements Donator
 	{
 		return donations;
 	}
+	
+	public List<Donation> getValidDonations()
+	{
+		List<Donation> validDonations = new ArrayList<Donation>();
+		for (Donation donation : this.donations)
+		{
+			if (donation.isValid())
+			{
+				validDonations.add(donation);
+			}
+		}
+		return validDonations;
+	}
 
 	public String getEmail()
 	{
@@ -309,6 +327,19 @@ public class Address extends AbstractEntity implements Donator
 		return members;
 	}
 
+	public List<Member> getValidMembers()
+	{
+		List<Member> validMembers = new ArrayList<Member>();
+		for (Member member : this.members)
+		{
+			if (member.isValid())
+			{
+				validMembers.add(member);
+			}
+		}
+		return validMembers;
+	}
+	
 	public String getName()
 	{
 		return AbstractEntity.stringValueOf(this.name);
@@ -559,8 +590,14 @@ public class Address extends AbstractEntity implements Donator
 
 	public void addBankAccount(final BankAccount bankAccount)
 	{
-		this.propertyChangeSupport.firePropertyChange("bankAccounts", this.bankAccounts,
+		this.propertyChangeSupport.firePropertyChange("addBankAccount", this.bankAccounts,
 				this.bankAccounts.add(bankAccount));
+	}
+
+	public void removeBankAccount(final BankAccount bankAccount)
+	{
+		this.propertyChangeSupport.firePropertyChange("removeBankAccount", this.bankAccounts,
+				this.bankAccounts.remove(bankAccount));
 	}
 
 	public List<BankAccount> getBankAccounts() {
