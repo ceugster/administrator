@@ -25,6 +25,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.reporting.Activator;
 import ch.eugster.events.documents.maps.AddressMap;
+import ch.eugster.events.documents.maps.CourseGuideMap;
 import ch.eugster.events.documents.maps.DataMap;
 import ch.eugster.events.documents.maps.DataMapKey;
 import ch.eugster.events.documents.maps.LinkMap;
@@ -33,6 +34,8 @@ import ch.eugster.events.documents.maps.PersonMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
+import ch.eugster.events.persistence.model.CourseGuide;
+import ch.eugster.events.persistence.model.Guide;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Season;
 import ch.eugster.events.persistence.model.User;
@@ -110,6 +113,14 @@ public class ParticipantListDialog extends TitleAreaDialog
 		}
 	}
 
+	private void computeCourseGuide(final List<DataMap<?>> map, final CourseGuide courseGuide)
+	{
+		if (!courseGuide.isDeleted())
+		{
+			map.add(new CourseGuideMap(courseGuide, false));
+		}
+	}
+
 	private void computeSeason(final List<DataMap<?>> map, final Season season)
 	{
 		if (!season.isDeleted())
@@ -130,6 +141,11 @@ public class ParticipantListDialog extends TitleAreaDialog
 			for (Booking booking : bookings)
 			{
 				computeBooking(map, booking);
+			}
+			List<CourseGuide> courseGuides = course.getCourseGuides();
+			for (CourseGuide courseGuide : courseGuides)
+			{
+				computeCourseGuide(map, courseGuide);
 			}
 		}
 	}
@@ -212,6 +228,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 		keys.add(ParticipantMap.Key.POLITE);
 		keys.add(ParticipantMap.Key.PRICE);
 		keys.add(ParticipantMap.Key.MAILING_ADDRESS);
+		keys.add(ParticipantMap.Key.COUNT);
 		keys.add(PersonMap.Key.SEX);
 		keys.add(PersonMap.Key.FORM);
 		keys.add(PersonMap.Key.TITLE);
@@ -222,6 +239,8 @@ public class ParticipantListDialog extends TitleAreaDialog
 		keys.add(PersonMap.Key.PHONE);
 		keys.add(PersonMap.Key.EMAIL);
 		keys.add(PersonMap.Key.WEBSITE);
+		keys.add(CourseGuideMap.Key.GUIDE_TYPE);
+		keys.add(CourseGuideMap.Key.STATE);
 		keys.addAll(PersonMap.getExtendedFieldKeys());
 		keys.addAll(LinkMap.getExtendedFieldKeys());
 		return keys.toArray(new DataMapKey[0]);
