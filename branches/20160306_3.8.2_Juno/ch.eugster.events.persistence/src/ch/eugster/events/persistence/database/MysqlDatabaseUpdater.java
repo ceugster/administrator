@@ -51,4 +51,23 @@ public class MysqlDatabaseUpdater extends DatabaseUpdater
 		sql = sql.append(")\nENGINE=InnoDB");
 		return sql.toString();
 	}
+
+	@Override
+	protected String getCreateTable(String tableName, Column[] columns,
+			String primaryKey, ForeignKey[] foreignKeys) 
+	{
+		StringBuilder sql = new StringBuilder("CREATE TABLE `" + tableName + "` (\n");
+		for (int i = 0; i < columns.length; i++)
+		{
+			sql = sql.append(" `" + columns[i].name + "` " + columns[i].dataType + " " + columns[i].defaultValue + " " + (columns[i].nullable ? "NULL" : "NOT NULL") + ",\n");
+		}
+		sql = sql.append(" PRIMARY KEY (`" + primaryKey + "`) " + (foreignKeys.length == 0 ? "" : ",\n"));
+		for (int i = 0; i < foreignKeys.length; i++)
+		{
+			sql = sql.append("CONSTRAINT `" + foreignKeys[i].foreignKeyName + "` FOREIGN KEY `" + foreignKeys[i].foreignKeyName + "` (`" + foreignKeys[i].columnName + "`) REFERENCES `" + foreignKeys[i].referencedTable + "` (`" + foreignKeys[i].referencedColumnName + "`)\n");
+			sql = sql.append(i < foreignKeys.length - 1 ? ", " : "");
+		}
+		sql = sql.append(")\nENGINE=InnoDB");
+		return sql.toString();
+	}
 }

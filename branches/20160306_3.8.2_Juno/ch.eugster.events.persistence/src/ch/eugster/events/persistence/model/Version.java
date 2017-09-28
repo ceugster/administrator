@@ -32,12 +32,12 @@ public class Version extends AbstractEntity
 {
 	public static final int DATA_VERSION = 3;
 
-	public static final int STRUCTURE_VERSION = 45;
+	public static final int STRUCTURE_VERSION = 46;
 
 	@Id
 	@Column(name = "version_id")
 	@GeneratedValue(generator = "events_version_id_seq")
-	@TableGenerator(name = "events_version_id_seq", table = "events_sequence", initialValue = 2, allocationSize = 5)
+	@TableGenerator(name = "events_version_id_seq", table = "events_sequence", initialValue = 1, allocationSize = 5)
 	protected Long id;
 
 	@Column(name = "version_data")

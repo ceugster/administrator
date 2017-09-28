@@ -37,6 +37,9 @@ import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.BookingType;
 import ch.eugster.events.persistence.model.BookingTypeProposition;
 import ch.eugster.events.persistence.model.Category;
+import ch.eugster.events.persistence.model.CharityRun;
+import ch.eugster.events.persistence.model.CharityRunTagRead;
+import ch.eugster.events.persistence.model.CharityRunner;
 import ch.eugster.events.persistence.model.Compensation;
 import ch.eugster.events.persistence.model.CompensationType;
 import ch.eugster.events.persistence.model.Contact;
@@ -88,6 +91,9 @@ import ch.eugster.events.persistence.queries.BookingQuery;
 import ch.eugster.events.persistence.queries.BookingTypePropositionQuery;
 import ch.eugster.events.persistence.queries.BookingTypeQuery;
 import ch.eugster.events.persistence.queries.CategoryQuery;
+import ch.eugster.events.persistence.queries.CharityRunQuery;
+import ch.eugster.events.persistence.queries.CharityRunTagReadQuery;
+import ch.eugster.events.persistence.queries.CharityRunnerQuery;
 import ch.eugster.events.persistence.queries.CompensationQuery;
 import ch.eugster.events.persistence.queries.CompensationTypeQuery;
 import ch.eugster.events.persistence.queries.ContactQuery;
@@ -302,6 +308,21 @@ public class ConnectionServiceComponent implements ConnectionService
 			else if (clazz.equals(Category.class))
 			{
 				query = new CategoryQuery(this);
+				queries.put(clazz, query);
+			}
+			else if (clazz.equals(CharityRun.class))
+			{
+				query = new CharityRunQuery(this);
+				queries.put(clazz, query);
+			}
+			else if (clazz.equals(CharityRunner.class))
+			{
+				query = new CharityRunnerQuery(this);
+				queries.put(clazz, query);
+			}
+			else if (clazz.equals(CharityRunTagRead.class))
+			{
+				query = new CharityRunTagReadQuery(this);
 				queries.put(clazz, query);
 			}
 			else if (clazz.equals(Compensation.class))
