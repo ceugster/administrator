@@ -414,6 +414,9 @@
    <feature url="features/ch.eugster.events.course.feature_1.0.0.201709271511.jar" id="ch.eugster.events.course.feature" version="1.0.0.201709271511">
       <category name="course"/>
    </feature>
+   <feature url="features/ch.eugster.events.course.feature_1.0.0.201709281633.jar" id="ch.eugster.events.course.feature" version="1.0.0.201709281633">
+      <category name="course"/>
+   </feature>
    <category-def name="addressgroup" label="Addressgruppen"/>
    <category-def name="course" label="Kursverwaltung"/>
    <category-def name="donation" label="Spendenverwaltung"/>
