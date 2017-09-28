@@ -6,9 +6,7 @@ import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
 
-import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
-import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Person;
 
@@ -52,7 +50,7 @@ public class ParticipantMap extends AbstractDataMap<Participant>
 
 	public enum Key implements DataMapKey
 	{
-		ID, BOOKING_TYPE_CODE, BOOKING_TYPE_NAME, PRICE, ANOTHER_LINE, SALUTATION, POLITE, MAILING_ADDRESS, COUNT, AMOUNT;
+		ID, BOOKING_TYPE_CODE, BOOKING_TYPE_NAME, PRICE, ANOTHER_LINE, SALUTATION, POLITE, COUNT, AMOUNT;
 
 		@Override
 		public String getDescription()
@@ -94,10 +92,6 @@ public class ParticipantMap extends AbstractDataMap<Participant>
 				case POLITE:
 				{
 					return "Briefanrede";
-				}
-				case MAILING_ADDRESS:
-				{
-					return "Anschrift";
 				}
 				default:
 				{
@@ -147,10 +141,6 @@ public class ParticipantMap extends AbstractDataMap<Participant>
 				{
 					return "participant_polite";
 				}
-				case MAILING_ADDRESS:
-				{
-					return "participant_mailing_address";
-				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -198,10 +188,6 @@ public class ParticipantMap extends AbstractDataMap<Participant>
 				case POLITE:
 				{
 					return "Briefanrede";
-				}
-				case MAILING_ADDRESS:
-				{
-					return "Anschrift";
 				}
 				default:
 				{
@@ -268,11 +254,6 @@ public class ParticipantMap extends AbstractDataMap<Participant>
 					Person person = participant.getLink().getPerson();
 					return person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
 							.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
-				}
-				case MAILING_ADDRESS:
-				{
-					LinkPersonAddress link = participant.getLink();
-					return LinkPersonAddressFormatter.getInstance().getLabel(link);
 				}
 				default:
 				{
