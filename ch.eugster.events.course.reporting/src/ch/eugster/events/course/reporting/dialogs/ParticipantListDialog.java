@@ -2,23 +2,33 @@ package ch.eugster.events.course.reporting.dialogs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -35,7 +45,8 @@ import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseGuide;
-import ch.eugster.events.persistence.model.Guide;
+import ch.eugster.events.persistence.model.CourseState;
+import ch.eugster.events.persistence.model.IBookingState;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Season;
 import ch.eugster.events.persistence.model.User;
@@ -44,10 +55,12 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class ParticipantListDialog extends TitleAreaDialog
 {
-	// private Button ListSelector;
+	private IDialogSettings settings;
 
-	private final StructuredSelection selection;
-
+	private Map<CourseState, List<IBookingState>> selectedStates = new HashMap<CourseState, List<IBookingState>>();
+	
+	private List<Course> courses = new ArrayList<Course>();
+	
 	private final String message = "Erstellen einer Adressliste der selektierten Kurse.";
 
 	private boolean isPageComplete = false;
@@ -55,7 +68,141 @@ public class ParticipantListDialog extends TitleAreaDialog
 	public ParticipantListDialog(final Shell parentShell, final StructuredSelection selection)
 	{
 		super(parentShell);
-		this.selection = selection;
+		settings = Activator.getDefault().getDialogSettings().getSection("participant.list.dialog");
+		if (settings == null)
+		{
+			settings = Activator.getDefault().getDialogSettings().addNewSection("participant.list.dialog");
+		}
+		Object[] elements = selection.toArray();
+		for (Object element : elements)
+		{
+			if (element instanceof Season)
+			{
+				Season season = (Season) element;
+				if (!season.isDeleted())
+				{
+					List<Course> courses = season.getCourses();
+					for (Course course : courses)
+					{
+						if (!course.isDeleted())
+						{
+							this.courses.add(course);
+						}
+					}
+				}
+			}
+			else if (element instanceof Course)
+			{
+				this.courses.add((Course) element);
+			}
+		}
+		for (Course course : this.courses)
+		{
+			if (this.selectedStates.get(course.getState()) == null)
+			{
+				this.selectedStates.put(course.getState(), new ArrayList<IBookingState>());
+			}
+		}
+	}
+
+	@Override
+	protected Control createDialogArea(final Composite parent)
+	{
+		this.setTitle();
+		this.setMessage();
+
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setLayout(new GridLayout(this.selectedStates.size(), true));
+
+		int max = 0;
+		for (CourseState courseState : this.selectedStates.keySet())
+		{
+			max = Math.max(max, courseState.getBookingStates().length);
+		}
+		Arrays.sort(this.selectedStates.keySet().toArray(new CourseState[0]), new Comparator<CourseState>() 
+		{
+			@Override
+			public int compare(CourseState o1, CourseState o2) 
+			{
+				return - o2.ordinal() - o1.ordinal();
+			} 
+		});
+
+		for (CourseState cst : this.selectedStates.keySet())
+		{
+			final CourseState courseState = cst;
+			
+			Group group = new Group(composite, SWT.SHADOW_ETCHED_IN);
+			group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			group.setLayout(new GridLayout());
+			group.setText(courseState.toString());
+
+			for (int i = 0; i < max; i++)
+			{
+				if (i < courseState.getBookingStates().length)
+				{
+					final IBookingState bookingState = courseState.getBookingStates()[i];
+					boolean selected = settings.getBoolean(bookingState.name());
+					if (selected)
+					{
+						List<IBookingState> bookingStates = this.selectedStates.get(courseState);
+						if (!bookingStates.contains(bookingState)) 
+						{
+							bookingStates.add(bookingState);
+						}
+					}
+					else
+					{
+						List<IBookingState> bookingStates = this.selectedStates.get(courseState);
+						if (bookingStates.contains(bookingState)) 
+						{
+							bookingStates.remove(bookingState);
+						}
+					}
+					final Button button = new Button(group, SWT.CHECK);
+					button.setText(bookingState.toString());
+					button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+					button.setSelection(selected);
+					button.addSelectionListener(new SelectionListener()
+					{
+						@Override
+						public void widgetDefaultSelected(final SelectionEvent e)
+						{
+							widgetSelected(e);
+						}
+
+						@Override
+						public void widgetSelected(final SelectionEvent e)
+						{
+							if (button.getSelection())
+							{
+								List<IBookingState> bookingStates = selectedStates.get(courseState);
+								if (!bookingStates.contains(bookingState)) 
+								{
+									bookingStates.add(bookingState);
+								}
+							}
+							else
+							{
+								List<IBookingState> bookingStates = selectedStates.get(courseState);
+								if (bookingStates.contains(bookingState)) 
+								{
+									bookingStates.remove(bookingState);
+								}
+							}
+						}
+					});
+				}
+				else
+				{
+					Label label = new Label(group, SWT.None);
+					label.setLayoutData(new GridData());
+				}
+			}
+		}
+
+		return parent;
 	}
 
 	private void buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap<?>[] dataMaps)
@@ -103,7 +250,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 
 	private void computeBooking(final List<DataMap<?>> map, final Booking booking)
 	{
-		if (!booking.isDeleted())
+		if (!booking.isDeleted() && this.selectedStates.get(booking.getCourse().getState()).contains(booking.getState()))
 		{
 			List<Participant> participants = booking.getParticipants();
 			for (Participant participant : participants)
@@ -118,18 +265,6 @@ public class ParticipantListDialog extends TitleAreaDialog
 		if (!courseGuide.isDeleted())
 		{
 			map.add(new CourseGuideMap(courseGuide, false));
-		}
-	}
-
-	private void computeSeason(final List<DataMap<?>> map, final Season season)
-	{
-		if (!season.isDeleted())
-		{
-			List<Course> courses = season.getCourses();
-			for (Course course : courses)
-			{
-				computeCourse(map, course);
-			}
 		}
 	}
 
@@ -165,82 +300,50 @@ public class ParticipantListDialog extends TitleAreaDialog
 		this.createButton(parent, IDialogConstants.CANCEL_ID, "Abbrechen", false);
 	}
 
-	private List<DataMap<?>> createDataMaps(final StructuredSelection ssel)
+	private List<DataMap<?>> createDataMaps()
 	{
 		List<DataMap<?>> maps = new ArrayList<DataMap<?>>();
-		Object[] elements = ssel.toArray();
-		for (Object element : elements)
+		for (Course course : courses)
 		{
-			if (element instanceof Season)
-			{
-				Season season = (Season) element;
-				computeSeason(maps, season);
-			}
-			else if (element instanceof Course)
-			{
-				Course course = (Course) element;
-				computeCourse(maps, course);
-			}
+			computeCourse(maps, course);
 		}
 		return maps;
-	}
-
-	@Override
-	protected Control createDialogArea(final Composite parent)
-	{
-		this.setTitle();
-		this.setMessage();
-
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setLayout(new GridLayout());
-
-		// if
-		// (EditorSelector.values()[PersonSettings.getInstance().getEditorSelector()]
-		// .equals(EditorSelector.MULTI_PAGE_EDITOR))
-		// {
-		// ListSelector = new Button(composite, SWT.CHECK);
-		// ListSelector.setText("Gruppenadressen nur einmal auflisten");
-		// ListSelector.setLayoutData(new GridData());
-		// }
-
-		return parent;
 	}
 
 	private DataMapKey[] getKeys()
 	{
 		List<DataMapKey> keys = new ArrayList<DataMapKey>();
 		keys.add(AddressMap.Key.NAME);
-		keys.add(AddressMap.Key.PHONE);
+		keys.add(LinkMap.Key.MAILING_ADDRESS);
+		keys.add(ParticipantMap.Key.BOOKING_TYPE_CODE);
+		keys.add(ParticipantMap.Key.BOOKING_TYPE_NAME);
+		keys.add(ParticipantMap.Key.PRICE);
+		keys.add(ParticipantMap.Key.COUNT);
+		keys.add(ParticipantMap.Key.ID);
+		keys.add(PersonMap.Key.FORM);
+		keys.add(PersonMap.Key.SEX);
+		keys.add(ParticipantMap.Key.SALUTATION);
+		keys.add(PersonMap.Key.FIRSTNAME);
+		keys.add(PersonMap.Key.LASTNAME);
 		keys.add(AddressMap.Key.ADDRESS);
 		keys.add(AddressMap.Key.POB);
 		keys.add(AddressMap.Key.COUNTRY);
 		keys.add(AddressMap.Key.ZIP);
 		keys.add(AddressMap.Key.CITY);
 		keys.add(AddressMap.Key.COUNTY);
-		keys.add(AddressMap.Key.FAX);
+		keys.add(PersonMap.Key.PHONE);
 		keys.add(LinkMap.Key.PHONE);
-		keys.add(ParticipantMap.Key.BOOKING_TYPE_CODE);
-		keys.add(ParticipantMap.Key.BOOKING_TYPE_NAME);
-		keys.add(ParticipantMap.Key.ID);
-		keys.add(ParticipantMap.Key.SALUTATION);
-		keys.add(ParticipantMap.Key.ANOTHER_LINE);
-		keys.add(ParticipantMap.Key.POLITE);
-		keys.add(ParticipantMap.Key.PRICE);
-		keys.add(ParticipantMap.Key.MAILING_ADDRESS);
-		keys.add(ParticipantMap.Key.COUNT);
-		keys.add(PersonMap.Key.SEX);
-		keys.add(PersonMap.Key.FORM);
-		keys.add(PersonMap.Key.TITLE);
-		keys.add(PersonMap.Key.FIRSTNAME);
-		keys.add(PersonMap.Key.LASTNAME);
+		keys.add(AddressMap.Key.PHONE);
+		keys.add(PersonMap.Key.EMAIL);
 		keys.add(PersonMap.Key.BIRTHDATE);
 		keys.add(PersonMap.Key.PROFESSION);
-		keys.add(PersonMap.Key.PHONE);
-		keys.add(PersonMap.Key.EMAIL);
-		keys.add(PersonMap.Key.WEBSITE);
-		keys.add(CourseGuideMap.Key.GUIDE_TYPE);
-		keys.add(CourseGuideMap.Key.STATE);
+//		keys.add(AddressMap.Key.FAX);
+//		keys.add(ParticipantMap.Key.ANOTHER_LINE);
+//		keys.add(ParticipantMap.Key.POLITE);
+//		keys.add(PersonMap.Key.TITLE);
+//		keys.add(PersonMap.Key.WEBSITE);
+//		keys.add(CourseGuideMap.Key.GUIDE_TYPE);
+//		keys.add(CourseGuideMap.Key.STATE);
 		keys.addAll(PersonMap.getExtendedFieldKeys());
 		keys.addAll(LinkMap.getExtendedFieldKeys());
 		return keys.toArray(new DataMapKey[0]);
@@ -256,7 +359,7 @@ public class ParticipantListDialog extends TitleAreaDialog
 	{
 		setCurrentUser();
 		final DataMapKey[] keys = getKeys();
-		final DataMap<?>[] dataMaps = createDataMaps(selection).toArray(new DataMap<?>[0]);
+		final DataMap<?>[] dataMaps = createDataMaps().toArray(new DataMap<?>[0]);
 
 		super.okPressed();
 

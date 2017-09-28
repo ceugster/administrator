@@ -2,8 +2,10 @@ package ch.eugster.events.course.reporting.dialogs;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,7 +27,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.util.tracker.ServiceTracker;
@@ -34,9 +35,6 @@ import ch.eugster.events.course.reporting.Activator;
 import ch.eugster.events.course.reporting.ParticipantListFactory;
 import ch.eugster.events.course.reporting.preferences.PreferenceConstants;
 import ch.eugster.events.persistence.model.Booking;
-import ch.eugster.events.persistence.model.BookingAnnulatedState;
-import ch.eugster.events.persistence.model.BookingDoneState;
-import ch.eugster.events.persistence.model.BookingForthcomingState;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseState;
 import ch.eugster.events.persistence.model.IBookingState;
@@ -51,25 +49,25 @@ public class ParticipantListReportDialog extends TitleAreaDialog
 {
 	private IDialogSettings settings;
 
-	private Map<IBookingState, Boolean> selectedStates = new HashMap<IBookingState, Boolean>();
-
+	private List<IBookingState> selectedStates = new ArrayList<IBookingState>();
+	
 	private Map<IBookingState, Integer> bookingStates = new HashMap<IBookingState, Integer>();
-
-	private final Course course;
-
-	private final String message = "Erstellen einer Adressliste des selektierten Kurses.";
+	
+	private Course course;
+	
+	private final String message = "Erstellen einer Teilnehmerliste des selektierten Kurses.";
 
 	private boolean isPageComplete = false;
 
 	public ParticipantListReportDialog(final Shell parentShell, Course course)
 	{
 		super(parentShell);
-		this.course = course;
 		settings = Activator.getDefault().getDialogSettings().getSection("participant.list.report.dialog");
 		if (settings == null)
 		{
-			settings = Activator.getDefault().getDialogSettings().addNewSection("participant.list.report.dialog");
+			settings = Activator.getDefault().getDialogSettings().addNewSection("participant.report.list.dialog");
 		}
+		this.course = course;
 	}
 
 	@Override
@@ -89,116 +87,65 @@ public class ParticipantListReportDialog extends TitleAreaDialog
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout());
 
-		Map<CourseState, CourseState> states = new HashMap<CourseState, CourseState>();
-		if (states.get(course.getState()) == null)
-		{
-			states.put(course.getState(), course.getState());
-		}
-
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 3;
-
+		final CourseState courseState = course.getState();
+		
 		Group group = new Group(composite, SWT.SHADOW_ETCHED_IN);
-		group.setLayoutData(gridData);
-		group.setLayout(new GridLayout(3, true));
-		group.setText("Auswahl Status");
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group.setLayout(new GridLayout());
+		group.setText(courseState.toString());
 
-		int max = Math.max(BookingForthcomingState.values().length, BookingDoneState.values().length);
-		max = Math.max(max, BookingAnnulatedState.values().length);
-		for (int i = 0; i < max; i++)
+		for (IBookingState state : courseState.getBookingStates())
 		{
-			if (i < BookingForthcomingState.values().length)
+			final IBookingState bookingState = state;
+			boolean selected = settings.getBoolean(bookingState.name());
+			if (selected)
 			{
-				final IBookingState state = BookingForthcomingState.values()[i];
-				boolean selected = settings.getBoolean(state.name());
-				selectedStates.put(state, selected);
-				final Button button = new Button(group, SWT.CHECK);
-				button.setText(state.toString());
-				button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				button.setSelection(selected);
-				button.addSelectionListener(new SelectionListener()
+				if (!selectedStates.contains(bookingState)) 
 				{
-					@Override
-					public void widgetDefaultSelected(final SelectionEvent e)
-					{
-						widgetSelected(e);
-					}
-
-					@Override
-					public void widgetSelected(final SelectionEvent e)
-					{
-						selectedStates.put(state, button.getSelection());
-						settings.put(state.name(), button.getSelection());
-					}
-				});
+					selectedStates.add(bookingState);
+				}
 			}
 			else
 			{
-				Label label = new Label(group, SWT.None);
-				label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			}
-			if (i < BookingDoneState.values().length)
-			{
-				final IBookingState state = BookingDoneState.values()[i];
-				boolean selected = settings.getBoolean(state.name());
-				selectedStates.put(state, selected);
-				final Button button = new Button(group, SWT.CHECK);
-				button.setText(state.toString());
-				button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				button.setSelection(selected);
-				button.addSelectionListener(new SelectionListener()
+				if (selectedStates.contains(bookingState)) 
 				{
-					@Override
-					public void widgetDefaultSelected(final SelectionEvent e)
-					{
-						widgetSelected(e);
-					}
-
-					@Override
-					public void widgetSelected(final SelectionEvent e)
-					{
-						selectedStates.put(state, button.getSelection());
-						settings.put(state.name(), button.getSelection());
-					}
-				});
+					selectedStates.remove(bookingState);
+				}
 			}
-			else
+			final Button button = new Button(group, SWT.CHECK);
+			button.setText(bookingState.toString());
+			button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			button.setSelection(selected);
+			button.addSelectionListener(new SelectionListener()
 			{
-				Label label = new Label(group, SWT.None);
-				label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			}
-			if (i < BookingAnnulatedState.values().length)
-			{
-				final IBookingState state = BookingAnnulatedState.values()[i];
-				boolean selected = settings.getBoolean(state.name());
-				selectedStates.put(state, selected);
-				final Button button = new Button(group, SWT.CHECK);
-				button.setText(state.toString());
-				button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				button.setSelection(selected);
-				button.addSelectionListener(new SelectionListener()
+				@Override
+				public void widgetDefaultSelected(final SelectionEvent e)
 				{
-					@Override
-					public void widgetDefaultSelected(final SelectionEvent e)
-					{
-						widgetSelected(e);
-					}
+					widgetSelected(e);
+				}
 
-					@Override
-					public void widgetSelected(final SelectionEvent e)
+				@Override
+				public void widgetSelected(final SelectionEvent e)
+				{
+					if (button.getSelection())
 					{
-						selectedStates.put(state, button.getSelection());
-						settings.put(state.name(), button.getSelection());
+						if (!selectedStates.contains(bookingState)) 
+						{
+							selectedStates.add(bookingState);
+						}
 					}
-				});
-			}
-			else
-			{
-				Label label = new Label(group, SWT.None);
-				label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			}
+					else
+					{
+						if (selectedStates.contains(bookingState)) 
+						{
+							selectedStates.remove(bookingState);
+						}
+					}
+					settings.put(bookingState.name(), button.getSelection());
+				}
+			});
 		}
-
+		
 		return parent;
 	}
 
@@ -207,27 +154,11 @@ public class ParticipantListReportDialog extends TitleAreaDialog
 		return this.isPageComplete;
 	}
 
-	private Map<IBookingState, Integer> getBookingStates()
-	{
-		for (Booking booking : course.getBookings())
-		{
-			IBookingState bookingState = booking.getBookingState(booking.getCourse().getState());
-			Boolean state = selectedStates.get(bookingState);
-			if (state.booleanValue())
-			{
-				Integer count = bookingStates.get(bookingState);
-				count = new Integer((count == null ? 0 : count) + booking.getParticipantCount());
-				bookingStates.put(bookingState, count);
-			}
-		}
-		return bookingStates;
-	}
-
 	@Override
 	protected void okPressed()
 	{
 		setCurrentUser();
-		this.bookingStates = getBookingStates();
+		this.bookingStates = this.getBookingStates();
 		UIJob job = new UIJob("Generiere Teilnahmeliste...")
 		{
 			@Override
@@ -251,6 +182,21 @@ public class ParticipantListReportDialog extends TitleAreaDialog
 		job.schedule();
 
 		super.okPressed();
+	}
+
+	private Map<IBookingState, Integer> getBookingStates()
+	{
+		for (Booking booking : course.getBookings())
+		{
+			IBookingState bookingState = booking.getBookingState(booking.getCourse().getState());
+			if (this.selectedStates.contains(bookingState))
+			{
+				Integer count = bookingStates.get(bookingState);
+				count = new Integer((count == null ? 0 : count) + booking.getParticipantCount());
+				bookingStates.put(bookingState, count);
+			}
+		}
+		return bookingStates;
 	}
 
 	private void setCurrentUser()
@@ -296,7 +242,7 @@ public class ParticipantListReportDialog extends TitleAreaDialog
 
 	public void setTitle()
 	{
-		super.setTitle("Adressliste generieren");
+		super.setTitle("Teilnehmerliste generieren");
 	}
 
 	private boolean export(final ParticipantListFactory factory, final Format format, final File file)
