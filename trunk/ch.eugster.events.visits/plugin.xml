@@ -713,10 +713,10 @@
                id="ch.eugster.events.visits.theme.overview"
                minimized="false"
                moveable="true"
-               relationship="left"
+               relationship="bottom"
                relative="org.eclipse.ui.editorss"
                showTitle="true"
-               standalone="true"
+               standalone="false"
                visible="true">
          </view>
          <view
@@ -726,6 +726,46 @@
                moveable="true"
                relationship="left"
                relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="ch.eugster.events.visits.appliance.view"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="ch.eugster.events.visits.theme.view"
+               showTitle="true"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="ch.eugster.events.visits.schoollevel.view"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="ch.eugster.events.visits.theme.view"
+               showTitle="true"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="ch.eugster.events.visits.todo.view"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="ch.eugster.events.visits.theme.view"
+               showTitle="true"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="ch.eugster.events.visits.visit.view"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="ch.eugster.events.visits.theme.view"
                showTitle="true"
                visible="true">
          </view>
