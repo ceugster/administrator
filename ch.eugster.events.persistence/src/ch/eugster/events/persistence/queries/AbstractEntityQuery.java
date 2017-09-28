@@ -66,7 +66,7 @@ public abstract class AbstractEntityQuery<T extends AbstractEntity>
 		return null;
 	}
 
-	private EntityManager getEntityManager()
+	protected EntityManager getEntityManager()
 	{
 		if (connectionService == null)
 		{
