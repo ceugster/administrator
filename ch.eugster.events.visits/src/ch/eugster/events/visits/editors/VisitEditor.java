@@ -74,7 +74,6 @@ import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.AddressSalutation;
 import ch.eugster.events.persistence.model.Appliance;
-import ch.eugster.events.persistence.model.Country;
 import ch.eugster.events.persistence.model.ISelectedEmailProvider;
 import ch.eugster.events.persistence.model.ISelectedPhoneProvider;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
@@ -102,16 +101,9 @@ import ch.eugster.events.ui.editors.AbstractEntityEditor;
 import ch.eugster.events.ui.editors.AbstractEntityEditorInput;
 import ch.eugster.events.visits.Activator;
 
-import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
-import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
-
 public class VisitEditor extends AbstractEntityEditor<Teacher>
 {
 	public static final String ID = "ch.eugster.events.visits.visit.editor";
-
-	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
 	/*
 	 * Visit
@@ -1453,7 +1445,7 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 		gridData.widthHint = gc.stringExtent("00.00.0000 00:00 0000").x;
 		gc.dispose();
 
-		end = new CDateTime(composite, CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
+		end = new CDateTime(composite, CDT.CLOCK_12_HOUR | CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TIME_SHORT);
 		end.setLayoutData(gridData);
 		end.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
 		end.addSelectionListener(new SelectionListener()
@@ -1990,30 +1982,5 @@ public class VisitEditor extends AbstractEntityEditor<Teacher>
 				}
 			}
 		}
-	}
-
-	private String formatPhoneNumber(String value)
-	{
-		Country country = null;
-		Visit visit = (Visit) this.getEditorInput().getAdapter(Visit.class);
-		if (visit.getTeacher() != null)
-		{
-			if (visit.getTeacher().getLink().getAddress().getCountry() != null)
-			{
-				country = visit.getTeacher().getLink().getAddress().getCountry();
-			}
-		}
-		if (country != null)
-		{
-			try
-			{
-				PhoneNumber phoneNumber = phoneUtil.parse(value, country.getIso3166alpha2());
-				value = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
-			}
-			catch (NumberParseException ex)
-			{
-			}
-		}
-		return value;
 	}
 }
