@@ -114,7 +114,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case ANNULATION_STATE:
 				{
-					return "Annulationsstatus";
+					return "Annullationsstatus";
 				}
 				case BOOKING_CONFIRMATION_SENT_DATE:
 				{
@@ -282,7 +282,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case ANNULATION_STATE:
 				{
-					return "Annulationsstatus";
+					return "Annullationsstatus";
 				}
 				case BOOKING_CONFIRMATION_SENT_DATE:
 				{
