@@ -287,7 +287,7 @@ public class Course extends AbstractEntity
 	private Calendar invitationDoneDate;
 
 	/*
-	 * Letzter Termin für Annulation durch Kunden
+	 * Letzter Termin für Annullation durch Kunden
 	 */
 	@Basic
 	@Temporal(TemporalType.TIMESTAMP)

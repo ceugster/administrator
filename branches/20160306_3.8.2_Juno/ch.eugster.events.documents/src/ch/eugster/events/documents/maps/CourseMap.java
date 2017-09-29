@@ -132,7 +132,7 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case ANNULATION_DATE:
 			{
-				return "Datum Annulation";
+				return "Datum Annullation";
 			}
 			case BOARDING:
 			{
@@ -201,7 +201,7 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case LAST_ANNULATION_DATE:
 			{
-				return "Spätestes Kursannulationsdatum";
+				return "Spätestes Kursannullationsdatum";
 			}
 			case LAST_BOOKING_DATE:
 			{
@@ -489,7 +489,7 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case ANNULATION_DATE:
 			{
-				return "Annulation";
+				return "Annullation";
 			}
 			case BOARDING:
 			{
@@ -541,7 +541,7 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case LAST_ANNULATION_DATE:
 			{
-				return "Kursannulation bis";
+				return "Kursannullation bis";
 			}
 			case LAST_BOOKING_DATE:
 			{

@@ -973,7 +973,7 @@
                commandId="ch.eugster.events.course.command.showAnnulatedCourses"
                hoverIcon="icons/flag_gray_16.png"
                icon="icons/flag_gray_16.png"
-               label="Annuliert"
+               label="Annulliert"
                style="toggle"
                tooltip="Annullierte Kurse anzeigen">
          </command>

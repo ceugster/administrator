@@ -1210,7 +1210,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			}
 		});
 
-		label = this.formToolkit.createLabel(composite, "Letztmögliche Annulation", SWT.TRAIL);
+		label = this.formToolkit.createLabel(composite, "Letztmögliche Annullation", SWT.TRAIL);
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData();
