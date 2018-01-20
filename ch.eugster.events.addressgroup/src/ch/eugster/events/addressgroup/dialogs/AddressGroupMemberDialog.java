@@ -1,20 +1,16 @@
 package ch.eugster.events.addressgroup.dialogs;
 
+import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -27,29 +23,18 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
-import org.eclipse.ui.progress.UIJob;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.addressgroup.Activator;
-import ch.eugster.events.addressgroup.AddressGroupMemberSelector;
-import ch.eugster.events.addressgroup.Monitor;
-import ch.eugster.events.addressgroup.views.AddressGroupMemberTreeSorter;
-import ch.eugster.events.addressgroup.views.PersonAddressGroupMemberTreeContentProvider;
-import ch.eugster.events.addressgroup.views.PersonAddressGroupMemberTreeLabelProvider;
 import ch.eugster.events.domain.views.DomainLabelProvider;
 import ch.eugster.events.domain.views.DomainSorter;
-import ch.eugster.events.persistence.events.EntityAdapter;
-import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
-import ch.eugster.events.persistence.formatters.AddressFormatter;
-import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressGroup;
@@ -57,41 +42,33 @@ import ch.eugster.events.persistence.model.AddressGroupCategory;
 import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
-import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.queries.AddressGroupMemberQuery;
 import ch.eugster.events.persistence.queries.DomainQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
 public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelectionChangedListener,
-		ITreeViewerListener, ICheckStateListener, AddressGroupMemberSelector
+		ITreeViewerListener, ICheckStateListener
 {
-	private ContainerCheckedTreeViewer addressGroupViewer;
-
-	private final Hashtable<Long, AddressGroupMember> current = new Hashtable<Long, AddressGroupMember>();
+	private final AbstractEntity parent;
 
 	private ComboViewer domainViewer;
 
-	private boolean dirty;
-	
-	private boolean isPageComplete = false;
-	
-	private final String message = "Selektieren oder Deselektieren Sie die Adressgruppen und speichern Sie die Änderungen.\nSie können die Änderungen jederzeit mit 'Abbrechen' widerrufen.";
+	private ContainerCheckedTreeViewer addressGroupViewer;
 
 	private final Hashtable<Long, Monitor> monitors = new Hashtable<Long, Monitor>();
 
-	private AbstractEntity parent;
+	private final Hashtable<Long, AddressGroupMember> current = new Hashtable<Long, AddressGroupMember>();
 
-	private ServiceTracker<ConnectionService, ConnectionService> tracker;
+	private final String message = "Selektieren oder Deselektieren Sie die Adressgruppen und speichern Sie die Änderungen.\nSie können die Änderungen jederzeit mit 'Abbrechen' widerrufen.";
 
-	private ConnectionService connectionService;
+	private boolean isPageComplete = false;
 
-	private EntityAdapter adapter;
-	
 	public AddressGroupMemberDialog(final Shell parentShell, final Address address)
 	{
 		super(parentShell);
-		init(address);
+		this.setShellStyle(SWT.SHELL_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN | SWT.APPLICATION_MODAL);
+		this.parent = address;
 	}
 
 	/**
@@ -111,65 +88,8 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 	public AddressGroupMemberDialog(final Shell parentShell, final LinkPersonAddress link)
 	{
 		super(parentShell);
-		init(link);
-	}
-
-	private void init(AbstractEntity entity)
-	{
 		this.setShellStyle(SWT.SHELL_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN | SWT.APPLICATION_MODAL);
-		this.parent = entity;
-		
-		adapter = new EntityAdapter() 
-		{
-			@Override
-			public void postDelete(AbstractEntity entity) 
-			{
-				refreshViewer();
-			}
-
-			@Override
-			public void postPersist(AbstractEntity entity) 
-			{
-				refreshViewer();
-			}
-
-			@Override
-			public void postRemove(AbstractEntity entity) 
-			{
-				refreshViewer();
-			}
-
-			@Override
-			public void postUpdate(AbstractEntity entity) 
-			{
-				refreshViewer(entity);
-			}
-		};
-		 
-		EntityMediator.addListener(AddressGroupMember.class, adapter);
-		EntityMediator.addListener(AddressGroup.class, adapter);
-		EntityMediator.addListener(LinkPersonAddress.class, adapter);
-		EntityMediator.addListener(Address.class, adapter);
-		EntityMediator.addListener(Person.class, adapter);
-
-		tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class, null);
-		tracker.open();
-		connectionService = (ConnectionService) tracker.getService();
-	}
-	
-	@Override
-	public boolean close() 
-	{
-		tracker.close();
-		
-		EntityMediator.removeListener(AddressGroupMember.class, adapter);
-		EntityMediator.removeListener(AddressGroup.class, adapter);
-		EntityMediator.removeListener(LinkPersonAddress.class, adapter);
-		EntityMediator.removeListener(Address.class, adapter);
-		EntityMediator.removeListener(Person.class, adapter);
-		
-		return super.close();
+		this.parent = link;
 	}
 
 	private void checkCategory(final Object object)
@@ -184,19 +104,18 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 				if (element instanceof AddressGroupCategory)
 				{
 					AddressGroupCategory category = (AddressGroupCategory) element;
-					List<AddressGroup> addressGroups = category.getValidAddressGroups();
+					List<AddressGroup> addressGroups = category.getAddressGroups();
 					int checked = 0;
 					for (AddressGroup addressGroup : addressGroups)
 					{
 						Monitor monitor = this.monitors.get(addressGroup.getId());
-						if (monitor != null && monitor.isValid())
+						if (monitor != null)
 						{
 							if (monitor.checked)
 							{
 								checked++;
 							}
 						}
-						this.addressGroupViewer.setChecked(addressGroup, monitor != null &&  monitor.isValid() && monitor.checked);
 					}
 					if (checked == addressGroups.size())
 					{
@@ -214,40 +133,20 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 	@Override
 	public void checkStateChanged(final CheckStateChangedEvent event)
 	{
-		boolean dirty = true;
 		Object object = event.getElement();
 		if (object instanceof AddressGroupCategory)
 		{
-			String message = null;
 			AddressGroupCategory category = (AddressGroupCategory) object;
 			List<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
 			{
-				String msg = this.updateMonitor(addressGroup, event.getChecked());
-				if (msg != null)
-				{
-					message = msg;
-				}
-			}
-			if (message != null)
-			{
-				Display.getCurrent().beep();
-				MessageDialog.openInformation(this.getShell(), "Bereits vorhanden", "Eine oder mehrere der neu gewählten Adressgruppen enthalten bereits die Person. Diese Adressgruppen wurden nicht aktualisiert.");
+				this.updateMonitor(addressGroup, event.getChecked());
 			}
 		}
 		else if (object instanceof AddressGroup)
 		{
-			AddressGroup addressGroup = (AddressGroup) object;
-			String message = this.updateMonitor(addressGroup, event.getChecked());
-			if (message != null)
-			{
-				dirty = false;
-				this.addressGroupViewer.setChecked(addressGroup, !event.getChecked());
-				Display.getCurrent().beep();
-				MessageDialog.openInformation(this.getShell(), "Bereits vorhanden", message);
-			}
+			this.updateMonitor((AddressGroup) object, event.getChecked());
 		}
-		setDirty(dirty);
 	}
 
 	@Override
@@ -257,28 +156,50 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		this.createButton(parent, IDialogConstants.CANCEL_ID, "Abbrechen", false);
 	}
 
-	private void setDirty(final boolean dirty)
-	{
-		this.dirty = dirty;
-	}
-	
-	private boolean isDirty()
-	{
-		return this.dirty;
-	}
-
 	@Override
 	protected Control createDialogArea(final Composite parent)
 	{
 		this.setTitle();
 		this.setMessage();
 
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.marginBottom = 0;
-		gridLayout.marginHeight = 0;
-		gridLayout.marginLeft = 0;
-		gridLayout.marginTop = 0;
-		gridLayout.marginWidth = 0;
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
+		tracker.open();
+		ConnectionService service = tracker.getService();
+		if (service != null)
+		{
+			List<AddressGroupMember> members = null;
+			AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
+			if (this.parent instanceof LinkPersonAddress)
+			{
+				LinkPersonAddress link = (LinkPersonAddress) this.parent;
+				members = query.selectByLink(link);
+				List<AddressGroupMember> addressMembers = link.getAddress().getAddressAddressGroupMembers();
+				members.addAll(addressMembers);
+			}
+			else if (this.parent instanceof Address)
+			{
+				members = query.selectByAddress((Address) this.parent);
+			}
+			if (members != null)
+			{
+				for (AddressGroupMember member : members)
+				{
+					member = (AddressGroupMember) query.refresh(member);
+					Monitor monitor = this.monitors.get(member.getAddressGroup().getId());
+					if (monitor == null)
+					{
+						monitor = new Monitor(member.getAddressGroup(), !member.isDeleted());
+						this.monitors.put(member.getAddressGroup().getId(), monitor);
+						this.current.put(member.getAddressGroup().getId(), member);
+					}
+					else if (!monitor.checked)
+					{
+						monitor.checked = !member.isDeleted();
+					}
+				}
+			}
+		}
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -325,160 +246,48 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		});
 
 		this.addressGroupViewer = new ContainerCheckedTreeViewer(tree);
-		this.addressGroupViewer.setContentProvider(new PersonAddressGroupMemberTreeContentProvider());
-		this.addressGroupViewer.setLabelProvider(new PersonAddressGroupMemberTreeLabelProvider(monitors));
-		this.addressGroupViewer.setSorter(new AddressGroupMemberTreeSorter(this));
+		this.addressGroupViewer.setContentProvider(new AddressGroupMemberTreeContentProvider());
+		this.addressGroupViewer.setLabelProvider(new AddressGroupMemberTreeLabelProvider());
+		this.addressGroupViewer.setSorter(new AddressGroupMemberSorter(this));
 		this.addressGroupViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
 		this.addressGroupViewer.addCheckStateListener(this);
 		this.addressGroupViewer.addTreeListener(this);
 
-		if (connectionService != null)
+		if (service != null)
 		{
-			this.domainViewer.addSelectionChangedListener(this);
-
-			DomainQuery query = (DomainQuery) connectionService.getQuery(Domain.class);
-			List<Domain> domains = query.selectValids();
-			if (domains.isEmpty())
-			{
-				domains.add(Domain.newInstance());
-			}
+			DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
+			List<Domain> domains = query.selectAll();
 			domainViewer.setInput(domains.toArray(new Domain[0]));
-			Domain selectedDomain = null;
-			if (this.parent instanceof LinkPersonAddress)
-			{
-				LinkPersonAddress link = (LinkPersonAddress) this.parent;
-				selectedDomain = link.getPerson().getDomain();
-			}
-			if (selectedDomain == null)
-			{
-				selectedDomain = User.getCurrent().getDomain();
-			}
-			if (selectedDomain != null)
-			{
-				domainViewer.setSelection(new StructuredSelection(new Domain[] { selectedDomain }));
-			}
-			reset();
 		}
+		this.domainViewer.addSelectionChangedListener(this);
+
+		tracker.close();
+
+		Domain domain = null;
+		if (this.parent instanceof LinkPersonAddress)
+		{
+			LinkPersonAddress link = (LinkPersonAddress) this.parent;
+			if (link.getPerson().getDomain() != null)
+			{
+				domain = link.getPerson().getDomain();
+			}
+		}
+		if (domain == null)
+		{
+			if (User.getCurrent() != null)
+			{
+				if (User.getCurrent().getDomain() != null)
+				{
+					domain = User.getCurrent().getDomain();
+				}
+			}
+		}
+		if (domain != null)
+		{
+			this.domainViewer.setSelection(new StructuredSelection(domain));
+		}
+
 		return parent;
-	}
-
-	private void refreshViewer()
-	{
-		UIJob job = new UIJob("")
-		{
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor)
-			{
-				internalRefresh();
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
-
-	private void refreshViewer(final Object object)
-	{
-		UIJob job = new UIJob("")
-		{
-
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor)
-			{
-				internalRefresh(object);
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
-
-	public void reset()
-	{
-		if (connectionService != null)
-		{
-			this.monitors.clear();
-			this.current.clear();
-
-			List<AddressGroupMember> members = null;
-
-			if (this.parent instanceof LinkPersonAddress)
-			{
-				LinkPersonAddress link = (LinkPersonAddress) this.parent;
-				AddressGroupMemberQuery query = (AddressGroupMemberQuery) connectionService.getQuery(AddressGroupMember.class);
-				members = query.selectByLink(link);
-			}
-			else if (this.parent instanceof Address)
-			{
-				AddressGroupMemberQuery query = (AddressGroupMemberQuery) connectionService.getQuery(AddressGroupMember.class);
-				members = query.selectByAddress((Address) this.parent);
-			}
-			if (members != null)
-			{
-				for (AddressGroupMember member : members)
-				{
-					Monitor monitor = this.monitors.get(member.getAddressGroup().getId());
-					if (monitor == null)
-					{
-						monitor = new Monitor(member, !member.isDeleted());
-						this.monitors.put(member.getAddressGroup().getId(), monitor);
-						this.current.put(member.getAddressGroup().getId(), member);
-					}
-					else if (!monitor.checked)
-					{
-						monitor.checked = !member.isDeleted();
-					}
-				}
-			}
-			IStructuredSelection ssel = (IStructuredSelection) domainViewer.getSelection();
-			this.checkCategory(ssel.getFirstElement());
-		}
-		this.setDirty(false);
-	}
-	
-	private AddressGroupMember getMember(AddressGroup addressGroup, Address address)
-	{
-		List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
-		for (AddressGroupMember member : members)
-		{
-			if (member.isValidAddressMember() || member.isValidLinkMember())
-			{
-				if (member.getAddressId().equals(address.getId()))
-				{
-					return member;
-				}
-			}
-		}
-		return null;
-	}
-
-	private AddressGroupMember getMember(AddressGroup addressGroup, LinkPersonAddress link)
-	{
-		List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
-		for (AddressGroupMember member : members)
-		{
-			if (member.isValidLinkMember() && member.getLink().getId().equals(link.getId()))
-			{
-				return member;
-			}
-		}
-		return null;
-	}
-
-	private void internalRefresh()
-	{
-		if (!addressGroupViewer.getControl().isDisposed())
-		{
-			addressGroupViewer.refresh();
-			checkCategory(addressGroupViewer.getInput());
-		}
-	}
-
-	private void internalRefresh(Object object)
-	{
-		if (!addressGroupViewer.getControl().isDisposed())
-		{
-			addressGroupViewer.refresh(object);
-			checkCategory(object);
-		}
 	}
 
 	public boolean isChecked(final AddressGroup addressGroup)
@@ -495,10 +304,7 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 	@Override
 	protected void okPressed()
 	{
-		if (this.isDirty())
-		{
-			this.updateAddressGroupMembers();
-		}
+		this.updateAddressGroupMembers();
 		super.okPressed();
 	}
 
@@ -509,8 +315,15 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		{
 			ComboViewer comboViewer = (ComboViewer) event.getSource();
 			StructuredSelection ssel = (StructuredSelection) comboViewer.getSelection();
-			this.updateViewer(ssel.getFirstElement());
-			this.checkCategory(ssel.getFirstElement());
+			if (ssel.isEmpty())
+			{
+				this.addressGroupViewer.setInput(null);
+			}
+			else
+			{
+				this.addressGroupViewer.setInput(ssel.getFirstElement());
+				this.checkCategory(ssel.getFirstElement());
+			}
 		}
 	}
 
@@ -569,7 +382,11 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		Long[] addressGroupIds = this.monitors.keySet().toArray(new Long[0]);
 		for (Long addressGroupId : addressGroupIds)
 		{
-			if (connectionService != null)
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
+			tracker.open();
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
 				AddressGroupMember member = this.current.get(addressGroupId);
 				Monitor monitor = this.monitors.get(addressGroupId);
@@ -584,24 +401,26 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 							{
 								member = AddressGroupMember.newInstance(monitor.addressGroup,
 										(LinkPersonAddress) this.parent);
+								member.setInserted(GregorianCalendar.getInstance());
 							}
 						}
-						else if (this.parent instanceof Address)
+						else if (parent instanceof Address)
 						{
-							member = getMember(monitor.addressGroup, (Address) this.parent);
+							member = getMember(monitor.addressGroup, (Address) parent);
 							if (member == null)
 							{
 								member = AddressGroupMember.newInstance(monitor.addressGroup, (Address) this.parent);
+								member.setInserted(GregorianCalendar.getInstance());
 							}
 						}
 						if (member != null)
 						{
 							member.setDeleted(false);
-							AddressGroupMemberQuery query = (AddressGroupMemberQuery) connectionService.getQuery(AddressGroupMember.class);
-							member = query.merge(member);
-							this.current.put(addressGroupId, member);
-							connectionService.refresh(this.parent);
-							monitor.addressGroupMember = member;
+							AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
+									.getQuery(AddressGroupMember.class);
+							current.put(addressGroupId, query.merge(member));
+							AddressGroup addressGroup = (AddressGroup) service.refresh(member.getAddressGroup());
+							this.addressGroupViewer.refresh(addressGroup);
 						}
 					}
 				}
@@ -610,90 +429,77 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 					if (monitor.checked == member.isDeleted())
 					{
 						member.setDeleted(!monitor.checked);
-						AddressGroupMemberQuery query = (AddressGroupMemberQuery) connectionService.getQuery(AddressGroupMember.class);
-						this.current.put(addressGroupId, query.merge(member));
-						connectionService.refresh(this.parent);
+						member.setUpdated(GregorianCalendar.getInstance());
+						if (parent instanceof LinkPersonAddress)
+						{
+							member.setLink((LinkPersonAddress) parent);
+						}
+						else if (parent instanceof Address)
+						{
+							member.setAddress((Address) parent);
+						}
+						AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
+								.getQuery(AddressGroupMember.class);
+						current.put(addressGroupId, query.merge(member));
 					}
 				}
 			}
+			tracker.close();
 		}
 	}
 
-	private void updateViewer(final Object object)
+	private AddressGroupMember getMember(AddressGroup addressGroup, LinkPersonAddress link)
 	{
-		UIJob updateViewer = new UIJob("")
+		List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
+		for (AddressGroupMember member : members)
 		{
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor)
+			if (member.getLink() != null && member.getLink().getId().equals(link.getId()))
 			{
-				if (!addressGroupViewer.getControl().isDisposed())
-				{
-					AddressGroupMemberDialog.this.addressGroupViewer.getControl().setEnabled(false);
-					AddressGroupMemberDialog.this.addressGroupViewer.setInput(object);
-					AddressGroupMemberDialog.this.internalRefresh();
-					AddressGroupMemberDialog.this.addressGroupViewer.getControl().setEnabled(true);
-				}
-				return Status.OK_STATUS;
-			}
-
-		};
-		updateViewer.setUser(true);
-		updateViewer.schedule();
-	}
-	
-	private String updateMonitor(final AddressGroup addressGroup, final boolean checked)
-	{
-		String message = null;
-		if (checked)
-		{
-			LinkPersonAddress link = alreadyChecked(addressGroup);
-			if (link instanceof LinkPersonAddress)
-			{
-				Person person = link.getPerson();
-				String name = PersonFormatter.getInstance().formatFirstnameLastname(person);
-				String address = AddressFormatter.getInstance().formatAddressLine(link.getAddress());
-				String city = AddressFormatter.getInstance().formatCityLine(link.getAddress());
-				message = name + " ist bereits mit der Adresse " + address + ", " + city + " in der Adressgruppe vorhanden.";
-			}
-		}
-		if (message == null)
-		{
-			Monitor monitor = this.monitors.get(addressGroup.getId());
-			if (monitor == null)
-			{
-				monitor = new Monitor(addressGroup, checked);
-				this.monitors.put(addressGroup.getId(), monitor);
-			}
-			monitor.checked = checked;
-		}
-		return message;
-	}
-
-	private LinkPersonAddress alreadyChecked(AddressGroup addressGroup)
-	{
-		Long id = null;
-		if (this.parent instanceof LinkPersonAddress)
-		{
-			id = ((LinkPersonAddress) this.parent).getPerson().getId();
-		}
-		else if (this.parent instanceof Person)
-		{
-			id = ((Person) this.parent).getId();
-		}
-		if (id != null)
-		{
-			List<AddressGroupMember> members = addressGroup.getValidAddressGroupMembers();
-			for (AddressGroupMember member : members)
-			{
-				if (member.isValidLinkMember())
-				{
-					if (member.getLink().getPerson().getId().equals(id))
-					{
-						return member.getLink();
-					}
-				}
+				return member;
 			}
 		}
 		return null;
+	}
+
+	private AddressGroupMember getMember(AddressGroup addressGroup, Address address)
+	{
+		List<AddressGroupMember> members = addressGroup.getAddressGroupMembers();
+		for (AddressGroupMember member : members)
+		{
+			if (member.getAddress().getId().equals(address.getId()))
+			{
+				return member;
+			}
+		}
+		return null;
+	}
+
+	private void updateMonitor(final AddressGroup addressGroup, final boolean checked)
+	{
+		Monitor monitor = this.monitors.get(addressGroup.getId());
+		if (monitor == null)
+		{
+			monitor = new Monitor(addressGroup);
+			this.monitors.put(addressGroup.getId(), monitor);
+		}
+		monitor.checked = checked;
+	}
+
+	private class Monitor
+	{
+		public boolean checked = false;
+
+		public AddressGroup addressGroup = null;
+
+		public Monitor(final AddressGroup addressGroup)
+		{
+			this.addressGroup = addressGroup;
+		}
+
+		public Monitor(final AddressGroup addressGroup, final boolean checked)
+		{
+			this.addressGroup = addressGroup;
+			this.checked = checked;
+		}
 	}
 }
