@@ -14,6 +14,12 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class CharityRunTagReadQuery extends AbstractEntityQuery<CharityRunTagRead>
 {
+	public int deleteByCharityRun(CharityRun charityRun)
+	{
+		Query query = connectionService.getEntityManager().createQuery("DELETE FROM CharityRunTagRead c WHERE c.charityRun.id = " + charityRun.getId());
+		return this.execute(query);
+	}
+	
 	public CharityRunTagRead selectLastRead(String tagId)
 	{
 		ExpressionBuilder charityRunTagReadExpression = new ExpressionBuilder();

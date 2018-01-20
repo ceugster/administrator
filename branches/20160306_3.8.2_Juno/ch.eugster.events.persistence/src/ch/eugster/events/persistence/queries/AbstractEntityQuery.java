@@ -159,6 +159,39 @@ public abstract class AbstractEntityQuery<T extends AbstractEntity>
 		return entity;
 	}
 
+	public int execute(Query query)
+	{
+		int result = 0;
+		EntityManager em = getEntityManager();
+		if (em != null)
+		{
+			try
+			{
+				em.getTransaction().begin();
+				result = query.executeUpdate();
+				em.flush();
+				em.getTransaction().commit();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				this.connectionService.log(LogService.LOG_ERROR, e.getLocalizedMessage());
+				MessageDialog dialog = new MessageDialog(null, "Fehler beim Ausführen", null,
+						"Beim Versuch, die Änderungen zu speichern, ist ein Fehler aufgetreten.", MessageDialog.ERROR,
+						new String[] { "OK" }, 0);
+				dialog.open();
+			}
+			finally
+			{
+				if (em.getTransaction().isActive())
+				{
+					em.getTransaction().rollback();
+				}
+			}
+		}
+		return result;
+	}
+
 	public AbstractEntity refresh(final AbstractEntity entity)
 	{
 		EntityManager em = getEntityManager();
