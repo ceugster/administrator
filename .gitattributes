@@ -388,7 +388,8 @@ ch.eugster.events.core/.project -text
 ch.eugster.events.core/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.core/META-INF/MANIFEST.MF -text
 ch.eugster.events.core/Thumbs.db -text
-ch.eugster.events.core/administrator.product -text
+ch.eugster.events.core/administrator.product -text svneol=unset#text/plain
+ch.eugster.events.core/administrator_full.product -text svneol=unset#text/plain
 ch.eugster.events.core/build.properties -text
 ch.eugster.events.core/doc/Handbuch.odt -text
 ch.eugster.events.core/doc/Thumbs.db -text
