@@ -139,8 +139,8 @@ public class PrintLabelDialog extends TitleAreaDialog
 				}
 				else
 				{
-					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-							ReportService.class.getName(), null);
+					ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+							ReportService.class, null);
 					try
 					{
 						tracker.open();
@@ -380,7 +380,7 @@ public class PrintLabelDialog extends TitleAreaDialog
 
 	private void extract(final LabelFactory factory, final Booking booking)
 	{
-		if (!booking.isDeleted() && booking.getParticipant() != null)
+		if (booking.isValid() && booking.getParticipant() != null)
 		{
 			Object object = bookingStates.get(booking.getBookingState(booking.getCourse().getState()));
 			if (object instanceof Boolean)
@@ -400,7 +400,7 @@ public class PrintLabelDialog extends TitleAreaDialog
 
 	private void extract(final LabelFactory factory, final Course course)
 	{
-		if (!course.isDeleted())
+		if (course.isValid())
 		{
 			List<Booking> bookings = course.getBookings();
 			for (Booking booking : bookings)
@@ -415,31 +415,21 @@ public class PrintLabelDialog extends TitleAreaDialog
 					this.extract(factory, guide);
 				}
 			}
-			// for (AddressGroupLink link : addressGroup.getChildren())
-			// {
-			// if (!link.isDeleted() && !link.getChild().isDeleted())
-			// {
-			// extract(link.getChild());
-			// }
-			// }
 		}
 	}
 
 	private void extract(final LabelFactory factory, final CourseGuide courseGuide)
 	{
-		if (!courseGuide.isDeleted())
+		if (courseGuide.isValid())
 		{
 			LinkPersonAddress link = courseGuide.getGuide().getLink();
-			if (!link.isDeleted())
-			{
-				factory.addEntry(link);
-			}
+			factory.addEntry(link);
 		}
 	}
 
 	private void extract(final LabelFactory factory, final Season season)
 	{
-		if (!season.isDeleted())
+		if (season.isValid())
 		{
 			List<Course> courses = season.getCourses();
 			for (Course course : courses)
