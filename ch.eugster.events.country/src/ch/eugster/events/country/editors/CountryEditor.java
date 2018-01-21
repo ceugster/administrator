@@ -380,41 +380,45 @@ public class CountryEditor extends AbstractEntityEditor<Country>
 	{
 		Message msg = null;
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			CountryEditorInput input = (CountryEditorInput) this.getEditorInput();
-			Country country = (Country) input.getAdapter(Country.class);
-			String code = this.iso3166alpha2.getText();
-
-			CountryQuery query = (CountryQuery) service.getQuery(Country.class);
-			if (!query.isIso3166alpha2Unique(code, country.getId()))
+			ConnectionService service = tracker.getService();
+			if (service != null)
 			{
-				msg = new Message(this.iso3166alpha2, "Ungültiger Code");
-				msg.setMessage("Der gewählte ISO 3166 Code wird bereits verwendet.");
-				return msg;
-			}
-
-			if (!query.isIso3166alpha3Unique(code, country.getId()))
-			{
-				msg = new Message(this.iso3166alpha3, "Ungültiger Code");
-				msg.setMessage("Der gewählte ISO 3166 Code wird bereits verwendet.");
-				return msg;
-			}
-
-			if (!query.isIso31662numericUnique(code, country.getId()))
-			{
-				msg = new Message(this.iso31662numeric, "Ungültiger Code");
-				msg.setMessage("Der gewählte numerische ISO 31662 Code wird bereits verwendet.");
-				return msg;
+				CountryEditorInput input = (CountryEditorInput) this.getEditorInput();
+				Country country = (Country) input.getAdapter(Country.class);
+				String code = this.iso3166alpha2.getText();
+	
+				CountryQuery query = (CountryQuery) service.getQuery(Country.class);
+				if (!query.isIso3166alpha2Unique(code, country.getId()))
+				{
+					msg = new Message(this.iso3166alpha2, "Ungültiger Code");
+					msg.setMessage("Der gewählte ISO 3166 Code wird bereits verwendet.");
+					return msg;
+				}
+	
+				if (!query.isIso3166alpha3Unique(code, country.getId()))
+				{
+					msg = new Message(this.iso3166alpha3, "Ungültiger Code");
+					msg.setMessage("Der gewählte ISO 3166 Code wird bereits verwendet.");
+					return msg;
+				}
+	
+				if (!query.isIso31662numericUnique(code, country.getId()))
+				{
+					msg = new Message(this.iso31662numeric, "Ungültiger Code");
+					msg.setMessage("Der gewählte numerische ISO 31662 Code wird bereits verwendet.");
+					return msg;
+				}
 			}
 		}
-		tracker.close();
-
+		finally
+		{
+			tracker.close();
+		}
 		return msg;
 	}
 

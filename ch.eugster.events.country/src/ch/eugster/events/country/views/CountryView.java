@@ -43,7 +43,7 @@ public class CountryView extends AbstractEntityView implements IDoubleClickListe
 {
 	public static final String ID = "ch.eugster.events.country.view";
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private TableViewer viewer;
 
@@ -205,13 +205,13 @@ public class CountryView extends AbstractEntityView implements IDoubleClickListe
 
 		getSite().setSelectionProvider(viewer);
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public ConnectionService addingService(ServiceReference<ConnectionService> reference)
 			{
-				final ConnectionService connectionService = (ConnectionService) super.addingService(reference);
+				final ConnectionService connectionService = super.addingService(reference);
 				Display display = Display.getCurrent();
 				if (display == null)
 				{
@@ -230,7 +230,7 @@ public class CountryView extends AbstractEntityView implements IDoubleClickListe
 			}
 
 			@Override
-			public void removedService(ServiceReference reference, Object service)
+			public void removedService(ServiceReference<ConnectionService> reference, ConnectionService connectionService)
 			{
 				Display display = Display.getCurrent();
 				if (display == null)
@@ -248,7 +248,7 @@ public class CountryView extends AbstractEntityView implements IDoubleClickListe
 						}
 					}
 				});
-				super.removedService(reference, service);
+				super.removedService(reference, connectionService);
 			}
 
 		};
