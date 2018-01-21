@@ -39,6 +39,11 @@ public class MaxRecordsPreferencePage extends FieldEditorPreferencePage implemen
 		maxRowsEditor.setValidRange(-1, 100000);
 		this.addField(maxRowsEditor);
 
+		IntegerFieldEditor criteriaMinLengthEditor = new IntegerFieldEditor(PreferenceInitializer.KEY_CRITERIA_MIN_LENGTH,
+				"Mindestlänge Kriterien", this.getFieldEditorParent());
+		criteriaMinLengthEditor.setEmptyStringAllowed(false);
+		criteriaMinLengthEditor.setValidRange(-1, 100000);
+		this.addField(criteriaMinLengthEditor);
 	}
 
 	@Override

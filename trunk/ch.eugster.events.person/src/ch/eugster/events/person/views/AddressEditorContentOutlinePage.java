@@ -14,9 +14,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -32,7 +30,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.osgi.util.tracker.ServiceTracker;
@@ -43,6 +40,8 @@ import ch.eugster.events.persistence.filters.BookingParticipantFilter;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
+import ch.eugster.events.persistence.model.Address;
+import ch.eugster.events.persistence.model.AddressContact;
 import ch.eugster.events.persistence.model.AddressGroup;
 import ch.eugster.events.persistence.model.AddressGroupCategory;
 import ch.eugster.events.persistence.model.AddressGroupMember;
@@ -57,18 +56,18 @@ import ch.eugster.events.persistence.model.LinkPersonAddressContact;
 import ch.eugster.events.persistence.model.Member;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Person;
-import ch.eugster.events.persistence.model.PersonContact;
 import ch.eugster.events.persistence.queries.ContactQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.person.Activator;
 import ch.eugster.events.person.dialogs.BankAccountDialog;
 import ch.eugster.events.person.dialogs.ContactDialog;
-import ch.eugster.events.person.editors.FormEditorLinkPage;
-import ch.eugster.events.person.editors.FormEditorPersonPage;
+import ch.eugster.events.person.editors.AddressEditor;
+import ch.eugster.events.person.editors.AddressEditorInput;
 import ch.eugster.events.person.editors.PersonEditorInput;
 import ch.eugster.events.person.editors.PersonFormEditor;
+import ch.eugster.events.ui.views.IEntityEditorContentOutlinePage;
 
-public class PersonFormEditorContentOutlinePage extends ContentOutlinePage implements IPageChangedListener
+public class AddressEditorContentOutlinePage extends ContentOutlinePage implements IEntityEditorContentOutlinePage
 {
 	// private static final Calendar calendar = GregorianCalendar.getInstance();
 
@@ -76,14 +75,13 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 
 	private static final NumberFormat nf = DecimalFormat.getCurrencyInstance();
 
-	private FormPage currentPage;
+	private AddressEditor currentAddressEditor;
 
 	private final EntityAdapter entityListener;
 
-	public PersonFormEditorContentOutlinePage(final FormPage page)
+	public AddressEditorContentOutlinePage(final AddressEditor addressEditor)
 	{
-		this.currentPage = page;
-		this.currentPage.getEditor().addPageChangedListener(this);
+		this.currentAddressEditor = addressEditor;
 
 		this.entityListener = new EntityAdapter() 
 		{
@@ -93,45 +91,45 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				if (entity instanceof BankAccount)
 				{
 					BankAccount bankAccount = (BankAccount) entity;
-					List<BankAccount> accounts = bankAccount.getPerson().getValidBankAccounts();
+					List<BankAccount> accounts = bankAccount.getAddress().getBankAccounts();
 					for (BankAccount account : accounts)
 					{
 						if (account.getId().equals(bankAccount.getId()))
 						{
-							account.getPerson().removeBankAccount(account);
-							account.getPerson().addBankAccount(bankAccount);
+							account.getAddress().removeBankAccount(account);
+							account.getAddress().addBankAccount(bankAccount);
 						}
 					}
-					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
+					AddressEditorContentOutlinePage.this.getTreeViewer().refresh();
 				}
-				if (entity instanceof PersonContact)
+				if (entity instanceof AddressContact)
 				{
-					PersonContact updatedContact = (PersonContact) entity;
-					List<PersonContact> contacts = updatedContact.getPerson().getValidContacts();
-					for (PersonContact contact : contacts)
+					AddressContact updatedContact = (AddressContact) entity;
+					List<AddressContact> contacts = updatedContact.getAddress().getContacts();
+					for (AddressContact contact : contacts)
 					{
 						if (contact.getId().equals(updatedContact.getId()))
 						{
-							updatedContact.getPerson().removeContact(contact);
-							updatedContact.getPerson().addContact(updatedContact);
+							updatedContact.getAddress().removeContact(contact);
+							updatedContact.getAddress().addContact(updatedContact);
 						}
 					}
-					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
+					AddressEditorContentOutlinePage.this.getTreeViewer().refresh();
 				}
-				if (entity instanceof LinkPersonAddressContact)
-				{
-					LinkPersonAddressContact updatedContact = (LinkPersonAddressContact) entity;
-					List<LinkPersonAddressContact> contacts = updatedContact.getLink().getValidContacts();
-					for (LinkPersonAddressContact contact : contacts)
-					{
-						if (contact.getId().equals(updatedContact.getId()))
-						{
-							updatedContact.getLink().removeContact(contact);
-							updatedContact.getLink().addContact(updatedContact);
-						}
-					}
-					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
-				}
+//				if (entity instanceof LinkPersonAddressContact)
+//				{
+//					LinkPersonAddressContact updatedContact = (LinkPersonAddressContact) entity;
+//					List<LinkPersonAddressContact> contacts = updatedContact.getLink().getValidContacts();
+//					for (LinkPersonAddressContact contact : contacts)
+//					{
+//						if (contact.getId().equals(updatedContact.getId()))
+//						{
+//							updatedContact.getLink().removeContact(contact);
+//							updatedContact.getLink().addContact(updatedContact);
+//						}
+//					}
+//					AddressEditorContentOutlinePage.this.getTreeViewer().refresh();
+//				}
 			}
 
 			@Override
@@ -140,43 +138,43 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				if (entity instanceof BankAccount)
 				{
 					BankAccount account = (BankAccount) entity;
-					account.getPerson().addBankAccount(account);
-					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
+					account.getAddress().addBankAccount(account);
+					AddressEditorContentOutlinePage.this.getTreeViewer().refresh();
 				}
-				else if (entity instanceof PersonContact)
+				else if (entity instanceof AddressContact)
 				{
-					PersonContact contact = (PersonContact) entity;
-					contact.getPerson().addContact(contact);
-					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
+					AddressContact contact = (AddressContact) entity;
+					contact.getAddress().addContact(contact);
+					AddressEditorContentOutlinePage.this.getTreeViewer().refresh();
 				}
-				else if (entity instanceof LinkPersonAddressContact)
-				{
-					LinkPersonAddressContact contact = (LinkPersonAddressContact) entity;
-					contact.getLink().addContact(contact);
-					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
-				}
+//				else if (entity instanceof LinkPersonAddressContact)
+//				{
+//					LinkPersonAddressContact contact = (LinkPersonAddressContact) entity;
+//					contact.getLink().addContact(contact);
+//					AddressEditorContentOutlinePage.this.getTreeViewer().refresh();
+//				}
 			}
 			
 			@Override
 			public void postDelete(AbstractEntity entity)
 			{
-				if (entity instanceof PersonContact)
+				if (entity instanceof AddressContact)
 				{
-					PersonContact contact = (PersonContact) entity;
-					contact.getPerson().removeContact(contact);
-					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
+					AddressContact contact = (AddressContact) entity;
+					contact.getAddress().removeContact(contact);
+					AddressEditorContentOutlinePage.this.getTreeViewer().refresh();
 				}
-				if (entity instanceof LinkPersonAddressContact)
-				{
-					LinkPersonAddressContact contact = (LinkPersonAddressContact) entity;
-					contact.getLink().removeContact(contact);
-					PersonFormEditorContentOutlinePage.this.getTreeViewer().refresh();
-				}
+//				if (entity instanceof LinkPersonAddressContact)
+//				{
+//					LinkPersonAddressContact contact = (LinkPersonAddressContact) entity;
+//					contact.getLink().removeContact(contact);
+//					AddressEditorContentOutlinePage.this.getTreeViewer().refresh();
+//				}
 			}
 		};
 		EntityMediator.addListener(BankAccount.class, entityListener);
-		EntityMediator.addListener(PersonContact.class, entityListener);
-		EntityMediator.addListener(LinkPersonAddressContact.class, entityListener);
+		EntityMediator.addListener(AddressContact.class, entityListener);
+//		EntityMediator.addListener(LinkPersonAddressContact.class, entityListener);
 	}
 
 	protected void createContextMenu()
@@ -188,29 +186,29 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			@Override
 			public void menuAboutToShow(final IMenuManager manager)
 			{
-				StructuredSelection ssel = (StructuredSelection) PersonFormEditorContentOutlinePage.this
+				StructuredSelection ssel = (StructuredSelection) AddressEditorContentOutlinePage.this
 						.getTreeViewer().getSelection();
 				Object object = ssel.getFirstElement();
 				if (object instanceof BankAccountRoot)
 				{
-					manager.add(PersonFormEditorContentOutlinePage.this.createAddBankAccountAction((BankAccountRoot) object));
+					manager.add(AddressEditorContentOutlinePage.this.createAddBankAccountAction((BankAccountRoot) object));
 				}
 				else if (object instanceof BankAccount)
 				{
-					manager.add(PersonFormEditorContentOutlinePage.this.createEditBankAccountAction((BankAccount) object));
+					manager.add(AddressEditorContentOutlinePage.this.createEditBankAccountAction((BankAccount) object));
 				}
 				else if (object instanceof LinkPersonAddress)
 				{
-					manager.add(PersonFormEditorContentOutlinePage.this.createEditLinkAction((LinkPersonAddress) object));
+					manager.add(AddressEditorContentOutlinePage.this.createEditLinkAction((LinkPersonAddress) object));
 				}
 				if (object instanceof ContactRoot)
 				{
-					manager.add(PersonFormEditorContentOutlinePage.this.createAddContactAction((ContactRoot) object));
+					manager.add(AddressEditorContentOutlinePage.this.createAddContactAction((ContactRoot) object));
 				}
 				else if (object instanceof Contact)
 				{
-					manager.add(PersonFormEditorContentOutlinePage.this.createEditContactAction((Contact) object));
-					manager.add(PersonFormEditorContentOutlinePage.this.createDeleteContactAction((Contact) object));
+					manager.add(AddressEditorContentOutlinePage.this.createEditContactAction((Contact) object));
+					manager.add(AddressEditorContentOutlinePage.this.createDeleteContactAction((Contact) object));
 				}
 			}
 		});
@@ -262,7 +260,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		});
 		this.createContextMenu();
 
-		this.setInput(this.currentPage);
+		this.setInput(this.currentAddressEditor);
 	}
 
 	private Action createEditLinkAction(final LinkPersonAddress link)
@@ -273,7 +271,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			public void run()
 			{
 				super.run();
-				PersonFormEditorContentOutlinePage.this.openEditor();
+				AddressEditorContentOutlinePage.this.openEditor();
 			}
 		};
 
@@ -289,22 +287,11 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			@Override
 			public void run()
 			{
-				Person person = null;
-				if (currentPage instanceof FormEditorPersonPage)
-				{
-					person = ((FormEditorPersonPage) currentPage).getPerson();
-				}
-				else if (currentPage instanceof FormEditorLinkPage)
-				{
-					person = ((FormEditorLinkPage) currentPage).getLink().getPerson();
-				}
-				if (person != null)
-				{
-					BankAccount account = BankAccount.newInstance(person);
-					Shell shell = PersonFormEditorContentOutlinePage.this.getSite().getShell();
-					BankAccountDialog dialog = new BankAccountDialog(shell, account);
-					dialog.open();
-				}
+				Address address = ((AddressEditorInput) currentAddressEditor.getEditorInput()).getEntity();
+				BankAccount account = BankAccount.newInstance(address);
+				Shell shell = AddressEditorContentOutlinePage.this.getSite().getShell();
+				BankAccountDialog dialog = new BankAccountDialog(shell, account);
+				dialog.open();
 			}
 		};
 		action.setText("Hinzufügen");
@@ -319,29 +306,11 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			@Override
 			public void run()
 			{
-				Contact contact = null;
-				if (currentPage instanceof FormEditorPersonPage)
-				{
-					Person person = ((FormEditorPersonPage) currentPage).getPerson();
-					if (person != null)
-					{
-						contact = PersonContact.newInstance(person);
-					}
-				}
-				else if (currentPage instanceof FormEditorLinkPage)
-				{
-					LinkPersonAddress link = ((FormEditorLinkPage) currentPage).getLink();
-					if (link != null)
-					{
-						contact = LinkPersonAddressContact.newInstance(link);
-					}
-				}
-				if (contact != null)
-				{
-					Shell shell = PersonFormEditorContentOutlinePage.this.getSite().getShell();
-					ContactDialog dialog = new ContactDialog(shell, contact);
-					dialog.open();
-				}
+				Address address = ((AddressEditorInput) currentAddressEditor.getEditorInput()).getEntity();
+				Contact contact = AddressContact.newInstance(address);
+				Shell shell = AddressEditorContentOutlinePage.this.getSite().getShell();
+				ContactDialog dialog = new ContactDialog(shell, contact);
+				dialog.open();
 			}
 		};
 		action.setText("Hinzufügen");
@@ -356,7 +325,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			@Override
 			public void run()
 			{
-				Shell shell = PersonFormEditorContentOutlinePage.this.getSite().getShell();
+				Shell shell = AddressEditorContentOutlinePage.this.getSite().getShell();
 				BankAccountDialog dialog = new BankAccountDialog(shell, account);
 				dialog.open();
 			}
@@ -373,7 +342,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			@Override
 			public void run()
 			{
-				Shell shell = PersonFormEditorContentOutlinePage.this.getSite().getShell();
+				Shell shell = AddressEditorContentOutlinePage.this.getSite().getShell();
 				ContactDialog dialog = new ContactDialog(shell, contact);
 				dialog.open();
 			}
@@ -390,7 +359,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 			@Override
 			public void run()
 			{
-				Shell shell = PersonFormEditorContentOutlinePage.this.getSite().getShell();
+				Shell shell = AddressEditorContentOutlinePage.this.getSite().getShell();
 				if (MessageDialog.openConfirm(shell, "Kontakt entfernen", "Wollen Sie den ausgewählten Kontakt entfernen?"))
 				{
 					ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class, null);
@@ -420,26 +389,21 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 	public void dispose()
 	{
 		EntityMediator.removeListener(BankAccount.class, entityListener);
-		EntityMediator.removeListener(PersonContact.class, entityListener);
-		EntityMediator.removeListener(LinkPersonAddressContact.class, entityListener);
-		if (this.currentPage != null)
-		{
-			this.currentPage.getEditor().removePageChangedListener(this);
-		}
+		EntityMediator.removeListener(AddressContact.class, entityListener);
 		super.dispose();
 	}
 
 	private void openEditor()
 	{
-		StructuredSelection ssel = (StructuredSelection) PersonFormEditorContentOutlinePage.this.getTreeViewer()
+		StructuredSelection ssel = (StructuredSelection) AddressEditorContentOutlinePage.this.getTreeViewer()
 				.getSelection();
-		if (ssel.getFirstElement() instanceof LinkPersonAddress)
+		if (ssel.getFirstElement() instanceof Address)
 		{
-			LinkPersonAddress link = (LinkPersonAddress) ssel.getFirstElement();
+			Address address = (Address) ssel.getFirstElement();
 			try
 			{
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-						.openEditor(new PersonEditorInput(link.getPerson()), PersonFormEditor.ID);
+						.openEditor(new AddressEditorInput(address), AddressEditor.ID);
 			}
 			catch (PartInitException e)
 			{
@@ -448,77 +412,49 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		}
 	}
 
-	@Override
-	public void pageChanged(final PageChangedEvent event)
+	private void setInput(final Object editor)
 	{
-		setInput(event.getSelectedPage());
-	}
-
-	private void setInput(final Object page)
-	{
-		if (page instanceof FormEditorPersonPage)
+		if (editor instanceof AddressEditor)
 		{
-			currentPage = (FormEditorPersonPage) page;
+			currentAddressEditor = (AddressEditor) editor;
 		}
-		else if (page instanceof FormEditorLinkPage)
-		{
-			currentPage = (FormEditorLinkPage) page;
-		}
-		getTreeViewer().setInput(this.currentPage);
+		getTreeViewer().setInput(this.currentAddressEditor);
 	}
 
 	private class AddressGroupMemberRoot implements Root
 	{
-		private final FormPage currentPage;
+		private final AddressEditor currentAddressEditor;
 
 		private Map<Long, AddressGroupCategoryContainer> map;
 
-		public AddressGroupMemberRoot(final FormPage page)
+		public AddressGroupMemberRoot(final AddressEditor editor)
 		{
-			this.currentPage = page;
+			this.currentAddressEditor = editor;
 			this.map = new HashMap<Long, AddressGroupCategoryContainer>();
 		}
 
 		@Override
 		public Object[] getChildren()
 		{
-			if (this.map.isEmpty())
+			this.map.clear();
+			List<AddressGroupMember> members = ((AddressEditorInput) currentAddressEditor.getEditorInput()).getEntity().getAddressAddressGroupMembers();
+			for (AddressGroupMember member : members)
 			{
-				this.map.clear();
-				List<AddressGroupMember> members = null;
-				if (this.currentPage instanceof FormEditorPersonPage)
+				AddressGroupCategoryContainer container = map.get(member.getAddressGroup().getAddressGroupCategory().getId());
+				if (container == null)
 				{
-					FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-					Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-					members = person.getAddressGroupMembers();
+					container = new AddressGroupCategoryContainer(member.getAddressGroup().getAddressGroupCategory());
+					map.put(member.getAddressGroup().getAddressGroupCategory().getId(), container);
 				}
-				else if (this.currentPage instanceof FormEditorLinkPage)
-				{
-					FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
-					LinkPersonAddress link = page.getLink();
-					members = link.getValidAddressGroupMembers();
-				}
-				if (members != null && !members.isEmpty())
-				{
-					for (AddressGroupMember member : members)
-					{
-						AddressGroupCategoryContainer container = map.get(member.getAddressGroup().getAddressGroupCategory().getId());
-						if (container == null)
-						{
-							container = new AddressGroupCategoryContainer(member.getAddressGroup().getAddressGroupCategory());
-							map.put(member.getAddressGroup().getAddressGroupCategory().getId(), container);
-						}
-						container.addMember(member);
-					}
-				}
+				container.addMember(member);
 			}
 			return map.values().toArray(new AddressGroupCategoryContainer[0]);
 		}
 
 		@Override
-		public FormPage getFormPage()
+		public AddressEditor getAddressEditor()
 		{
-			return currentPage;
+			return currentAddressEditor;
 		}
 
 		@Override
@@ -666,37 +602,23 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 
 	private class AddressRoot implements Root
 	{
-		private final FormPage currentPage;
+		private final AddressEditor currentAddressEditor;
 
-		public AddressRoot(final FormPage page)
+		public AddressRoot(final AddressEditor editor)
 		{
-			this.currentPage = page;
+			this.currentAddressEditor = editor;
 		}
 
 		@Override
 		public Object[] getChildren()
 		{
-			List<LinkPersonAddress> others = new ArrayList<LinkPersonAddress>();
-			if (currentPage instanceof FormEditorLinkPage)
-			{
-				FormEditorLinkPage page = (FormEditorLinkPage) currentPage;
-				List<LinkPersonAddress> links = page.getLink().getAddress().getPersonLinks();
-				for (LinkPersonAddress link : links)
-				{
-					if (!link.isDeleted() && !link.getPerson().isDeleted() && page.getLink().getId() != null
-							&& !page.getLink().getId().equals(link.getId()))
-					{
-						others.add(link);
-					}
-				}
-			}
-			return others.toArray(new LinkPersonAddress[0]);
+			return ((AddressEditorInput) currentAddressEditor.getEditorInput()).getEntity().getValidLinks().toArray(new LinkPersonAddress[0]);
 		}
 
 		@Override
-		public FormPage getFormPage()
+		public AddressEditor getAddressEditor()
 		{
-			return currentPage;
+			return currentAddressEditor;
 		}
 
 		@Override
@@ -720,55 +642,29 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public boolean hasChildren()
 		{
-			int count = 0;
-			if (currentPage instanceof FormEditorLinkPage)
-			{
-				FormEditorLinkPage page = (FormEditorLinkPage) currentPage;
-				List<LinkPersonAddress> links = page.getLink().getAddress().getPersonLinks();
-				for (LinkPersonAddress link : links)
-				{
-					if (!link.isDeleted() && !link.getPerson().isDeleted() && page.getLink().getId() != null
-							&& !page.getLink().getId().equals(link.getId()))
-					{
-						count++;
-					}
-				}
-			}
-			return count > 0;
+			return ((AddressEditorInput) currentAddressEditor.getEditorInput()).getEntity().getValidLinks().size() > 0;
 		}
 	}
 
 	private class DonationRoot implements Root
 	{
-		private final FormPage currentPage;
+		private final AddressEditor currentAddressEditor;
 
-		public DonationRoot(final FormPage page)
+		public DonationRoot(final AddressEditor editor)
 		{
-			this.currentPage = page;
+			this.currentAddressEditor = editor;
 		}
 
 		@Override
 		public Object[] getChildren()
 		{
-			if (this.currentPage instanceof FormEditorPersonPage)
-			{
-				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return person.getDonations().toArray(new Donation[0]);
-			}
-			else if (this.currentPage instanceof FormEditorLinkPage)
-			{
-				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
-				LinkPersonAddress link = page.getLink();
-				return link.getValidDonations().toArray(new Donation[0]);
-			}
-			return new Donation[0];
+			return ((AddressEditorInput) currentAddressEditor.getEditorInput()).getEntity().getValidDonations().toArray(new Donation[0]);
 		}
 
 		@Override
-		public FormPage getFormPage()
+		public AddressEditor getAddressEditor()
 		{
-			return currentPage;
+			return currentAddressEditor;
 		}
 
 		@Override
@@ -792,54 +688,31 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public boolean hasChildren()
 		{
-			if (this.currentPage instanceof FormEditorPersonPage)
-			{
-				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return !person.getDonations().isEmpty();
-			}
-			else if (this.currentPage instanceof FormEditorLinkPage)
-			{
-				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
-				LinkPersonAddress link = page.getLink();
-				return !link.getDonations().isEmpty();
-			}
-			return false;
+			return ((AddressEditorInput) currentAddressEditor.getEditorInput()).getEntity().getValidDonations().size() > 0;
 		}
 	}
 
 	private class ContactRoot implements Root
 	{
-		private final FormPage currentPage;
+		private final AddressEditor currentAddressEditor;
 
-		public ContactRoot(final FormPage page)
+		public ContactRoot(final AddressEditor editor)
 		{
-			this.currentPage = page;
+			this.currentAddressEditor = editor;
 		}
 
 		@Override
 		public Object[] getChildren()
 		{
-			if (this.currentPage instanceof FormEditorPersonPage)
-			{
-				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return person.getValidContacts().toArray(new PersonContact[0]);
-			}
-			else if (this.currentPage instanceof FormEditorLinkPage)
-			{
-				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
-				LinkPersonAddress link = page.getLink();
-				return link.getValidContacts().toArray(new LinkPersonAddressContact[0]);
-			}
-			return new LinkPersonAddressContact[0];
+			return ((AddressEditorInput) currentAddressEditor.getEditorInput()).getEntity().getValidContacts().toArray(new LinkPersonAddressContact[0]);
 		}
 
 		@Override
-		public FormPage getFormPage()
+		public AddressEditor getAddressEditor()
 		{
-			return currentPage;
+			return currentAddressEditor;
 		}
+
 
 		@Override
 		public Image getImage()
@@ -856,59 +729,35 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public Integer getOrder()
 		{
-			return Integer.valueOf(Order.DONATION.ordinal());
+			return Integer.valueOf(Order.CONTACTS.ordinal());
 		}
 
 		@Override
 		public boolean hasChildren()
 		{
-			if (this.currentPage instanceof FormEditorPersonPage)
-			{
-				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return !person.getContacts().isEmpty();
-			}
-			else if (this.currentPage instanceof FormEditorLinkPage)
-			{
-				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
-				LinkPersonAddress link = page.getLink();
-				return !link.getContacts().isEmpty();
-			}
-			return false;
+			return ((AddressEditorInput) currentAddressEditor.getEditorInput()).getEntity().getValidContacts().size() > 0;
 		}
 	}
 
 	private class MemberRoot implements Root
 	{
-		private final FormPage currentPage;
+		private final AddressEditor currentAddressEditor;
 
-		public MemberRoot(final FormPage page)
+		public MemberRoot(final AddressEditor editor)
 		{
-			this.currentPage = page;
+			this.currentAddressEditor = editor;
 		}
 
 		@Override
 		public Object[] getChildren()
 		{
-			if (this.currentPage instanceof FormEditorPersonPage)
-			{
-				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return person.getMembers().toArray(new Member[0]);
-			}
-			else if (this.currentPage instanceof FormEditorLinkPage)
-			{
-				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
-				LinkPersonAddress link = page.getLink();
-				return link.getValidMembers().toArray(new Member[0]);
-			}
-			return new Member[0];
+			return ((AddressEditorInput) currentAddressEditor.getEditorInput()).getEntity().getValidMembers().toArray(new Member[0]);
 		}
 
 		@Override
-		public FormPage getFormPage()
+		public AddressEditor getAddressEditor()
 		{
-			return currentPage;
+			return currentAddressEditor;
 		}
 
 		@Override
@@ -932,25 +781,13 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public boolean hasChildren()
 		{
-			if (this.currentPage instanceof FormEditorPersonPage)
-			{
-				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return !person.getMembers().isEmpty();
-			}
-			else if (this.currentPage instanceof FormEditorLinkPage)
-			{
-				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
-				LinkPersonAddress link = page.getLink();
-				return !link.getMembers().isEmpty();
-			}
-			return false;
+			return ((AddressEditorInput) currentAddressEditor.getEditorInput()).getEntity().getValidMembers().size() > 0;
 		}
 	}
 
 	public enum Order
 	{
-		PERSONS, BANK_ACCOUNT, COURSES, DONATION, MEMBER, ADDRESS_GROUPS;
+		PERSONS, CONTACTS, BANK_ACCOUNT, COURSES, DONATION, MEMBER, ADDRESS_GROUPS;
 	}
 
 	private class OutlineContentProvider implements ITreeContentProvider
@@ -963,35 +800,19 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		@Override
 		public Object[] getChildren(final Object parentElement)
 		{
-			if (parentElement instanceof FormEditorPersonPage)
-			{
-				/*
-				 * Es wurde der PersonenEditor ausgwählt
-				 */
-				FormEditorPersonPage page = (FormEditorPersonPage) parentElement;
-				List<Root> roots = new ArrayList<Root>();
-				roots.add(new MemberRoot(page));
-				roots.add(new ParticipantRoot(page));
-				roots.add(new DonationRoot(page));
-				roots.add(new AddressGroupMemberRoot(page));
-				roots.add(new BankAccountRoot(page));
-				roots.add(new ContactRoot(page));
-				return roots.toArray(new Root[0]);
-			}
-			else if (parentElement instanceof FormEditorLinkPage)
+			if (parentElement instanceof AddressEditor)
 			{
 				/*
 				 * Es wurde ein AdressEditor ausgewählt
 				 */
-				FormEditorLinkPage page = (FormEditorLinkPage) parentElement;
+				AddressEditor editor = (AddressEditor) parentElement;
 				List<Root> roots = new ArrayList<Root>();
-				roots.add(new AddressRoot(page));
-				roots.add(new MemberRoot(page));
-				roots.add(new ParticipantRoot(page));
-				roots.add(new DonationRoot(page));
-				roots.add(new AddressGroupMemberRoot(page));
-				roots.add(new BankAccountRoot(page));
-				roots.add(new ContactRoot(page));
+				roots.add(new AddressRoot(editor));
+				roots.add(new MemberRoot(editor));
+				roots.add(new DonationRoot(editor));
+				roots.add(new AddressGroupMemberRoot(editor));
+				roots.add(new BankAccountRoot(editor));
+				roots.add(new ContactRoot(editor));
 				return roots.toArray(new Root[0]);
 			}
 			else if (parentElement instanceof Root)
@@ -1061,76 +882,13 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 
 	}
 
-	private class ParticipantRoot implements Root
-	{
-		private final FormPage currentPage;
-
-		public ParticipantRoot(final FormPage page)
-		{
-			this.currentPage = page;
-		}
-
-		@Override
-		public Object[] getChildren()
-		{
-			return getParticipants().toArray(new Participant[0]);
-		}
-
-		@Override
-		public FormPage getFormPage()
-		{
-			return currentPage;
-		}
-
-		@Override
-		public Image getImage()
-		{
-			return Activator.getDefault().getImageRegistry().get(Activator.KEY_PARTICIPANT);
-		}
-
-		@Override
-		public String getName()
-		{
-			return "Besuchte Kurse (" + getParticipants().size() + ")";
-		}
-
-		@Override
-		public Integer getOrder()
-		{
-			return Integer.valueOf(Order.COURSES.ordinal());
-		}
-
-		private List<Participant> getParticipants()
-		{
-			if (this.currentPage instanceof FormEditorPersonPage)
-			{
-				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return person.getParticipants();
-			}
-			else if (this.currentPage instanceof FormEditorLinkPage)
-			{
-				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
-				LinkPersonAddress link = page.getLink();
-				return link.getValidParticipants();
-			}
-			return new ArrayList<Participant>();
-		}
-
-		@Override
-		public boolean hasChildren()
-		{
-			return getParticipants().size() > 0;
-		}
-	}
-
 	private class BankAccountRoot implements Root
 	{
-		private final FormPage currentPage;
+		private final AddressEditor currentAddressEditor;
 
-		public BankAccountRoot(final FormPage page)
+		public BankAccountRoot(final AddressEditor editor)
 		{
-			this.currentPage = page;
+			this.currentAddressEditor = editor;
 		}
 
 		@Override
@@ -1140,9 +898,9 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		}
 
 		@Override
-		public FormPage getFormPage()
+		public AddressEditor getAddressEditor()
 		{
-			return currentPage;
+			return currentAddressEditor;
 		}
 
 		@Override
@@ -1165,18 +923,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 
 		private List<BankAccount> getBankAccounts()
 		{
-			if (this.currentPage instanceof FormEditorPersonPage)
-			{
-				FormEditorPersonPage page = (FormEditorPersonPage) this.currentPage;
-				Person person = ((PersonEditorInput) page.getEditor().getEditorInput()).getEntity();
-				return person.getValidBankAccounts();
-			}
-			else if (this.currentPage instanceof FormEditorLinkPage)
-			{
-				FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
-				return page.getLink().getPerson().getValidBankAccounts();
-			}
-			return new ArrayList<BankAccount>();
+			return ((AddressEditorInput) currentAddressEditor.getEditorInput()).getEntity().getBankAccounts();
 		}
 
 		@Override
@@ -1218,7 +965,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 	{
 		Object[] getChildren();
 
-		FormPage getFormPage();
+		AddressEditor getAddressEditor();
 
 		Image getImage();
 
@@ -1255,5 +1002,12 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 		{
 			return this.members.toArray(new AddressGroupMember[0]);
 		}
+	}
+
+	@Override
+	public void update() 
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

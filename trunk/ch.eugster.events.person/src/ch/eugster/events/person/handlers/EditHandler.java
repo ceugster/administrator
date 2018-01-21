@@ -1,31 +1,26 @@
 package ch.eugster.events.person.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.PersonSettings;
-import ch.eugster.events.persistence.service.ConnectionService;
-import ch.eugster.events.person.Activator;
 import ch.eugster.events.person.editors.AddressEditor;
 import ch.eugster.events.person.editors.AddressEditorInput;
 import ch.eugster.events.person.editors.EditorSelector;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 
-public class EditHandler extends AbstractHandler implements IHandler
+public class EditHandler extends ConnectionServiceDependentAbstractHandler
 {
-
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
@@ -86,34 +81,18 @@ public class EditHandler extends AbstractHandler implements IHandler
 
 	private Address refreshEntity(Address address)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		try
+		if (connectionService != null)
 		{
-			tracker.open();
-			ConnectionService service = (ConnectionService) tracker.getService();
-			address = (Address) service.refresh(address);
-		}
-		finally
-		{
-			tracker.close();
+			address = (Address) connectionService.refresh(address);
 		}
 		return address;
 	}
 
 	private LinkPersonAddress refreshEntity(LinkPersonAddress link)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		try
+		if (connectionService != null)
 		{
-			tracker.open();
-			ConnectionService service = (ConnectionService) tracker.getService();
-			link = (LinkPersonAddress) service.refresh(link);
-		}
-		finally
-		{
-			tracker.close();
+			link = (LinkPersonAddress) connectionService.refresh(link);
 		}
 		return link;
 	}

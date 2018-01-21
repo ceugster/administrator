@@ -24,7 +24,12 @@ package org.iban4j;
  */
 public abstract class Iban4jException extends RuntimeException {
 
-    public Iban4jException() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4245327978247406941L;
+
+	public Iban4jException() {
         super();
     }
 
