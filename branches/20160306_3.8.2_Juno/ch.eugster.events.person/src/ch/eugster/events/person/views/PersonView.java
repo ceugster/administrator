@@ -807,9 +807,6 @@ public class PersonView extends AbstractEntityView implements IDoubleClickListen
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
-				// IStructuredSelection ssel = (IStructuredSelection)
-				// event.getSelection();
-				// Object object = ssel.getFirstElement();
 				PersonView.this.selected.setText("Ausgewählt: " + ((StructuredSelection) event.getSelection()).size());
 			}
 		});
