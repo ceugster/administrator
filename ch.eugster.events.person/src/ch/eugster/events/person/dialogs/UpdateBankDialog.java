@@ -37,7 +37,7 @@ public class UpdateBankDialog extends TitleAreaDialog
 {
 	private static final String[] FILTERS = { "*", "", "txt", "xls", "xlsx" };
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 	
 	private Text sourcePath;
 	
@@ -117,7 +117,7 @@ public class UpdateBankDialog extends TitleAreaDialog
 			}
 		});
 		
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class, null);
 		connectionServiceTracker.open();
 		
 		return composite;

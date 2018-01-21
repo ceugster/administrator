@@ -61,6 +61,8 @@ public class FormatPreferencePage extends FieldEditorPreferencePage implements I
 				description.toString(), variables, this.getFieldEditorParent());
 		this.addField(addressFormatEditor);
 
+		StringFieldEditor streetEditor = new StringFieldEditor(PreferenceInitializer.KEY_STREET_ABBREVIATION, "Formatierung Strasse", this.getFieldEditorParent());
+		this.addField(streetEditor);
 	}
 
 	@Override
