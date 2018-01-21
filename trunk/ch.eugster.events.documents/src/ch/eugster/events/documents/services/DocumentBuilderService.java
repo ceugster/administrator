@@ -12,11 +12,11 @@ public interface DocumentBuilderService
 {
 //	IStatus buildDocument(IProgressMonitor monitor, DataMapKey[] keys, List<DataMap> maps);
 
-	IStatus buildDocument(IProgressMonitor monitor, DataMapKey[] keys, DataMap[] maps);
+	IStatus buildDocument(IProgressMonitor monitor, DataMapKey[] keys, DataMap<?>[] maps);
 
 //	IStatus buildDocument(IProgressMonitor monitor, File file, Collection<DataMap> maps);
 
-	IStatus buildDocument(IProgressMonitor monitor, File file, DataMap[] map);
+	IStatus buildDocument(IProgressMonitor monitor, File file, DataMap<?>[] map);
 
-	IStatus buildDocument(IProgressMonitor monitor, File file, DataMap map);
+	IStatus buildDocument(IProgressMonitor monitor, File file, DataMap<?> map);
 }

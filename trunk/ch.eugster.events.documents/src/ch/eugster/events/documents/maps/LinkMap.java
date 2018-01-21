@@ -34,7 +34,7 @@ import ch.eugster.events.persistence.model.PersonExtendedField;
 import ch.eugster.events.persistence.queries.FieldExtensionQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
-public class LinkMap extends AbstractDataMap
+public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 {
 	private static NumberFormat amountFormatter = null;
 
@@ -101,21 +101,27 @@ public class LinkMap extends AbstractDataMap
 	public static List<DataMapKey> getExtendedFieldKeys()
 	{
 		List<DataMapKey> keys = new ArrayList<DataMapKey>();
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		Object service = tracker.getService();
-		if (service instanceof ConnectionService)
+		try
 		{
-			ConnectionService connectionService = (ConnectionService) service;
-			FieldExtensionQuery query = (FieldExtensionQuery) connectionService.getQuery(FieldExtension.class);
-			List<FieldExtension> fieldExtensions = query.selectByTarget(FieldExtensionTarget.PA_LINK, false);
-			for (FieldExtension fieldExtension : fieldExtensions)
+			Object service = tracker.getService();
+			if (service instanceof ConnectionService)
 			{
-				keys.add(new ExtendedFieldKey(fieldExtension));
+				ConnectionService connectionService = (ConnectionService) service;
+				FieldExtensionQuery query = (FieldExtensionQuery) connectionService.getQuery(FieldExtension.class);
+				List<FieldExtension> fieldExtensions = query.selectByTarget(FieldExtensionTarget.PA_LINK, false);
+				for (FieldExtension fieldExtension : fieldExtensions)
+				{
+					keys.add(new ExtendedFieldKey(fieldExtension));
+				}
 			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return keys;
 	}
 
@@ -488,29 +494,14 @@ public class LinkMap extends AbstractDataMap
 			}
 		}
 
-		// public List<DataMap> getTableMaps(final LinkPersonAddress link)
-		// {
-		// switch (this)
-		// {
-		// case DONATION:
-		// {
-		// return this.getTableMaps(link, null, null, null);
-		// }
-		// default:
-		// {
-		// throw new RuntimeException("Invalid key");
-		// }
-		// }
-		// }
-
-		public List<DataMap> getTableMaps(final LinkPersonAddress link, final Integer year, DonationPurpose purpose,
+		public List<DataMap<?>> getTableMaps(final LinkPersonAddress link, final Integer year, DonationPurpose purpose,
 				Domain domain)
 		{
 			switch (this)
 			{
 				case DONATIONS:
 				{
-					List<DataMap> tableMaps = new ArrayList<DataMap>();
+					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 					List<Donation> donations = link.getPerson().getDonations();
 					for (Donation donation : donations)
 					{
@@ -525,7 +516,7 @@ public class LinkMap extends AbstractDataMap
 			}
 		}
 
-		private void addDonation(Donation donation, List<DataMap> tableMaps, Integer year, DonationPurpose purpose,
+		private void addDonation(Donation donation, List<DataMap<?>> tableMaps, Integer year, DonationPurpose purpose,
 				Domain domain)
 		{
 			if (printDonation(donation, purpose, domain))

@@ -15,7 +15,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 	@Override
 	public void initializeDefaultPreferences()
 	{
-		IEclipsePreferences prefs = new InstanceScope().getNode(Activator.getDefault().getBundleContext().getBundle()
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(Activator.getDefault().getBundleContext().getBundle()
 				.getSymbolicName());
 		prefs.put(PreferenceConstants.KEY_PRINT_OUT_KEYS, "");
 	}
