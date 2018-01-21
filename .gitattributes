@@ -45,6 +45,8 @@ ch.eugster.events.addressgroup/META-INF/MANIFEST.MF -text
 ch.eugster.events.addressgroup/build.properties -text
 ch.eugster.events.addressgroup/icons/add_16.gif -text
 ch.eugster.events.addressgroup/icons/add_grey_16.gif -text
+ch.eugster.events.addressgroup/icons/address_16.png -text
+ch.eugster.events.addressgroup/icons/address_grey_16.png -text
 ch.eugster.events.addressgroup/icons/addressgroup_16.png -text
 ch.eugster.events.addressgroup/icons/addressgroup_add_16.png -text
 ch.eugster.events.addressgroup/icons/addressgroup_add_grey_16.png -text
@@ -66,10 +68,13 @@ ch.eugster.events.addressgroup/icons/copy.png -text
 ch.eugster.events.addressgroup/icons/cut.png -text
 ch.eugster.events.addressgroup/icons/delete_16.png -text
 ch.eugster.events.addressgroup/icons/delete_grey_16.png -text
+ch.eugster.events.addressgroup/icons/domain_16.gif -text
 ch.eugster.events.addressgroup/icons/edit_16.png -text
 ch.eugster.events.addressgroup/icons/edit_grey_16.png -text
 ch.eugster.events.addressgroup/icons/email_16.png -text
 ch.eugster.events.addressgroup/icons/email_grey_16.png -text
+ch.eugster.events.addressgroup/icons/factory_grey_16.png -text
+ch.eugster.events.addressgroup/icons/factory_yellow_16.png -text
 ch.eugster.events.addressgroup/icons/home_16.png -text
 ch.eugster.events.addressgroup/icons/member_add_16.png -text
 ch.eugster.events.addressgroup/icons/member_add_grey_16.png -text
@@ -79,6 +84,8 @@ ch.eugster.events.addressgroup/icons/member_delete_grey_16.png -text
 ch.eugster.events.addressgroup/icons/member_edit_16.png -text
 ch.eugster.events.addressgroup/icons/member_edit_grey_16.png -text
 ch.eugster.events.addressgroup/icons/paste.png -text
+ch.eugster.events.addressgroup/icons/person_blue_16.png -text
+ch.eugster.events.addressgroup/icons/person_grey_16.png -text
 ch.eugster.events.addressgroup/icons/refresh_16.png -text
 ch.eugster.events.addressgroup/icons/remove_16.png -text
 ch.eugster.events.addressgroup/icons/reset_16.png -text
