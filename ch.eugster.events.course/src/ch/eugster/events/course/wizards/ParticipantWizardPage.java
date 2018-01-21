@@ -349,9 +349,6 @@ public class ParticipantWizardPage extends WizardPage implements ISelectionChang
 			public void criteriaChanged(final AbstractEntity[] entities)
 			{
 				List<LinkPersonAddress> revisedLinks = new ArrayList<LinkPersonAddress>();
-				// BookingWizard wizard = (BookingWizard) this.getWizard();
-				// ViewerRoot root = (ViewerRoot)
-				// ParticipantWizardPage.this.participantViewer.getInput();
 				for (AbstractEntity entity : entities)
 				{
 					if (entity instanceof Person)

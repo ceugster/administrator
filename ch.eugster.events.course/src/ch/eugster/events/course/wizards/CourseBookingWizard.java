@@ -51,16 +51,22 @@ public class CourseBookingWizard extends Wizard implements IBookingWizard
 		((BookingWizardPage) this.getPage("bookingWizardPage")).update(this.booking);
 		((ParticipantWizardPage) this.getPage("participantWizardPage")).update(this.booking);
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			BookingQuery query = (BookingQuery) service.getQuery(Booking.class);
-			this.booking = query.merge(this.booking);
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				BookingQuery query = (BookingQuery) service.getQuery(Booking.class);
+				this.booking = query.merge(this.booking);
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return true;
 	}
 

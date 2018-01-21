@@ -9,9 +9,6 @@ import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -40,7 +37,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ColumnLayoutData;
@@ -50,7 +46,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.event.Event;
@@ -63,10 +58,8 @@ import ch.eugster.events.course.views.CourseEditorContentOutlinePage;
 import ch.eugster.events.domain.viewers.DomainComboContentProvider;
 import ch.eugster.events.domain.viewers.DomainComboLabelProvider;
 import ch.eugster.events.domain.viewers.DomainComboSorter;
-import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.exceptions.PersistenceException;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
-import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Category;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseSexConstraint;
@@ -191,16 +184,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 
 	private IDialogSettings dialogSettings;
 
-	private ServiceRegistration eventHandlerRegistration;
-	
-	public CourseEditor()
-	{
-		super();
-		Dictionary<String, String> properties = new Hashtable<String, String>();
-		properties.put(EventConstants.EVENT_TOPIC, "ch/eugster/events/persistence/merge");		
-		eventHandlerRegistration = Activator.getDefault().getBundle().getBundleContext().registerService(EventHandler.class.getName(), this, properties);
-
-	}
+	private ServiceRegistration<EventHandler> eventHandlerRegistration;
 	
 	private void createClassificationSection(final ScrolledForm parent)
 	{
@@ -378,7 +362,6 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 	public void dispose()
 	{
 		eventHandlerRegistration.unregister();
-		EntityMediator.removeListener(Course.class, this);
 		super.dispose();
 	}
 
@@ -388,36 +371,156 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 		composite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		composite.setLayout(new GridLayout(2, false));
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-
-		ConnectionService service = (ConnectionService) tracker.getService();
-
-		if (GlobalSettings.getInstance().getCourseHasDomain())
+		try
 		{
-			Label label = this.formToolkit.createLabel(composite, "Domäne");
+			ConnectionService service = (ConnectionService) tracker.getService();
+	
+			if (GlobalSettings.getInstance().getCourseHasDomain())
+			{
+				Label label = this.formToolkit.createLabel(composite, "Domäne");
+				label.setLayoutData(new GridData());
+	
+				CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
+				combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+				combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				this.formToolkit.adapt(combo);
+	
+				this.domainViewer = new ComboViewer(combo);
+				this.domainViewer.setContentProvider(new DomainComboContentProvider(GlobalSettings.getInstance()
+						.isCourseDomainMandatory()));
+				this.domainViewer.setLabelProvider(new DomainComboLabelProvider());
+				this.domainViewer.setSorter(new DomainComboSorter());
+				this.domainViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
+	
+				if (service != null)
+				{
+					DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
+					List<Domain> domains = query.selectAll();
+					this.domainViewer.setInput(domains.toArray(new Domain[0]));
+				}
+				this.domainViewer.addSelectionChangedListener(new ISelectionChangedListener()
+				{
+					@Override
+					public void selectionChanged(final SelectionChangedEvent event)
+					{
+						CourseEditor.this.setDirty(true);
+					}
+				});
+			}
+	
+			if (GlobalSettings.getInstance().getCourseHasCategory())
+			{
+				Label label = this.formToolkit.createLabel(composite, "Kategorie");
+				label.setLayoutData(new GridData());
+	
+				CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
+				combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+				combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				this.formToolkit.adapt(combo);
+	
+				this.categoryViewer = new ComboViewer(combo);
+				this.categoryViewer.setContentProvider(new CategoryContentProvider(GlobalSettings.getInstance()
+						.isCourseCategoryMandatory()));
+				this.categoryViewer.setLabelProvider(new CategoryLabelProvider());
+				this.categoryViewer.setSorter(new CategorySorter());
+				this.categoryViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
+	
+				if (service != null)
+				{
+					CategoryQuery query = (CategoryQuery) service.getQuery(Category.class);
+					List<Category> categories = query.selectAll();
+					this.categoryViewer.setInput(categories.toArray(new Category[0]));
+				}
+				this.categoryViewer.addSelectionChangedListener(new ISelectionChangedListener()
+				{
+					@Override
+					public void selectionChanged(final SelectionChangedEvent event)
+					{
+						CourseEditor.this.setDirty(true);
+					}
+				});
+			}
+	
+			if (GlobalSettings.getInstance().getCourseHasRubric())
+			{
+				Label label = this.formToolkit.createLabel(composite, "Rubrik");
+				label.setLayoutData(new GridData());
+	
+				CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
+				combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+				combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				this.formToolkit.adapt(combo);
+	
+				this.rubricViewer = new ComboViewer(combo);
+				this.rubricViewer.setContentProvider(new RubricContentProvider(GlobalSettings.getInstance()
+						.isCourseRubricMandatory()));
+				this.rubricViewer.setLabelProvider(new RubricLabelProvider());
+				this.rubricViewer.setSorter(new RubricSorter());
+				this.rubricViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
+	
+				if (service != null)
+				{
+					RubricQuery query = (RubricQuery) service.getQuery(Rubric.class);
+					List<Rubric> rubrics = query.selectAll();
+					this.rubricViewer.setInput(rubrics.toArray(new Rubric[0]));
+				}
+				this.rubricViewer.addSelectionChangedListener(new ISelectionChangedListener()
+				{
+					@Override
+					public void selectionChanged(final SelectionChangedEvent event)
+					{
+						CourseEditor.this.setDirty(true);
+					}
+				});
+			}
+	
+			Label label = this.formToolkit.createLabel(composite, "Zahlungsbedingungen");
 			label.setLayoutData(new GridData());
-
+	
 			CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
 			combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 			combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			this.formToolkit.adapt(combo);
-
-			this.domainViewer = new ComboViewer(combo);
-			this.domainViewer.setContentProvider(new DomainComboContentProvider(GlobalSettings.getInstance()
-					.isCourseDomainMandatory()));
-			this.domainViewer.setLabelProvider(new DomainComboLabelProvider());
-			this.domainViewer.setSorter(new DomainComboSorter());
-			this.domainViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
-
+	
+			this.paymentTermViewer = new ComboViewer(combo);
+			this.paymentTermViewer.setContentProvider(new ArrayContentProvider());
+			this.paymentTermViewer.setLabelProvider(new PaymentTermLabelProvider());
+			this.paymentTermViewer.setInput(getPaymentTerms());
+			this.paymentTermViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
+			this.paymentTermViewer.addSelectionChangedListener(new ISelectionChangedListener()
+			{
+				@Override
+				public void selectionChanged(final SelectionChangedEvent event)
+				{
+					CourseEditor.this.setDirty(true);
+				}
+			});
+	
+			label = this.formToolkit.createLabel(composite, "Verantwortlich");
+			label.setLayoutData(new GridData());
+	
+			combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
+			combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+			combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			this.formToolkit.adapt(combo);
+	
+			this.userViewer = new ComboViewer(combo);
+			this.userViewer.setContentProvider(new UserContentProvider(GlobalSettings.getInstance()
+					.isCourseResponsibleUserMandatory()));
+			this.userViewer.setLabelProvider(new UserLabelProvider());
+			this.userViewer.setSorter(new UserSorter());
+			this.userViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
+	
 			if (service != null)
 			{
-				DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
-				List<Domain> domains = query.selectAll();
-				this.domainViewer.setInput(domains.toArray(new Domain[0]));
+				UserQuery query = (UserQuery) service.getQuery(User.class);
+				List<User> users = query.selectAll();
+				this.userViewer.setInput(users.toArray(new User[0]));
 			}
-			this.domainViewer.addSelectionChangedListener(new ISelectionChangedListener()
+			this.userViewer.addSelectionChangedListener(new ISelectionChangedListener()
 			{
 				@Override
 				public void selectionChanged(final SelectionChangedEvent event)
@@ -426,127 +529,10 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 				}
 			});
 		}
-
-		if (GlobalSettings.getInstance().getCourseHasCategory())
+		finally
 		{
-			Label label = this.formToolkit.createLabel(composite, "Kategorie");
-			label.setLayoutData(new GridData());
-
-			CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
-			combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-			combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			this.formToolkit.adapt(combo);
-
-			this.categoryViewer = new ComboViewer(combo);
-			this.categoryViewer.setContentProvider(new CategoryContentProvider(GlobalSettings.getInstance()
-					.isCourseCategoryMandatory()));
-			this.categoryViewer.setLabelProvider(new CategoryLabelProvider());
-			this.categoryViewer.setSorter(new CategorySorter());
-			this.categoryViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
-
-			if (service != null)
-			{
-				CategoryQuery query = (CategoryQuery) service.getQuery(Category.class);
-				List<Category> categories = query.selectAll();
-				this.categoryViewer.setInput(categories.toArray(new Category[0]));
-			}
-			this.categoryViewer.addSelectionChangedListener(new ISelectionChangedListener()
-			{
-				@Override
-				public void selectionChanged(final SelectionChangedEvent event)
-				{
-					CourseEditor.this.setDirty(true);
-				}
-			});
+			tracker.close();
 		}
-
-		if (GlobalSettings.getInstance().getCourseHasRubric())
-		{
-			Label label = this.formToolkit.createLabel(composite, "Rubrik");
-			label.setLayoutData(new GridData());
-
-			CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
-			combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-			combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			this.formToolkit.adapt(combo);
-
-			this.rubricViewer = new ComboViewer(combo);
-			this.rubricViewer.setContentProvider(new RubricContentProvider(GlobalSettings.getInstance()
-					.isCourseRubricMandatory()));
-			this.rubricViewer.setLabelProvider(new RubricLabelProvider());
-			this.rubricViewer.setSorter(new RubricSorter());
-			this.rubricViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
-
-			if (service != null)
-			{
-				RubricQuery query = (RubricQuery) service.getQuery(Rubric.class);
-				List<Rubric> rubrics = query.selectAll();
-				this.rubricViewer.setInput(rubrics.toArray(new Rubric[0]));
-			}
-			this.rubricViewer.addSelectionChangedListener(new ISelectionChangedListener()
-			{
-				@Override
-				public void selectionChanged(final SelectionChangedEvent event)
-				{
-					CourseEditor.this.setDirty(true);
-				}
-			});
-		}
-
-		Label label = this.formToolkit.createLabel(composite, "Zahlungsbedingungen");
-		label.setLayoutData(new GridData());
-
-		CCombo combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
-		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		this.formToolkit.adapt(combo);
-
-		this.paymentTermViewer = new ComboViewer(combo);
-		this.paymentTermViewer.setContentProvider(new ArrayContentProvider());
-		this.paymentTermViewer.setLabelProvider(new PaymentTermLabelProvider());
-		this.paymentTermViewer.setInput(getPaymentTerms());
-		this.paymentTermViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
-		this.paymentTermViewer.addSelectionChangedListener(new ISelectionChangedListener()
-		{
-			@Override
-			public void selectionChanged(final SelectionChangedEvent event)
-			{
-				CourseEditor.this.setDirty(true);
-			}
-		});
-
-		label = this.formToolkit.createLabel(composite, "Verantwortlich");
-		label.setLayoutData(new GridData());
-
-		combo = new CCombo(composite, SWT.READ_ONLY | SWT.FLAT);
-		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		this.formToolkit.adapt(combo);
-
-		this.userViewer = new ComboViewer(combo);
-		this.userViewer.setContentProvider(new UserContentProvider(GlobalSettings.getInstance()
-				.isCourseResponsibleUserMandatory()));
-		this.userViewer.setLabelProvider(new UserLabelProvider());
-		this.userViewer.setSorter(new UserSorter());
-		this.userViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
-
-		if (service != null)
-		{
-			UserQuery query = (UserQuery) service.getQuery(User.class);
-			List<User> users = query.selectAll();
-			this.userViewer.setInput(users.toArray(new User[0]));
-		}
-		this.userViewer.addSelectionChangedListener(new ISelectionChangedListener()
-		{
-			@Override
-			public void selectionChanged(final SelectionChangedEvent event)
-			{
-				CourseEditor.this.setDirty(true);
-			}
-		});
-
-		tracker.close();
-
 		this.formToolkit.paintBordersFor(composite);
 
 		return composite;
@@ -557,8 +543,8 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 		List<PaymentTerm> paymentTerms = new ArrayList<PaymentTerm>();
 		PaymentTerm term = PaymentTerm.newInstance();
 		term.setId(Long.valueOf(0L));
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
 		try
 		{
@@ -1224,7 +1210,7 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			}
 		});
 
-		label = this.formToolkit.createLabel(composite, "Letztmögliche Annulation", SWT.TRAIL);
+		label = this.formToolkit.createLabel(composite, "Letztmögliche Annullation", SWT.TRAIL);
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData();
@@ -1335,26 +1321,30 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 	{
 		Message msg = null;
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			CourseEditorInput input = (CourseEditorInput) this.getEditorInput();
-			Course course = (Course) input.getAdapter(Course.class);
-			String code = this.code.getText();
-			CourseQuery query = (CourseQuery) service.getQuery(Course.class);
-			if (!query.isCodeUnique(code, course.getId()))
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				msg = new Message(this.code, "Ungültiger Code");
-				msg.setMessage("Der gewählte Code wird bereits verwendet.");
-				return msg;
+				CourseEditorInput input = (CourseEditorInput) this.getEditorInput();
+				Course course = (Course) input.getAdapter(Course.class);
+				String code = this.code.getText();
+				CourseQuery query = (CourseQuery) service.getQuery(Course.class);
+				if (!query.isCodeUnique(code, course.getId()))
+				{
+					msg = new Message(this.code, "Ungültiger Code");
+					msg.setMessage("Der gewählte Code wird bereits verwendet.");
+					return msg;
+				}
 			}
 		}
-		tracker.close();
-
+		finally
+		{
+			tracker.close();
+		}
 		return msg;
 	}
 
@@ -1363,8 +1353,9 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 	{
 		Long id = ((CourseEditorInput) this.getEditorInput()).getEntity().getId();
 		this.initializeDialogSettings(id == null ? CourseEditor.COURSE_EDITOR : CourseEditor.COURSE_EDITOR + "." + id);
-
-		EntityMediator.addListener(Course.class, this);
+		Dictionary<String, String> properties = new Hashtable<String, String>();
+		properties.put(EventConstants.EVENT_TOPIC, "ch/eugster/events/persistence/merge");		
+		eventHandlerRegistration = Activator.getDefault().getBundle().getBundleContext().registerService(EventHandler.class, this, properties);
 	}
 
 	private void initializeDialogSettings(final String section)
@@ -1500,33 +1491,6 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 			}
 		}
 		this.setDirty(false);
-	}
-
-	@Override
-	public void postDelete(final AbstractEntity entity)
-	{
-		UIJob job = new UIJob("")
-		{
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor)
-			{
-				if (entity instanceof Course)
-				{
-					CourseEditorInput input = (CourseEditorInput) getEditorInput();
-					if (input.getEntity().getId().equals(entity.getId()))
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-								.closeEditor(CourseEditor.this, false);
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
-
-	@Override
-	public void postUpdate(final AbstractEntity entity)
-	{
-
 	}
 
 	@Override
@@ -1823,8 +1787,15 @@ public class CourseEditor extends AbstractEntityEditor<Course> implements Proper
 				Course updatedCourse = (Course) entity;
 				if (course.getId().equals(updatedCourse.getId()))
 				{
-					input.setEntity(updatedCourse);
-					loadValues();
+					if (course.isDeleted())
+					{
+						this.getSite().getPage().closeEditor(this, false);
+					}
+					else
+					{
+						input.setEntity(updatedCourse);
+						loadValues();
+					}
 				}
 			}
 		}

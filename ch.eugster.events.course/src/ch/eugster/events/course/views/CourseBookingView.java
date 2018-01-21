@@ -1,5 +1,6 @@
 package ch.eugster.events.course.views;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -33,6 +35,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
@@ -40,13 +43,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
+import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.Activator;
 import ch.eugster.events.course.editors.BookingEditor;
 import ch.eugster.events.course.editors.BookingEditorInput;
 import ch.eugster.events.persistence.events.EntityMediator;
 import ch.eugster.events.persistence.filters.DeletedEntityFilter;
-import ch.eugster.events.persistence.filters.NotBookingParticipantFilter;
 import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.CourseFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
@@ -62,13 +65,15 @@ import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.Season;
+import ch.eugster.events.persistence.queries.BookingQuery;
+import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.views.AbstractEntityView;
 
 public class CourseBookingView extends AbstractEntityView implements IDoubleClickListener, ISelectionListener
 {
 	public static final String ID = "ch.eugster.events.course.views.courseBookingView";
 
-	private TreeViewer viewer;
+	private CheckboxTreeViewer viewer;
 
 	private Label bookingViewLabelMinMaxParticipants;
 
@@ -101,7 +106,7 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 	{
 		parent.setLayout(new GridLayout());
 
-		final Tree tree = new Tree(parent, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		final Tree tree = new Tree(parent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tree.setHeaderVisible(true);
 		tree.addListener(SWT.Expand, new Listener()
@@ -124,12 +129,58 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 				}
 			}
 		});
-
-		this.viewer = new TreeViewer(tree);
+		tree.addListener(SWT.Selection, new Listener() 
+		{
+			@Override
+			public void handleEvent(Event event) 
+			{
+				if (event.detail == SWT.CHECK)
+				{
+					TreeItem item = (TreeItem) event.item;
+					Object data = item.getData();
+					if (data instanceof Booking)
+					{
+						Booking booking = (Booking) data;
+						booking.setPayAmount(item.getChecked() ? booking.getAmount() : 0D);
+						ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class, null);
+						tracker.open();
+						try
+						{
+							ConnectionService service = tracker.getService();
+							if (service != null)
+							{
+								BookingQuery query = (BookingQuery) service.getQuery(Booking.class);
+								setInput(query.merge(booking).getCourse());
+							}
+						}
+						finally
+						{
+							tracker.close();
+						}
+					}
+					else if (data instanceof Participant)
+					{
+						event.doit = false;
+						try
+						{
+							tree.setRedraw(false);
+							item.setChecked(! item.getChecked() );
+						} 
+						finally 
+						{
+							tree.setRedraw(true);
+						}
+					}
+					System.out.println();
+				}
+			}
+		});
+		
+		this.viewer = new CheckboxTreeViewer(tree);
 		this.viewer.setContentProvider(new CourseBookingContentProvider());
 		this.viewer.setSorter(new CourseBookingSorter());
 		this.viewer.addDoubleClickListener(this);
-		ViewerFilter[] filters = new ViewerFilter[] { new NotBookingParticipantFilter(), new DeletedEntityFilter() };
+		ViewerFilter[] filters = new ViewerFilter[] { new DeletedEntityFilter() };
 
 		this.viewer.setFilters(filters);
 
@@ -143,16 +194,25 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 				{
 					Booking booking = (Booking) cell.getElement();
 					cell.setImage(CourseBookingView.this.getImage(booking));
-					cell.setText(CourseFormatter.getInstance().formatBookingId(booking) + " "
-							+ booking.getState().toString() + " ("
+					cell.setText(CourseFormatter.getInstance().formatBookingId(booking)
+							+ " - " + booking.getState().toString() + " ("
 							+ Integer.valueOf(booking.getParticipantCount()).toString() + ")");
+//					if (booking.getAmount() <= booking.getPayAmount())
+//					{
+//						((TreeItem)cell.getItem()).setChecked(true);
+//					}
+//					else if (booking.getPayAmount() > 0D)
+//					{
+//						((TreeItem)cell.getItem()).setGrayed(true);
+//					}
 				}
 				else if (cell.getElement() instanceof Participant)
 				{
 					Participant participant = (Participant) cell.getElement();
 					cell.setImage(CourseBookingView.this.getImage(participant));
-					cell.setText(PersonFormatter.getInstance().formatId(participant.getLink().getPerson()) + " ("
-							+ participant.getCount() + ")");
+					cell.setText(PersonFormatter.getInstance().formatId(participant.getLink().getPerson()) + " - " +
+							PersonFormatter.getInstance().formatLastnameFirstname(
+							participant.getLink().getPerson()));
 				}
 			}
 
@@ -161,9 +221,10 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 		FontMetrics fm = gc.getFontMetrics();
 		int charWidth = fm.getAverageCharWidth();
 		int columnWidth = charWidth * 30;
+		gc.dispose();
 
 		TreeColumn treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText("Buchung");
+		treeColumn.setText("Buchung Status");
 		treeColumn.setWidth(columnWidth);
 		treeColumn.setResizable(true);
 
@@ -176,20 +237,46 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 				if (cell.getElement() instanceof Booking)
 				{
 					Booking booking = (Booking) cell.getElement();
+					Participant participant = booking.getParticipant();
 					cell.setText(PersonFormatter.getInstance().formatLastnameFirstname(
-							booking.getParticipant().getLink().getPerson()));
+							participant.getLink().getPerson()));
 				}
 				else if (cell.getElement() instanceof Participant)
 				{
 					Participant participant = (Participant) cell.getElement();
-					cell.setText(PersonFormatter.getInstance().formatLastnameFirstname(
-							participant.getLink().getPerson()));
+					if (participant.getBookingType() != null)
+					{
+						cell.setText(CourseFormatter.getInstance().formatComboEntryBookingType(participant));
+					}
 				}
 			}
 
 		});
 		treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText("Teilnehmer");
+		treeColumn.setText("Name/Buchungsart");
+		treeColumn.setResizable(true);
+
+		treeViewerColumn = new TreeViewerColumn(this.viewer, SWT.LEFT);
+		treeViewerColumn.setLabelProvider(new CellLabelProvider()
+		{
+			@Override
+			public void update(final ViewerCell cell)
+			{
+				if (cell.getElement() instanceof Booking)
+				{
+					Booking booking = (Booking) cell.getElement();
+					cell.setText(NumberFormat.getCurrencyInstance().format(booking.getAmount()));
+				}
+				else if (cell.getElement() instanceof Participant)
+				{
+					Participant participant = (Participant) cell.getElement();
+					cell.setText(NumberFormat.getCurrencyInstance().format(participant.getAmount()));
+				}
+			}
+
+		});
+		treeColumn = treeViewerColumn.getColumn();
+		treeColumn.setText("Betrag");
 		treeColumn.setResizable(true);
 
 		treeViewerColumn = new TreeViewerColumn(this.viewer, SWT.LEFT);
@@ -214,32 +301,6 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 		});
 		treeColumn = treeViewerColumn.getColumn();
 		treeColumn.setText("Adresse");
-		treeColumn.setResizable(true);
-
-		treeViewerColumn = new TreeViewerColumn(this.viewer, SWT.LEFT);
-		treeViewerColumn.setLabelProvider(new CellLabelProvider()
-		{
-			@Override
-			public void update(final ViewerCell cell)
-			{
-				if (cell.getElement() instanceof Booking)
-				{
-					Booking booking = (Booking) cell.getElement();
-					Participant participant = booking.getParticipant();
-					if (participant.getBookingType() != null)
-						cell.setText(CourseFormatter.getInstance().formatComboEntryBookingType(participant));
-				}
-				else if (cell.getElement() instanceof Participant)
-				{
-					Participant participant = (Participant) cell.getElement();
-					if (participant.getBookingType() != null)
-						cell.setText(CourseFormatter.getInstance().formatComboEntryBookingType(participant));
-				}
-			}
-
-		});
-		treeColumn = treeViewerColumn.getColumn();
-		treeColumn.setText("Buchungsart");
 		treeColumn.setResizable(true);
 
 		treeViewerColumn = new TreeViewerColumn(this.viewer, SWT.LEFT);
@@ -380,13 +441,11 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 	
 	private Image getDoneStateImage(Booking booking)
 	{
-		if (booking.getState().equals(BookingForthcomingState.BOOKED))
+		if (booking.getState().equals(BookingDoneState.PARTICIPATED))
 			return selectImageForPayedOrUnpayed(booking, "BOOKING_GREEN", "BOOKING_GREEN_EXCLAMATION");
-		else if (booking.getState().equals(BookingForthcomingState.PROVISIONAL_BOOKED))
-			return Activator.getDefault().getImageRegistry().get("BOOKING_BLUE");
-		else if (booking.getState().equals(BookingForthcomingState.WAITING_LIST))
+		else if (booking.getState().equals(BookingDoneState.PARTICIPATION_BROKE_OFF))
 			return Activator.getDefault().getImageRegistry().get("BOOKING_RED");
-		else if (booking.getState().equals(BookingForthcomingState.BOOKING_CANCELED))
+		else if (booking.getState().equals(BookingDoneState.NOT_PARTICIPATED))
 			return Activator.getDefault().getImageRegistry().get("BOOKING_GREY");
 		else return null;
 	}
@@ -547,7 +606,7 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 					else if (entity instanceof Booking)
 					{
 						Booking booking = (Booking) entity;
-						viewer.refresh(booking);
+						viewer.refresh();
 						setSummaryLabels(booking.getCourse());
 					}
 					else if (entity instanceof Participant)
@@ -839,7 +898,7 @@ public class CourseBookingView extends AbstractEntityView implements IDoubleClic
 
 		public String getBookingTypeName()
 		{
-			return type.getName();
+			return type == null ? "" : type.getName();
 		}
 
 		public int getCount()

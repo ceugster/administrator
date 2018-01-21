@@ -519,7 +519,6 @@ ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/prefer
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/preferences/PreferenceInitializer.java -text
 ch.eugster.events.course/.classpath -text
 ch.eugster.events.course/.project -text
-ch.eugster.events.course/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.course/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.course/META-INF/MANIFEST.MF -text
 ch.eugster.events.course/build.properties -text
@@ -567,10 +566,6 @@ ch.eugster.events.course/icons/user_grey_16.png -text
 ch.eugster.events.course/icons/user_red_16.png -text
 ch.eugster.events.course/icons/work_16.png -text
 ch.eugster.events.course/icons/work_grey_16.png -text
-ch.eugster.events.course/lib/dom4j-1.6.1.jar -text
-ch.eugster.events.course/lib/geronimo-stax-api_1.0_spec-1.0.jar -text
-ch.eugster.events.course/lib/junit-3.8.1.jar -text
-ch.eugster.events.course/lib/xmlbeans-2.3.0.jar -text
 ch.eugster.events.course/plugin.xml -text
 ch.eugster.events.course/src/ch/eugster/events/course/Activator.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/Constants.java -text

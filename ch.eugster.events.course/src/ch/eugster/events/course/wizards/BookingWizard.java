@@ -121,18 +121,18 @@ public class BookingWizard extends Wizard implements IBookingWizard
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 				{
-					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-							DocumentBuilderService.class.getName(), null);
+					ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
+							DocumentBuilderService.class, null);
+					tracker.open();
 					try
 					{
 						monitor.beginTask("Buchungsbestätigung wird gedruckt...", 1);
-						tracker.open();
 
 						Object service = tracker.getService();
 						if (service instanceof DocumentBuilderService)
 						{
 							File template = new File(bookingPage.getBookingConfirmationTemplatePath());
-							DataMap map = new BookingMap(BookingWizard.this.booking);
+							DataMap<?> map = new BookingMap(BookingWizard.this.booking);
 							DocumentBuilderService builderService = (DocumentBuilderService) service;
 							builderService.buildDocument(new SubProgressMonitor(monitor, 1), template, map);
 						}
@@ -181,18 +181,18 @@ public class BookingWizard extends Wizard implements IBookingWizard
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 				{
-					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-							DocumentBuilderService.class.getName(), null);
+					ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
+							DocumentBuilderService.class, null);
+					tracker.open();
 					try
 					{
 						monitor.beginTask("Kurseinladung wird gedruckt...", 1);
-						tracker.open();
 
 						Object service = tracker.getService();
 						if (service instanceof DocumentBuilderService)
 						{
 							File template = new File(bookingPage.getInvitationTemplatePath());
-							DataMap map = new BookingMap(BookingWizard.this.booking);
+							DataMap<?> map = new BookingMap(BookingWizard.this.booking);
 							DocumentBuilderService builderService = (DocumentBuilderService) service;
 							builderService.buildDocument(new SubProgressMonitor(monitor, 1), template, map);
 						}
@@ -233,8 +233,8 @@ public class BookingWizard extends Wizard implements IBookingWizard
 	private IStatus saveBooking()
 	{
 		IStatus status = Status.OK_STATUS;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
 		try
 		{
@@ -267,8 +267,8 @@ public class BookingWizard extends Wizard implements IBookingWizard
 	{
 		if (booking.getId() != null)
 		{
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
 			tracker.open();
 			try
 			{

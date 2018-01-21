@@ -2,6 +2,7 @@ package ch.eugster.events.course.wizards;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -30,12 +31,14 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.course.Activator;
 import ch.eugster.events.persistence.formatters.CourseFormatter;
+import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.Guide;
 import ch.eugster.events.persistence.model.GuideType;
-import ch.eugster.events.persistence.queries.GuideQuery;
+import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.queries.GuideTypeQuery;
+import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
 public class CourseGuideWizardPage extends WizardPage implements Listener, SelectionListener
@@ -103,54 +106,65 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 		this.guideViewer.setSorter(new GuideComboSorter());
 		this.guideViewer.setFilters(new ViewerFilter[] { new GuideComboFilter(wizard) });
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			GuideQuery query = (GuideQuery) service.getQuery(Guide.class);
-			List<Guide> guides = query.selectAll();
-			this.guideViewer.setInput(guides.toArray(new Guide[0]));
-		}
-
-		this.guideViewer.addSelectionChangedListener(new ISelectionChangedListener()
-		{
-			@Override
-			public void selectionChanged(final SelectionChangedEvent event)
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				StructuredSelection ssel = (StructuredSelection) event.getSelection();
-				if (!ssel.isEmpty())
+				List<Guide> guides = new Vector<Guide>();
+				LinkPersonAddressQuery query = (LinkPersonAddressQuery) service.getQuery(LinkPersonAddress.class);
+				List<LinkPersonAddress> links = query.selectGuides();
+				for (LinkPersonAddress link : links)
 				{
-					CourseGuideWizardPage.this.setPageComplete(true);
+					guides.add(link.getGuide());
 				}
+//				GuideQuery query = (GuideQuery) service.getQuery(Guide.class);
+//				List<Guide> guides = query.selectValids();
+				this.guideViewer.setInput(guides.toArray(new Guide[0]));
 			}
-		});
-		gridData = new GridData();
-		gridData.horizontalAlignment = GridData.END;
-		gridData.grabExcessHorizontalSpace = false;
-
-		label = new Label(composite, SWT.NONE);
-		label.setLayoutData(gridData);
-		label.setText("Leitungsfunktion");
-
-		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		this.guideTypeViewer = new ComboViewer(combo);
-		this.guideTypeViewer.setContentProvider(new GuideTypeComboContentProvider());
-		this.guideTypeViewer.setLabelProvider(new GuideTypeComboLabelProvider());
-		this.guideTypeViewer.setSorter(new GuideTypeComboSorter());
-
-		if (service != null)
-		{
-			GuideTypeQuery query = (GuideTypeQuery) service.getQuery(GuideType.class);
-			List<GuideType> guideTypes = query.selectAll();
-			this.guideTypeViewer.setInput(guideTypes);
+	
+			this.guideViewer.addSelectionChangedListener(new ISelectionChangedListener()
+			{
+				@Override
+				public void selectionChanged(final SelectionChangedEvent event)
+				{
+					StructuredSelection ssel = (StructuredSelection) event.getSelection();
+					if (!ssel.isEmpty())
+					{
+						CourseGuideWizardPage.this.setPageComplete(true);
+					}
+				}
+			});
+			gridData = new GridData();
+			gridData.horizontalAlignment = GridData.END;
+			gridData.grabExcessHorizontalSpace = false;
+	
+			label = new Label(composite, SWT.NONE);
+			label.setLayoutData(gridData);
+			label.setText("Leitungsfunktion");
+	
+			combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
+			combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	
+			this.guideTypeViewer = new ComboViewer(combo);
+			this.guideTypeViewer.setContentProvider(new GuideTypeComboContentProvider());
+			this.guideTypeViewer.setLabelProvider(new GuideTypeComboLabelProvider());
+			this.guideTypeViewer.setSorter(new GuideTypeComboSorter());
+	
+			if (service != null)
+			{
+				GuideTypeQuery query = (GuideTypeQuery) service.getQuery(GuideType.class);
+				List<GuideType> guideTypes = query.selectAll();
+				this.guideTypeViewer.setInput(guideTypes);
+			}
 		}
-
-		tracker.close();
-
+		finally
+		{
+			tracker.close();
+		}
 		this.guideTypeViewer.addSelectionChangedListener(new ISelectionChangedListener()
 		{
 			@Override
@@ -412,7 +426,7 @@ public class CourseGuideWizardPage extends WizardPage implements Listener, Selec
 			if (element instanceof Guide)
 			{
 				Guide guide = (Guide) element;
-				return PersonFormatter.getInstance().formatLastnameFirstname(guide.getLink().getPerson());
+				return LinkPersonAddressFormatter.getInstance().formatPersonAndAddress(guide.getLink());
 			}
 			return "";
 

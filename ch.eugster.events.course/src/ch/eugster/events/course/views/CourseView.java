@@ -94,7 +94,7 @@ public class CourseView extends AbstractEntityView implements IDoubleClickListen
 
 	private IAction copy;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private IContextActivation ctxActivation;
 
@@ -358,11 +358,11 @@ public class CourseView extends AbstractEntityView implements IDoubleClickListen
 		state.addListener(annulatedCoursesFilter);
 		annulatedCoursesFilter.doFilter(((Boolean) state.getValue()).booleanValue());
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
 		{
 			@Override
-			public Object addingService(final ServiceReference reference)
+			public ConnectionService addingService(final ServiceReference<ConnectionService> reference)
 			{
 				final ConnectionService connectionService = (ConnectionService) super.addingService(reference);
 				Display display = Display.getCurrent();
@@ -382,7 +382,7 @@ public class CourseView extends AbstractEntityView implements IDoubleClickListen
 			}
 
 			@Override
-			public void removedService(final ServiceReference reference, final Object service)
+			public void removedService(final ServiceReference<ConnectionService> reference, final ConnectionService service)
 			{
 				Display display = Display.getCurrent();
 				if (display == null)

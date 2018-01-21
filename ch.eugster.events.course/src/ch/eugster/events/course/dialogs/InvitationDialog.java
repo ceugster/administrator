@@ -82,25 +82,25 @@ public class InvitationDialog extends TitleAreaDialog
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 				{
-					DataMap[] maps = createDataMaps().toArray(new DataMap[0]);
+					DataMap<?>[] maps = createDataMaps().toArray(new DataMap<?>[0]);
 					if (maps.length == 0)
 					{
 						MessageDialog.openConfirm(getShell(), MSG_TITLE_NO_COURSES, MSG_TITLE_NO_COURSES);
 					}
 					else
 					{
-						ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle()
-								.getBundleContext(), DocumentBuilderService.class.getName(), null);
+						ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle()
+								.getBundleContext(), DocumentBuilderService.class, null);
+						tracker.open();
 						try
 						{
-							tracker.open();
-							ServiceReference[] references = tracker.getServiceReferences();
+							ServiceReference<DocumentBuilderService>[] references = tracker.getServiceReferences();
 							if (references != null)
 							{
 								try
 								{
 									monitor.beginTask("Dokumente werden erstellt...", references.length);
-									for (ServiceReference reference : references)
+									for (ServiceReference<DocumentBuilderService> reference : references)
 									{
 										DocumentBuilderService service = (DocumentBuilderService) tracker
 												.getService(reference);
@@ -151,9 +151,9 @@ public class InvitationDialog extends TitleAreaDialog
 		this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
 	}
 
-	private List<DataMap> createDataMaps()
+	private List<DataMap<?>> createDataMaps()
 	{
-		List<DataMap> dataMaps = new ArrayList<DataMap>();
+		List<DataMap<?>> dataMaps = new ArrayList<DataMap<?>>();
 		Object[] elements = selection.toArray();
 		for (Object element : elements)
 		{
@@ -285,11 +285,11 @@ public class InvitationDialog extends TitleAreaDialog
 
 	private void setUserPath()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			Object service = tracker.getService();
 			if (service instanceof ConnectionService)
 			{
