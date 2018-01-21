@@ -190,8 +190,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				if (object instanceof AddressGroupMember)
 				{
 					AddressGroupMember member = (AddressGroupMember) object;
-					if (member.getLink() == null || member.getLink().isDeleted()
-							|| member.getLink().getPerson().isDeleted())
+					if (member.getLink() == null || !member.getLink().isValid())
 					{
 						cell.setText(AddressFormatter.getInstance().formatId(member.getAddress()));
 						cell.setImage(Activator.getDefault().getImageRegistry().get("ADDRESS"));
@@ -244,8 +243,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				if (object instanceof AddressGroupMember)
 				{
 					AddressGroupMember member = (AddressGroupMember) object;
-					if (member.getLink() == null || member.getLink().isDeleted()
-							|| member.getLink().getPerson().isDeleted())
+					if (member.getLink() == null || !member.getLink().isValid())
 					{
 						cell.setText(member.getAddress().getName());
 					}
@@ -297,13 +295,13 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				if (object instanceof AddressGroupMember)
 				{
 					AddressGroupMember member = (AddressGroupMember) object;
-					cell.setText(member.getAddress().getAddress());
+					cell.setText(member.getAddress() == null ? member.getLink().getAddress().getName() : member.getAddress().getName());
 				}
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
-		tableColumn.setText("Strasse");
+		tableColumn.setText("Organisation");
 		tableColumn.addSelectionListener(new SelectionListener()
 		{
 			@Override
@@ -341,21 +339,20 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				if (object instanceof AddressGroupMember)
 				{
 					AddressGroupMember member = (AddressGroupMember) object;
-					if (member.getLink() == null || member.getLink().isDeleted()
-							|| member.getLink().getPerson().isDeleted())
+					if (member.getAddress() == null)
 					{
-						cell.setText(AddressFormatter.getInstance().formatCityLine(member.getAddress()));
+						cell.setText(member.getLink().getAddress().getAddress());
 					}
 					else
 					{
-						cell.setText(AddressFormatter.getInstance().formatCityLine(member.getLink().getAddress()));
+						cell.setText(member.getAddress().getAddress());
 					}
 				}
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
-		tableColumn.setText("Wohnort");
+		tableColumn.setText("Strasse");
 		tableColumn.addSelectionListener(new SelectionListener()
 		{
 			@Override
@@ -383,6 +380,57 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			}
 		});
 
+		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
+		tableViewerColumn.setLabelProvider(new CellLabelProvider()
+		{
+			@Override
+			public void update(final ViewerCell cell)
+			{
+				Object object = cell.getElement();
+				if (object instanceof AddressGroupMember)
+				{
+					AddressGroupMember member = (AddressGroupMember) object;
+					if (member.getLink() == null || !member.getLink().isValid())
+					{
+						cell.setText(AddressFormatter.getInstance().formatCityLine(member.getAddress()));
+					}
+					else
+					{
+						cell.setText(AddressFormatter.getInstance().formatCityLine(member.getLink().getAddress()));
+					}
+				}
+			}
+		});
+		tableColumn = tableViewerColumn.getColumn();
+		tableColumn.setResizable(true);
+		tableColumn.setText("Wohnort");
+		tableColumn.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent e)
+			{
+				this.widgetSelected(e);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent e)
+			{
+				if (AddressGroupMemberView.this.sorter.getColumn() == 4)
+				{
+					boolean asc = !AddressGroupMemberView.this.sorter.getAscending();
+					AddressGroupMemberView.this.dialogSettings.put("member.sorter.ascending", asc);
+					AddressGroupMemberView.this.sorter.setAscending(asc);
+				}
+				else
+				{
+					AddressGroupMemberView.this.dialogSettings.put("member.sorter.column", 4);
+					AddressGroupMemberView.this.sorter.setColumn(4);
+
+				}
+				internalRefresh();
+			}
+		});
+
 		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.LEFT);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
 		{
@@ -393,8 +441,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				if (object instanceof AddressGroupMember)
 				{
 					AddressGroupMember member = (AddressGroupMember) object;
-					if (member.getLink() == null || member.getLink().isDeleted()
-							|| member.getLink().getPerson().isDeleted())
+					if (member.getLink() == null || !member.getLink().isValid())
 					{
 						cell.setText(member.getAddress().getEmail());
 					}
@@ -426,7 +473,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 			@Override
 			public void widgetSelected(final SelectionEvent e)
 			{
-				if (AddressGroupMemberView.this.sorter.getColumn() == 4)
+				if (AddressGroupMemberView.this.sorter.getColumn() == 5)
 				{
 					boolean asc = !AddressGroupMemberView.this.sorter.getAscending();
 					AddressGroupMemberView.this.dialogSettings.put("member.sorter.ascending", asc);
@@ -434,8 +481,8 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 				}
 				else
 				{
-					AddressGroupMemberView.this.dialogSettings.put("member.sorter.column", 3);
-					AddressGroupMemberView.this.sorter.setColumn(3);
+					AddressGroupMemberView.this.dialogSettings.put("member.sorter.column", 5);
+					AddressGroupMemberView.this.sorter.setColumn(5);
 
 				}
 				internalRefresh();
@@ -502,11 +549,11 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 
 	private void editAddressGroupMember(final AddressGroupMember member)
 	{
-		if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
+		if (member.isValidAddressMember())
 		{
 			editAddress(member.getAddress());
 		}
-		else
+		else if (member.isValidLinkMember())
 		{
 			editLink(member.getLink());
 		}
@@ -514,7 +561,7 @@ public class AddressGroupMemberView extends AbstractEntityView implements IDoubl
 
 	private void editLink(final LinkPersonAddress link)
 	{
-		if (link.getPerson().isDeleted() || link.isDeleted())
+		if (!link.isValid())
 		{
 			String title = "Entfernte Person";
 			String message = "Eine entfernte Person kann nicht bearbeitet werden.";
