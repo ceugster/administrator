@@ -68,6 +68,11 @@ public class Guide extends AbstractEntity
 		this.setLink(link);
 	}
 
+	public boolean isValid()
+	{
+		return !this.deleted && this.getLink().isValid();
+	}
+	
 	public void addCourseGuide(final CourseGuide courseGuide)
 	{
 		this.propertyChangeSupport.firePropertyChange("courseGuides", this.courseGuides,

@@ -135,7 +135,8 @@ public abstract class DatabaseUpdater
 			statement = connection.createStatement();
 			try
 			{
-				return statement.execute(query);
+				statement.execute(query);
+				return true;
 			}
 			finally
 			{
@@ -167,6 +168,8 @@ public abstract class DatabaseUpdater
 
 	protected abstract String getClobTypeName();
 
+	protected abstract String getBlobTypeName();
+	
 	protected abstract String getCurrentDate();
 
 	protected abstract String getEngine();
@@ -174,6 +177,8 @@ public abstract class DatabaseUpdater
 	protected abstract String getCharset();
 
 	protected abstract String getCreateTable(String tableName, String[] columnNames, String[] dataTypes, String[] defaults, String primaryKey, String[] foreignKeys);
+	
+	protected abstract String getCreateTable(String tableName, Column[] columns, String primaryKey, ForeignKey[] foreignKeys);
 	
 	private void log(final int level, final String message)
 	{
@@ -1507,6 +1512,464 @@ public abstract class DatabaseUpdater
 						}
 						updateSequenceTable(con);
 					}
+					if (structureVersion == 38)
+					{
+						String tableName = "events_visit_theme";
+						String columnName = "visit_theme_hidden";
+						if (!columnExists(con, tableName, columnName))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE " + tableName + " ");
+							builder.append("ADD COLUMN " + columnName + " TINYINT DEFAULT 0");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+					}
+					if (structureVersion == 39)
+					{
+						String tableName = "events_visit";
+						String columnName = "visit_color";
+						if (!columnExists(con, tableName, columnName))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE " + tableName + " ");
+							builder.append("ADD COLUMN " + columnName + " INTEGER DEFAULT NULL");
+							log(LogService.LOG_INFO, builder.toString());
+							System.out.println(builder.toString());
+							ok = executeSqlQuery(con, builder.toString());
+						}
+					}
+					if (structureVersion == 40)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						String tableName = "events_contact_type";
+						String[] columnNames = { "contact_type_id",
+												 "contact_type_code",
+												 "contact_type_name",
+												 "contact_type_description",
+												 "contact_type_protocol",
+												 "contact_type_icon",
+												 "contact_type_deleted",
+												 "contact_type_version",
+												 "contact_type_user_id",
+												 "contact_type_updated",
+												 "contact_type_inserted" };
+						String[] dataTypes = {
+								"int(10)",
+								"varchar(15)",
+								"varchar(255)",
+								"varchar(6000)",
+								"int(10)",
+								this.getBlobTypeName(),
+								"int(1)",
+								"int(10)",
+								"int(10)",
+								"datetime",
+								"datetime" };
+						String[] defaults = {
+								"NOT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL" };
+						String primaryKey = "contact_type_id";
+						if (!tableExists(con, tableName))
+						{
+							String sql = getCreateTable(tableName, columnNames, dataTypes, defaults, primaryKey, new String[0]);
+							log(LogService.LOG_INFO, sql);
+							System.out.println(sql);
+							ok = executeSqlQuery(con, sql);
+						}
+						tableName = "events_contact";
+						columnNames = new String[] { "contact_id",
+												 "contact_contact_type_id",
+												 "contact_country_id",
+												 "contact_discriminator",
+												 "contact_name",
+												 "contact_value",
+												 "contact_owner_id",
+												 "contact_deleted",
+												 "contact_version",
+												 "contact_user_id",
+												 "contact_updated",
+												 "contact_inserted" };
+						dataTypes = new String[] {
+								"int(10)",
+								"int(10)",
+								"int(10)",
+								"char(1)",
+								"varchar(255)",
+								this.getClobTypeName(),
+								"int(10)",
+								"int(1)",
+								"int(10)",
+								"int(10)",
+								"datetime",
+								"datetime" };
+						defaults = new String[] {
+								"NOT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"NOT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL",
+								"DEFAULT NULL" };
+						primaryKey = "contact_id";
+						if (!tableExists(con, tableName))
+						{
+							String sql = getCreateTable(tableName, columnNames, dataTypes, defaults, primaryKey, new String[0]);
+							log(LogService.LOG_INFO, sql);
+							System.out.println(sql);
+							ok = executeSqlQuery(con, sql);
+						}
+						updateSequenceTable(con);
+						String sql = "SELECT contact_type_id FROM events_contact_type WHERE contact_type_id = 1";
+						ResultSet results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							sql = "INSERT INTO events_contact_type VALUES (1, '', 'Telefon', '', 0, null, 0, 0, null, null, null)";
+							stm.executeUpdate(sql);
+						}
+						results.close();
+						sql = "SELECT contact_type_id FROM events_contact_type WHERE contact_type_id = 2";
+						results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							sql = "INSERT INTO events_contact_type VALUES (2, '', 'Mobile', '', 1, null, 0, 0, null, null, null)";
+							stm.executeUpdate(sql);
+						}
+						results.close();
+						sql = "SELECT contact_type_id FROM events_contact_type WHERE contact_type_id = 3";
+						results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							sql = "INSERT INTO events_contact_type VALUES (3, '', 'Email', '', 2, null, 0, 0, null, null, null)";
+							stm.executeUpdate(sql);
+						}
+						results.close();
+						sql = "SELECT contact_type_id FROM events_contact_type WHERE contact_type_id = 4";
+						results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							sql = "INSERT INTO events_contact_type VALUES (4, '', 'Website', '', 3, null, 0, 0, null, null, null)";
+							stm.executeUpdate(sql);
+						}
+						results.close();
+						sql = "SELECT contact_type_id FROM events_contact_type WHERE contact_type_id = 5";
+						results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							sql = "INSERT INTO events_contact_type VALUES (5, '', 'Andere', '', 4, null, 0, 0, null, null, null)";
+							stm.executeUpdate(sql);
+						}
+						results.close();
+					}
+					if (structureVersion == 41)
+					{
+						if (!tableExists(con, "events_school_level"))
+						{
+							ok = executeSqlQuery(
+									con,
+									new StringBuilder("CREATE TABLE events_school_level (")
+											.append("school_level_id BIGINT UNSIGNED NOT NULL, ")
+											.append("school_level_deleted TINYINT DEFAULT NULL, ")
+											.append("school_level_version INTEGER DEFAULT NULL, ")
+											.append("school_level_inserted DATETIME DEFAULT NULL, ")
+											.append("school_level_updated DATETIME DEFAULT NULL, ")
+											.append("school_level_user_id BIGINT DEFAULT NULL, ")
+											.append("school_level_name VARCHAR(255) DEFAULT NULL)").toString());
+							ok = executeSqlQuery(con,
+									"ALTER TABLE events_school_level ADD PRIMARY KEY (school_level_id)");
+							ok = executeSqlQuery(con,
+									"CREATE INDEX idx_school_level_name ON events_school_level(school_level_name)");
+						}
+						String sql = "SELECT school_level_id FROM events_school_level WHERE school_level_id = 1";
+						ResultSet results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							ok = executeSqlQuery(
+									con,
+									"INSERT INTO events_school_level (school_level_id, school_level_name, school_level_version, school_level_deleted) VALUES (1, \"Kindergarten\", 0, 0);");
+						}
+						results.close();
+						sql = "SELECT school_level_id FROM events_school_level WHERE school_level_id = 2";
+						results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							ok = executeSqlQuery(
+									con,
+									"INSERT INTO events_school_level (school_level_id, school_level_name, school_level_version, school_level_deleted) VALUES (2, \"Unterstufe\", 0, 0);");
+						}
+						results.close();
+						sql = "SELECT school_level_id FROM events_school_level WHERE school_level_id = 3";
+						results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							ok = executeSqlQuery(
+									con,
+									"INSERT INTO events_school_level (school_level_id, school_level_name, school_level_version, school_level_deleted) VALUES (3, \"Mittelstufe\", 0, 0);");
+						}
+						results.close();
+						sql = "SELECT school_level_id FROM events_school_level WHERE school_level_id = 4";
+						results = stm.executeQuery(sql);
+						if (!results.next())
+						{
+							ok = executeSqlQuery(
+									con,
+									"INSERT INTO events_school_level (school_level_id, school_level_name, school_level_version, school_level_deleted) VALUES (4, \"Oberstufe\", 0, 0);");
+						}
+						results.close();
+
+						if (!rowExists(con, "events_sequence", "seq_name", "events_school_level_id_seq", "'"))
+						{
+							ok = executeSqlQuery(con,
+									"INSERT INTO events_sequence (seq_name, seq_count) VALUES ('events_school_level_id_seq', 5);");
+						}
+						
+						if (tableExists(con, "events_school_class"))
+						{
+							ok = executeSqlQuery(con, "DROP TABLE events_school_class");
+						}
+						
+						if (columnExists(con, "events_visit", "visit_school_class_id"))
+						{
+							StringBuilder builder = new StringBuilder("ALTER TABLE events_visit\n")
+									.append("\tCHANGE COLUMN visit_school_class_id visit_school_level_id INT(10) NULL DEFAULT NULL,\n")
+									.append("\tDROP INDEX visit_school_class_id,\n")
+									.append("\tADD INDEX visit_school_level_id (visit_school_level_id ASC)");
+							ok = executeSqlQuery(con, builder.toString());
+						}
+					}
+					if (structureVersion == 42)
+					{
+						if (!columnExists(con, "events_teacher", "teacher_notes"))
+						{
+							ok = executeSqlQuery(con,
+									"ALTER TABLE events_teacher ADD COLUMN teacher_notes " + this.getClobTypeName() + " NULL");
+						}
+						if (!columnExists(con, "events_visit", "visit_notes"))
+						{
+							ok = executeSqlQuery(con,
+									"ALTER TABLE events_visit ADD COLUMN visit_notes " + this.getClobTypeName() + " NULL");
+						}
+					}
+					if (structureVersion == 43)
+					{
+						String tableName = "events_person_settings";
+						String columnName = "person_settings_criteria_min_length";
+						if (!columnExists(con, tableName, columnName))
+						{
+							ok = executeSqlQuery(con,
+									"ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " INTEGER DEFAULT 3");
+						}
+						columnName = "person_settings_max_records_listed";
+						if (!columnExists(con, tableName, columnName))
+						{
+							ok = executeSqlQuery(con,
+									"ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " INTEGER DEFAULT 100");
+						}
+					}
+					if (structureVersion == 43)
+					{
+						String tableName = "events_person_settings";
+						String columnName = "person_settings_criteria_min_length";
+						if (!columnExists(con, tableName, columnName))
+						{
+							ok = executeSqlQuery(con,
+									"ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " INTEGER DEFAULT 3");
+						}
+						columnName = "person_settings_max_records_listed";
+						if (!columnExists(con, tableName, columnName))
+						{
+							ok = executeSqlQuery(con,
+									"ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " INTEGER DEFAULT 100");
+						}
+					}
+					if (structureVersion == 44)
+					{
+						String tableName = "events_person_settings";
+						String columnName = "person_settings_street_abbreviation";
+						if (!columnExists(con, tableName, columnName))
+						{
+							ok = executeSqlQuery(con,
+									"ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " VARCHAR(255) DEFAULT ''");
+						}
+					}
+					if (structureVersion == 45)
+					{
+						log(LogService.LOG_INFO, "Updating structure version to " + structureVersion + 1);
+						String table = "events_charity_run";
+						if (!tableExists(con, table))
+						{
+							Column[] columns = new Column[12];
+							columns[0] = new Column("charity_run_id", "BIGINT", "", false);
+							columns[1] = new Column("charity_run_deleted", "SMALLINT", "DEFAULT NULL", true);
+							columns[2] = new Column("charity_run_version", "INTEGER UNSIGNED", "DEFAULT NULL", true);
+							columns[3] = new Column("charity_run_inserted", "DATETIME", "DEFAULT NULL", true);
+							columns[4] = new Column("charity_run_updated", "DATETIME", "DEFAULT NULL", true);
+							columns[5] = new Column("charity_run_user_id", "int(10)", "DEFAULT NULL", true);
+							columns[6] = new Column("charity_run_name", "VARCHAR(255)", "DEFAULT NULL", true);
+							columns[7] = new Column("charity_run_description", "VARCHAR(6000)", "DEFAULT NULL", true);
+							columns[8] = new Column("charity_run_place", "VARCHAR(255)", "DEFAULT NULL", true);
+							columns[9] = new Column("charity_run_date", "DATETIME", "DEFAULT NULL", true);
+							columns[10] = new Column("charity_run_state", "SMALLINT", "DEFAULT NULL", true);
+							columns[11] = new Column("charity_run_round_length", "DOUBLE", "DEFAULT 0", true);
+							String primaryKey = "charity_run_id";
+							ForeignKey[] foreignKeys = new ForeignKey[1];
+							foreignKeys[0] = new ForeignKey("charity_run_user_id", "charity_run_user_id", "events_user", "user_id");
+							ok = executeSqlQuery(
+									con, getCreateTable(table, columns, primaryKey, foreignKeys));
+							if (!rowExists(con, "events_sequence", "seq_name", "events_charity_run_id_seq", "'"))
+							{
+								ok = executeSqlQuery(con,
+										"INSERT INTO events_sequence (seq_name, seq_count) VALUES ('events_charity_run_id_seq', 1);");
+							}
+						}
+						table = "events_charity_person";
+						if (!tableExists(con, table))
+						{
+							Column[] columns = new Column[16];
+							columns[0] = new Column("charity_person_id", "BIGINT", "", false);
+							columns[1] = new Column("charity_person_deleted", "SMALLINT", "DEFAULT NULL", true);
+							columns[2] = new Column("charity_person_version", "INTEGER UNSIGNED", "DEFAULT NULL", true);
+							columns[3] = new Column("charity_person_inserted", "DATETIME", "DEFAULT NULL", true);
+							columns[4] = new Column("charity_person_updated", "DATETIME", "DEFAULT NULL", true);
+							columns[5] = new Column("charity_person_user_id", "int(10)", "DEFAULT NULL", true);
+							columns[6] = new Column("charity_person_pa_link_id", "int(10)", "DEFAULT NULL", true);
+							columns[7] = new Column("charity_person_another_id", "VARCHAR(255)", "DEFAULT NULL", true);
+							columns[8] = new Column("charity_person_firstname", "VARCHAR(255)", "DEFAULT NULL", true);
+							columns[9] = new Column("charity_person_lastname", "VARCHAR(255)", "DEFAULT NULL", true);
+							columns[10] = new Column("charity_person_street", "VARCHAR(255)", "DEFAULT NULL", true);
+							columns[11] = new Column("charity_person_zip", "VARCHAR(255)", "DEFAULT NULL", true);
+							columns[12] = new Column("charity_person_city", "VARCHAR(255)", "DEFAULT NULL", true);
+							columns[13] = new Column("charity_person_phone", "VARCHAR(255)", "DEFAULT NULL", true);
+							columns[14] = new Column("charity_person_email", "VARCHAR(255)", "DEFAULT NULL", true);
+							columns[15] = new Column("charity_person_sex", "SMALLINT", "DEFAULT 0", true);
+							String primaryKey = "charity_person_id";
+							ForeignKey[] foreignKeys = new ForeignKey[2];
+							foreignKeys[0] = new ForeignKey("charity_person_user_id", "charity_person_user_id", "events_user", "user_id");
+							foreignKeys[1] = new ForeignKey("charity_person_pa_link_id", "charity_person_pa_link_id", "events_pa_link", "pa_link_id");
+							ok = executeSqlQuery(
+									con, getCreateTable(table, columns, primaryKey, foreignKeys));
+							if (!rowExists(con, "events_sequence", "seq_name", "events_charity_person_id_seq", "'"))
+							{
+								ok = executeSqlQuery(con,
+										"INSERT INTO events_sequence (seq_name, seq_count) VALUES ('events_charity_person_id_seq', 1);");
+							}
+						}
+						table = "events_charity_tag";
+						if (!tableExists(con, table))
+						{
+							Column[] columns = new Column[9];
+							columns[0] = new Column("charity_tag_id", "BIGINT", "", false);
+							columns[1] = new Column("charity_tag_deleted", "SMALLINT", "DEFAULT NULL", true);
+							columns[2] = new Column("charity_tag_version", "INTEGER UNSIGNED", "DEFAULT NULL", true);
+							columns[3] = new Column("charity_tag_inserted", "DATETIME", "DEFAULT NULL", true);
+							columns[4] = new Column("charity_tag_updated", "DATETIME", "DEFAULT NULL", true);
+							columns[5] = new Column("charity_tag_user_id", "int(10)", "DEFAULT NULL", true);
+							columns[6] = new Column("charity_tag_charity_run_id", "BIGINT", "DEFAULT NULL", true);
+							columns[7] = new Column("charity_tag_tag_id", "VARCHAR(64)", "DEFAULT NULL", true);
+							columns[8] = new Column("charity_tag_start_number", "BIGINT", "DEFAULT NULL", true);
+							String primaryKey = "charity_tag_id";
+							ForeignKey[] foreignKeys = new ForeignKey[2];
+							foreignKeys[0] = new ForeignKey("charity_tag_user_id", "charity_tag_user_id", "events_user", "user_id");
+							foreignKeys[1] = new ForeignKey("charity_tag_charity_run_id", "charity_tag_charity_run_id", "events_charity_run", "charity_run_id");
+							ok = executeSqlQuery(
+									con, getCreateTable(table, columns, primaryKey, foreignKeys));
+							if (!rowExists(con, "events_sequence", "seq_name", "events_charity_tag_id_seq", "'"))
+							{
+								ok = executeSqlQuery(con,
+										"INSERT INTO events_sequence (seq_name, seq_count) VALUES ('events_charity_tag_id_seq', 1);");
+							}
+						}
+						table = "events_charity_runner";
+						if (!tableExists(con, table))
+						{
+							Column[] columns = new Column[15];
+							columns[0] = new Column("charity_runner_id", "BIGINT", "", false);
+							columns[1] = new Column("charity_runner_deleted", "SMALLINT", "DEFAULT NULL", true);
+							columns[2] = new Column("charity_runner_version", "INTEGER UNSIGNED", "DEFAULT NULL", true);
+							columns[3] = new Column("charity_runner_inserted", "DATETIME", "DEFAULT NULL", true);
+							columns[4] = new Column("charity_runner_updated", "DATETIME", "DEFAULT NULL", true);
+							columns[5] = new Column("charity_runner_user_id", "int(10)", "DEFAULT NULL", true);
+							columns[6] = new Column("charity_runner_charity_run_id", "BIGINT", "DEFAULT NULL", true);
+							columns[7] = new Column("charity_runner_charity_person_id", "BIGINT", "DEFAULT NULL", true);
+							columns[8] = new Column("charity_runner_charity_tag_id", "BIGINT", "DEFAULT NULL", true);
+							columns[9] = new Column("charity_runner_leader_id", "BIGINT", "DEFAULT NULL", true);
+							columns[10] = new Column("charity_runner_group_name", "VARCHAR(255)", "DEFAULT NULL", true);
+							columns[11] = new Column("charity_runner_leadership", "TINYINT", "DEFAULT 0", true);
+							columns[12] = new Column("charity_runner_rounds", "INTEGER", "DEFAULT 0", true);
+							columns[13] = new Column("charity_runner_variable_amount", "DOUBLE", "DEFAULT 0", true);
+							columns[14] = new Column("charity_runner_fix_amount", "DOUBLE", "DEFAULT 0", true);
+							String primaryKey = "charity_runner_id";
+							ForeignKey[] foreignKeys = new ForeignKey[5];
+							foreignKeys[0] = new ForeignKey("charity_runner_user_id", "charity_runner_user_id", "events_user", "user_id");
+							foreignKeys[1] = new ForeignKey("charity_runner_charity_person_id", "charity_runner_charity_person_id", "events_charity_person", "charity_person_id");
+							foreignKeys[2] = new ForeignKey("charity_runner_charity_run_id", "charity_runner_charity_run_id", "events_charity_run", "charity_run_id");
+							foreignKeys[3] = new ForeignKey("charity_runner_charity_tag_id", "charity_runner_charity_tag_id", "events_charity_tag", "charity_tag_id");
+							foreignKeys[4] = new ForeignKey("charity_runner_leader_id", "charity_runner_leader_id", "events_charity_runner", "charity_runner_id");
+							ok = executeSqlQuery(
+									con, getCreateTable(table, columns, primaryKey, foreignKeys));
+							if (!rowExists(con, "events_sequence", "seq_name", "events_charity_runner_id_seq", "'"))
+							{
+								ok = executeSqlQuery(con,
+										"INSERT INTO events_sequence (seq_name, seq_count) VALUES ('events_charity_runner_id_seq', 1);");
+							}
+						}
+						table = "events_charity_run_tag_read";
+						if (!tableExists(con, table))
+						{
+							Column[] columns = new Column[12];
+							columns[0] = new Column("charity_run_tag_read_id", "BIGINT", "", false);
+							columns[1] = new Column("charity_run_tag_read_deleted", "SMALLINT", "DEFAULT NULL", true);
+							columns[2] = new Column("charity_run_tag_read_version", "INTEGER UNSIGNED", "DEFAULT NULL", true);
+							columns[3] = new Column("charity_run_tag_read_inserted", "DATETIME", "DEFAULT NULL", true);
+							columns[4] = new Column("charity_run_tag_read_updated", "DATETIME", "DEFAULT NULL", true);
+							columns[5] = new Column("charity_run_tag_read_user_id", "int(10)", "DEFAULT NULL", true);
+							columns[6] = new Column("charity_run_tag_read_charity_run_id", "BIGINT", "DEFAULT NULL", true);
+							columns[7] = new Column("charity_run_tag_read_antenna_port", "INTEGER UNSIGNED", "DEFAULT NULL", true);
+							columns[8] = new Column("charity_run_tag_read_tag_id", "VARCHAR(48)", "DEFAULT NULL", true);
+							columns[9] = new Column("charity_run_tag_read_tag_count", "INTEGER", "DEFAULT 0", true);
+							columns[10] = new Column("charity_run_tag_read_first_seen", "DATETIME", "DEFAULT NULL", true);
+							columns[11] = new Column("charity_run_tag_read_last_seen", "DATETIME", "DEFAULT NULL", true);
+							String primaryKey = "charity_run_tag_read_id";
+							ForeignKey[] foreignKeys = new ForeignKey[1];
+							foreignKeys[0] = new ForeignKey("charity_run_tag_read_charity_run_id", "charity_run_tag_read_charity_run_id", "events_charity_run", "charity_run_id");
+							ok = executeSqlQuery(con, getCreateTable(table, columns, primaryKey, foreignKeys));
+							ok = executeSqlQuery(con, "ALTER TABLE " + table + " ADD INDEX charity_run_tag_read_tag_id (charity_run_tag_read_tag_id ASC)");
+							ok = executeSqlQuery(con, "ALTER TABLE " + table + " ADD INDEX charity_run_tag_read_last_seen (charity_run_tag_read_last_seen DESC)");
+							if (!rowExists(con, "events_sequence", "seq_name", "events_charity_run_tag_read_id_seq", "'"))
+							{
+								ok = executeSqlQuery(con,
+										"INSERT INTO events_sequence (seq_name, seq_count) VALUES ('events_charity_run_tag_read_id_seq', 1);");
+							}
+						}
+						if (columnExists(con, "events_contact", "contact_owner_id"))
+						{
+							ok = executeSqlQuery(
+									con, "ALTER TABLE events_contact DROP COLUMN contact_owner_id");
+						}
+						if (!columnExists(con, "events_contact", "contact_address_id"))
+						{
+							ok = executeSqlQuery(
+									con, "ALTER TABLE events_contact ADD COLUMN contact_address_id BIGINT DEFAULT NULL");
+						}
+						if (!columnExists(con, "events_contact", "contact_pa_link_id"))
+						{
+							ok = executeSqlQuery(
+									con, "ALTER TABLE events_contact ADD COLUMN contact_pa_link_id BIGINT DEFAULT NULL");
+						}
+					}
 					if (ok)
 					{
 						stm.execute("UPDATE events_version SET version_structure = " + ++structureVersion);
@@ -1541,5 +2004,43 @@ public abstract class DatabaseUpdater
 			return new MysqlDatabaseUpdater();
 		}
 		return null;
+	}
+	
+	protected class Column
+	{
+		public String name;
+		
+		public String dataType;
+		
+		public String defaultValue;
+		
+		public boolean nullable;
+	
+		public Column(String name, String dataType, String defaultValue, boolean nullable)
+		{
+			this.name = name;
+			this.dataType = dataType;
+			this.defaultValue = defaultValue;
+			this.nullable = nullable;
+		}
+	}
+	
+	protected class ForeignKey
+	{
+		public String foreignKeyName;
+		
+		public String columnName;
+	
+		public String referencedTable;
+		
+		public String referencedColumnName;
+		
+		public ForeignKey(String columnName, String foreignKeyName, String referencedTable, String referenceColumnName)
+		{
+			this.columnName = columnName;
+			this.foreignKeyName = foreignKeyName;
+			this.referencedTable = referencedTable;
+			this.referencedColumnName = referenceColumnName;
+		}
 	}
 }

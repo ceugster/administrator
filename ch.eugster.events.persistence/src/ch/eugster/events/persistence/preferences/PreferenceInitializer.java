@@ -23,7 +23,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 
 	public static Preferences getServerNode()
 	{
-		return new InstanceScope().getNode(Activator.PLUGIN_ID).node(Activator.PERSISTENCE_UNIT_NAME);
+		return InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID).node(Activator.PERSISTENCE_UNIT_NAME);
 	}
 
 	@Override

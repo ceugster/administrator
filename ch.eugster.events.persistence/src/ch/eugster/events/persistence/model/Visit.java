@@ -3,6 +3,7 @@ package ch.eugster.events.persistence.model;
 import static javax.persistence.CascadeType.ALL;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Vector;
@@ -26,6 +27,8 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import ch.eugster.events.persistence.model.VisitVisitor.VisitorType;
+
 @Entity
 @Table(name = "events_visit")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "visit_user_id")) })
@@ -47,8 +50,8 @@ public class Visit extends AbstractEntity
 	private Teacher teacher;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "visit_school_class_id", referencedColumnName = "school_class_id")
-	private SchoolClass schoolClass;
+	@JoinColumn(name = "visit_school_level_id", referencedColumnName = "school_level_id")
+	private SchoolLevel schoolLevel;
 
 	/**
 	 * Data
@@ -95,6 +98,10 @@ public class Visit extends AbstractEntity
 	private String classRoom;
 
 	@Basic
+	@Column(name = "visit_color")
+	private int color;
+
+	@Basic
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "visit_start")
 	private Calendar start;
@@ -103,6 +110,10 @@ public class Visit extends AbstractEntity
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "visit_end")
 	private Calendar end;
+
+	@Basic
+	@Column(name = "visit_notes")
+	private String notes;
 
 	@OneToMany(mappedBy = "visit", cascade = ALL)
 	private List<VisitAppliance> appliances = new Vector<VisitAppliance>();
@@ -113,6 +124,11 @@ public class Visit extends AbstractEntity
 	private Visit()
 	{
 		super();
+	}
+	
+	public boolean isValid()
+	{
+		return !this.deleted && this.theme.isValid() && this.teacher.isValid();
 	}
 
 	public void addAppliance(final VisitAppliance appliance)
@@ -191,9 +207,9 @@ public class Visit extends AbstractEntity
 		return pupils;
 	}
 
-	public SchoolClass getSchoolClass()
+	public SchoolLevel getSchoolLevel()
 	{
-		return schoolClass;
+		return schoolLevel;
 	}
 
 	public SelectedEmail getSelectedEmail()
@@ -221,14 +237,48 @@ public class Visit extends AbstractEntity
 		return teacher;
 	}
 
+	public String getNotes()
+	{
+		return stringValueOf(this.notes);
+	}
 	public VisitTheme getTheme()
 	{
 		return theme;
 	}
 
+	public int getColor()
+	{
+		return this.color;
+	}
+	
 	public List<VisitVisitor> getVisitors()
 	{
 		return this.visitors;
+	}
+
+	public List<VisitVisitor> getValidVisitors()
+	{
+		List<VisitVisitor> visitors = new ArrayList<VisitVisitor>();
+		for (VisitVisitor visitor : this.visitors)
+		{
+			if (visitor.isValid())
+			{
+				visitors.add(visitor);
+			}
+		}
+		return visitors;
+	}
+	
+	public VisitVisitor getVisitor(VisitorType type)
+	{
+		for (VisitVisitor visitor : this.visitors)
+		{
+			if (visitor.isValid() && visitor.getType().equals(type))
+			{
+				return visitor;
+			}
+		}
+		return null;
 	}
 
 	public void removeAppliance(final VisitAppliance appliance)
@@ -280,9 +330,14 @@ public class Visit extends AbstractEntity
 		this.propertyChangeSupport.firePropertyChange("pupils", this.pupils, this.pupils = pupils);
 	}
 
-	public void setSchoolClass(final SchoolClass schoolClass)
+	public void setSchoolLevel(final SchoolLevel schoolLevel)
 	{
-		this.schoolClass = schoolClass;
+		this.propertyChangeSupport.firePropertyChange("schoolLevel", this.schoolLevel, this.schoolLevel = schoolLevel);
+	}
+
+	public void setColor(final int color)
+	{
+		this.propertyChangeSupport.firePropertyChange("color", this.color, this.color = color);
 	}
 
 	public void setSelectedEmail(final SelectedEmail selectedEmail)
@@ -297,15 +352,20 @@ public class Visit extends AbstractEntity
 				this.selectedPhone = phone == null ? SelectedPhone.NONE : phone);
 	}
 
+	public void setNotes(final String notes)
+	{
+		this.propertyChangeSupport.firePropertyChange("notes", this.notes,
+				this.notes = notes == null || notes.isEmpty() ? null : notes);
+	}
+
 	public void setStart(final Calendar start)
 	{
 		this.propertyChangeSupport.firePropertyChange("start", this.start, this.start = start);
-		this.start = start;
 	}
 
 	public void setState(final State state)
 	{
-		this.state = state;
+		this.propertyChangeSupport.firePropertyChange("state", this.state, this.state = state);
 	}
 
 	public void setTeacher(final Teacher teacher)
@@ -316,7 +376,6 @@ public class Visit extends AbstractEntity
 	public void setTheme(final VisitTheme theme)
 	{
 		this.propertyChangeSupport.firePropertyChange("theme", this.theme, this.theme = theme);
-		this.theme = theme;
 	}
 
 	public void setDeleted(boolean deleted)

@@ -90,22 +90,22 @@ public class CourseFormatter
 
 	public String formatComboEntryBookingType(Participant participant)
 	{
+		StringBuffer text = new StringBuffer(NumberFormat.getIntegerInstance().format(participant.getCount()));
+
 		String code = participant.getBookingType().getCode();
 		String name = participant.getBookingType().getName();
 
-		StringBuffer text = new StringBuffer("");
-
 		if (code.length() > 0)
 		{
-			text = text.append(code);
+			text = text.append(" " + code);
 			if (name.length() > 0)
-				text = text.append(" - ");
+				text = text.append(" -");
 		}
 		if (name.length() > 0)
-			text.append(name);
+			text.append(" " + name);
 
 		if (text.length() > 0)
-			text.append(", ");
+			text.append(" à ");
 
 		text.append(NumberFormat.getCurrencyInstance().format(participant.getPrice()));
 		return text.toString();

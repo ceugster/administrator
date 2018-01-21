@@ -1030,19 +1030,22 @@ ch.eugster.events.persistence.feature/build.properties -text
 ch.eugster.events.persistence.feature/feature.xml -text
 ch.eugster.events.persistence/.classpath -text
 ch.eugster.events.persistence/.project -text
-ch.eugster.events.persistence/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.persistence/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.persistence/META-INF/MANIFEST.MF -text
 ch.eugster.events.persistence/META-INF/persistence.xml -text
 ch.eugster.events.persistence/OSGI-INF/provider-component.xml -text
 ch.eugster.events.persistence/OSGI-INF/service-component.xml -text
 ch.eugster.events.persistence/build.properties -text
+ch.eugster.events.persistence/icons/browse_16.png -text
 ch.eugster.events.persistence/icons/defcon_wiz.png -text
+ch.eugster.events.persistence/icons/email_16.png -text
+ch.eugster.events.persistence/icons/mobile_16.png -text
+ch.eugster.events.persistence/icons/phone_16.png -text
 ch.eugster.events.persistence/lib/derby.jar -text
 ch.eugster.events.persistence/lib/derbyclient.jar -text
 ch.eugster.events.persistence/lib/derbynet.jar -text
 ch.eugster.events.persistence/lib/derbytools.jar -text
-ch.eugster.events.persistence/lib/libphonenumber-5.5.jar -text
+ch.eugster.events.persistence/lib/libphonenumber-7.7.2.jar -text
 ch.eugster.events.persistence/lib/mysql-connector-java-3.0.11-stable-bin.jar -text
 ch.eugster.events.persistence/lib/postgresql-8.4-701.jdbc4.jar -text
 ch.eugster.events.persistence/lib/sqljdbc4.jar -text
@@ -1071,6 +1074,7 @@ ch.eugster.events.persistence/src/ch/eugster/events/persistence/filters/NotBooki
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/AbstractFormatter.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/AddressFormatter.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/CourseFormatter.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/DateFormatter.java -text svneol=unset#text/plain
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/DonationFormatter.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/ImageConverter.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/formatters/LinkPersonAddressFormatter.java -text
@@ -1097,6 +1101,11 @@ ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/BookingFor
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/BookingType.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/BookingTypeProposition.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Category.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/CharityPerson.java -text svneol=unset#text/plain
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/CharityRun.java -text svneol=unset#text/plain
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/CharityRunTagRead.java -text svneol=unset#text/plain
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/CharityRunner.java -text svneol=unset#text/plain
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/CharityTag.java -text svneol=unset#text/plain
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Compensation.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/CompensationType.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Contact.java -text
@@ -1144,7 +1153,7 @@ ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/PersonSett
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/PersonSex.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/PersonTitle.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Rubric.java -text
-ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/SchoolClass.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/SchoolLevel.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Season.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/SelectedEmail.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/SelectedPhone.java -text
@@ -1179,8 +1188,12 @@ ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/BookingQ
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/BookingTypePropositionQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/BookingTypeQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/CategoryQuery.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/CharityRunQuery.java -text svneol=unset#text/plain
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/CharityRunTagReadQuery.java -text svneol=unset#text/plain
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/CharityRunnerQuery.java -text svneol=unset#text/plain
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/CompensationQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/CompensationTypeQuery.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/ContactQuery.java -text svneol=unset#text/plain
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/ContactTypeQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/CountryQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/CourseDetailQuery.java -text
@@ -1204,7 +1217,7 @@ ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/PersonSe
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/PersonSexQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/PersonTitleQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/RubricQuery.java -text
-ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/SchoolClassQuery.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/SchoolLevelQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/SeasonQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/TeacherQuery.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/queries/UserQuery.java -text

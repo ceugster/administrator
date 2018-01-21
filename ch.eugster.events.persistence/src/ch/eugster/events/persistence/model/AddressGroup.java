@@ -107,6 +107,10 @@ public class AddressGroup extends AbstractEntity
 	// this.children.add(child));
 	// }
 
+	public boolean isValid()
+	{
+		return !this.deleted && this.getAddressGroupCategory().isValid();
+	}
 	/**
 	 * 
 	 * @param addressGroupMember
@@ -153,7 +157,7 @@ public class AddressGroup extends AbstractEntity
 		List<AddressGroupMember> validMembers = new ArrayList<AddressGroupMember>();
 		for (AddressGroupMember member : this.addressGroupMembers)
 		{
-			if (!member.isDeleted() && !member.getAddress().isDeleted() && (member.getLink() == null || !member.getLink().isDeleted()))
+			if (member.isValid())
 			{
 				validMembers.add(member);
 			}
@@ -224,17 +228,27 @@ public class AddressGroup extends AbstractEntity
 		this.propertyChangeSupport.firePropertyChange("code", this.code, this.code = code);
 	}
 	
-	public boolean contains(LinkPersonAddress link, Address address)
+	public boolean contains(Address address)
 	{
 		List<AddressGroupMember> members = this.getValidAddressGroupMembers();
 		for (AddressGroupMember member : members)
 		{
-			if (member.getAddress().getId().equals(address.getId()))
+			if (member.isValidAddressMember() && member.getAddress().getId().equals(address.getId()))
 			{
-				if (member.getLink() != null && member.getLink().getId().equals(link.getId()))
-				{
-					return true;
-				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean contains(LinkPersonAddress link)
+	{
+		List<AddressGroupMember> members = this.getValidAddressGroupMembers();
+		for (AddressGroupMember member : members)
+		{
+			if (member.isValidLinkMember() && member.getLink().getId().equals(link.getId()))
+			{
+				return true;
 			}
 		}
 		return false;

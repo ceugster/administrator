@@ -195,6 +195,11 @@ public class Domain extends AbstractEntity
 		this.propertyChangeSupport.firePropertyChange("website", this.website, this.website = website);
 	}
 
+	public String getComboFormat()
+	{
+		return this.getCode().equals("") ? this.getName() : this.getCode() + " - " + this.getName();
+	}
+	
 	public static Domain newInstance()
 	{
 		return (Domain) AbstractEntity.newInstance(new Domain());

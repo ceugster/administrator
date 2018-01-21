@@ -50,7 +50,7 @@ public class PhoneFormatter
 		return format(phoneNumber, country.getIso3166alpha2());
 	}
 	
-	private static String format(String phoneNumber, String countryCode)
+	public static String format(String phoneNumber, String countryCode)
 	{
 		try 
 		{

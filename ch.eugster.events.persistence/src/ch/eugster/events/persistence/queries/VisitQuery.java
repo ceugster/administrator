@@ -7,7 +7,7 @@ import java.util.List;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
 
-import ch.eugster.events.persistence.model.SchoolClass;
+import ch.eugster.events.persistence.model.SchoolLevel;
 import ch.eugster.events.persistence.model.Visit;
 import ch.eugster.events.persistence.service.ConnectionService;
 
@@ -18,9 +18,9 @@ public class VisitQuery extends AbstractEntityQuery<Visit>
 		super(service);
 	}
 
-	public long countSchoolClasses(SchoolClass schoolClass)
+	public long countSchoolLevels(SchoolLevel schoolLevel)
 	{
-		Expression expression = new ExpressionBuilder(Visit.class).get("schoolClass").equal(schoolClass);
+		Expression expression = new ExpressionBuilder(Visit.class).get("schoolLevel").equal(schoolLevel);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
 		return this.count(Visit.class, expression);
 	}

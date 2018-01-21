@@ -10,7 +10,9 @@ import org.eclipse.persistence.queries.ReadAllQuery;
 import org.eclipse.persistence.queries.ReportQuery;
 import org.eclipse.persistence.queries.ReportQueryResult;
 
+import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.Donation;
+import ch.eugster.events.persistence.model.DonationPurpose;
 import ch.eugster.events.persistence.model.DonationYear;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.service.ConnectionService;
@@ -37,6 +39,32 @@ public class DonationQuery extends AbstractEntityQuery<Donation>
 		return (List<String>) connectionService.getSession().executeQuery(query);
 	}
 
+	public List<Donation> selectByYearPurposeDomain(DonationYear year, DonationPurpose purpose, Domain domain)
+	{
+		Expression donationExpression = new ExpressionBuilder(Donation.class).get("deleted").equal(false);
+		if (year != null)
+		{
+			donationExpression = donationExpression.and(new ExpressionBuilder().get("year").equal(year.getYear()));
+		}
+		if (purpose != null)
+		{
+			donationExpression = donationExpression.and(new ExpressionBuilder().get("purpose").equal(purpose));
+		}
+		if (domain != null)
+		{
+			if (domain.getName().equals("Ohne Domäne"))
+			{
+				donationExpression = donationExpression.and(new ExpressionBuilder().get("domain").isNull());
+			}
+			else
+			{
+				donationExpression = donationExpression.and(new ExpressionBuilder().get("domain").equal(domain));
+			}
+		}
+		List<Donation> donations = super.select(Donation.class, donationExpression);
+		return donations;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<DonationYear> selectYears()
 	{
@@ -56,6 +84,18 @@ public class DonationQuery extends AbstractEntityQuery<Donation>
 			}
 		}
 		return years;
+	}
+
+	public List<Donation> selectValids()
+	{
+		Expression expression = new ExpressionBuilder(Donation.class).get("deleted").equal(false);
+//		Expression donator = new ExpressionBuilder().get("link").isNull();
+//		Expression validDonator = new ExpressionBuilder().get("link").get("deleted").equal(false);
+//		validDonator = validDonator.and(new ExpressionBuilder().get("link").get("person").get("deleted").equal(false));
+//		validDonator = validDonator.and(new ExpressionBuilder().get("link").get("address").get("deleted").equal(false));
+//		donator = donator.or(validDonator);
+//		expression = expression.and(donator).and(new ExpressionBuilder().get("address").get("deleted").equal(false));
+		return select(Donation.class, expression);
 	}
 
 	@SuppressWarnings("unchecked")

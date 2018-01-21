@@ -177,6 +177,11 @@ public class Booking extends AbstractEntity
 		this.setCourse(course);
 	}
 
+	public boolean isValid()
+	{
+		return !this.deleted && this.getCourse().isValid();
+	}
+	
 	public void addParticipant(final Participant participant)
 	{
 		this.propertyChangeSupport.firePropertyChange("participants", this.participants,
@@ -299,7 +304,7 @@ public class Booking extends AbstractEntity
 					}
 					else
 					{
-						return state;
+						return BookingDoneState.NOT_PARTICIPATED;
 					}
 				}
 				case FORTHCOMING:
@@ -363,6 +368,22 @@ public class Booking extends AbstractEntity
 			if (!participant.isDeleted())
 			{
 				count += participant.getCount();
+			}
+		}
+		return count;
+	}
+
+	public int getParticipantCount(BookingType bookingType)
+	{
+		int count = 0;
+		for (Participant participant : this.participants)
+		{
+			if (!participant.isDeleted() && participant.getBookingType() != null)
+			{
+				if (participant.getBookingType().getId().equals(bookingType.getId()))
+				{
+					count += participant.getCount();
+				}
 			}
 		}
 		return count;

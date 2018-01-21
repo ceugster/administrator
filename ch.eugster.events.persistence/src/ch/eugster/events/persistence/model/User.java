@@ -253,33 +253,38 @@ public class User extends AbstractEntity
 	{
 		if (current == null)
 		{
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
 			tracker.open();
-
-			String username = System.getProperty("user.name");
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
+			try
 			{
-				UserQuery query = (UserQuery) service.getQuery(User.class);
-				User user = query.selectByUsername(username);
-				if (user == null)
+				String username = System.getProperty("user.name");
+				ConnectionService service = (ConnectionService) tracker.getService();
+				if (service != null)
 				{
-					user = User.newInstance();
-					user.setUsername(username);
-					user.setState(UserStatus.USER);
-					user = query.merge(user);
-					if (user != null)
+					UserQuery query = (UserQuery) service.getQuery(User.class);
+					User user = query.selectByUsername(username);
+					if (user == null)
+					{
+						user = User.newInstance();
+						user.setUsername(username);
+						user.setState(UserStatus.USER);
+						user = query.merge(user);
+						if (user != null)
+						{
+							User.setCurrent(user);
+						}
+					}
+					else
 					{
 						User.setCurrent(user);
 					}
 				}
-				else
-				{
-					User.setCurrent(user);
-				}
 			}
-			tracker.close();
+			finally
+			{
+				tracker.close();
+			}
 		}
 
 		return User.current;

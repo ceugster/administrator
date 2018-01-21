@@ -4,7 +4,7 @@ public enum CourseState
 {
 	FORTHCOMING, DONE, ANNULATED;
 
-	String[] states = new String[] { "Bevorstehend", "Durchgeführt", "Annuliert" };
+	String[] states = new String[] { "Bevorstehend", "Durchgeführt", "Annulliert" };
 
 	String[] codes = new String[] { "B", "D", "A" };
 
