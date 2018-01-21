@@ -128,16 +128,22 @@ public class SelectBookingTypeDialog extends TitleAreaDialog
 			}
 		}
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			ParticipantQuery query = (ParticipantQuery) service.getQuery(Participant.class);
-			this.participant = query.merge(this.participant);
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				ParticipantQuery query = (ParticipantQuery) service.getQuery(Participant.class);
+				this.participant = query.merge(this.participant);
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		this.close();
 	}
 }

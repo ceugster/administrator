@@ -226,8 +226,6 @@ public class CompensationTableViewerComposite extends Composite
 
 	private class CompensationList
 	{
-		public static final long serialVersionUID = 100000001l;
-
 		private List<CWrapper> wrappers = new ArrayList<CWrapper>();
 
 		private final List<Listener> listeners = new ArrayList<Listener>();
@@ -492,37 +490,41 @@ public class CompensationTableViewerComposite extends Composite
 
 		private String[] getCompensationTypeEntries()
 		{
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
 			tracker.open();
-
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
+			try
 			{
-				if (this.compensationTypes == null)
+				ConnectionService service = (ConnectionService) tracker.getService();
+				if (service != null)
 				{
-					CompensationTypeQuery query = (CompensationTypeQuery) service.getQuery(CompensationType.class);
-					List<CompensationType> compensationTypes = query.selectAll();
-					this.compensationTypes = compensationTypes.toArray(new CompensationType[0]);
-					this.entries = new String[this.compensationTypes.length];
-					for (int i = 0; i < this.entries.length; i++)
+					if (this.compensationTypes == null)
 					{
-						StringBuilder builder = new StringBuilder();
-						CompensationType type = this.compensationTypes[i];
-						if (!type.getCode().isEmpty())
+						CompensationTypeQuery query = (CompensationTypeQuery) service.getQuery(CompensationType.class);
+						List<CompensationType> compensationTypes = query.selectAll();
+						this.compensationTypes = compensationTypes.toArray(new CompensationType[0]);
+						this.entries = new String[this.compensationTypes.length];
+						for (int i = 0; i < this.entries.length; i++)
 						{
-							builder = builder.append(type.getCode());
+							StringBuilder builder = new StringBuilder();
+							CompensationType type = this.compensationTypes[i];
+							if (!type.getCode().isEmpty())
+							{
+								builder = builder.append(type.getCode());
+								if (!type.getName().isEmpty())
+									builder = builder.append(" - ");
+							}
 							if (!type.getName().isEmpty())
-								builder = builder.append(" - ");
+								builder = builder.append(type.getName());
+							this.entries[i] = builder.toString();
 						}
-						if (!type.getName().isEmpty())
-							builder = builder.append(type.getName());
-						this.entries[i] = builder.toString();
 					}
 				}
 			}
-			tracker.close();
-
+			finally
+			{
+				tracker.close();
+			}
 			return this.entries;
 		}
 
