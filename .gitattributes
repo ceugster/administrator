@@ -1246,7 +1246,6 @@ ch.eugster.events.person.feature/build.properties -text
 ch.eugster.events.person.feature/feature.xml -text
 ch.eugster.events.person/.classpath -text
 ch.eugster.events.person/.project -text
-ch.eugster.events.person/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.person/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.person/META-INF/MANIFEST.MF -text
 ch.eugster.events.person/build.properties -text
@@ -1262,6 +1261,7 @@ ch.eugster.events.person/icons/address_16.png -text
 ch.eugster.events.person/icons/address_16x16.png -text
 ch.eugster.events.person/icons/address_48x48.png -text
 ch.eugster.events.person/icons/address_grey_16x16.png -text
+ch.eugster.events.person/icons/addressgroup_16.png -text
 ch.eugster.events.person/icons/bank-cards-16.png -text
 ch.eugster.events.person/icons/browse_16.png -text
 ch.eugster.events.person/icons/browse_grey_16.png -text
@@ -1269,9 +1269,11 @@ ch.eugster.events.person/icons/bulp-off_16.png -text
 ch.eugster.events.person/icons/bulp-on_16.png -text
 ch.eugster.events.person/icons/bulp_off.png -text
 ch.eugster.events.person/icons/bulp_on.png -text
+ch.eugster.events.person/icons/category_16.png -text
 ch.eugster.events.person/icons/change_16.png -text
 ch.eugster.events.person/icons/clear_16.png -text
 ch.eugster.events.person/icons/clear_grey_16.png -text
+ch.eugster.events.person/icons/contact_16.png -text
 ch.eugster.events.person/icons/copy_16.png -text
 ch.eugster.events.person/icons/copy_edit.gif -text
 ch.eugster.events.person/icons/delete_16.png -text
@@ -1285,6 +1287,7 @@ ch.eugster.events.person/icons/form_banner.gif -text
 ch.eugster.events.person/icons/group_16.png -text
 ch.eugster.events.person/icons/home_16.png -text
 ch.eugster.events.person/icons/home_grey_16.png -text
+ch.eugster.events.person/icons/mobile_16.png -text
 ch.eugster.events.person/icons/money.png -text
 ch.eugster.events.person/icons/ok_16.gif -text
 ch.eugster.events.person/icons/person_blue_16.png -text
@@ -1316,6 +1319,7 @@ ch.eugster.events.person/src/ch/eugster/events/person/actions/DeleteLinkActionDe
 ch.eugster.events.person/src/ch/eugster/events/person/dialogs/BankAccountDialog.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/dialogs/ChangeAddressTypeDialog.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/dialogs/ContactDialog.java -text
+ch.eugster.events.person/src/ch/eugster/events/person/dialogs/SelectEditorInputTypeDialog.java -text svneol=unset#text/plain
 ch.eugster.events.person/src/ch/eugster/events/person/dialogs/UpdateBankDialog.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/AddressEditor.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/editors/AddressEditorInput.java -text
@@ -1393,6 +1397,7 @@ ch.eugster.events.person/src/ch/eugster/events/person/preferences/PersonPreferen
 ch.eugster.events.person/src/ch/eugster/events/person/preferences/PersonPreferenceStore.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/preferences/PreferenceInitializer.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/preferences/SectionExpanderBehaviourPreferencePage.java -text
+ch.eugster.events.person/src/ch/eugster/events/person/views/AddressEditorContentOutlinePage.java -text svneol=unset#text/plain
 ch.eugster.events.person/src/ch/eugster/events/person/views/AddressFilter.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/views/AddressSalutationContentProvider.java -text
 ch.eugster.events.person/src/ch/eugster/events/person/views/AddressSalutationSorter.java -text

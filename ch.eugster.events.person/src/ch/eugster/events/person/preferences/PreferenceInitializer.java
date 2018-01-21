@@ -18,6 +18,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 
 	public static final String KEY_ADDRESS_LABEL_FORMAT = "address.label.format";
 
+	public static final String KEY_STREET_ABBREVIATION = "street.abbreviation";
+	
 	public static final String KEY_DOMAIN_MANDATORY = "person.domain.mandatory";
 
 	public static final String KEY_USE_DOMAIN = "person.use.domain";
@@ -27,6 +29,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 	public static final String KEY_TITLE_MALE = "person.title.male";
 
 	public static final String KEY_MAX_RECORDS = "person.max.records";
+
+	public static final String KEY_CRITERIA_MIN_LENGTH = "criteria.minimal.length";
 
 	public static final String KEY_EDITOR_SECTION_BEHAVIOUR = "editor.section.behaviour";
 
@@ -47,7 +51,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 	@Override
 	public void initializeDefaultPreferences()
 	{
-		IEclipsePreferences prefs = new InstanceScope().getNode(Activator.PLUGIN_ID);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 		prefs.put(KEY_ID_FORMAT, PersonSettings.getInstance().getIdFormat());
 		String label = PersonSettings.getInstance().getPersonLabelFormat();
 		label = label.isEmpty() ? PersonFormatter.getInstance().createVisiblePersonLabel() : PersonFormatter
@@ -60,9 +64,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 		prefs.put(KEY_USE_DOMAIN, Boolean.toString(PersonSettings.getInstance().getPersonHasDomain()));
 		prefs.put(KEY_DOMAIN_MANDATORY, Boolean.toString(PersonSettings.getInstance().isPersonDomainMandatory()));
 		prefs.putInt(KEY_MAX_RECORDS, 100);
+		prefs.putInt(KEY_CRITERIA_MIN_LENGTH, 3);
 		prefs.put(KEY_EDITOR_SECTION_BEHAVIOUR, EDITOR_SECTION_BEHAVIOUR_EDITOR);
 		prefs.put(KEY_EDITOR_SELECTOR, EditorSelector.SINGLE_PAGE_EDITOR.value());
 		prefs.put(KEY_EDITOR_ADD_BLANK_AFTER_DOT_IN_CITY, "0");
+		prefs.put(KEY_STREET_ABBREVIATION, "str.");
 	}
 
 }

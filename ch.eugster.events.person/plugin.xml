@@ -116,7 +116,7 @@
                id="ch.eugster.events.person.sex.view"
                minimized="false"
                moveable="true"
-               relationship="bottom"
+               relationship="stack"
                relative="ch.eugster.events.person.salutation.view"
                showTitle="true"
                standalone="false"
@@ -127,7 +127,7 @@
                id="ch.eugster.events.person.field.extension.view"
                minimized="false"
                moveable="true"
-               relationship="bottom"
+               relationship="stack"
                relative="ch.eugster.events.person.sex.view"
                showTitle="true"
                standalone="false"
@@ -986,15 +986,6 @@
                tooltip="Neue Person hinzufügen">
          </command>
          <command
-               commandId="ch.eugster.events.person.command.addAddress"
-               disabledIcon="icons/home_grey_16.png"
-               hoverIcon="icons/home_16.png"
-               icon="icons/home_16.png"
-               label="Neue Adresse hinzufügen"
-               style="push"
-               tooltip="Neue Adresse hinzufügen">
-         </command>
-         <command
                commandId="ch.eugster.events.person.command.edit"
                disabledIcon="icons/edit_grey_16.png"
                hoverIcon="icons/edit_16.png"
@@ -1583,7 +1574,7 @@
       <menuContribution
             locationURI="popup:ch.eugster.events.person.salutation.view?after=additions">
          <command
-               commandId="ch.eugster.events.person.field.extension.add"
+               commandId="ch.eugster.events.person.commands.field.extension.add"
                disabledIcon="icons/add_grey_16.gif"
                hoverIcon="icons/add_16.gif"
                icon="icons/add_16.gif"
@@ -1592,7 +1583,7 @@
                tooltip="Neues Zusatzfeld hinzufügen">
          </command>
          <command
-               commandId="ch.eugster.events.person.field.extension.edit"
+               commandId="ch.eugster.events.person.commands.field.extension.edit"
                disabledIcon="icons/edit_grey_16.png"
                hoverIcon="icons/edit_16.png"
                icon="icons/edit_16.png"
@@ -1617,7 +1608,7 @@
             </visibleWhen>
          </command>
          <command
-               commandId="ch.eugster.events.person.field.extension.delete"
+               commandId="ch.eugster.events.person.commands.field.extension.delete"
                disabledIcon="icons/delete_grey_16.png"
                hoverIcon="icons/delete_16.png"
                icon="icons/delete_16.png"
@@ -1658,7 +1649,7 @@
          </command>
          <command
                commandId="ch.eugster.events.person.bank.account.edit"
-               disabledIcon="icons/edit_grey_16.gif"
+               disabledIcon="icons/edit_grey_16.png"
                icon="icons/edit_16.png"
                label="Bankverbindung bearbeiten"
                style="push"

@@ -157,8 +157,6 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 	private Text lastname;
 
-	// private ImageHyperlink notesSelector;
-
 	private CDateTime birthdate;
 
 	private Text birthyear;
@@ -242,8 +240,8 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 
 	private void addExtendedFields(final Composite parent)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
 		try
 		{
@@ -494,18 +492,24 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 		this.sexRadioGroupViewer.setLabelProvider(new PersonSexLabelProvider());
 		this.sexRadioGroupViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			PersonSexQuery query = (PersonSexQuery) service.getQuery(PersonSex.class);
-			List<PersonSex> sexes = query.selectAll();
-			this.sexRadioGroupViewer.setInput(sexes.toArray(new PersonSex[0]));
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				PersonSexQuery query = (PersonSexQuery) service.getQuery(PersonSex.class);
+				List<PersonSex> sexes = query.selectAll();
+				this.sexRadioGroupViewer.setInput(sexes.toArray(new PersonSex[0]));
+			}
 		}
-		tracker.close();
-
+		finally
+		{
+			tracker.close();
+		}
+		
 		Control[] controls = this.sexRadioGroupViewer.getRadioGroup().getChildren();
 		for (Control control : controls)
 		{
@@ -1439,12 +1443,18 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 				}
 			});
 
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
 			tracker.open();
-			ConnectionService service = (ConnectionService) tracker.getService();
-			this.domainViewer.setInput(service);
-			tracker.close();
+			try
+			{
+				ConnectionService service = (ConnectionService) tracker.getService();
+				this.domainViewer.setInput(service);
+			}
+			finally
+			{
+				tracker.close();
+			}
 		}
 
 		addExtendedFields(composite);
@@ -1521,16 +1531,22 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 	private ZipCode findZipCode(final Country country, final String zip)
 	{
 		List<ZipCode> zipCodes = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
-			zipCodes = query.selectByCountryAndZipCode(country, zip);
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
+				zipCodes = query.selectByCountryAndZipCode(country, zip);
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		if (zipCodes.iterator().hasNext())
 		{
 			return zipCodes.iterator().next();
@@ -2008,82 +2024,111 @@ public class PersonEditor extends AbstractEntityEditor<Address> implements Prope
 	private Country[] selectCountries()
 	{
 		List<Country> countries = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			CountryQuery query = (CountryQuery) service.getQuery(Country.class);
-			countries = query.selectVisibles();
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				CountryQuery query = (CountryQuery) service.getQuery(Country.class);
+				countries = query.selectVisibles();
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return countries == null ? new Country[0] : countries.toArray(new Country[0]);
 	}
 
 	private Domain[] selectDomains()
 	{
 		List<Domain> domains = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
-			domains = query.selectAll();
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
+				domains = query.selectAll();
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return domains == null ? new Domain[0] : domains.toArray(new Domain[0]);
 	}
 
 	private PersonTitle[] selectPersonTitles()
 	{
 		List<PersonTitle> titles = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			PersonTitleQuery query = (PersonTitleQuery) service.getQuery(PersonTitle.class);
-			titles = query.selectAll(false);
-			titles.add(PersonTitle.newInstance());
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				PersonTitleQuery query = (PersonTitleQuery) service.getQuery(PersonTitle.class);
+				titles = query.selectAll(false);
+				titles.add(PersonTitle.newInstance());
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return titles == null ? new PersonTitle[0] : titles.toArray(new PersonTitle[0]);
 	}
 
 	private Country[] selectPrefixes()
 	{
 		List<Country> prefixes = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			CountryQuery query = (CountryQuery) service.getQuery(Country.class);
-			prefixes = query.selectPrefixes();
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				CountryQuery query = (CountryQuery) service.getQuery(Country.class);
+				prefixes = query.selectPrefixes();
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return prefixes == null ? new Country[0] : prefixes.toArray(new Country[0]);
 	}
 
 	private String[] selectProvinceCodes(final Country country)
 	{
 		List<String> states = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
-			states = query.selectStates(country);
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
+				states = query.selectStates(country);
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return states == null ? new String[0] : states.toArray(new String[0]);
 	}
 

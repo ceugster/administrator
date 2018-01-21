@@ -2,60 +2,24 @@ package ch.eugster.events.person.handlers;
 
 import java.util.Iterator;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
 
+import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
+import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.queries.AddressQuery;
+import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
 import ch.eugster.events.persistence.queries.PersonQuery;
-import ch.eugster.events.persistence.service.ConnectionService;
-import ch.eugster.events.person.Activator;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 
-public class ReactivateHandler extends AbstractHandler implements IHandler
+public class ReactivateHandler extends ConnectionServiceDependentAbstractHandler
 {
-	private ServiceTracker connectionServiceTracker;
-
-	private ConnectionService connectionService;
-
-	public ReactivateHandler()
-	{
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
-		{
-			@Override
-			public Object addingService(final ServiceReference reference)
-			{
-				connectionService = (ConnectionService) super.addingService(reference);
-				setBaseEnabled(connectionService != null);
-				return connectionService;
-			}
-
-			@Override
-			public void removedService(final ServiceReference reference, final Object service)
-			{
-				connectionService = null;
-				setBaseEnabled(false);
-				super.removedService(reference, service);
-			}
-		};
-		connectionServiceTracker.open();
-	}
-
-	@Override
-	public void dispose()
-	{
-		connectionServiceTracker.close();
-	}
-
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
@@ -91,6 +55,16 @@ public class ReactivateHandler extends AbstractHandler implements IHandler
 										person = query.merge(person);
 									}
 								}
+								if (person.getDefaultLink().isDeleted())
+								{
+									if (connectionService != null)
+									{
+										LinkPersonAddress link = person.getDefaultLink();
+										LinkPersonAddressQuery query = (LinkPersonAddressQuery) connectionService.getQuery(LinkPersonAddress.class);
+										link.setDeleted(false);
+										person.setDefaultLink(query.merge(link));
+									}
+								}
 							}
 							else if (object instanceof Address)
 							{
@@ -116,31 +90,21 @@ public class ReactivateHandler extends AbstractHandler implements IHandler
 	@Override
 	public void setEnabled(final Object evaluationContext)
 	{
-		// if (evaluationContext != null)
-		// {
-		// EvaluationContext context = (EvaluationContext) evaluationContext;
-		// Object object = context.getParent().getVariable("selection");
-		// if (object instanceof StructuredSelection)
-		// {
-		// StructuredSelection ssel = (StructuredSelection) object;
-		// if (ssel.getFirstElement() instanceof Person)
-		// {
-		// if (((Person) ssel.getFirstElement()).isDeleted())
-		// {
-		// super.setBaseEnabled(true);
-		// return;
-		// }
-		// }
-		// else if (ssel.getFirstElement() instanceof Address)
-		// {
-		// if (((Address) ssel.getFirstElement()).isDeleted())
-		// {
-		// super.setBaseEnabled(true);
-		// return;
-		// }
-		// }
-		// }
-		// }
-		super.setBaseEnabled(false);
+		if (evaluationContext instanceof EvaluationContext)
+		{
+			EvaluationContext context = (EvaluationContext) evaluationContext;
+			if (context.getParent().getVariable("selection") instanceof StructuredSelection)
+			{
+				StructuredSelection ssel = (StructuredSelection) context.getParent().getVariable("selection");
+				if (ssel.getFirstElement() instanceof AbstractEntity)
+				{
+					this.setBaseEnabled(!((AbstractEntity)ssel.getFirstElement()).isValid());
+				}
+				else 
+				{
+					this.setBaseEnabled(false);
+				}
+			}
+		}
 	}
 }

@@ -1,7 +1,6 @@
 package ch.eugster.events.person.views;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -19,11 +18,16 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.ServiceReference;
@@ -34,9 +38,9 @@ import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.FieldExtension;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
+import ch.eugster.events.persistence.model.PersonSettings;
 import ch.eugster.events.persistence.queries.AddressQuery;
 import ch.eugster.events.persistence.queries.FieldExtensionQuery;
-import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
 import ch.eugster.events.persistence.queries.PersonQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.person.Activator;
@@ -74,7 +78,7 @@ public class LinkSearcher extends Composite
 
 	private final List<ICriteriaChangedListener> listeners = new Vector<ICriteriaChangedListener>();
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private ConnectionService connectionService;
 
@@ -105,13 +109,29 @@ public class LinkSearcher extends Composite
 		if (this.dialogSettings.get("id.text") == null)
 			this.dialogSettings.put("id.text", "");
 
-		this.setLayout(new GridLayout(2, false));
+		GridLayout layout = new GridLayout(2, false);
+//		layout.horizontalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 1;
+
+		this.setLayout(layout);
 
 		Label label = new Label(this, SWT.NONE);
 		label.setText("Nachname");
 		label.setLayoutData(new GridData());
 
-		Text widget = new Text(this, SWT.BORDER | SWT.SINGLE);
+		layout = new GridLayout(2, false);
+		layout.horizontalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+
+		Composite composite = new Composite(this, SWT.FLAT);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setLayout(layout);
+		
+		Text widget = new Text(composite, SWT.BORDER | SWT.SINGLE);
 		widget.setText(this.dialogSettings.get("lastname.text"));
 		widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		widget.addModifyListener(new ModifyListener()
@@ -132,13 +152,45 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		Control[] tablist = composite.getTabList();
+		ToolBar toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
+		toolBar.setLayoutData(new GridData());
+		ToolItem item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
+		item.setData("target", widget);
+		item.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_CLEAR));
+		item.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e) 
+			{
+				Text target = (Text) ((ToolItem) e.getSource()).getData("target");
+				target.setText("");
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) 
+			{
+				widgetSelected(e);
+			}
+		});
 		this.widgets.put(LASTNAME, widget);
 
 		label = new Label(this, SWT.NONE);
 		label.setText("Vorname");
 		label.setLayoutData(new GridData());
 
-		widget = new Text(this, SWT.BORDER | SWT.SINGLE);
+		layout = new GridLayout(2, false);
+		layout.horizontalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+
+		composite = new Composite(this, SWT.FLAT);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setLayout(layout);
+		
+		widget = new Text(composite, SWT.BORDER | SWT.SINGLE);
 		widget.setText(this.dialogSettings.get("firstname.text"));
 		widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		widget.addModifyListener(new ModifyListener()
@@ -159,13 +211,45 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		tablist = composite.getTabList();
+		toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
+		toolBar.setLayoutData(new GridData());
+		item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
+		item.setData("target", widget);
+		item.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_CLEAR));
+		item.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e) 
+			{
+				Text target = (Text) ((ToolItem) e.getSource()).getData("target");
+				target.setText("");
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) 
+			{
+				widgetSelected(e);
+			}
+		});
 		this.widgets.put(FIRSTNAME, widget);
 
 		label = new Label(this, SWT.NONE);
 		label.setText("Organisation");
 		label.setLayoutData(new GridData());
 
-		widget = new Text(this, SWT.BORDER | SWT.SINGLE);
+		layout = new GridLayout(2, false);
+		layout.horizontalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+
+		composite = new Composite(this, SWT.FLAT);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setLayout(layout);
+		
+		widget = new Text(composite, SWT.BORDER | SWT.SINGLE);
 		widget.setText(this.dialogSettings.get("organization.text"));
 		widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		widget.addModifyListener(new ModifyListener()
@@ -186,13 +270,45 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		tablist = composite.getTabList();
+		toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
+		toolBar.setLayoutData(new GridData());
+		item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
+		item.setData("target", widget);
+		item.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_CLEAR));
+		item.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e) 
+			{
+				Text target = (Text) ((ToolItem) e.getSource()).getData("target");
+				target.setText("");
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) 
+			{
+				widgetSelected(e);
+			}
+		});
 		this.widgets.put(ORGANISATION, widget);
 
 		label = new Label(this, SWT.NONE);
 		label.setText("Strasse/Postfach");
 		label.setLayoutData(new GridData());
 
-		widget = new Text(this, SWT.BORDER | SWT.SINGLE);
+		layout = new GridLayout(2, false);
+		layout.horizontalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+
+		composite = new Composite(this, SWT.FLAT);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setLayout(layout);
+		
+		widget = new Text(composite, SWT.BORDER | SWT.SINGLE);
 		widget.setText(this.dialogSettings.get("address.text"));
 		widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		widget.addModifyListener(new ModifyListener()
@@ -213,13 +329,45 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		tablist = composite.getTabList();
+		toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
+		toolBar.setLayoutData(new GridData());
+		item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
+		item.setData("target", widget);
+		item.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_CLEAR));
+		item.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e) 
+			{
+				Text target = (Text) ((ToolItem) e.getSource()).getData("target");
+				target.setText("");
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) 
+			{
+				widgetSelected(e);
+			}
+		});
 		this.widgets.put(ADDRESS, widget);
 
 		label = new Label(this, SWT.NONE);
 		label.setText("Postleitzahl/Ort");
 		label.setLayoutData(new GridData());
 
-		widget = new Text(this, SWT.BORDER | SWT.SINGLE);
+		layout = new GridLayout(2, false);
+		layout.horizontalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+
+		composite = new Composite(this, SWT.FLAT);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setLayout(layout);
+		
+		widget = new Text(composite, SWT.BORDER | SWT.SINGLE);
 		widget.setText(this.dialogSettings.get("city.text"));
 		widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		widget.addModifyListener(new ModifyListener()
@@ -240,13 +388,45 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		tablist = composite.getTabList();
+		toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
+		toolBar.setLayoutData(new GridData());
+		item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
+		item.setData("target", widget);
+		item.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_CLEAR));
+		item.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e) 
+			{
+				Text target = (Text) ((ToolItem) e.getSource()).getData("target");
+				target.setText("");
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) 
+			{
+				widgetSelected(e);
+			}
+		});
 		this.widgets.put(CITY, widget);
 
 		label = new Label(this, SWT.NONE);
 		label.setText("Telefon/Fax");
 		label.setLayoutData(new GridData());
 
-		widget = new Text(this, SWT.BORDER | SWT.SINGLE);
+		layout = new GridLayout(2, false);
+		layout.horizontalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+
+		composite = new Composite(this, SWT.FLAT);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setLayout(layout);
+		
+		widget = new Text(composite, SWT.BORDER | SWT.SINGLE);
 		widget.setText(this.dialogSettings.get("phone.text"));
 		widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		widget.addModifyListener(new ModifyListener()
@@ -267,13 +447,45 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		tablist = composite.getTabList();
+		toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
+		toolBar.setLayoutData(new GridData());
+		item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
+		item.setData("target", widget);
+		item.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_CLEAR));
+		item.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e) 
+			{
+				Text target = (Text) ((ToolItem) e.getSource()).getData("target");
+				target.setText("");
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) 
+			{
+				widgetSelected(e);
+			}
+		});
 		this.widgets.put(PHONE, widget);
 
 		label = new Label(this, SWT.NONE);
 		label.setText("Email");
 		label.setLayoutData(new GridData());
 
-		widget = new Text(this, SWT.BORDER | SWT.SINGLE);
+		layout = new GridLayout(2, false);
+		layout.horizontalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+
+		composite = new Composite(this, SWT.FLAT);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setLayout(layout);
+		
+		widget = new Text(composite, SWT.BORDER | SWT.SINGLE);
 		widget.setText(this.dialogSettings.get("email.text"));
 		widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		widget.addModifyListener(new ModifyListener()
@@ -294,7 +506,41 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		tablist = composite.getTabList();
+		toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
+		toolBar.setLayoutData(new GridData());
+		item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
+		item.setData("target", widget);
+		item.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_CLEAR));
+		item.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e) 
+			{
+				Text target = (Text) ((ToolItem) e.getSource()).getData("target");
+				target.setText("");
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) 
+			{
+				widgetSelected(e);
+			}
+		});
 		this.widgets.put(EMAIL, widget);
+
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
+		{
+			@Override
+			public ConnectionService addingService(final ServiceReference<ConnectionService> reference)
+			{
+				connectionService = (ConnectionService) super.addingService(reference);
+				return connectionService;
+			}
+		};
+		connectionServiceTracker.open();
 
 		addExtendedWidgets();
 
@@ -302,7 +548,17 @@ public class LinkSearcher extends Composite
 		label.setText("Id");
 		label.setLayoutData(new GridData());
 
-		widget = new Text(this, SWT.BORDER | SWT.SINGLE);
+		layout = new GridLayout(2, false);
+		layout.horizontalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+
+		composite = new Composite(this, SWT.FLAT);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setLayout(layout);
+		
+		widget = new Text(composite, SWT.BORDER | SWT.SINGLE);
 		widget.setText(this.dialogSettings.get("id.text"));
 		widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		widget.setData("dialog.setting", "id.text");
@@ -324,21 +580,32 @@ public class LinkSearcher extends Composite
 				((Text) e.widget).selectAll();
 			}
 		});
+		tablist = composite.getTabList();
+		toolBar = new ToolBar(composite, SWT.FLAT);
+		composite.setTabList(tablist);
+		toolBar.setLayoutData(new GridData());
+		item = new ToolItem(toolBar, SWT.FLAT | SWT.PUSH);
+		item.setData("target", widget);
+		item.setImage(Activator.getDefault().getImageRegistry().get(Activator.KEY_CLEAR));
+		item.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e) 
+			{
+				Text target = (Text) ((ToolItem) e.getSource()).getData("target");
+				target.setText("");
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) 
+			{
+				widgetSelected(e);
+			}
+		});
 		this.widgets.put(ID, widget);
 
 		this.startListening();
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
-		{
-			@Override
-			public Object addingService(final ServiceReference reference)
-			{
-				connectionService = (ConnectionService) super.addingService(reference);
-				return connectionService;
-			}
-		};
-		connectionServiceTracker.open();
 	}
 
 	public void addCriteriaChangedListener(final ICriteriaChangedListener listener)
@@ -349,60 +616,47 @@ public class LinkSearcher extends Composite
 
 	private void addExtendedWidgets()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		try
+		ConnectionService service = (ConnectionService) connectionServiceTracker.getService();
+		if (service != null)
 		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
+			FieldExtensionQuery extensionQuery = (FieldExtensionQuery) service.getQuery(FieldExtension.class);
+			List<FieldExtension> extensions = extensionQuery.selectSearchables(false);
+			for (final FieldExtension extension : extensions)
 			{
-				FieldExtensionQuery extensionQuery = (FieldExtensionQuery) service.getQuery(FieldExtension.class);
-				List<FieldExtension> extensions = extensionQuery.selectSearchables(false);
-				for (final FieldExtension extension : extensions)
-				{
-					Label label = new Label(this, SWT.NONE);
-					label.setText(extension.getLabel());
-					label.setLayoutData(new GridData());
+				Label label = new Label(this, SWT.NONE);
+				label.setText(extension.getLabel());
+				label.setLayoutData(new GridData());
 
-					Text widget = new Text(this, SWT.BORDER | SWT.SINGLE);
-					String value = dialogSettings.get(extension.getId().toString() + ".text");
-					if (value != null)
-					{
-						widget.setText(value);
-					}
-					widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-					widget.setData("dialog.setting", extension.getId().toString() + ".text");
-					widget.addModifyListener(new ModifyListener()
-					{
-						@Override
-						public void modifyText(final ModifyEvent event)
-						{
-							Text widget = (Text) LinkSearcher.this.widgets.get(ID);
-							LinkSearcher.this.dialogSettings.put(extension.getId().toString() + ".text",
-									widget.getText());
-							LinkSearcher.this.modifyText();
-						}
-					});
-					widget.addFocusListener(new FocusAdapter()
-					{
-						@Override
-						public void focusGained(final FocusEvent e)
-						{
-							((Text) e.widget).selectAll();
-						}
-					});
-					this.widgets.put(extension.getId().toString(), widget);
-					this.extensions.put(extension.getId().toString(), extension);
+				Text widget = new Text(this, SWT.BORDER | SWT.SINGLE);
+				String value = dialogSettings.get(extension.getId().toString() + ".text");
+				if (value != null)
+				{
+					widget.setText(value);
 				}
+				widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				widget.setData("dialog.setting", extension.getId().toString() + ".text");
+				widget.addModifyListener(new ModifyListener()
+				{
+					@Override
+					public void modifyText(final ModifyEvent event)
+					{
+						Text widget = (Text) LinkSearcher.this.widgets.get(ID);
+						LinkSearcher.this.dialogSettings.put(extension.getId().toString() + ".text",
+								widget.getText());
+						LinkSearcher.this.modifyText();
+					}
+				});
+				widget.addFocusListener(new FocusAdapter()
+				{
+					@Override
+					public void focusGained(final FocusEvent e)
+					{
+						((Text) e.widget).selectAll();
+					}
+				});
+				this.widgets.put(extension.getId().toString(), widget);
+				this.extensions.put(extension.getId().toString(), extension);
 			}
-		}
-		catch (NumberFormatException e)
-		{
-		}
-		finally
-		{
-			tracker.close();
 		}
 	}
 
@@ -444,17 +698,11 @@ public class LinkSearcher extends Composite
 				if (entry.getKey().equals(ID))
 				{
 				}
-				else if (entry.getKey().equals(LASTNAME))
-				{
-				}
-				else if (entry.getKey().equals(PHONE))
-				{
-				}
 				else if (entry.getKey().equals(CITY))
 				{
 					if (!value.isEmpty())
 					{
-						if (value.contains("."))
+						if (value.contains(".") && !value.contains(".%"))
 						{
 							value = value.replace(".", ".%");
 						}
@@ -467,36 +715,6 @@ public class LinkSearcher extends Composite
 					{
 						criteria.put(entry.getKey(), value);
 					}
-				}
-			}
-			if (criteria.isEmpty())
-			{
-				text = (Text) widgets.get(LASTNAME);
-				String value = text.getText().trim();
-				if (value.length() > 3)
-				{
-					criteria.put(LASTNAME, value);
-				}
-				text = (Text) widgets.get(PHONE);
-				value = text.getText().trim();
-				if (value.length() > 6)
-				{
-					criteria.put(PHONE, value);
-				}
-			}
-			else
-			{
-				text = (Text) widgets.get(LASTNAME);
-				String value = text.getText().trim();
-				if (!value.isEmpty())
-				{
-					criteria.put(LASTNAME, value);
-				}
-				text = (Text) widgets.get(PHONE);
-				value = text.getText().trim();
-				if (!value.isEmpty())
-				{
-					criteria.put(PHONE, value);
 				}
 			}
 		}
@@ -606,18 +824,18 @@ public class LinkSearcher extends Composite
 		return result.toString().trim();
 	}
 
-	private Collection<Person> getPersons(final List<LinkPersonAddress> links)
-	{
-		Map<Long, Person> persons = new HashMap<Long, Person>();
-		for (LinkPersonAddress link : links)
-		{
-			if (persons.get(link.getPerson().getId()) == null)
-			{
-				persons.put(link.getPerson().getId(), link.getPerson());
-			}
-		}
-		return persons.values();
-	}
+//	private Collection<Person> getPersons(final List<LinkPersonAddress> links)
+//	{
+//		Map<Long, Person> persons = new HashMap<Long, Person>();
+//		for (LinkPersonAddress link : links)
+//		{
+//			if (persons.get(link.getPerson().getId()) == null)
+//			{
+//				persons.put(link.getPerson().getId(), link.getPerson());
+//			}
+//		}
+//		return persons.values();
+//	}
 
 //	private boolean hasAddressCriteria(final Map<String, String> criteria)
 //	{
@@ -649,7 +867,7 @@ public class LinkSearcher extends Composite
 //		return false;
 //	}
 
-	private boolean hasPersonCriteria(final Map<String, String> criteria)
+	private boolean searchPersons(final Map<String, String> criteria)
 	{
 		Iterator<String> keys = criteria.keySet().iterator();
 		while (keys.hasNext())
@@ -663,13 +881,39 @@ public class LinkSearcher extends Composite
 			{
 				return true;
 			}
+			if (key.equals(PHONE))
+			{
+				return true;
+			}
+			if (key.equals(EMAIL))
+			{
+				return true;
+			}
 		}
 		return false;
 	}
 
+	private boolean searchAddresses(final Map<String, String> criteria)
+	{
+		Iterator<String> keys = criteria.keySet().iterator();
+		while (keys.hasNext())
+		{
+			String key = keys.next();
+			if (key.equals(LASTNAME))
+			{
+				return false;
+			}
+			if (key.equals(FIRSTNAME))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public void initialize()
 	{
-		if (this.listen)
+		if (this.listen && checkCriteriaValuesForLength())
 		{
 			Map<String, String> criteria = createCriteria();
 			AbstractEntity[] entities = selectItems(criteria);
@@ -681,7 +925,27 @@ public class LinkSearcher extends Composite
 				}
 			}
 		}
-
+	}
+	
+	private boolean checkCriteriaValuesForLength()
+	{
+		Text text = (Text) widgets.get(ID);
+		String id = text.getText().trim();
+		if (!id.isEmpty())
+		{
+			return true;
+		}
+		int minLength = PersonSettings.getInstance().getCriteriaMinLength();
+		for (Entry<String, Widget> entry : widgets.entrySet())
+		{
+			text = (Text) entry.getValue();
+			String value = text.getText().trim();
+			if (!value.isEmpty() && value.length() < minLength)
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public void modifyText()
@@ -698,34 +962,37 @@ public class LinkSearcher extends Composite
 			this.listeners.remove(listener);
 	}
 
-	private void schedule()
+	public void schedule()
 	{
-		if (updateListJob == null)
+		if (checkCriteriaValuesForLength())
 		{
-			updateListJob = new UIJob("Starte Suchlauf...")
+			if (updateListJob == null)
 			{
-				@Override
-				public IStatus runInUIThread(final IProgressMonitor monitor)
+				updateListJob = new UIJob("Starte Suchlauf...")
 				{
-					AbstractEntity[] entities = new AbstractEntity[0];
-					final Map<String, String> criteria = createCriteria();
-					if (!criteria.isEmpty())
+					@Override
+					public IStatus runInUIThread(final IProgressMonitor monitor)
 					{
-						entities = LinkSearcher.this.selectItems(criteria);
+						AbstractEntity[] entities = new AbstractEntity[0];
+						final Map<String, String> criteria = createCriteria();
+						if (!criteria.isEmpty())
+						{
+							entities = LinkSearcher.this.selectItems(criteria);
+						}	
+						for (ICriteriaChangedListener listener : LinkSearcher.this.listeners)
+						{
+							listener.criteriaChanged(entities);
+						}
+						return Status.OK_STATUS;
 					}
-					for (ICriteriaChangedListener listener : LinkSearcher.this.listeners)
-					{
-						listener.criteriaChanged(entities);
-					}
-					return Status.OK_STATUS;
-				}
-			};
+				};
+			}
+			else
+			{
+				updateListJob.cancel();
+			}
+			updateListJob.schedule(500L);
 		}
-		else
-		{
-			updateListJob.cancel();
-		}
-		updateListJob.schedule(500L);
 	}
 
 	private AbstractEntity[] selectById(final String text)
@@ -734,7 +1001,6 @@ public class LinkSearcher extends Composite
 
 		Person person = null;
 		Address address = null;
-		LinkPersonAddress link = null;
 
 		try
 		{
@@ -745,8 +1011,6 @@ public class LinkSearcher extends Composite
 				person = personQuery.find(Person.class, id);
 				AddressQuery addressQuery = (AddressQuery) connectionService.getQuery(Address.class);
 				address = addressQuery.find(Address.class, id);
-//				LinkPersonAddressQuery linkQuery = (LinkPersonAddressQuery) connectionService.getQuery(LinkPersonAddress.class);
-//				link = linkQuery.find(LinkPersonAddress.class, id);
 			}
 		}
 		catch (NumberFormatException e)
@@ -810,27 +1074,23 @@ public class LinkSearcher extends Composite
 				if (connectionService != null)
 				{
 					List<AbstractEntity> selected = new ArrayList<AbstractEntity>();
-					LinkPersonAddressQuery linkQuery = (LinkPersonAddressQuery) connectionService
-							.getQuery(LinkPersonAddress.class);
-					int maxRows = new InstanceScope().getNode(Activator.PLUGIN_ID).getInt(
+					int maxRows = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID).getInt(
 							PreferenceInitializer.KEY_MAX_RECORDS, 0);
-					selected.addAll(getPersons(linkQuery.selectByCriteria(criteria, extensions, maxRows)));
 
-					if (this.searchAddresses)
+					if (searchPersons(criteria))
 					{
-						if (!hasPersonCriteria(criteria))
-						{
-							AddressQuery addressQuery = (AddressQuery) connectionService.getQuery(Address.class);
-							List<Address> addresses = addressQuery.selectByCriteria(criteria,
-									maxRows - selected.size());
-							for (Address address : addresses)
-							{
-								if (address.getValidLinks().isEmpty())
-								{
-									selected.add(address);
-								}
-							}
-						}
+						PersonQuery personQuery = (PersonQuery) connectionService.getQuery(Person.class);
+						selected.addAll(personQuery.selectByCriteria(criteria, extensions, maxRows));
+//						LinkPersonAddressQuery linkQuery = (LinkPersonAddressQuery) connectionService
+//								.getQuery(LinkPersonAddress.class);
+//						selected.addAll(linkQuery.selectByCriteria(criteria, extensions, maxRows));
+					}
+					if (this.searchAddresses && searchAddresses(criteria))
+					{
+						AddressQuery addressQuery = (AddressQuery) connectionService.getQuery(Address.class);
+						List<Address> addresses = addressQuery.selectByCriteria(criteria,
+								maxRows - selected.size());
+						selected.addAll(addresses);
 					}
 					entities = selected.toArray(new AbstractEntity[0]);
 				}

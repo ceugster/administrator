@@ -10,6 +10,7 @@ ch.eugster.events.import/bin
 ch.eugster.events.member/bin
 ch.eugster.events.merge/bin
 ch.eugster.events.persistence/bin
+ch.eugster.events.person/bin
 ch.eugster.events.report.rhino/bin
 ch.eugster.events.report/bin
 ch.eugster.events.report/lib

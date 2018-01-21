@@ -120,8 +120,7 @@ public class PersonSorter extends ViewerSorter
 			{
 				case CODE:
 				{
-					return PersonFormatter.getInstance().formatId(person)
-							+ (person.isMember() ? "*" : "");
+					return PersonFormatter.getInstance().formatId(person);
 				}
 				case NAME:
 				{
@@ -196,8 +195,7 @@ public class PersonSorter extends ViewerSorter
 			{
 				case CODE:
 				{
-					return PersonFormatter.getInstance().formatId(link.getPerson())
-							+ (link.getPerson().isMember() ? "*" : "");
+					return PersonFormatter.getInstance().formatId(link.getPerson());
 				}
 				case NAME:
 				{

@@ -227,8 +227,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 
 	private void addExtendedFields(final Composite parent, FormToolkit toolkit, int numColumns)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
 		try
 		{
@@ -716,24 +716,11 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 			@Override
 			public void focusLost(final FocusEvent e)
 			{
-				Text address = (Text) e.getSource();
-				String value = address.getText();
-				if (value.toLowerCase().trim().endsWith("str."))
-				{
-					value = value.substring(0, value.length() - "str.".length());
-					if (value.endsWith(" "))
-						value = value.concat("Strasse");
-					else
-						value = value.concat("strasse");
-				}
-				else if (value.toLowerCase().indexOf("strasse ") < value.length() - "strasse ".length())
-				{
-					value = value.replace("trasse ", "tr. ");
-				}
-				if (!address.getText().equals(value))
+				String street = PersonSettings.getInstance().updateStreet(address.getText());
+				if (!address.getText().equals(street))
 				{
 					setDirty(true);
-					address.setText(value);
+					address.setText(street);
 				}
 			}
 
@@ -1073,18 +1060,26 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 				LinkPersonAddress link = FormEditorLinkPage.this.getLink();
 				if (link != null)
 				{
-					link.setDeleted(true);
 					getEditor().removePage(getEditor().getActivePage());
+					if (link.getId() == null)
+					{
+						link.getPerson().removeLink(link);
+						link.setPerson(null);
+						link.getAddress().removeLink(link);
+						link.setAddress(null);
+					}
+					else
+					{
+						link.setDeleted(true);
+					}
 				}
 			}
 		});
 		/**
-		 * set enabled only and only if link has an id and there are at least
-		 * one other active address page!
+		 * set enabled only and only if link has another active address page!
 		 */
 		LinkPersonAddress link = getLink();
-		boolean enabled = link == null || link.isDeleted() || link.getPerson().isDeleted() ? false : link.getPerson()
-				.getDefaultLink() != link;
+		boolean enabled = link.getPerson().getDefaultLink() != link;
 		deleteHyperlink.setEnabled(enabled);
 		String key = enabled ? Activator.KEY_DELETE : Activator.KEY_DELETE_INACTIVE;
 		image = Activator.getDefault().getImageRegistry().get(key);
@@ -1125,8 +1120,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 				"Geben Sie hier die gewünschten Adressdaten ein. Im Feld Strasse können Sie CTRL+Space verwenden, um aus bestehenden Adressen auszuwählen.",
 				5);
 		createAddressContactsSectionPart(managedForm, "Kontakte", "Adressenbezogene Kontaktmöglichkeiten", 3);
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
 		try
 		{
@@ -1385,16 +1380,22 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	private AddressType[] getAddressTypes()
 	{
 		List<AddressType> addressTypes = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
-			addressTypes = query.selectAll(false);
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				AddressTypeQuery query = (AddressTypeQuery) service.getQuery(AddressType.class);
+				addressTypes = query.selectAll(false);
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return addressTypes == null ? new AddressType[0] : addressTypes.toArray(new AddressType[0]);
 	}
 
@@ -1801,8 +1802,8 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 		{
 			if (!this.originalAddress.isDeleted() && this.originalAddress.getValidLinks().size() == 0)
 			{
-				ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-						ConnectionService.class.getName(), null);
+				ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+						ConnectionService.class, null);
 				try
 				{
 					tracker.open();
@@ -1901,12 +1902,12 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	{
 		if (this.originalAddress != null && this.originalAddress.getId() != null && !this.originalAddress.getId().equals(this.getLink().getAddress().getId()))
 		{
-			if (!this.originalAddress.isDeleted() && this.originalAddress.getValidLinks().size() == 1 && this.originalAddress.getValidLinks().get(0).getId().equals(this.getLink().getId()))
+			this.originalAddress.removeLink(this.getLink());
+			if (this.originalAddress.getValidLinks().size() == 0)
 			{
-				this.originalAddress.removeLink(this.getLink());
 				this.originalAddress.setDeleted(true);
-				this.getLink().getAddress().addLink(getLink());
 			}
+			this.getLink().getAddress().addLink(getLink());
 		}
 
 		saveAddressValues();
@@ -1920,32 +1921,44 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	private Country[] selectCountries()
 	{
 		List<Country> countries = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			CountryQuery query = (CountryQuery) service.getQuery(Country.class);
-			countries = query.selectVisibles();
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				CountryQuery query = (CountryQuery) service.getQuery(Country.class);
+				countries = query.selectVisibles();
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return countries == null ? new Country[0] : countries.toArray(new Country[0]);
 	}
 
 	private String[] selectProvinceCodes(final Country country)
 	{
 		List<String> states = null;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
-			states = query.selectStates(country);
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				ZipCodeQuery query = (ZipCodeQuery) service.getQuery(ZipCode.class);
+				states = query.selectStates(country);
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return states == null ? new String[0] : states.toArray(new String[0]);
 	}
 
@@ -1958,16 +1971,22 @@ public class FormEditorLinkPage extends FormPage implements IPersonFormEditorPag
 	private AddressSalutation[] selectSalutations()
 	{
 		List<AddressSalutation> salutations = new ArrayList<AddressSalutation>();
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			AddressSalutationQuery query = (AddressSalutationQuery) service.getQuery(AddressSalutation.class);
-			salutations.addAll(query.selectAll());
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				AddressSalutationQuery query = (AddressSalutationQuery) service.getQuery(AddressSalutation.class);
+				salutations.addAll(query.selectAll());
+			}
 		}
-		tracker.close();
+		finally
+		{
+			tracker.close();
+		}
 		return salutations.toArray(new AddressSalutation[0]);
 	}
 

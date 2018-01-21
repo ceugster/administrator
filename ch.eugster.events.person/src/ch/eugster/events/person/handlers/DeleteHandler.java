@@ -4,18 +4,14 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.AbstractEntity;
@@ -29,39 +25,11 @@ import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.queries.AddressQuery;
 import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
 import ch.eugster.events.persistence.queries.PersonQuery;
-import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.person.Activator;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 
-public class DeleteHandler extends AbstractHandler implements IHandler
+public class DeleteHandler extends ConnectionServiceDependentAbstractHandler
 {
-	private ServiceTracker connectionServiceTracker;
-
-	private ConnectionService connectionService;
-
-	public DeleteHandler()
-	{
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
-		{
-			@Override
-			public Object addingService(final ServiceReference reference)
-			{
-				connectionService = (ConnectionService) super.addingService(reference);
-				setBaseEnabled(connectionService != null);
-				return connectionService;
-			}
-
-			@Override
-			public void removedService(final ServiceReference reference, final Object service)
-			{
-				connectionService = null;
-				setBaseEnabled(false);
-				super.removedService(reference, service);
-			}
-		};
-		connectionServiceTracker.open();
-	}
-
 	private boolean askForDelete(final Shell shell, final StructuredSelection ssel)
 	{
 		Object[] selectedObjects = ssel.toArray();
@@ -93,7 +61,7 @@ public class DeleteHandler extends AbstractHandler implements IHandler
 		String msg = null;
 		if (items == 1)
 		{
-			msg = persons == 0 ? "Soll die ausgewählte Adresse entfernt werden?"
+			msg = addresses == 1 ? "Soll die ausgewählte Adresse entfernt werden?"
 					: "Soll die ausgewählte Person entfernt werden?";
 		}
 		else
@@ -175,12 +143,6 @@ public class DeleteHandler extends AbstractHandler implements IHandler
 			}
 		}
 		return Status.OK_STATUS;
-	}
-
-	@Override
-	public void dispose()
-	{
-		connectionServiceTracker.close();
 	}
 
 	@Override

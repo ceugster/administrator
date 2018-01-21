@@ -36,7 +36,7 @@ import ch.eugster.events.person.Activator;
 
 public class BankAccountDialog extends TitleAreaDialog
 {
-	private ServiceTracker tracker;
+	private ServiceTracker<ConnectionService, ConnectionService> tracker;
 	
 	private BankAccount account;
 
@@ -52,6 +52,8 @@ public class BankAccountDialog extends TitleAreaDialog
 	{
 		super(shell);
 		this.account = account;
+		this.tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
+		this.tracker.open();
 	}
 
 	@Override
@@ -99,7 +101,7 @@ public class BankAccountDialog extends TitleAreaDialog
 					}
 					String bcNr = Long.valueOf(i.getBankCode()).toString();
 					
-					ConnectionService service = (ConnectionService) tracker.getService();
+					ConnectionService service = (ConnectionService) BankAccountDialog.this.tracker.getService();
 					if (service != null)
 					{
 						BankQuery query = (BankQuery) service.getQuery(Bank.class);
@@ -154,14 +156,8 @@ public class BankAccountDialog extends TitleAreaDialog
 			}
 		});
 
-		tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
-		tracker.open();
-
-		bankViewer.setInput(getInput());
-//		bankViewer.setSelection(account.getBank() == null ? new StructuredSelection() : new StructuredSelection(new Bank[] { account.getBank() }));
-		
-		iban.setText(account.getIban());
-
+		this.bankViewer.setInput(getInput());
+		this.iban.setText(account.getIban());
 		return composite;
 	}
 	
@@ -180,7 +176,7 @@ public class BankAccountDialog extends TitleAreaDialog
 
 	private Bank[] getInput()
 	{
-		ConnectionService service = (ConnectionService) tracker.getService();
+		ConnectionService service = (ConnectionService) this.tracker.getService();
 		if (service != null)
 		{
 			BankQuery query = (BankQuery) service.getQuery(Bank.class);
@@ -191,16 +187,16 @@ public class BankAccountDialog extends TitleAreaDialog
 	
 	public void okPressed()
 	{
-		ConnectionService service = (ConnectionService) tracker.getService();
+		ConnectionService service = (ConnectionService) this.tracker.getService();
 		if (service != null)
 		{
-			IStructuredSelection ssel = (IStructuredSelection) bankViewer.getSelection();
+			IStructuredSelection ssel = (IStructuredSelection) this.bankViewer.getSelection();
 			Bank bank = ssel.isEmpty() ? null : (Bank) ssel.getFirstElement();
 			BankAccountQuery query = (BankAccountQuery) service.getQuery(BankAccount.class);
-			account.setAccountNumber(code.getText());
-			account.setBank(bank);
-			account.setIban(iban.getText());
-			account = query.merge(account);
+			this.account.setAccountNumber(code.getText());
+			this.account.setBank(bank);
+			this.account.setIban(iban.getText());
+			this.account = query.merge(account);
 		}
 		super.okPressed();
 	}
