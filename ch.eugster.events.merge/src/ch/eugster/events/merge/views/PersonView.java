@@ -1554,27 +1554,33 @@ public class PersonView extends ViewPart
 		}
 		if (!criteria.isEmpty() && count > 2)
 		{
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
 			tracker.open();
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
+			try
 			{
-				PersonQuery query = (PersonQuery) service.getQuery(Person.class);
-				List<Person> persons = query.selectByCriteria(criteria);
-				List<LinkPersonAddress> links = new ArrayList<LinkPersonAddress>();
-				for (Person person : persons)
+				ConnectionService service = (ConnectionService) tracker.getService();
+				if (service != null)
 				{
-					links.addAll(person.getLinks());
-				}
-				viewer.setInput(links.toArray(new LinkPersonAddress[0]));
-				TableColumn[] tableColumns = viewer.getTable().getColumns();
-				for (TableColumn tableColumn : tableColumns)
-				{
-					tableColumn.pack();
+					PersonQuery query = (PersonQuery) service.getQuery(Person.class);
+					List<Person> persons = query.selectByCriteria(criteria);
+					List<LinkPersonAddress> links = new ArrayList<LinkPersonAddress>();
+					for (Person person : persons)
+					{
+						links.addAll(person.getLinks());
+					}
+					viewer.setInput(links.toArray(new LinkPersonAddress[0]));
+					TableColumn[] tableColumns = viewer.getTable().getColumns();
+					for (TableColumn tableColumn : tableColumns)
+					{
+						tableColumn.pack();
+					}
 				}
 			}
-			tracker.close();
+			finally
+			{
+				tracker.close();
+			}
 		}
 	}
 
@@ -1759,8 +1765,11 @@ public class PersonView extends ViewPart
 				{
 					return l1.getAddress().getWebsite().compareTo(l2.getAddress().getWebsite());
 				}
+				default:
+				{
+					return 0;
+				}
 			}
-			return 0;
 		}
 
 		public void setColumnOrder(final ColumnOrder order)

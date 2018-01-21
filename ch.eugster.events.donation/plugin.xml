@@ -83,6 +83,12 @@
             id="ch.eugster.events.donation.copy"
             name="Kopieren">
       </command>
+      <command
+            categoryId="category.donation"
+            defaultHandler="ch.eugster.events.donation.handlers.GenerateDonationListHandler"
+            id="ch.eugster.events.donation.createList"
+            name="Spendenliste erstellen">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -234,7 +240,7 @@
                commandId="ch.eugster.events.donation.addToLink"
                hoverIcon="icons/money.png"
                icon="icons/money.png"
-               label="Spende"
+               label="Spende erfassen"
                style="push"
                tooltip="Neue Spende hinzufügen">
             <visibleWhen
@@ -291,6 +297,15 @@
                label="Entfernen"
                style="push"
                tooltip="Ausgewählte Spende entfernen">
+         </command>
+         <separator
+               name="ch.eugster.events.donation.separator1">
+         </separator>
+         <command
+               commandId="ch.eugster.events.donation.generate.confirmation"
+               icon="icons/money.png"
+               label="Spendenbestätigung"
+               style="push">
          </command>
       </menuContribution>
       <menuContribution
