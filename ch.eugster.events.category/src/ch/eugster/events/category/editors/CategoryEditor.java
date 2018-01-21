@@ -147,26 +147,30 @@ public class CategoryEditor extends AbstractEntityEditor<Category>
 	{
 		Message msg = null;
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			CategoryEditorInput input = (CategoryEditorInput) this.getEditorInput();
-			Category category = (Category) input.getAdapter(Category.class);
-			String code = this.code.getText();
-			CategoryQuery query = (CategoryQuery) service.getQuery(Category.class);
-			if (!query.isCodeUnique(code, category.getId()))
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				msg = new Message(this.code, "Ungültiger Code");
-				msg.setMessage("Der gewählte Code wird bereits verwendet.");
-				return msg;
+				CategoryEditorInput input = (CategoryEditorInput) this.getEditorInput();
+				Category category = (Category) input.getAdapter(Category.class);
+				String code = this.code.getText();
+				CategoryQuery query = (CategoryQuery) service.getQuery(Category.class);
+				if (!query.isCodeUnique(code, category.getId()))
+				{
+					msg = new Message(this.code, "Ungültiger Code");
+					msg.setMessage("Der gewählte Code wird bereits verwendet.");
+					return msg;
+				}
 			}
 		}
-		tracker.close();
-
+		finally
+		{
+			tracker.close();
+		}
 		return msg;
 	}
 
