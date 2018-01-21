@@ -5,7 +5,7 @@ Bundle-SymbolicName: ch.eugster.events.course.reporting;singleton:=true
 Bundle-Version: 1.0.8.qualifier
 Bundle-Activator: ch.eugster.events.course.reporting.Activator
 Bundle-Vendor: Christian Eugster
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.eugster.events.documents.maps,
  ch.eugster.events.documents.services,
@@ -24,6 +24,6 @@ Import-Package: ch.eugster.events.documents.maps,
  ch.eugster.events.ui.sorters,
  ch.eugster.events.ui.views,
  ch.eugster.events.ui.wizards
-Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
- org.eclipse.ui;bundle-version="3.6.2",
- org.eclipse.core.expressions;bundle-version="3.4.200"
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
+ org.eclipse.ui;bundle-version="3.8.2",
+ org.eclipse.core.expressions;bundle-version="3.4.400"

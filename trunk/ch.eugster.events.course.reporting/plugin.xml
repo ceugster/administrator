@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
    <extension
@@ -72,6 +72,11 @@
             defaultHandler="ch.eugster.events.course.reporting.handlers.GenerateCourseDescriptionHandler"
             id="ch.eugster.events.course.reporting.generateCourseDescriptions"
             name="Kursbeschreibungen generieren">
+      </command>
+      <command
+            defaultHandler="ch.eugster.events.course.reporting.handlers.GenerateCourseListSpreadsheetHandler"
+            id="ch.eugster.events.course.reporting.command.showCourseListSpreadsheet"
+            name="Kursliste drucken">
       </command>
    </extension>
    <extension
@@ -189,13 +194,22 @@
                tooltip="Generieren der Teilnahmeliste">
          </command>
          <command
+               commandId="ch.eugster.events.course.reporting.command.showCourseListSpreadsheet"
+               disabledIcon="icons/work_grey_16.png"
+               hoverIcon="icons/work_16.png"
+               icon="icons/work_16.png"
+               label="Kursliste drucken"
+               style="push"
+               tooltip="Drucken der Kursliste">
+         </command>
+         <command
                commandId="ch.eugster.events.course.reporting.command.printBookingListReport"
                disabledIcon="icons/work_grey_16.png"
                hoverIcon="icons/work_16.png"
                icon="icons/work_16.png"
                label="Kursliste mit Buchungsstand drucken"
                style="push"
-               tooltip="Drucken der Kursliste">
+               tooltip="Drucken der Kursliste mit Buchungsstand">
          </command>
          <command
                commandId="ch.eugster.events.course.reporting.command.generateParticipantList"
