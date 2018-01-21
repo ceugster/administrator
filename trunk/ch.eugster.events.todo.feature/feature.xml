@@ -217,16 +217,16 @@ litigation.
    </url>
 
    <requires>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.expressions" version="3.4.200" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.osgi.services" version="3.2.100" match="greaterOrEqual"/>
       <import plugin="ch.eugster.events.course"/>
       <import plugin="ch.eugster.events.documents"/>
       <import plugin="ch.eugster.events.persistence"/>
       <import plugin="ch.eugster.events.ui"/>
-      <import plugin="org.eclipse.nebula.cwt"/>
-      <import plugin="org.eclipse.nebula.widgets.cdatetime"/>
+      <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.400" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.8.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi.services" version="3.3.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.nebula.jface.cdatetime" version="0.14.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.nebula.widgets.cdatetime" version="0.14.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
