@@ -26,7 +26,7 @@ public class XmlDocumentBuilderService implements DocumentBuilderService
 	private String[] applicableExtensions = new String[] { ".xml" };
 
 	@Override
-	public IStatus buildDocument(IProgressMonitor monitor, File template, final DataMap[] maps)
+	public IStatus buildDocument(IProgressMonitor monitor, File template, final DataMap<?>[] maps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
 		if (template.getName().isEmpty())
@@ -58,7 +58,7 @@ public class XmlDocumentBuilderService implements DocumentBuilderService
 	}
 
 	@Override
-	public IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap map)
+	public IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap<?> map)
 	{
 		IStatus status = Status.CANCEL_STATUS;
 		if (!validExtension(template))
@@ -69,7 +69,7 @@ public class XmlDocumentBuilderService implements DocumentBuilderService
 		try
 		{
 			monitor.beginTask("Dokument wird erstellt...", 1);
-			DataMap[] maps = new DataMap[] { map };
+			DataMap<?>[] maps = new DataMap<?>[] { map };
 			status = buildTextDocument(new SubProgressMonitor(monitor, maps.length), template, maps);
 			monitor.worked(1);
 		}
@@ -81,7 +81,7 @@ public class XmlDocumentBuilderService implements DocumentBuilderService
 	}
 
 	@Override
-	public IStatus buildDocument(IProgressMonitor monitor, DataMapKey[] keys, DataMap[] maps)
+	public IStatus buildDocument(IProgressMonitor monitor, DataMapKey[] keys, DataMap<?>[] maps)
 	{
 		return Status.CANCEL_STATUS;
 	}
@@ -96,7 +96,7 @@ public class XmlDocumentBuilderService implements DocumentBuilderService
 		return false;
 	}
 	
-	private IStatus buildTextDocument(IProgressMonitor monitor, final File targetPath, final DataMap[] maps)
+	private IStatus buildTextDocument(IProgressMonitor monitor, final File targetPath, final DataMap<?>[] maps)
 	{
 		IStatus status = Status.OK_STATUS;
 		try
@@ -105,9 +105,10 @@ public class XmlDocumentBuilderService implements DocumentBuilderService
 			
 			Element courses = new Element("courses");
 			Document document = new Document(courses);
+			document.setProperty("encoding", "ISO-8859-1");
 			document.setRootElement(courses);
 
-			for (DataMap map : maps)
+			for (DataMap<?> map : maps)
 			{
 				Element course = new Element("course");
 				Properties props = map.getProperties();
@@ -123,8 +124,7 @@ public class XmlDocumentBuilderService implements DocumentBuilderService
 			}
 	 
 			XMLOutputter xmlOutput = new XMLOutputter();
-	 
-			xmlOutput.setFormat(Format.getPrettyFormat());
+			xmlOutput.setFormat(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
 			Writer writer = new BufferedWriter(new FileWriter(targetPath));
 			xmlOutput.output(document, writer);
 			writer.close();

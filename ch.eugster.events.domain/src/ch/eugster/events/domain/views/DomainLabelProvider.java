@@ -25,7 +25,7 @@ public class DomainLabelProvider extends LabelProvider
 		if (element instanceof Domain)
 		{
 			Domain domain = (Domain) element;
-			return domain.getCode().equals("") ? domain.getName() : domain.getCode() + " - " + domain.getName();
+			return domain.getComboFormat();
 		}
 		return "";
 	}
