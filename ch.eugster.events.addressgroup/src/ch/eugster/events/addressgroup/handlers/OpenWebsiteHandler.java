@@ -51,14 +51,14 @@ public class OpenWebsiteHandler extends AbstractHandler implements IHandler
 
 	private boolean hasValidInternetAddress(final AddressGroupMember member)
 	{
-		if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
+		if (member.isValidAddressMember())
 		{
 			if (BrowseHelper.getInstance().isValidAddress(member.getAddress().getWebsite()))
 			{
 				return true;
 			}
 		}
-		else
+		else if (member.isValidLinkMember())
 		{
 			if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getWebsite()))
 			{

@@ -25,29 +25,24 @@ public class AddressGroupMemberSorter extends ViewerSorter
 		AddressGroupMember member1 = (AddressGroupMember) e1;
 		AddressGroupMember member2 = (AddressGroupMember) e2;
 
-		String v1 = null;
-		String v2 = null;
+		String v1 = "";
+		String v2 = "";
 
 		switch (this.column)
 		{
 			case 0:
 			{
-				if ((member1.getLink() == null || member1.getLink().isDeleted() || member1.getLink().getPerson()
-						.isDeleted())
-						&& (member2.getLink() == null || member2.getLink().isDeleted() || member2.getLink().getPerson()
-								.isDeleted()))
+				if (member1.isValidAddressMember() && member2.isValidAddressMember())
 				{
 					v1 = AddressFormatter.getInstance().formatId(member1.getAddress());
 					v2 = AddressFormatter.getInstance().formatId(member2.getAddress());
 				}
-				else if (member1.getLink() == null || member1.getLink().isDeleted()
-						|| member1.getLink().getPerson().isDeleted())
+				else if (member1.isValidAddressMember() && member2.isValidLinkMember())
 				{
 					v1 = AddressFormatter.getInstance().formatId(member1.getAddress());
 					v2 = PersonFormatter.getInstance().formatId(member2.getLink().getPerson());
 				}
-				else if (member2.getLink() == null || member2.getLink().isDeleted()
-						|| member2.getLink().getPerson().isDeleted())
+				else if (member1.isValidLinkMember() && member2.isValidAddressMember())
 				{
 					v1 = PersonFormatter.getInstance().formatId(member1.getLink().getPerson());
 					v2 = AddressFormatter.getInstance().formatId(member2.getAddress());
@@ -62,22 +57,17 @@ public class AddressGroupMemberSorter extends ViewerSorter
 			}
 			case 1:
 			{
-				if ((member1.getLink() == null || member1.getLink().isDeleted() || member1.getLink().getPerson()
-						.isDeleted())
-						&& (member2.getLink() == null || member2.getLink().isDeleted() || member2.getLink().getPerson()
-								.isDeleted()))
+				if (member1.isValidAddressMember() && member2.isValidAddressMember())
 				{
 					v1 = member1.getAddress().getName();
 					v2 = member2.getAddress().getName();
 				}
-				else if (member1.getLink() == null || member1.getLink().isDeleted()
-						|| member1.getLink().getPerson().isDeleted())
+				else if (member1.isValidAddressMember() && member2.isValidLinkMember())
 				{
 					v1 = member1.getAddress().getName();
 					v2 = PersonFormatter.getInstance().formatLastnameFirstname(member2.getLink().getPerson());
 				}
-				else if (member2.getLink() == null || member2.getLink().isDeleted()
-						|| member2.getLink().getPerson().isDeleted())
+				else if (member1.isValidLinkMember() && member2.isValidAddressMember())
 				{
 					v1 = PersonFormatter.getInstance().formatLastnameFirstname(member1.getLink().getPerson());
 					v2 = member2.getAddress().getName();
@@ -91,22 +81,17 @@ public class AddressGroupMemberSorter extends ViewerSorter
 			}
 			case 2:
 			{
-				if ((member1.getLink() == null || member1.getLink().isDeleted() || member1.getLink().getPerson()
-						.isDeleted())
-						&& (member2.getLink() == null || member2.getLink().isDeleted() || member2.getLink().getPerson()
-								.isDeleted()))
+				if (member1.isValidAddressMember() && member2.isValidAddressMember())
 				{
 					v1 = member1.getAddress().getAddress();
 					v2 = member2.getAddress().getAddress();
 				}
-				else if (member1.getLink() == null || member1.getLink().isDeleted()
-						|| member1.getLink().getPerson().isDeleted())
+				else if (member1.isValidAddressMember() && member2.isValidLinkMember())
 				{
 					v1 = member1.getAddress().getAddress();
 					v2 = member2.getLink().getAddress().getAddress();
 				}
-				else if (member2.getLink() == null || member2.getLink().isDeleted()
-						|| member2.getLink().getPerson().isDeleted())
+				else if (member1.isValidLinkMember() && member2.isValidAddressMember())
 				{
 					v1 = member1.getLink().getAddress().getAddress();
 					v2 = member2.getAddress().getAddress();
@@ -120,22 +105,17 @@ public class AddressGroupMemberSorter extends ViewerSorter
 			}
 			case 3:
 			{
-				if ((member1.getLink() == null || member1.getLink().isDeleted() || member1.getLink().getPerson()
-						.isDeleted())
-						&& (member2.getLink() == null || member2.getLink().isDeleted() || member2.getLink().getPerson()
-								.isDeleted()))
+				if (member1.isValidAddressMember() && member2.isValidAddressMember())
 				{
 					v1 = member1.getAddress().getCity();
 					v2 = member2.getAddress().getCity();
 				}
-				else if (member1.getLink() == null || member1.getLink().isDeleted()
-						|| member1.getLink().getPerson().isDeleted())
+				else if (member1.isValidAddressMember() && member2.isValidLinkMember())
 				{
 					v1 = member1.getAddress().getCity();
 					v2 = member2.getLink().getAddress().getCity();
 				}
-				else if (member2.getLink() == null || member2.getLink().isDeleted()
-						|| member2.getLink().getPerson().isDeleted())
+				else if (member1.isValidLinkMember() && member2.isValidAddressMember())
 				{
 					v1 = member1.getLink().getAddress().getCity();
 					v2 = member2.getAddress().getCity();
@@ -149,16 +129,12 @@ public class AddressGroupMemberSorter extends ViewerSorter
 			}
 			case 4:
 			{
-				if ((member1.getLink() == null || member1.getLink().isDeleted() || member1.getLink().getPerson()
-						.isDeleted())
-						&& (member2.getLink() == null || member2.getLink().isDeleted() || member2.getLink().getPerson()
-								.isDeleted()))
+				if (member1.isValidAddressMember() && member2.isValidAddressMember())
 				{
 					v1 = member1.getAddress().getEmail();
 					v2 = member2.getAddress().getEmail();
 				}
-				else if (member1.getLink() == null || member1.getLink().isDeleted()
-						|| member1.getLink().getPerson().isDeleted())
+				else if (member1.isValidAddressMember() && member2.isValidLinkMember())
 				{
 					v1 = member1.getAddress().getEmail();
 					if (member2.getLink().getPerson().getEmail().isEmpty())
@@ -170,8 +146,7 @@ public class AddressGroupMemberSorter extends ViewerSorter
 						v2 = member2.getLink().getEmail();
 					}
 				}
-				else if (member2.getLink() == null || member2.getLink().isDeleted()
-						|| member2.getLink().getPerson().isDeleted())
+				else if (member1.isValidLinkMember() && member2.isValidAddressMember())
 				{
 					if (member1.getLink().getPerson().getEmail().isEmpty())
 					{

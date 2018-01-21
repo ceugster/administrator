@@ -162,10 +162,10 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		this.setTitle();
 		this.setMessage();
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
+		ConnectionService service = tracker.getService();
 		if (service != null)
 		{
 			List<AddressGroupMember> members = null;
@@ -382,8 +382,8 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 		Long[] addressGroupIds = this.monitors.keySet().toArray(new Long[0]);
 		for (Long addressGroupId : addressGroupIds)
 		{
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
 			tracker.open();
 			ConnectionService service = (ConnectionService) tracker.getService();
 			if (service != null)
@@ -432,11 +432,11 @@ public class AddressGroupMemberDialog extends TitleAreaDialog implements ISelect
 						member.setUpdated(GregorianCalendar.getInstance());
 						if (parent instanceof LinkPersonAddress)
 						{
-							member.setParent((LinkPersonAddress) parent, member.getAddress());
+							member.setLink((LinkPersonAddress) parent);
 						}
 						else if (parent instanceof Address)
 						{
-							member.setParent(null, (Address) parent);
+							member.setAddress((Address) parent);
 						}
 						AddressGroupMemberQuery query = (AddressGroupMemberQuery) service
 								.getQuery(AddressGroupMember.class);

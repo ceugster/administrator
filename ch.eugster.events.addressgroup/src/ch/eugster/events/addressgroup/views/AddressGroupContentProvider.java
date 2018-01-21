@@ -2,18 +2,18 @@ package ch.eugster.events.addressgroup.views;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.osgi.util.tracker.ServiceTracker;
 
-import ch.eugster.events.addressgroup.Activator;
 import ch.eugster.events.persistence.model.AddressGroup;
 import ch.eugster.events.persistence.model.AddressGroupCategory;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.queries.AddressGroupCategoryQuery;
+import ch.eugster.events.persistence.queries.DomainQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
 public class AddressGroupContentProvider implements ITreeContentProvider
 {
-
+	private ConnectionService connectionService;
+	
 	@Override
 	public void dispose()
 	{
@@ -22,33 +22,29 @@ public class AddressGroupContentProvider implements ITreeContentProvider
 	@Override
 	public Object[] getChildren(final Object parentElement)
 	{
-		if (parentElement instanceof Domain)
+		if (parentElement instanceof ConnectionService)
 		{
-			AddressGroupCategory[] categories = new AddressGroupCategory[0];
-			ServiceTracker connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle()
-					.getBundleContext(), ConnectionService.class.getName(), null);
-			connectionServiceTracker.open();
-
-			ConnectionService con = (ConnectionService) connectionServiceTracker.getService();
-			if (con != null)
+			this.connectionService = (ConnectionService) parentElement;
+			if (this.connectionService != null)
+			{
+				DomainQuery query = (DomainQuery) this.connectionService.getQuery(Domain.class);
+				return query.selectValids().toArray(new Domain[0]);
+			}
+		}
+		else if (parentElement instanceof Domain)
+		{
+			if (connectionService != null)
 			{
 				Domain domain = (Domain) parentElement;
-				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) con.getQuery(AddressGroupCategory.class);
-				categories = query.selectByDomain(domain).toArray(new AddressGroupCategory[0]);
+				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) this.connectionService.getQuery(AddressGroupCategory.class);
+				return query.selectByDomain(domain).toArray(new AddressGroupCategory[0]);
 			}
-			connectionServiceTracker.close();
-			return categories;
 		}
 		else if (parentElement instanceof AddressGroupCategory)
 		{
 			return ((AddressGroupCategory) parentElement).getAddressGroups().toArray(new AddressGroup[0]);
 		}
-		// else if (parentElement instanceof AddressGroup)
-		// {
-		// return ((AddressGroup) parentElement).getChildren().toArray(new
-		// AddressGroupLink[0]);
-		// }
-		return new AddressGroupCategory[0];
+		return new Object[0];
 	}
 
 	@Override
@@ -60,10 +56,6 @@ public class AddressGroupContentProvider implements ITreeContentProvider
 	@Override
 	public Object getParent(final Object element)
 	{
-		// if (element instanceof AddressGroupLink)
-		// {
-		// return ((AddressGroupLink) element).getParent();
-		// }
 		if (element instanceof AddressGroup)
 		{
 			return ((AddressGroup) element).getAddressGroupCategory();
@@ -78,39 +70,25 @@ public class AddressGroupContentProvider implements ITreeContentProvider
 	@Override
 	public boolean hasChildren(final Object element)
 	{
+		if (element instanceof ConnectionService)
+		{
+			this.connectionService = (ConnectionService) element;
+			DomainQuery query = (DomainQuery) this.connectionService.getQuery(Domain.class);
+			return query.selectValids().size() > 0;
+		}
 		if (element instanceof Domain)
 		{
-			long count = 0L;
-			ServiceTracker connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle()
-					.getBundleContext(), ConnectionService.class.getName(), null);
-			connectionServiceTracker.open();
-
-			ConnectionService con = (ConnectionService) connectionServiceTracker.getService();
-			if (con != null)
+			if (this.connectionService != null)
 			{
 				Domain domain = (Domain) element;
-				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) con.getQuery(AddressGroupCategory.class);
-				count = query.countByDomain(domain);
+				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) this.connectionService.getQuery(AddressGroupCategory.class);
+				return query.countByDomain(domain) > 0L;
 			}
-			connectionServiceTracker.close();
-			return count > 0l;
 		}
 		else if (element instanceof AddressGroupCategory)
 		{
 			return ((AddressGroupCategory) element).getAddressGroups().size() > 0;
 		}
-		// else if (element instanceof AddressGroup)
-		// {
-		// int i = 0;
-		// for (AddressGroupLink link : ((AddressGroup) element).getChildren())
-		// {
-		// if (!link.isDeleted())
-		// {
-		// i++;
-		// }
-		// }
-		// return i > 0;
-		// }
 		return false;
 	}
 

@@ -10,6 +10,7 @@ import ch.eugster.events.persistence.model.AddressGroupCategory;
 import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.queries.AddressGroupCategoryQuery;
+import ch.eugster.events.persistence.queries.DomainQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
 public class PersonAddressGroupMemberTreeContentProvider implements ITreeContentProvider
@@ -23,21 +24,37 @@ public class PersonAddressGroupMemberTreeContentProvider implements ITreeContent
 	@Override
 	public Object[] getChildren(Object object)
 	{
-		if (object instanceof Domain)
+		if (object instanceof ConnectionService)
+		{
+			ConnectionService service = (ConnectionService) object;
+			DomainQuery query = (DomainQuery) service.getQuery(Domain.class);
+			Domain[] domains = query.selectValids().toArray(new Domain[0]);
+			if (domains.length == 0)
+			{
+				domains = new Domain[] { Domain.newInstance() };
+			}
+			return domains;
+		}
+		else if (object instanceof Domain)
 		{
 			AddressGroupCategory[] categories = new AddressGroupCategory[0];
-			ServiceTracker connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle()
-					.getBundleContext(), ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle()
+					.getBundleContext(), ConnectionService.class, null);
 			connectionServiceTracker.open();
-
-			ConnectionService con = (ConnectionService) connectionServiceTracker.getService();
-			if (con != null)
+			try
 			{
-				Domain domain = (Domain) object;
-				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) con.getQuery(AddressGroupCategory.class);
-				categories = query.selectByDomain(domain).toArray(new AddressGroupCategory[0]);
+				ConnectionService con = (ConnectionService) connectionServiceTracker.getService();
+				if (con != null)
+				{
+					Domain domain = (Domain) object;
+					AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) con.getQuery(AddressGroupCategory.class);
+					categories = query.selectByDomain(domain).toArray(new AddressGroupCategory[0]);
+				}
 			}
-			connectionServiceTracker.close();
+			finally
+			{
+				connectionServiceTracker.close();
+			}
 			return categories;
 		}
 		else if (object instanceof AddressGroupCategory)
@@ -50,21 +67,30 @@ public class PersonAddressGroupMemberTreeContentProvider implements ITreeContent
 	@Override
 	public boolean hasChildren(Object object)
 	{
+		if (object instanceof ConnectionService)
+		{
+			return true;
+		}
 		if (object instanceof Domain)
 		{
 			long count = 0l;
-			ServiceTracker connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle()
-					.getBundleContext(), ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle()
+					.getBundleContext(), ConnectionService.class, null);
 			connectionServiceTracker.open();
-
-			ConnectionService con = (ConnectionService) connectionServiceTracker.getService();
-			if (con != null)
+			try
 			{
-				Domain domain = (Domain) object;
-				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) con.getQuery(AddressGroupCategory.class);
-				count = query.countByDomain(domain);
+				ConnectionService con = (ConnectionService) connectionServiceTracker.getService();
+				if (con != null)
+				{
+					Domain domain = (Domain) object;
+					AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) con.getQuery(AddressGroupCategory.class);
+					count = query.countByDomain(domain);
+				}
 			}
-			connectionServiceTracker.close();
+			finally
+			{
+				connectionServiceTracker.close();
+			}
 			return count > 0;
 		}
 		else if (object instanceof AddressGroupCategory)
