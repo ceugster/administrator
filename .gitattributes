@@ -89,7 +89,9 @@ ch.eugster.events.addressgroup/icons/view_grey_16.png -text
 ch.eugster.events.addressgroup/plugin.xml -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/Activator.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/AddressGroupFormatter.java -text
+ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/AddressGroupMemberSelector.java -text svneol=unset#text/plain
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/ContributionItem.java -text
+ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/Monitor.java -text svneol=unset#text/plain
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/PerspectiveFactory.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/actions/ResetEditorActionDelegate.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/actions/SaveEditorActionDelegate.java -text
@@ -125,7 +127,7 @@ ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/Paste
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/RefreshHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/ResetPersonAddressGroupMemberHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/SelectAllHandler.java -text
-ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/SendEmailHandler.java -text
+ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/SendEmailHandler.java -text svneol=unset#text/plain
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/handlers/UpdatePersonAddressGroupMemberHandler.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/preferences/AddressGroupPreferencePage.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/preferences/FormLetterFolderPreferencePage.java -text

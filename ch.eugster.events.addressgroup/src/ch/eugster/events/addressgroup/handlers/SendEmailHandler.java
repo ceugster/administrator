@@ -85,19 +85,12 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 			{
 				this.extract(addressGroupMember);
 			}
-			// for (AddressGroupLink link : addressGroup.getChildren())
-			// {
-			// if (!link.isDeleted() && !link.getChild().isDeleted())
-			// {
-			// extract(link.getChild());
-			// }
-			// }
 		}
 	}
 
 	private void extract(final AddressGroupCategory category)
 	{
-		if (!category.isDeleted())
+		if (category.isValid())
 		{
 			List<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
@@ -111,11 +104,11 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 	{
 		if (!member.isDeleted())
 		{
-			if (member.getLink() == null && !member.getAddress().isDeleted())
+			if (member.isValidAddressMember())
 			{
 				addAddress(member.getAddress().getEmail());
 			}
-			else if (!member.getLink().isDeleted() && !member.getLink().getPerson().isDeleted())
+			else if (member.isValidLinkMember())
 			{
 				if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
 				{
@@ -165,25 +158,22 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 
 	private boolean hasValidEmailAddress(final AddressGroupMember member)
 	{
-		if (!member.isDeleted())
+		if (member.isValidAddressMember())
 		{
-			if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
+			if (EmailHelper.getInstance().isValidAddress(member.getAddress().getEmail()))
 			{
-				if (EmailHelper.getInstance().isValidAddress(member.getAddress().getEmail()))
-				{
-					return true;
-				}
+				return true;
 			}
-			else
+		}
+		else if (member.isValidLinkMember())
+		{
+			if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
 			{
-				if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
-				{
-					return true;
-				}
-				if (EmailHelper.getInstance().isValidAddress(member.getLink().getEmail()))
-				{
-					return true;
-				}
+				return true;
+			}
+			if (EmailHelper.getInstance().isValidAddress(member.getLink().getEmail()))
+			{
+				return true;
 			}
 		}
 		return false;

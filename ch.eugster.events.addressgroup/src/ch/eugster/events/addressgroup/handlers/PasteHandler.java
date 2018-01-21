@@ -5,10 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -16,9 +14,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.ui.IWorkbenchPart;
-import org.osgi.util.tracker.ServiceTracker;
 
-import ch.eugster.events.addressgroup.Activator;
 import ch.eugster.events.addressgroup.dnd.AddressGroupMemberTransfer;
 import ch.eugster.events.addressgroup.dnd.AddressGroupTransfer;
 import ch.eugster.events.addressgroup.views.AddressGroupMemberView;
@@ -34,12 +30,12 @@ import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.model.Season;
 import ch.eugster.events.persistence.queries.AddressGroupCategoryQuery;
-import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.dnd.CourseTransfer;
 import ch.eugster.events.ui.dnd.DonationTransfer;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 import ch.eugster.events.ui.helpers.ClipboardHelper;
 
-public class PasteHandler extends AbstractHandler implements IHandler
+public class PasteHandler extends ConnectionServiceDependentAbstractHandler
 {
 	private void execute(final AddressGroupMemberView view)
 	{
@@ -298,13 +294,25 @@ public class PasteHandler extends AbstractHandler implements IHandler
 	// return bookings;
 	// }
 
+	private boolean found(final AddressGroup target, final AddressGroupMember member)
+	{
+		if (member.isValidAddressMember())
+		{
+			return found(target, member.getAddress());
+		}
+		else
+		{
+			return found(target, member.getLink());
+		}
+	}
+
 	private boolean found(final AddressGroup target, final LinkPersonAddress link)
 	{
 		boolean found = false;
 		List<AddressGroupMember> targetMembers = target.getAddressGroupMembers();
 		for (AddressGroupMember targetMember : targetMembers)
 		{
-			if (!targetMember.isDeleted() && targetMember.getLink() != null)
+			if (targetMember.isValidLinkMember())
 			{
 				if (targetMember.getLink().getPerson().getId().equals(link.getPerson().getId()))
 				{
@@ -316,26 +324,13 @@ public class PasteHandler extends AbstractHandler implements IHandler
 		return found;
 	}
 
-	private boolean found(final AddressGroup target, final AddressGroupMember member)
-	{
-		if (member.getLink() == null || member.getLink().isDeleted() || member.getLink().getPerson().isDeleted())
-		{
-			return found(target, member.getAddress());
-		}
-		else
-		{
-			return found(target, member.getLink());
-		}
-	}
-
 	private boolean found(final AddressGroup target, final Address address)
 	{
 		boolean found = false;
 		List<AddressGroupMember> targetMembers = target.getAddressGroupMembers();
 		for (AddressGroupMember targetMember : targetMembers)
 		{
-			if (targetMember.getLink() == null || targetMember.getLink().isDeleted()
-					|| targetMember.getLink().getPerson().isDeleted())
+			if (targetMember.isValidAddressMember())
 			{
 				if (!targetMember.isDeleted() && targetMember.getAddress().getId().equals(address.getId()))
 				{
@@ -464,7 +459,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 			final int type)
 	{
 		boolean inserted = false;
-		if (!sourceMember.isDeleted())
+		if (sourceMember.isValid())
 		{
 			if (!found(target, sourceMember))
 			{
@@ -502,7 +497,7 @@ public class PasteHandler extends AbstractHandler implements IHandler
 		List<AddressGroupCategory> categoriesToUpdate = new ArrayList<AddressGroupCategory>();
 		for (AddressGroupMember member : members)
 		{
-			if (!member.isDeleted())
+			if (member.isValid())
 			{
 				if (insertAddressGroupMember(target, member, type))
 				{
@@ -795,25 +790,10 @@ public class PasteHandler extends AbstractHandler implements IHandler
 
 	private void updateCategories(final AddressGroupCategory[] categories)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
-		tracker.open();
-		try
+		AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) connectionService.getQuery(AddressGroupCategory.class);
+		for (AddressGroupCategory category : categories)
 		{
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
-			{
-				AddressGroupCategoryQuery query = (AddressGroupCategoryQuery) service
-						.getQuery(AddressGroupCategory.class);
-				for (AddressGroupCategory category : categories)
-				{
-					category = query.merge(category);
-				}
-			}
-		}
-		finally
-		{
-			tracker.close();
+			category = query.merge(category);
 		}
 	}
 
