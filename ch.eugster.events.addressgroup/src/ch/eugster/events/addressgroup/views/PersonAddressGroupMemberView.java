@@ -407,48 +407,55 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 
 	public void reset()
 	{
-		this.addressGroupViewer.getTree().setEnabled(false);
-		this.monitors.clear();
-		this.current.clear();
-
-		List<AddressGroupMember> members = null;
-
-		ConnectionService service = (ConnectionService) connectionServiceTracker.getService();
-		if (service != null)
+		this.getSite().getShell().getDisplay().asyncExec(new Runnable() 
 		{
-			AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
-			if (this.parent instanceof LinkPersonAddress)
+			@Override
+			public void run()
 			{
-				LinkPersonAddress link = (LinkPersonAddress) this.parent;
-				members = query.selectByLink(link);
-			}
-			else if (this.parent instanceof Address)
-			{
-				Address address = (Address) this.parent;
-				members = query.selectByAddress(address);
-			}
-		}
-		if (members != null)
-		{
-			for (AddressGroupMember member : members)
-			{
-				Monitor monitor = this.monitors.get(member.getAddressGroup().getId());
-				if (monitor == null)
+				PersonAddressGroupMemberView.this.addressGroupViewer.getTree().setEnabled(false);
+				PersonAddressGroupMemberView.this.monitors.clear();
+				PersonAddressGroupMemberView.this.current.clear();
+
+				List<AddressGroupMember> members = null;
+
+				ConnectionService service = (ConnectionService) connectionServiceTracker.getService();
+				if (service != null)
 				{
-					monitor = new Monitor(member, !member.isDeleted());
-					this.monitors.put(member.getAddressGroup().getId(), monitor);
-					this.current.put(member.getAddressGroup().getId(), member);
+					AddressGroupMemberQuery query = (AddressGroupMemberQuery) service.getQuery(AddressGroupMember.class);
+					if (PersonAddressGroupMemberView.this.parent instanceof LinkPersonAddress)
+					{
+						LinkPersonAddress link = (LinkPersonAddress) PersonAddressGroupMemberView.this.parent;
+						members = query.selectByLink(link);
+					}
+					else if (PersonAddressGroupMemberView.this.parent instanceof Address)
+					{
+						Address address = (Address) PersonAddressGroupMemberView.this.parent;
+						members = query.selectByAddress(address);
+					}
 				}
-				else if (!monitor.checked)
+				if (members != null)
 				{
-					monitor.checked = !member.isDeleted();
+					for (AddressGroupMember member : members)
+					{
+						Monitor monitor = PersonAddressGroupMemberView.this.monitors.get(member.getAddressGroup().getId());
+						if (monitor == null)
+						{
+							monitor = new Monitor(member, !member.isDeleted());
+							PersonAddressGroupMemberView.this.monitors.put(member.getAddressGroup().getId(), monitor);
+							PersonAddressGroupMemberView.this.current.put(member.getAddressGroup().getId(), member);
+						}
+						else if (!monitor.checked)
+						{
+							monitor.checked = !member.isDeleted();
+						}
+					}
 				}
+				PersonAddressGroupMemberView.this.checkParents();
+				PersonAddressGroupMemberView.this.setDirty(false);
+				PersonAddressGroupMemberView.this.addressGroupViewer.refresh();
+				PersonAddressGroupMemberView.this.addressGroupViewer.getTree().setEnabled(PersonAddressGroupMemberView.this.parent != null);
 			}
-		}
-		this.checkParents();
-		this.setDirty(false);
-		this.addressGroupViewer.refresh();
-		this.addressGroupViewer.getTree().setEnabled(this.parent != null);
+		});
 	}
 	
 	@Override
@@ -466,16 +473,21 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 			IStructuredSelection ssel = (StructuredSelection) selection;
 			if (ssel.getFirstElement() instanceof AbstractEntity)
 			{
-				if (ssel.getFirstElement() instanceof Person)
+				AbstractEntity entity = (AbstractEntity) ssel.getFirstElement();
+				if (!selectionChanged(entity))
+				{
+					return;
+				}
+				if (entity instanceof Person)
 				{
 					Person person = (Person) ssel.getFirstElement();
 					this.parent = person.getDefaultLink();
 				}
-				else if (ssel.getFirstElement() instanceof LinkPersonAddress)
+				else if (entity instanceof LinkPersonAddress)
 				{
 					this.parent = (LinkPersonAddress) ssel.getFirstElement();
 				}
-				else if (ssel.getFirstElement() instanceof Address)
+				else if (entity instanceof Address)
 				{
 					this.parent = (Address) ssel.getFirstElement();
 				}
@@ -488,6 +500,15 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 		reset();
 	}
 
+	private boolean selectionChanged(AbstractEntity entity)
+	{
+		if (this.parent != null)
+		{
+			return !entity.getClass().equals(this.parent.getClass()) || !entity.getId().equals(this.parent.getId());
+		}
+		return true;
+	}
+	
 	@Override
 	public void selectionChanged(final SelectionChangedEvent event)
 	{
