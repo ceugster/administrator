@@ -500,6 +500,7 @@ ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialog
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/CommitmentContractDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/CourseDescriptionDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/CourseInvitationDialog.java -text
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/CourseListDialog.java -text svneol=unset#text/plain
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/ParticipantListDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/ParticipantListReportDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/ParticipationConfirmationDialog.java -text
