@@ -80,6 +80,18 @@ public class PersonSettings extends AbstractEntity
 	@Column(name = "person_settings_add_blank_after_point_in_city")
 	private boolean addBlankAfterPointInCity;
 
+	@Basic
+	@Column(name = "person_settings_criteria_min_length")
+	private int criteriaMinLength;
+
+	@Basic
+	@Column(name = "person_settings_max_records_listed")
+	private int maxRecordsListed;
+
+	@Basic
+	@Column(name = "person_settings_street_abbreviation")
+	private String streetAbbreviation;
+			
 	@Override
 	public Object clone()
 	{
@@ -89,6 +101,7 @@ public class PersonSettings extends AbstractEntity
 		settings.setIdFormat(this.getIdFormat());
 		settings.setPersonLabelFormat(this.getPersonLabelFormat());
 		settings.setAddressLabelFormat(this.getAddressLabelFormat());
+		
 		return settings;
 	}
 
@@ -131,6 +144,16 @@ public class PersonSettings extends AbstractEntity
 	public boolean isAddBlankAfterPointInCity()
 	{
 		return addBlankAfterPointInCity;
+	}
+
+	public int getCriteriaMinLength()
+	{
+		return this.criteriaMinLength == 0 ? 3 : this.criteriaMinLength;
+	}
+
+	public int getMaxRecordListed()
+	{
+		return this.maxRecordsListed;
 	}
 
 	public boolean isPersonDomainMandatory()
@@ -187,20 +210,71 @@ public class PersonSettings extends AbstractEntity
 				this.personLabelFormat = personLabelFormat);
 	}
 
+	public void setCriteriaMinLength(final int criteriaMinLength)
+	{
+		this.propertyChangeSupport.firePropertyChange("criteriaMinLength", this.criteriaMinLength,
+				this.criteriaMinLength = criteriaMinLength);
+	}
+
+	public void setMaxRecordsListed(final int maxRecordsListed)
+	{
+	}
+	
+	public void setStreetAbbreviation(String streetAbbreviation)
+	{
+		this.propertyChangeSupport.firePropertyChange("streetAbbreviation", this.streetAbbreviation,
+						this.streetAbbreviation = streetAbbreviation);
+	}
+	
+	public String getStreetAbbreviation()
+	{
+		return stringValueOf(this.streetAbbreviation);
+	}
+
+	public String updateStreet(String value)
+	{
+		if (value.toLowerCase().trim().endsWith("str."))
+		{
+			value = value.substring(0, value.length() - "str.".length());
+			if (value.endsWith(" "))
+				value = value.concat("Strasse");
+			else
+				value = value.concat("strasse");
+		}
+		if (getStreetAbbreviation().isEmpty())
+		{
+			return value;
+		}
+		else
+		{
+			if (value.toLowerCase().indexOf("strasse ") < value.length() - "strasse ".length())
+			{
+				value = value.replace("trasse ", "tr. ");
+			}
+		}
+		return value;
+	}
+	
 	public static PersonSettings getInstance()
 	{
 		if (PersonSettings.instance == null)
 		{
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
 			tracker.open();
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
+			try
 			{
-				PersonSettingsQuery query = (PersonSettingsQuery) service.getQuery(PersonSettings.class);
-				PersonSettings.instance = query.find(PersonSettings.class, Long.valueOf(1L));
+				ConnectionService service = (ConnectionService) tracker.getService();
+				if (service != null)
+				{
+					PersonSettingsQuery query = (PersonSettingsQuery) service.getQuery(PersonSettings.class);
+					PersonSettings.instance = query.find(PersonSettings.class, Long.valueOf(1L));
+				}
 			}
-			tracker.close();
+			finally
+			{
+				tracker.close();
+			}
 		}
 		return PersonSettings.instance;
 	}

@@ -20,6 +20,14 @@ public class VisitThemeQuery extends AbstractEntityQuery<VisitTheme>
 	{
 		return super.selectAll(VisitTheme.class, deletedToo);
 	}
+	
+	public List<VisitTheme> selectVisibles()
+	{
+		Expression expression = new ExpressionBuilder(VisitTheme.class).get("deleted").equal(false);
+		expression = expression.and(new ExpressionBuilder().get("hidden").equal(false));
+		List<VisitTheme> visitThemes = this.select(VisitTheme.class, expression);
+		return visitThemes;
+	}
 
 	public boolean isNameUnique(String name, Long id)
 	{

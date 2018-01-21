@@ -218,16 +218,22 @@ public class GlobalSettings extends AbstractEntity
 	{
 		if (GlobalSettings.instance == null)
 		{
-			ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-					ConnectionService.class.getName(), null);
+			ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+					ConnectionService.class, null);
 			tracker.open();
-			ConnectionService service = (ConnectionService) tracker.getService();
-			if (service != null)
+			try
 			{
-				GlobalSettingsQuery query = (GlobalSettingsQuery) service.getQuery(GlobalSettings.class);
-				instance = query.find(GlobalSettings.class, Long.valueOf(1L));
+				ConnectionService service = (ConnectionService) tracker.getService();
+				if (service != null)
+				{
+					GlobalSettingsQuery query = (GlobalSettingsQuery) service.getQuery(GlobalSettings.class);
+					instance = query.find(GlobalSettings.class, Long.valueOf(1L));
+				}
 			}
-			tracker.close();
+			finally
+			{
+				tracker.close();
+			}
 		}
 		return GlobalSettings.instance;
 	}

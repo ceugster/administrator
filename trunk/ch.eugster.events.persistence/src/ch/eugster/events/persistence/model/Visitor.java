@@ -207,6 +207,11 @@ public class Visitor extends AbstractEntity implements LinkPersonAddressChild, I
 	{
 		return color;
 	}
+	
+	public boolean isValid()
+	{
+		return !this.isDeleted() && this.getLink() != null && this.getLink().isValid();
+	}
 
 	public static Visitor newInstance()
 	{

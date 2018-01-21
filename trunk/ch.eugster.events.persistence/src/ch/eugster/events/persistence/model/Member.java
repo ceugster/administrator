@@ -82,6 +82,16 @@ public class Member extends AbstractEntity
 		this.setMembership(membership);
 	}
 
+	public boolean isValidLink()
+	{
+		return !this.deleted && this.link.isValid();
+	}
+	
+	public boolean isValidAddress()
+	{
+		return !this.deleted && this.address.isValid();
+	}
+	
 	public Address getAddress()
 	{
 		return this.address;

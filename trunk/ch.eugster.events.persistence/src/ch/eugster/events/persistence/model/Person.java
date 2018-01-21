@@ -114,6 +114,9 @@ public class Person extends AbstractEntity
 	@OneToMany(cascade = ALL, mappedBy = "person")
 	private List<BankAccount> bankAccounts = new Vector<BankAccount>();
 
+	@OneToMany(cascade = ALL, mappedBy = "person")
+	private List<PersonContact> contacts = new Vector<PersonContact>();
+
 	/*
 	 * AddressLinks
 	 */
@@ -134,6 +137,16 @@ public class Person extends AbstractEntity
 		this.setDomain(domain);
 	}
 
+	public void addContact(final PersonContact contact)
+	{
+		this.propertyChangeSupport.firePropertyChange("addContact", this.contacts, this.contacts.add(contact));
+	}
+
+	public void removeContact(final PersonContact contact)
+	{
+		this.propertyChangeSupport.firePropertyChange("removeContact", this.contacts, this.contacts.remove(contact));
+	}
+
 	public void addExtendedFields(final PersonExtendedField extendedField)
 	{
 		this.propertyChangeSupport.firePropertyChange("addField", this.extendedFields,
@@ -147,6 +160,24 @@ public class Person extends AbstractEntity
 		{
 			defaultLink = link;
 		}
+	}
+	
+	public List<PersonContact> getContacts()
+	{
+		return this.contacts;
+	}
+
+	public List<PersonContact> getValidContacts()
+	{
+		List<PersonContact> contacts = new ArrayList<PersonContact>();
+		for (PersonContact contact : this.contacts)
+		{
+			if (contact.isValid())
+			{
+				contacts.add(contact);
+			}
+		}
+		return contacts;
 	}
 
 	public Person copy()
@@ -200,14 +231,13 @@ public class Person extends AbstractEntity
 
 	public Date getBirthday()
 	{
-		Long birthdate = getBirthdate();
-		if (birthdate == null)
+		if (this.birthdate == null)
 		{
 			return null;
 		}
 
 		Calendar calendar = Calendar.getInstance();
-		long birth = birthdate.longValue();
+		long birth = this.birthdate.longValue();
 		int year = calendar.get(Calendar.YEAR);
 		if (birth < 1900 || year < birth)
 		{
@@ -451,6 +481,11 @@ public class Person extends AbstractEntity
 			}
 		}
 		return false;
+	}
+	
+	public boolean isValid()
+	{
+		return this.getDefaultLink().isValid();
 	}
 
 	public void removeExtendedFields(final PersonExtendedField extendedField)

@@ -37,8 +37,13 @@ import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.BookingType;
 import ch.eugster.events.persistence.model.BookingTypeProposition;
 import ch.eugster.events.persistence.model.Category;
+import ch.eugster.events.persistence.model.CharityRun;
+import ch.eugster.events.persistence.model.CharityRunTagRead;
+import ch.eugster.events.persistence.model.CharityRunner;
 import ch.eugster.events.persistence.model.Compensation;
 import ch.eugster.events.persistence.model.CompensationType;
+import ch.eugster.events.persistence.model.Contact;
+import ch.eugster.events.persistence.model.ContactType;
 import ch.eugster.events.persistence.model.Country;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseDetail;
@@ -61,7 +66,7 @@ import ch.eugster.events.persistence.model.PersonSettings;
 import ch.eugster.events.persistence.model.PersonSex;
 import ch.eugster.events.persistence.model.PersonTitle;
 import ch.eugster.events.persistence.model.Rubric;
-import ch.eugster.events.persistence.model.SchoolClass;
+import ch.eugster.events.persistence.model.SchoolLevel;
 import ch.eugster.events.persistence.model.Season;
 import ch.eugster.events.persistence.model.Teacher;
 import ch.eugster.events.persistence.model.User;
@@ -86,8 +91,13 @@ import ch.eugster.events.persistence.queries.BookingQuery;
 import ch.eugster.events.persistence.queries.BookingTypePropositionQuery;
 import ch.eugster.events.persistence.queries.BookingTypeQuery;
 import ch.eugster.events.persistence.queries.CategoryQuery;
+import ch.eugster.events.persistence.queries.CharityRunQuery;
+import ch.eugster.events.persistence.queries.CharityRunTagReadQuery;
+import ch.eugster.events.persistence.queries.CharityRunnerQuery;
 import ch.eugster.events.persistence.queries.CompensationQuery;
 import ch.eugster.events.persistence.queries.CompensationTypeQuery;
+import ch.eugster.events.persistence.queries.ContactQuery;
+import ch.eugster.events.persistence.queries.ContactTypeQuery;
 import ch.eugster.events.persistence.queries.CountryQuery;
 import ch.eugster.events.persistence.queries.CourseDetailQuery;
 import ch.eugster.events.persistence.queries.CourseGuideQuery;
@@ -110,7 +120,7 @@ import ch.eugster.events.persistence.queries.PersonSettingsQuery;
 import ch.eugster.events.persistence.queries.PersonSexQuery;
 import ch.eugster.events.persistence.queries.PersonTitleQuery;
 import ch.eugster.events.persistence.queries.RubricQuery;
-import ch.eugster.events.persistence.queries.SchoolClassQuery;
+import ch.eugster.events.persistence.queries.SchoolLevelQuery;
 import ch.eugster.events.persistence.queries.SeasonQuery;
 import ch.eugster.events.persistence.queries.TeacherQuery;
 import ch.eugster.events.persistence.queries.UserQuery;
@@ -300,6 +310,21 @@ public class ConnectionServiceComponent implements ConnectionService
 				query = new CategoryQuery(this);
 				queries.put(clazz, query);
 			}
+			else if (clazz.equals(CharityRun.class))
+			{
+				query = new CharityRunQuery(this);
+				queries.put(clazz, query);
+			}
+			else if (clazz.equals(CharityRunner.class))
+			{
+				query = new CharityRunnerQuery(this);
+				queries.put(clazz, query);
+			}
+			else if (clazz.equals(CharityRunTagRead.class))
+			{
+				query = new CharityRunTagReadQuery(this);
+				queries.put(clazz, query);
+			}
 			else if (clazz.equals(Compensation.class))
 			{
 				query = new CompensationQuery(this);
@@ -310,9 +335,14 @@ public class ConnectionServiceComponent implements ConnectionService
 				query = new CompensationTypeQuery(this);
 				queries.put(clazz, query);
 			}
-			else if (clazz.equals(FieldExtension.class))
+			else if (clazz.equals(Contact.class))
 			{
-				query = new FieldExtensionQuery(this);
+				query = new ContactQuery(this);
+				queries.put(clazz, query);
+			}
+			else if (clazz.equals(ContactType.class))
+			{
+				query = new ContactTypeQuery(this);
 				queries.put(clazz, query);
 			}
 			else if (clazz.equals(Country.class))
@@ -353,6 +383,11 @@ public class ConnectionServiceComponent implements ConnectionService
 			else if (clazz.equals(EmailAccount.class))
 			{
 				query = new EmailAccountQuery(this);
+				queries.put(clazz, query);
+			}
+			else if (clazz.equals(FieldExtension.class))
+			{
+				query = new FieldExtensionQuery(this);
 				queries.put(clazz, query);
 			}
 			else if (clazz.equals(GlobalSettings.class))
@@ -420,9 +455,9 @@ public class ConnectionServiceComponent implements ConnectionService
 				query = new RubricQuery(this);
 				queries.put(clazz, query);
 			}
-			else if (clazz.equals(SchoolClass.class))
+			else if (clazz.equals(SchoolLevel.class))
 			{
-				query = new SchoolClassQuery(this);
+				query = new SchoolLevelQuery(this);
 				queries.put(clazz, query);
 			}
 			else if (clazz.equals(Season.class))

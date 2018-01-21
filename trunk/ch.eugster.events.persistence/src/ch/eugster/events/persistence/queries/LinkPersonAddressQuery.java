@@ -15,7 +15,6 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddress>
 {
-
 	public LinkPersonAddressQuery(final ConnectionService connectionService)
 	{
 		super(connectionService);
@@ -178,6 +177,16 @@ public class LinkPersonAddressQuery extends AbstractEntityQuery<LinkPersonAddres
 				LinkPersonAddress.class));
 		List<LinkPersonAddress> links = select(LinkPersonAddress.class, expression, maxResults);
 		return links;
+	}
+	
+	public List<LinkPersonAddress> selectGuides()
+	{
+		Expression expression = new ExpressionBuilder().get("address").get("deleted").equal(false);
+		expression = expression.and(new ExpressionBuilder().get("person").get("deleted").equal(false));
+		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
+		expression = expression.and(new ExpressionBuilder().get("guide").notNull());
+		expression = expression.and(new ExpressionBuilder().get("guide").get("deleted").equal(false));
+		return this.select(LinkPersonAddress.class, expression);
 	}
 
 }

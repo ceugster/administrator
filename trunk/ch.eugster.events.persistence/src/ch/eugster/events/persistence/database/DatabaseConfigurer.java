@@ -7,6 +7,7 @@
 package ch.eugster.events.persistence.database;
 
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -86,6 +87,15 @@ public class DatabaseConfigurer implements IRunnableWithProgress
 	{
 		this.connectionService = connectionService;
 		IStatus status = Status.OK_STATUS;
+		VersionQuery query = (VersionQuery) this.connectionService.getQuery(Version.class);
+		List<Version> versions = query.selectAll(Version.class);
+		if (versions.size() == 0)
+		{
+			Version version = Version.newInstance();
+			version.setStructureVersion(Version.STRUCTURE_VERSION);
+			version.setDataVersion(Version.DATA_VERSION);
+			query.merge(version);
+		}
 //		ProgressMonitorDialog dialog = new ProgressMonitorDialog(null);
 //		try 
 //		{
