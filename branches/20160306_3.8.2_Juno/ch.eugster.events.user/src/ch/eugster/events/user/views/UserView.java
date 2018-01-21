@@ -122,7 +122,7 @@ public class UserView extends AbstractEntityView implements IDoubleClickListener
 			{
 				Object object = cell.getElement();
 				User user = (User) object;
-				cell.setText(user.getState().toString());
+				cell.setText(user.getState() == null ? "" : user.getState().toString());
 			}
 		});
 		tableColumn = tableViewerColumn.getColumn();
