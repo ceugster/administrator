@@ -204,6 +204,172 @@ ch.eugster.events.category/src/ch/eugster/events/category/handlers/EditCategoryH
 ch.eugster.events.category/src/ch/eugster/events/category/views/CategoryContentProvider.java -text
 ch.eugster.events.category/src/ch/eugster/events/category/views/CategorySorter.java -text
 ch.eugster.events.category/src/ch/eugster/events/category/views/CategoryView.java -text
+ch.eugster.events.charity.feature/.project -text svneol=unset#text/plain
+ch.eugster.events.charity.feature/build.properties -text svneol=unset#text/plain
+ch.eugster.events.charity.feature/feature.xml -text svneol=unset#text/plain
+ch.eugster.events.charity/.classpath -text svneol=unset#text/plain
+ch.eugster.events.charity/.project -text svneol=unset#text/plain
+ch.eugster.events.charity/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
+ch.eugster.events.charity/META-INF/MANIFEST.MF -text svneol=unset#text/plain
+ch.eugster.events.charity/bin/ch/eugster/events/charity/Activator.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/PerspectiveFactory.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/TagReader$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/TagReader$2.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/TagReader$TagReportMediator.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/TagReader.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunEditor$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunEditor$2.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunEditor$3.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunEditor$4.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunEditor$5.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunEditor$6.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunEditor.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunEditorInput.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$10.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$11.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$12.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$13.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$14.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$15.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$16.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$17.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$18.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$19.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$2.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$20.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$3.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$4.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$5.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$6.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$7.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$8.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor$9.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditor.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/editors/CharityRunnerEditorInput.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/handlers/ActivateCharityRunsView.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/handlers/ActivateStartNumberAssignView.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/handlers/ActivateTagReaderView.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/handlers/AddCharityRunHandler.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/handlers/AddCharityRunnerHandler.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/handlers/DeleteCharityRunHandler.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/handlers/DeleteCharityRunnerHandler.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/handlers/EditCharityRunHandler.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/handlers/EditCharityRunnerHandler.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/handlers/RemoveTagsRead.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/listeners/AbstractStartableTagReportListener.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/listeners/DatabaseTagAssignListener.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/listeners/DatabaseTagReportListener.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/listeners/FileTagReportListener.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/listeners/StartableTagReportListener.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/preferences/CharityPreferencePage$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/preferences/CharityPreferencePage$2$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/preferences/CharityPreferencePage$2.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/preferences/CharityPreferencePage$3.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/preferences/CharityPreferencePage.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/preferences/PreferenceInitializer.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityPersonView$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityPersonView$2$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityPersonView$2$2.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityPersonView$2$3.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityPersonView$2.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityPersonView$3.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityPersonView$4.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityPersonView.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityRunView$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityRunView$2.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityRunView$3$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityRunView$3$2.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityRunView$3$3.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityRunView$3.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityRunView$4$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityRunView$4$2.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityRunView$4$3.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityRunView$4.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityRunView$5.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityRunView$6.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/CharityRunView.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/StartNumberAssignView$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/StartNumberAssignView$PartListener.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/StartNumberAssignView$UITagReportListener$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/StartNumberAssignView$UITagReportListener.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/StartNumberAssignView.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$10.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$11$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$11.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$12$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$12.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$13$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$13.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$14.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$15$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$15.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$16$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$16.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$17$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$17.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$2.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$3.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$4.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$5.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$6.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$7$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$7.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$8$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$8.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$9$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$9.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$PartListener.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$UITagReportListener$1.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView$UITagReportListener.class -text
+ch.eugster.events.charity/bin/ch/eugster/events/charity/views/TagReaderView.class -text
+ch.eugster.events.charity/build.properties -text svneol=unset#text/plain
+ch.eugster.events.charity/icons/add_16.gif -text
+ch.eugster.events.charity/icons/add_grey_16.gif -text
+ch.eugster.events.charity/icons/delete_16.png -text
+ch.eugster.events.charity/icons/delete_grey_16.png -text
+ch.eugster.events.charity/icons/edit_16.png -text
+ch.eugster.events.charity/icons/edit_grey_16.png -text
+ch.eugster.events.charity/icons/green_dot.gif -text
+ch.eugster.events.charity/icons/red_dot.gif -text
+ch.eugster.events.charity/icons/reset_16.png -text
+ch.eugster.events.charity/icons/reset_grey_16.png -text
+ch.eugster.events.charity/icons/runner_16.png -text
+ch.eugster.events.charity/icons/save_16.png -text
+ch.eugster.events.charity/icons/save_grey_16.png -text
+ch.eugster.events.charity/icons/yellow_dot.gif -text
+ch.eugster.events.charity/lib/OctaneSDKJava-1.28.0.1-jar-with-dependencies.jar -text
+ch.eugster.events.charity/log4j.properties -text svneol=unset#text/plain
+ch.eugster.events.charity/plugin.xml -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/Activator.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/PerspectiveFactory.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/TagReader.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/editors/CharityRunEditor.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/editors/CharityRunEditorInput.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/editors/CharityRunnerEditor.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/editors/CharityRunnerEditorInput.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/handlers/ActivateCharityRunsView.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/handlers/ActivateStartNumberAssignView.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/handlers/ActivateTagReaderView.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/handlers/AddCharityRunHandler.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/handlers/AddCharityRunnerHandler.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/handlers/DeleteCharityRunHandler.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/handlers/DeleteCharityRunnerHandler.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/handlers/EditCharityRunHandler.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/handlers/EditCharityRunnerHandler.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/handlers/RemoveTagsRead.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/listeners/AbstractStartableTagReportListener.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/listeners/DatabaseTagAssignListener.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/listeners/DatabaseTagReportListener.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/listeners/FileTagReportListener.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/listeners/StartableTagReportListener.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/preferences/CharityPreferencePage.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/preferences/PreferenceInitializer.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/views/CharityPersonView.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/views/CharityRunView.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/views/StartNumberAssignView.java -text svneol=unset#text/plain
+ch.eugster.events.charity/src/ch/eugster/events/charity/views/TagReaderView.java -text svneol=unset#text/plain
 ch.eugster.events.core.feature/.project -text
 ch.eugster.events.core.feature/build.properties -text
 ch.eugster.events.core.feature/feature.xml -text
