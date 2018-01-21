@@ -39,6 +39,7 @@ ch.eugster.events.addressgroup.report/src/ch/eugster/events/addressgroup/report/
 ch.eugster.events.addressgroup.report/src/ch/eugster/events/addressgroup/report/preferences/PrintPreferencePage.java -text
 ch.eugster.events.addressgroup/.classpath -text
 ch.eugster.events.addressgroup/.project -text
+ch.eugster.events.addressgroup/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 ch.eugster.events.addressgroup/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.addressgroup/META-INF/MANIFEST.MF -text
 ch.eugster.events.addressgroup/build.properties -text
