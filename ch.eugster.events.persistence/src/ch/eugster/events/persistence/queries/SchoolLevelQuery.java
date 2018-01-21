@@ -5,30 +5,30 @@ import java.util.List;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
 
-import ch.eugster.events.persistence.model.SchoolClass;
+import ch.eugster.events.persistence.model.SchoolLevel;
 import ch.eugster.events.persistence.service.ConnectionService;
 
-public class SchoolClassQuery extends AbstractEntityQuery<SchoolClass>
+public class SchoolLevelQuery extends AbstractEntityQuery<SchoolLevel>
 {
 
-	public SchoolClassQuery(ConnectionService connectionService)
+	public SchoolLevelQuery(ConnectionService connectionService)
 	{
 		super(connectionService);
 	}
 
-	public List<SchoolClass> selectAll()
+	public List<SchoolLevel> selectAll()
 	{
-		return this.selectAll(SchoolClass.class);
+		return this.selectAll(SchoolLevel.class);
 	}
 
 	public boolean isNameUnique(String name, Long id)
 	{
 		if (name == null || name.length() == 0)
 			return true;
-		Expression expression = new ExpressionBuilder(SchoolClass.class).get("name").equal(name);
+		Expression expression = new ExpressionBuilder(SchoolLevel.class).get("name").equal(name);
 		expression = expression.and(new ExpressionBuilder().get("deleted").equal(false));
-		List<SchoolClass> schoolClasses = select(SchoolClass.class, expression);
-		if (schoolClasses.isEmpty())
+		List<SchoolLevel> schoolLevels= select(SchoolLevel.class, expression);
+		if (schoolLevels.isEmpty())
 		{
 			return true;
 		}
@@ -40,9 +40,9 @@ public class SchoolClassQuery extends AbstractEntityQuery<SchoolClass>
 			}
 			else
 			{
-				for (SchoolClass schoolClass : schoolClasses)
+				for (SchoolLevel schoolLevel : schoolLevels)
 				{
-					if (!schoolClass.getId().equals(id))
+					if (!schoolLevel.getId().equals(id))
 					{
 						return false;
 					}

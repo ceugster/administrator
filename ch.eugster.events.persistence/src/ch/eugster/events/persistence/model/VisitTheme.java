@@ -19,6 +19,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.eclipse.persistence.annotations.Convert;
+
 @Entity
 @Table(name = "events_visit_theme")
 @AssociationOverrides({ @AssociationOverride(name = "user", joinColumns = @JoinColumn(name = "visit_theme_user_id")) })
@@ -48,6 +50,11 @@ public class VisitTheme extends AbstractEntity
 	@Basic
 	@Column(name = "visit_theme_color")
 	private Integer color;
+
+	@Basic
+	@Column(name = "visit_theme_hidden")
+	@Convert("booleanConverter")
+	private boolean hidden;
 
 	/*
 	 * Children
@@ -107,6 +114,11 @@ public class VisitTheme extends AbstractEntity
 		}
 		return validVisits;
 	}
+	
+	public boolean isHidden()
+	{
+		return this.hidden;
+	}
 
 	public void removeVisit(final Visit visit)
 	{
@@ -115,12 +127,12 @@ public class VisitTheme extends AbstractEntity
 
 	public void setColor(final Integer color)
 	{
-		this.color = color;
+		this.propertyChangeSupport.firePropertyChange("color", this.color, this.color = color);
 	}
 
 	public void setDescription(final String description)
 	{
-		this.description = description;
+		this.propertyChangeSupport.firePropertyChange("description", this.description, this.description = description);
 	}
 
 	@Override
@@ -131,12 +143,17 @@ public class VisitTheme extends AbstractEntity
 
 	public void setName(final String name)
 	{
-		this.name = name;
+		this.propertyChangeSupport.firePropertyChange("name", this.name, this.name = name);
 	}
 
 	public void setVisits(final List<Visit> visits)
 	{
 		this.propertyChangeSupport.firePropertyChange("visits", this.visits, this.visits = visits);
+	}
+	
+	public void setHidden(boolean hidden)
+	{
+		this.propertyChangeSupport.firePropertyChange("hidden", this.hidden, this.hidden = hidden);
 	}
 
 	public static VisitTheme newInstance()

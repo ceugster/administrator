@@ -18,12 +18,22 @@ public class DonationYear implements IEntity
 		this.year = year;
 	}
 
+	public static DonationYear all()
+	{
+		return new DonationYear(0);
+	}
+
 	@Override
 	public Long getId()
 	{
 		return null;
 	}
 
+	public boolean isAll()
+	{
+		return year == 0;
+	}
+	
 	@Override
 	public boolean isDeleted()
 	{
@@ -37,14 +47,21 @@ public class DonationYear implements IEntity
 
 	public List<Donation> getDonations()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			DonationQuery query = (DonationQuery) service.getQuery(Donation.class);
-			return query.selectByYear(Integer.valueOf(year));
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
+			{
+				DonationQuery query = (DonationQuery) service.getQuery(Donation.class);
+				return query.selectByYear(Integer.valueOf(year));
+			}
+		}
+		finally
+		{
+			tracker.close();
 		}
 		return new ArrayList<Donation>();
 	}

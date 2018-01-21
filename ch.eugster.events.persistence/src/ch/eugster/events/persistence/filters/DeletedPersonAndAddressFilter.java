@@ -16,7 +16,7 @@ public class DeletedPersonAndAddressFilter extends ViewerFilter
 		{
 			return true;
 		}
-		return !((AbstractEntity) element).isDeleted();
+		return ((AbstractEntity) element).isValid();
 	}
 
 	public void setShowDeleted(final boolean show)

@@ -287,7 +287,7 @@ public class Course extends AbstractEntity
 	private Calendar invitationDoneDate;
 
 	/*
-	 * Letzter Termin für Annulation durch Kunden
+	 * Letzter Termin für Annullation durch Kunden
 	 */
 	@Basic
 	@Temporal(TemporalType.TIMESTAMP)
@@ -348,6 +348,11 @@ public class Course extends AbstractEntity
 		this.setSeason(season);
 	}
 
+	public boolean isValid()
+	{
+		return !this.deleted && this.getSeason().isValid();
+	}
+	
 	public void addBooking(final Booking booking)
 	{
 		this.propertyChangeSupport.firePropertyChange("bookings", this.bookings, this.bookings.add(booking));
@@ -1145,6 +1150,17 @@ public class Course extends AbstractEntity
 	public String getEntityName()
 	{
 		return "Kurs";
+	}
+	
+	public int getParticipantsCount(BookingType bookingType)
+	{
+		int count = 0;
+		List<Booking> bookings = this.getBookings();
+		for (Booking booking : bookings)
+		{
+			count += booking.getParticipantCount(bookingType);
+		}
+		return count;
 	}
 
 	public String getInstanceName()

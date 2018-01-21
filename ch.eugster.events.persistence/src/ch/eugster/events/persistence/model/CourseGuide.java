@@ -26,7 +26,7 @@ import javax.persistence.TableGenerator;
 		@AttributeOverride(name = "updated", column = @Column(name = "course_guide_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "course_guide_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "course_guide_version")) })
-public class CourseGuide extends AbstractEntity
+public class CourseGuide extends AbstractEntity implements Comparable<CourseGuide>
 {
 	/**
 	 * References
@@ -78,6 +78,11 @@ public class CourseGuide extends AbstractEntity
 		this.setCourse(course);
 	}
 
+	public boolean isValid()
+	{
+		return !this.deleted && this.getCourse().isValid() && this.getGuide().isValid();
+	}
+	
 	public void addCompensation(final Compensation compensation)
 	{
 		this.propertyChangeSupport.firePropertyChange("compensations", this.compensations,
@@ -211,5 +216,11 @@ public class CourseGuide extends AbstractEntity
 	public static CourseGuide newInstance(final Course course)
 	{
 		return (CourseGuide) AbstractEntity.newInstance(new CourseGuide(course));
+	}
+
+	@Override
+	public int compareTo(CourseGuide other) 
+	{
+		return this.getGuideType().getCode().compareTo(other.getGuideType().getCode());
 	}
 }

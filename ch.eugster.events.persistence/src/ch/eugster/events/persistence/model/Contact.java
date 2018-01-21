@@ -6,9 +6,13 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -22,6 +26,8 @@ import javax.persistence.TableGenerator;
 		@AttributeOverride(name = "updated", column = @Column(name = "contact_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "contact_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "contact_version")) })
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "contact_discriminator", discriminatorType = DiscriminatorType.STRING)
 public class Contact extends AbstractEntity
 {
 	/*

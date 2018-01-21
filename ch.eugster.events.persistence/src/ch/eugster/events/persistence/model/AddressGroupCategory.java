@@ -2,6 +2,7 @@ package ch.eugster.events.persistence.model;
 
 import static javax.persistence.CascadeType.ALL;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -86,6 +87,15 @@ public class AddressGroupCategory extends AbstractEntity
 		super();
 		this.setDomain(domain);
 	}
+	
+	public boolean isValid()
+	{
+		if (this.domain == null || this.domain.isValid())
+		{
+			return !this.deleted;
+		}
+		return false;
+	}
 
 	/**
 	 * 
@@ -123,6 +133,19 @@ public class AddressGroupCategory extends AbstractEntity
 	public List<AddressGroup> getAddressGroups()
 	{
 		return this.addressGroups;
+	}
+
+	public List<AddressGroup> getValidAddressGroups()
+	{
+		List<AddressGroup> validAddressGroups = new ArrayList<AddressGroup>();
+		for (AddressGroup addressGroup : this.addressGroups)
+		{
+			if (addressGroup.isValid())
+			{
+				validAddressGroups.add(addressGroup);
+			}
+		}
+		return validAddressGroups;
 	}
 
 	public String getCode()

@@ -22,7 +22,7 @@ public class ContactTypeQuery extends AbstractEntityQuery<ContactType>
 
 	public List<ContactType> selectContactTypes()
 	{
-		Expression expression = new ExpressionBuilder();
+		Expression expression = new ExpressionBuilder(ContactType.class).get("deleted").equal(false);
 		return this.select(ContactType.class, expression);
 	}
 
