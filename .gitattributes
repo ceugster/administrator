@@ -682,14 +682,6 @@ ch.eugster.events.course/src/ch/eugster/events/course/wizards/MembershipSorter.j
 ch.eugster.events.course/src/ch/eugster/events/course/wizards/ParticipantSorter.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/wizards/ParticipantWizardPage.java -text
 ch.eugster.events.course/src/ch/eugster/events/course/wizards/PersonBookingViewerContentProvider.java -text
-ch.eugster.events.customer.wwfost/.classpath -text
-ch.eugster.events.customer.wwfost/.project -text
-ch.eugster.events.customer.wwfost/.settings/org.eclipse.jdt.core.prefs -text
-ch.eugster.events.customer.wwfost/META-INF/MANIFEST.MF -text
-ch.eugster.events.customer.wwfost/Thumbs.db -text
-ch.eugster.events.customer.wwfost/build.properties -text
-ch.eugster.events.customer.wwfost/splash.bmp -text
-ch.eugster.events.customer.wwfost/src/ch/eugster/events/wwfost/Activator.java -text
 ch.eugster.events.documents.feature/.project -text
 ch.eugster.events.documents.feature/build.properties -text
 ch.eugster.events.documents.feature/feature.xml -text
