@@ -1,18 +1,23 @@
 package ch.eugster.events.course.reporting;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.BookingAnnulatedState;
 import ch.eugster.events.persistence.model.BookingDoneState;
 import ch.eugster.events.persistence.model.BookingForthcomingState;
+import ch.eugster.events.persistence.model.BookingType;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseState;
 import ch.eugster.events.persistence.model.IBookingState;
 
-public class BookingListReportItem implements Comparable<BookingListReportItem>
+public class BookingListItem implements Comparable<BookingListItem>
 {
+	private Course course;
+	
 	private String code;
 
 	private String name;
@@ -34,40 +39,48 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 //	private int participated;
 //
 //	private int brokeOff;
-
-	private int notParticipated;
-
+//
+//	private int didNotParticipate;
+	
 	private double amount;
 
 	private double payed;
 
 	private String status;
-
-	public BookingListReportItem()
-	{
-		super();
-	}
+	
+	private Map<String, Integer> countForBookingTypes = new HashMap<String, Integer>();
 
 	/**
 	 * Load Address
 	 * 
 	 * @param member
 	 */
-	public BookingListReportItem(final Course course)
+	public BookingListItem(final Course course, Map<String, BookingTypeKey> bookingTypeKeys)
 	{
-		loadData(course);
+		this.course = course;
+		loadData(course, bookingTypeKeys);
 	}
 
 	@Override
-	public int compareTo(final BookingListReportItem other)
+	public int compareTo(final BookingListItem other)
 	{
-		BookingListReportItem item = other;
+		BookingListItem item = other;
 		int comparison = this.getName().compareTo(item.getName());
 		if (comparison == 0)
 		{
 			return this.getCode().compareTo(item.getCode());
 		}
 		return comparison;
+	}
+	
+	public Map<String, Integer> getBookingTypeCounts()
+	{
+		return this.countForBookingTypes;
+	}
+	
+	public Course getCourse()
+	{
+		return course;
 	}
 
 	public Double getAmount()
@@ -135,7 +148,7 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 		return status;
 	}
 
-	private void loadData(final Course course)
+	private void loadData(final Course course, Map<String, BookingTypeKey> bookingTypeKeys)
 	{
 		this.amount = 0D;
 		this.canceled = 0;
@@ -149,6 +162,12 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 		this.name = course.getTitle();
 		this.date = course.getFirstDate() == null ? null : course.getFirstDate().getTime();
 		this.status = course.getState().code();
+//		List<BookingType> courseBookingTypes = course.getBookingTypes();
+//		for (BookingType courseBookingType : courseBookingTypes)
+//		{
+//			BookingTypeKey key = new BookingTypeKey(courseBookingType.getName(), courseBookingType.getName(), courseBookingType.getComboLabel());
+//			countForBookingTypes.put(key, Integer.valueOf(0));
+//		}
 		List<Booking> bookings = course.getBookings();
 		for (Booking booking : bookings)
 		{
@@ -159,15 +178,28 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 			{
 				if (booking.getBookingState(course.getState()).equals(BookingForthcomingState.BOOKED))
 				{
-					booked += booking.getParticipantCount();
+					this.booked += booking.getParticipantCount();
+					List<BookingType> courseBookingTypes = course.getBookingTypes();
+					for (BookingType bookingType : courseBookingTypes)
+					{
+						BookingTypeKey key = new BookingTypeKey(booking.getBookingState(booking.getCourse().getState()) + " " + bookingType.getName(), booking.getBookingState(booking.getCourse().getState()) + " " + bookingType.getName(), booking.getBookingState(booking.getCourse().getState()) + " " + bookingType.getComboLabel());
+						Integer count = countForBookingTypes.get(key.getKey());
+						count = count == null ? Integer.valueOf(0) : count;
+						int counter = booking.getParticipantCount(bookingType);
+						if (counter > 0) 
+						{
+							countForBookingTypes.put(key.getKey(), Integer.valueOf(count.intValue() + counter));
+							bookingTypeKeys.put(key.getKey(), key);
+						}
+					}
 				}
 				else if (booking.getBookingState(course.getState()).equals(BookingForthcomingState.WAITING_LIST))
 				{
-					waitingList += booking.getParticipantCount();
+					this.waitingList += booking.getParticipantCount();
 				}
 				else if (booking.getBookingState(course.getState()).equals(BookingForthcomingState.PROVISIONAL_BOOKED))
 				{
-					provisional += booking.getParticipantCount();
+					this.provisional += booking.getParticipantCount();
 				}
 				else if (booking.getBookingState(course.getState()).equals(BookingForthcomingState.BOOKING_CANCELED))
 				{
@@ -178,16 +210,27 @@ public class BookingListReportItem implements Comparable<BookingListReportItem>
 			{
 				if (booking.getBookingState(course.getState()).equals(BookingDoneState.PARTICIPATED))
 				{
-					booked += booking.getParticipantCount();
+					this.booked += booking.getParticipantCount();
+					List<BookingType> courseBookingTypes = course.getBookingTypes();
+					for (BookingType bookingType : courseBookingTypes)
+					{
+						BookingTypeKey key = new BookingTypeKey(booking.getBookingState(booking.getCourse().getState()) + " " + bookingType.getName(), booking.getBookingState(booking.getCourse().getState()) + " " + bookingType.getName(), booking.getBookingState(booking.getCourse().getState()) + " " + bookingType.getComboLabel());
+						Integer count = countForBookingTypes.get(key.getKey());
+						count = count == null ? Integer.valueOf(0) : count;
+						int counter = booking.getParticipantCount(bookingType);
+						if (counter > 0) 
+						{
+							countForBookingTypes.put(key.getKey(), Integer.valueOf(count.intValue() + counter));
+							bookingTypeKeys.put(key.getKey(), key);
+						}
+					}
 				}
-				else if (booking.getBookingState(CourseState.FORTHCOMING).equals(BookingForthcomingState.WAITING_LIST))
+				else if (booking.getBookingState(course.getState()).equals(BookingDoneState.PARTICIPATION_BROKE_OFF))
 				{
-					waitingList += booking.getParticipantCount();
+					this.waitingList += booking.getParticipantCount();
 				}
-				else if (booking.getBookingState(CourseState.FORTHCOMING).equals(
-						BookingForthcomingState.BOOKING_CANCELED))
+				else if (booking.getBookingState(course.getState()).equals(BookingDoneState.NOT_PARTICIPATED))
 				{
-					notParticipated += booking.getParticipantCount();
 				}
 			}
 			else if (course.getState().equals(CourseState.ANNULATED))

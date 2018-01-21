@@ -479,7 +479,6 @@ ch.eugster.events.course.feature/feature.xml -text
 ch.eugster.events.course.reporting/.classpath -text
 ch.eugster.events.course.reporting/.project -text
 ch.eugster.events.course.reporting/.settings/org.eclipse.core.resources.prefs -text
-ch.eugster.events.course.reporting/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.course.reporting/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.course.reporting/META-INF/MANIFEST.MF -text
 ch.eugster.events.course.reporting/build.properties -text
@@ -491,13 +490,13 @@ ch.eugster.events.course.reporting/reports/booking_list.jrxml -text
 ch.eugster.events.course.reporting/reports/participant_list.jrxml -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/Activator.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/BookingListFactory.java -text
-ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/BookingListReportItem.java -text
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/BookingListItem.java -text svneol=unset#text/plain
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/BookingTypeKey.java -text svneol=unset#text/plain
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/CourseDescriptionFactory.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/ParticipantListFactory.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/ParticipantListReportItem.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/BookingConfirmationDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/BookingListDialog.java -text
-ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/BookingListReportDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/CommitmentContractDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/CourseDescriptionDialog.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/dialogs/CourseInvitationDialog.java -text
@@ -511,6 +510,7 @@ ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handle
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateBookingConfirmationHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateBookingListReportHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateCourseDescriptionHandler.java -text
+ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateCourseListSpreadsheetHandler.java -text svneol=unset#text/plain
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateInvitationHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateParticipantListHandler.java -text
 ch.eugster.events.course.reporting/src/ch/eugster/events/course/reporting/handlers/GenerateParticipantListReportHandler.java -text

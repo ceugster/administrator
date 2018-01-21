@@ -6,11 +6,12 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.eugster.events.course.reporting.dialogs.ParticipantListDialog;
+import ch.eugster.events.persistence.model.Course;
 
 public class GenerateParticipantListHandler extends AbstractHandler implements IHandler
 {
@@ -24,9 +25,12 @@ public class GenerateParticipantListHandler extends AbstractHandler implements I
 			if (context.getParent().getVariable("selection") instanceof StructuredSelection)
 			{
 				StructuredSelection ssel = (StructuredSelection) context.getParent().getVariable("selection");
-				Shell shell = (Shell) context.getParent().getVariable("activeShell");
-				ParticipantListDialog dialog = new ParticipantListDialog(shell, ssel);
-				dialog.open();
+				if (!ssel.isEmpty())
+				{
+					Shell shell = (Shell) context.getParent().getVariable("activeShell");
+					ParticipantListDialog dialog = new ParticipantListDialog(shell, ssel);
+					dialog.open();
+				}
 			}
 		}
 		return Status.OK_STATUS;
@@ -41,8 +45,8 @@ public class GenerateParticipantListHandler extends AbstractHandler implements I
 			EvaluationContext context = (EvaluationContext) object;
 			if (context.getParent().getVariable("selection") instanceof StructuredSelection)
 			{
-				ISelection sel = (ISelection) context.getParent().getVariable("selection");
-				enabled = sel != null && !sel.isEmpty();
+				IStructuredSelection ssel = (IStructuredSelection) context.getParent().getVariable("selection");
+				enabled = ssel != null && ssel.getFirstElement() instanceof Course;
 			}
 		}
 		setBaseEnabled(enabled);

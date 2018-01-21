@@ -9,7 +9,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -33,6 +35,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -86,7 +89,7 @@ public class CourseInvitationDialog extends TitleAreaDialog
 		this.selection = selection;
 	}
 
-	private void buildDocument(final DataMap[] dataMaps)
+	private void buildDocument(final DataMap<?>[] dataMaps)
 	{
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
 		try
@@ -96,25 +99,25 @@ public class CourseInvitationDialog extends TitleAreaDialog
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 				{
-					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle()
-							.getBundleContext(), DocumentBuilderService.class.getName(), null);
+					ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle()
+							.getBundleContext(), DocumentBuilderService.class, null);
+					tracker.open();
 					try
 					{
-						tracker.open();
-						ServiceReference[] references = tracker.getServiceReferences();
+						ServiceReference<DocumentBuilderService>[] references = tracker.getServiceReferences();
 						if (references != null)
 						{
 							try
 							{
 								monitor.beginTask("Dokumente werden erstellt...", references.length);
-								for (ServiceReference reference : references)
+								for (ServiceReference<DocumentBuilderService> reference : references)
 								{
 									DocumentBuilderService service = (DocumentBuilderService) tracker
 											.getService(reference);
 									DocumentBuilderService builderService = service;
 									IStatus status = builderService.buildDocument(new SubProgressMonitor(monitor,
 											dataMaps.length), new File(userPropertyTemplatePath.getValue()), dataMaps);
-									if (status.isOK())
+									if (status.isOK() || status.getSeverity() == IStatus.ERROR)
 									{
 										break;
 									}
@@ -128,7 +131,16 @@ public class CourseInvitationDialog extends TitleAreaDialog
 						}
 						else
 						{
-							MessageDialog.openWarning(getShell(), "Service nicht aktiv", MSG_NO_SERVICE_AVAILABLE);
+							Job job = new UIJob("") 
+							{
+								@Override
+								public IStatus runInUIThread(IProgressMonitor monitor) 
+								{
+									MessageDialog.openWarning(getShell(), "Service nicht aktiv", MSG_NO_SERVICE_AVAILABLE);
+									return Status.OK_STATUS;
+								}
+							};
+							job.schedule();
 						}
 					}
 					finally
@@ -139,7 +151,7 @@ public class CourseInvitationDialog extends TitleAreaDialog
 			});
 			if (updateCourse != null && updateCourse.getSelection())
 			{
-				ServiceTracker connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
+				ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class, null);
 				connectionServiceTracker.open();
 				try
 				{
@@ -186,9 +198,9 @@ public class CourseInvitationDialog extends TitleAreaDialog
 		this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
 	}
 
-	private List<DataMap> createDataMaps()
+	private List<DataMap<?>> createDataMaps()
 	{
-		List<DataMap> dataMaps = new ArrayList<DataMap>();
+		List<DataMap<?>> dataMaps = new ArrayList<DataMap<?>>();
 		Object[] elements = selection.toArray();
 		for (int i = elements.length; i > 0; i--)
 		{
@@ -274,18 +286,22 @@ public class CourseInvitationDialog extends TitleAreaDialog
 			@Override
 			public void widgetSelected(final SelectionEvent e)
 			{
-				String path = CourseInvitationDialog.this.documentPath.getText();
+				File file = new File(CourseInvitationDialog.this.documentPath.getText());
+				while (!file.exists())
+				{
+					file = file.getParentFile();
+				}
 				FileDialog dialog = new FileDialog(CourseInvitationDialog.this.getShell());
-				dialog.setFilterPath(path);
+				dialog.setFilterPath(file.getAbsolutePath());
 				dialog.setFilterExtensions(new String[] { "*.odt" });
 				dialog.setText(DIALOG_TITLE);
-				path = dialog.open();
+				String path = dialog.open();
 				if (path != null)
 				{
 					CourseInvitationDialog.this.documentPath.setText(path);
 
 				}
-				File file = new File(CourseInvitationDialog.this.documentPath.getText());
+				file = new File(CourseInvitationDialog.this.documentPath.getText());
 				if (file.exists())
 				{
 					userPropertyTemplatePath.setValue(file.getAbsolutePath());
@@ -345,7 +361,7 @@ public class CourseInvitationDialog extends TitleAreaDialog
 	protected void okPressed()
 	{
 		setUserPath();
-		DataMap[] dataMaps = createDataMaps().toArray(new DataMap[0]);
+		DataMap<?>[] dataMaps = createDataMaps().toArray(new DataMap[0]);
 		if (dataMaps.length == 0)
 		{
 			MessageDialog.openConfirm(this.getShell(), MSG_TITLE_NO_COURSES, MSG_TITLE_NO_COURSES);
@@ -380,11 +396,11 @@ public class CourseInvitationDialog extends TitleAreaDialog
 
 	private void setUserPath()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			Object service = tracker.getService();
 			if (service instanceof ConnectionService)
 			{

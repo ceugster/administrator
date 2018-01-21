@@ -38,11 +38,11 @@ public class CommitmentContractHandler extends AbstractHandler implements IHandl
 	public void setEnabled(final Object object)
 	{
 		boolean enabled = false;
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
+		ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
 				DocumentBuilderService.class.getName(), null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			enabled = tracker.getServiceReferences().length > 0;
 			if (enabled)
 			{
