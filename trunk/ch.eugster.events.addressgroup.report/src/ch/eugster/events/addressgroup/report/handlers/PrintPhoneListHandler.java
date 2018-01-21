@@ -54,11 +54,6 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 			{
 				this.extract((AddressGroup) element);
 			}
-			// else if (element instanceof AddressGroupLink)
-			// {
-			// this.extract(((AddressGroupLink)
-			// element).getChild());
-			// }
 			else if (element instanceof AddressGroupMember)
 			{
 				this.extract((AddressGroupMember) element);
@@ -107,11 +102,11 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 
 	private boolean export(final Format format, final File file)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{
@@ -134,26 +129,19 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 
 	private void extract(final AddressGroup addressGroup)
 	{
-		if (!addressGroup.isDeleted())
+		if (addressGroup.isValid())
 		{
 			List<AddressGroupMember> addressGroupMembers = addressGroup.getAddressGroupMembers();
 			for (AddressGroupMember addressGroupMember : addressGroupMembers)
 			{
 				this.extract(addressGroupMember);
 			}
-			// for (AddressGroupLink link : addressGroup.getChildren())
-			// {
-			// if (!link.isDeleted() && !link.getChild().isDeleted())
-			// {
-			// extract(link.getChild());
-			// }
-			// }
 		}
 	}
 
 	private void extract(final AddressGroupCategory category)
 	{
-		if (!category.isDeleted())
+		if (category.isValid())
 		{
 			List<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
@@ -165,7 +153,7 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 
 	private void extract(final AddressGroupMember member)
 	{
-		if (!member.isDeleted())
+		if (member.isValid())
 		{
 			if (PhoneListFactory.addEntry(member))
 			{
@@ -200,14 +188,14 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 
 	private boolean hasValidEmailAddress(final AddressGroupMember member)
 	{
-		if (member.getLink() == null)
+		if (member.isValidAddressMember())
 		{
 			if (EmailHelper.getInstance().isValidAddress(member.getAddress().getEmail()))
 			{
 				return true;
 			}
 		}
-		else
+		else if (member.isValidLinkMember())
 		{
 			if (EmailHelper.getInstance().isValidAddress(member.getLink().getPerson().getEmail()))
 			{
@@ -223,11 +211,11 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 
 	private boolean preview()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{
@@ -250,11 +238,11 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 
 	private boolean print(final boolean showPrintDialog)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{
