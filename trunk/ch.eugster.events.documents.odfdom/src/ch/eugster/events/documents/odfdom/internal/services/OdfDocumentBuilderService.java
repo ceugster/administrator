@@ -41,7 +41,7 @@ import ch.eugster.events.documents.services.DocumentBuilderService;
 public class OdfDocumentBuilderService implements DocumentBuilderService
 {
 	@Override
-	public IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap[] maps)
+	public IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap<?>[] maps)
 	{
 		IStatus status = Status.CANCEL_STATUS;
 		if (!template.getName().endsWith(".odt"))
@@ -63,7 +63,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 	}
 
 	@Override
-	public IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap map)
+	public IStatus buildDocument(IProgressMonitor monitor, final File template, final DataMap<?> map)
 	{
 		IStatus status = Status.CANCEL_STATUS;
 		if (!template.getName().endsWith(".odt"))
@@ -74,7 +74,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		try
 		{
 			monitor.beginTask("Dokument wird erstellt...", 1);
-			DataMap[] maps = new DataMap[] { map };
+			DataMap<?>[] maps = new DataMap<?>[] { map };
 			status = buildTextDocument(new SubProgressMonitor(monitor, maps.length), template, maps);
 			monitor.worked(1);
 		}
@@ -86,12 +86,12 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 	}
 
 	@Override
-	public IStatus buildDocument(IProgressMonitor monitor, DataMapKey[] keys, DataMap[] maps)
+	public IStatus buildDocument(IProgressMonitor monitor, DataMapKey[] keys, DataMap<?>[] maps)
 	{
 		return Status.CANCEL_STATUS;
 	}
 
-	private IStatus buildTextDocument(IProgressMonitor monitor, final File template, final DataMap[] maps)
+	private IStatus buildTextDocument(IProgressMonitor monitor, final File template, final DataMap<?>[] maps)
 	{
 		IStatus status = Status.OK_STATUS;
 		try
@@ -122,7 +122,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 					text.removeChild(stylableElement);
 					stylableElement = OdfElement.findFirstChildNode(OdfStylableElement.class, text);
 				}
-
+//				document.addPageBreak();
 				for (int i = 0; i < maps.length; i++)
 				{
 					stylableElement = OdfElement.findFirstChildNode(OdfStylableElement.class, textCopy);
@@ -138,6 +138,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 						text.appendChild(clonedStylableElement);
 						stylableElement = OdfElement.findNextChildNode(OdfStylableElement.class, stylableElement);
 					}
+//					document.addPageBreak();
 					monitor.worked(1);
 				}
 
@@ -179,7 +180,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		return rows.toArray(new TableTableRowElement[0]);
 	}
 
-	private Node fillDummyRow(final OdfFileDom fileDom, final Node node, final DataMap map)
+	private Node fillDummyRow(final OdfFileDom fileDom, final Node node, final DataMap<?> map)
 	{
 		if (node instanceof TextTextInputElement)
 		{
@@ -200,10 +201,10 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		return node;
 	}
 
-	private void fillTable(final OdfFileDom fileDom, final TableTableElement table, final DataMap map)
+	private void fillTable(final OdfFileDom fileDom, final TableTableElement table, final DataMap<?> map)
 	{
 		String name = table.getTableNameAttribute();
-		DataMap[] maps = map.getTableMaps(name).toArray(new DataMap[0]);
+		DataMap<?>[] maps = (DataMap<?>[]) map.getTableMaps(name).toArray(new DataMap<?>[0]);
 		TableTableRowElement[] rows = this.collectTableRows(table);
 		TableTableRowElement totalRow = null;
 
@@ -247,12 +248,12 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		}
 	}
 
-	private TableTableRowElement fillTableRow(final OdfFileDom fileDom, final TableTableRowElement row, final DataMap map)
+	private TableTableRowElement fillTableRow(final OdfFileDom fileDom, final TableTableRowElement row, final DataMap<?> map)
 	{
 		return (TableTableRowElement) this.replaceTableContent(fileDom, row, map);
 	}
 
-	private void replaceConditionalTextWithCurrentValue(final TextConditionalTextElement element, final DataMap map)
+	private void replaceConditionalTextWithCurrentValue(final TextConditionalTextElement element, final DataMap<?> map)
 	{
 		TextConditionalTextElement conditionalText = element;
 		String condition = conditionalText.getTextConditionAttribute();
@@ -312,7 +313,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		}
 	}
 
-	private void replaceContent(final OdfFileDom fileDom, final Node node, final DataMap map)
+	private void replaceContent(final OdfFileDom fileDom, final Node node, final DataMap<?> map)
 	{
 		if (node instanceof TextTextInputElement)
 		{
@@ -337,7 +338,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 	}
 
 	private void replaceOdfTextInputWithOdfTextSpan(final OdfFileDom fileDom, final TextTextInputElement element,
-			final DataMap map)
+			final DataMap<?> map)
 	{
 		TextTextInputElement input = element;
 		String desc = input.getTextDescriptionAttribute();
@@ -362,7 +363,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 		parent.replaceChild(span, input);
 	}
 
-	private Node replaceTableContent(final OdfFileDom fileDom, final Node node, final DataMap map)
+	private Node replaceTableContent(final OdfFileDom fileDom, final Node node, final DataMap<?> map)
 	{
 		if (node instanceof TextTextInputElement)
 		{
@@ -385,7 +386,7 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 
 	private IStatus showDocument(final TextDocument document) throws Exception
 	{
-		IPreferenceStore store = new ScopedPreferenceStore(new InstanceScope(), Activator.getDefault().getBundle()
+		IPreferenceStore store = new ScopedPreferenceStore(InstanceScope.INSTANCE, Activator.getDefault().getBundle()
 				.getSymbolicName());
 		// String office =
 		// store.getString(PreferenceInitializer.KEY_OFFICE_PACKAGE);
