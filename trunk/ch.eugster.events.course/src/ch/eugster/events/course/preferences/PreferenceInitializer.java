@@ -38,7 +38,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 	@Override
 	public void initializeDefaultPreferences()
 	{
-		IEclipsePreferences prefs = new InstanceScope().getNode(Activator.PLUGIN_ID);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 		prefs.put(KEY_BOOKING_ID_FORMAT, GlobalSettings.getInstance().getBookingIdFormat());
 		prefs.put(KEY_USE_CATEGORIES, Boolean.toString(GlobalSettings.getInstance().getCourseHasCategory()));
 		prefs.put(KEY_USE_DOMAINS, Boolean.toString(GlobalSettings.getInstance().getCourseHasDomain()));

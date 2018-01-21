@@ -53,7 +53,7 @@ public class BasicBookingTypeView extends AbstractEntityView implements IDoubleC
 	
 	private BasicBookingTypeSorter sorter;
 	
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	public BasicBookingTypeView()
 	{
@@ -196,7 +196,7 @@ public class BasicBookingTypeView extends AbstractEntityView implements IDoubleC
 		});
 		tableColumn = tableViewerColumn.getColumn();
 		tableColumn.setResizable(true);
-		tableColumn.setText("Annulationsgebühr");
+		tableColumn.setText("Annullationsgebühr");
 
 		tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
@@ -220,11 +220,11 @@ public class BasicBookingTypeView extends AbstractEntityView implements IDoubleC
 
 		this.getSite().setSelectionProvider(this.viewer);
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public ConnectionService addingService(ServiceReference<ConnectionService> reference)
 			{
 				final ConnectionService connectionService = (ConnectionService) super.addingService(reference);
 				Display display = Display.getCurrent();
@@ -245,7 +245,7 @@ public class BasicBookingTypeView extends AbstractEntityView implements IDoubleC
 			}
 
 			@Override
-			public void removedService(ServiceReference reference, Object service)
+			public void removedService(ServiceReference<ConnectionService> reference, ConnectionService service)
 			{
 				Display display = Display.getCurrent();
 				if (display == null)
