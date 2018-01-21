@@ -1881,7 +1881,6 @@ ch.eugster.poi.feature/build.properties -text svneol=unset#text/plain
 ch.eugster.poi.feature/feature.xml -text svneol=unset#text/plain
 ch.eugster.poi/.classpath -text
 ch.eugster.poi/.project -text
-ch.eugster.poi/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.poi/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.poi/META-INF/MANIFEST.MF -text
 ch.eugster.poi/build.properties -text
