@@ -158,7 +158,6 @@ ch.eugster.events.addresstype.feature/build.properties -text
 ch.eugster.events.addresstype.feature/feature.xml -text
 ch.eugster.events.addresstype/.classpath -text
 ch.eugster.events.addresstype/.project -text
-ch.eugster.events.addresstype/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.addresstype/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.addresstype/META-INF/MANIFEST.MF -text
 ch.eugster.events.addresstype/build.properties -text
