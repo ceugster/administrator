@@ -147,26 +147,30 @@ public class RubricEditor extends AbstractEntityEditor<Rubric>
 	{
 		Message msg = null;
 
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
 		tracker.open();
-
-		ConnectionService service = (ConnectionService) tracker.getService();
-		if (service != null)
+		try
 		{
-			RubricEditorInput input = (RubricEditorInput) this.getEditorInput();
-			Rubric rubric = (Rubric) input.getAdapter(Rubric.class);
-			String code = this.code.getText();
-			RubricQuery query = (RubricQuery) service.getQuery(Rubric.class);
-			if (!query.isCodeUnique(code, rubric.getId()))
+			ConnectionService service = (ConnectionService) tracker.getService();
+			if (service != null)
 			{
-				msg = new Message(this.code, "Ungültiger Code");
-				msg.setMessage("Der gewählte Code wird bereits verwendet.");
-				return msg;
+				RubricEditorInput input = (RubricEditorInput) this.getEditorInput();
+				Rubric rubric = (Rubric) input.getAdapter(Rubric.class);
+				String code = this.code.getText();
+				RubricQuery query = (RubricQuery) service.getQuery(Rubric.class);
+				if (!query.isCodeUnique(code, rubric.getId()))
+				{
+					msg = new Message(this.code, "Ungültiger Code");
+					msg.setMessage("Der gewählte Code wird bereits verwendet.");
+					return msg;
+				}
 			}
 		}
-		tracker.close();
-
+		finally
+		{
+			tracker.close();
+		}
 		return msg;
 	}
 

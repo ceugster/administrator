@@ -15,7 +15,7 @@ public class PersonWithoutChildrenRemover implements CommandProvider
 {
 	public void _clearlinks(final CommandInterpreter commandInterpreter)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getContext(), ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getContext(), ConnectionService.class, null);
 		tracker.open();
 		try
 		{
