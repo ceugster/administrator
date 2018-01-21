@@ -11,7 +11,7 @@ import ch.eugster.events.persistence.model.AddressSalutation;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
 
-public class AddressGroupMemberMap extends AbstractDataMap implements Comparable<AddressGroupMemberMap>
+public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 {
 	protected AddressGroupMemberMap() {
 		super();
@@ -19,28 +19,36 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 
 	public AddressGroupMemberMap(final AddressGroupMember member, boolean isGroup)
 	{
+//		if (member.isValidLinkMember() && member.getLink().getPerson().getLastname().equals("Amsler") && member.getLink().getPerson().getFirstname().equals("Ursula"))
+//		{
+//			System.out.println();
+//		}
+//		if (member.isValidAddressMember() && member.getAddress().getAddress().equals("Platz 10") && member.getAddress().getCity().equals("Herisau"))
+//		{
+//			System.out.println();
+//		}
 		isGroup = isGroup(member, isGroup);
 		for (Key key : Key.values())
 		{
 			this.setProperty(key.getKey(), key.getValue(member, isGroup));
 		}
 		this.setProperties(new AddressGroupMap(member.getAddressGroup()).getProperties());
-		if (member.getLink() == null)
+		if (member.isValidAddressMember())
 		{
-			if (member.getAddress().getValidLinks().size() == 1)
-			{
-				this.setProperties(new LinkMap(member.getAddress().getValidLinks().iterator().next()).getProperties());
-			}
-			else
-			{
+//			if (member.getAddress().getValidLinks().size() == 1)
+//			{
+//				this.setProperties(new LinkMap(member.getAddress().getValidLinks().iterator().next()).getProperties());
+//			}
+//			else
+//			{
 				this.setProperties(new AddressMap(member.getAddress(), isGroup).getProperties());
-			}
+//			}
 		}
-		else if (isGroup && member.getAddress().getValidLinks().size() > 1)
+		else if (isGroup && member.isValidLinkMember() && member.getLink().getAddress().getValidLinks().size() > 1)
 		{
-			this.setProperties(new AddressMap(member.getAddress(), isGroup).getProperties());
+			this.setProperties(new AddressMap(member.getLink().getAddress(), isGroup).getProperties());
 		}
-		else
+		else if (member.isValidLinkMember())
 		{
 			this.setProperties(new LinkMap(member.getLink()).getProperties());
 		}
@@ -49,21 +57,20 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 	private boolean isGroup(AddressGroupMember member, boolean isGroup)
 	{
 		if (!isGroup) return false;
-		List<AddressGroupMember> ms = member.getAddressGroup().getAddressGroupMembers();
-		for (AddressGroupMember m : ms)
+		if (member.isValidAddressMember())
 		{
-			if (!m.isDeleted() && m.getAddressGroup().getId().equals(member.getAddressGroup().getId()) && !m.getId().equals(member.getId()) && m.getAddress().getId().equals(member.getAddress().getId()))
-			{
-				return true;
-			}
+			return true;
 		}
-		List<LinkPersonAddress> links = member.getAddress().getValidLinks();
-		for (LinkPersonAddress link : links)
+		List<AddressGroupMember> ms = member.getAddressGroup().getAddressGroupMembers();
+		if (member.isValidLinkMember())
 		{
-			ms = link.getAddressGroupMembers();
 			for (AddressGroupMember m : ms)
 			{
-				if (!m.isDeleted() && m.getAddressGroup().getId().equals(member.getAddressGroup().getId()) && !m.getId().equals(member.getId()) && m.getAddress().getId().equals(member.getAddress().getId()))
+				if (m.isValidAddressMember() && m.getAddress().getId().equals(member.getLink().getAddress().getId()))
+				{
+					return true;
+				}
+				else if (m.isValidLinkMember() && !m.getLink().getId().equals(member.getLink().getId()) && m.getLink().getAddress().getId().equals(member.getLink().getAddress().getId()))
 				{
 					return true;
 				}
@@ -72,9 +79,15 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 		return false;
 	}
 
+	@Override
+	protected DataMapKey[] getKeys() 
+	{
+		return Key.values();
+	}
+
 	public String getId()
 	{
-		return this.getProperty(Key.TYPE.getKey()) + this.getProperty(Key.ID.getKey());
+		return this.getProperty(Key.ID.getKey());
 	}
 
 	protected void printReferences(Writer writer)
@@ -92,7 +105,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 
 	public enum Key implements DataMapKey
 	{
-		ID, TYPE, ANOTHER_LINE, SALUTATION, POLITE, MAILING_ADDRESS;
+		ID, ANOTHER_LINE, SALUTATION, POLITE, MAILING_ADDRESS;
 
 		@Override
 		public String getDescription()
@@ -102,10 +115,6 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 				case ID:
 				{
 					return "Id";
-				}
-				case TYPE:
-				{
-					return "Typ";
 				}
 				case ANOTHER_LINE:
 				{
@@ -139,10 +148,6 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 				{
 					return "address_group_member_id";
 				}
-				case TYPE:
-				{
-					return "address_group_member_type";
-				}
 				case ANOTHER_LINE:
 				{
 					return "address_group_member_another_line";
@@ -175,10 +180,10 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 				{
 					return "Id";
 				}
-				case TYPE:
-				{
-					return "Typ";
-				}
+//				case TYPE:
+//				{
+//					return "Typ";
+//				}
 				case ANOTHER_LINE:
 				{
 					return "Zusatzzeile";
@@ -208,102 +213,48 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 			{
 				case ID:
 				{
-					if (member.getLink() == null)
+					if (member.isValidAddressMember())
 					{
-						if (member.getAddress().getValidLinks().size() == 1)
-						{
-							return member.getAddress().getValidLinks().iterator().next().getId().toString();
-						}
-						else
-						{
-							return member.getAddress().getId().toString();
-						}
+						return "A" + member.getAddress().getId().toString();
+					}
+					else if (isGroup)
+					{
+						return "A" + member.getLink().getAddress().getId().toString();
+					}
+					else if (member.isValidLinkMember())
+					{
+						return "P" + member.getLink().getPerson().getId().toString();
 					}
 					else
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
-						{
-							return member.getAddress().getId().toString();
-						}
-						else
-						{
-							return member.getLink().getId().toString();
-						}
-					}
-				}
-				case TYPE:
-				{
-					
-					if (member.getLink() == null)
-					{
-						if (member.getAddress().getValidLinks().size() == 1)
-						{
-							return "P";
-						}
-						else
-						{
-							return "A";
-						}
-					}
-					else
-					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
-						{
-							return "A";
-						}
-						else
-						{
-							return "P";
-						}
+						return "";
 					}
 				}
 				case ANOTHER_LINE:
 				{
 					String anotherLine = "";
-					if (member.getLink() == null)
+					if (member.isValidAddressMember())
 					{
-						if (member.getAddress().getValidLinks().size() == 1)
-						{
-							anotherLine = member.getAddress().getValidLinks().iterator().next().getAddress().getAnotherLine();
-						}
-						else
-						{
-							anotherLine = member.getAddress().getAnotherLine();
-						}
+						anotherLine = member.getAddress().getAnotherLine();
 					}
-					else
+					else if (member.isValidLinkMember())
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
-						{
-							anotherLine = member.getAddress().getAnotherLine();
-						}
-						else
-						{
-							anotherLine = member.getLink().getAddress().getAnotherLine();
-						}
+						anotherLine = member.getLink().getAddress().getAnotherLine();
 					}
 					return anotherLine;
 				}
 				case SALUTATION:
 				{
-					if (member.getLink() == null)
+					if (member.isValidAddressMember())
 					{
-						if (member.getAddress().getValidLinks().size() == 1)
-						{
-							Person person = member.getAddress().getValidLinks().iterator().next().getPerson();
-							return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
-						}
-						else
-						{
-							return member.getAddress().getSalutation() == null ? "" : member.getAddress().getSalutation()
+						return member.getAddress().getSalutation() == null ? "" : member.getAddress().getSalutation()
 									.getSalutation();
-						}
 					}
-					else
+					else if (member.isValidLinkMember())
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
+						if (isGroup && member.getLink().getAddress().getValidLinks().size() > 1)
 						{
-							return member.getAddress().getSalutation() == null ? "" : member.getAddress().getSalutation()
+							return member.getLink().getAddress().getSalutation() == null ? "" : member.getLink().getAddress().getSalutation()
 								.getSalutation();
 						}
 						else
@@ -316,29 +267,29 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 				case POLITE:
 				{
 					String polite = null;
-					if (member.getLink() == null)
+					if (member.isValidAddressMember())
 					{
-						if (member.getAddress().getValidLinks().size() == 1)
-						{
-							Person person = member.getAddress().getValidLinks().iterator().next().getPerson();
-							polite = person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
-									.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
-						}
-						else
-						{
+//						if (member.getAddress().getValidLinks().size() == 1)
+//						{
+//							Person person = member.getAddress().getValidLinks().iterator().next().getPerson();
+//							polite = person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
+//									.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
+//						}
+//						else
+//						{
 							AddressSalutation salutation = member.getAddress().getSalutation();
 							polite = salutation == null ? "" : salutation.getPolite();
 							if (polite.isEmpty())
 							{
 								polite = "Sehr geehrte Damen und Herren";
 							}
-						}
+//						}
 					}
-					else
+					else if (member.isValidLinkMember())
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
+						if (isGroup && member.getLink().getAddress().getValidLinks().size() > 1)
 						{
-							AddressSalutation salutation = member.getAddress().getSalutation();
+							AddressSalutation salutation = member.getLink().getAddress().getSalutation();
 							polite = salutation == null ? "" : salutation.getPolite();
 							if (polite.isEmpty())
 							{
@@ -356,7 +307,7 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 				}
 				case MAILING_ADDRESS:
 				{
-					if (member.getLink() == null)
+					if (member.isValidAddressMember())
 					{
 						if (member.getAddress().getValidLinks().size() == 1)
 						{
@@ -368,11 +319,11 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 							return AddressFormatter.getInstance().formatAddressLabel(member.getAddress());
 						}
 					}
-					else
+					else if (member.isValidLinkMember())
 					{
-						if (member.getLink().isDeleted() || member.getLink().getPerson().isDeleted() || (isGroup && member.getAddress().getValidLinks().size() > 1))
+						if (isGroup && member.getLink().getAddress().getValidLinks().size() > 1)
 						{
-							return AddressFormatter.getInstance().formatAddressLabel(member.getAddress());
+							return AddressFormatter.getInstance().formatAddressLabel(member.getLink().getAddress());
 						}
 						else
 						{
@@ -388,17 +339,4 @@ public class AddressGroupMemberMap extends AbstractDataMap implements Comparable
 			}
 		}
 	}
-
-	@Override
-	public int compareTo(AddressGroupMemberMap other)
-	{
-		return 0;
-	}
-
-	@Override
-	protected DataMapKey[] getKeys() 
-	{
-		return Key.values();
-	}
-
 }

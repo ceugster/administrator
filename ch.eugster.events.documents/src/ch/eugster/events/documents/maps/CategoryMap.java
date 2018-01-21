@@ -2,7 +2,7 @@ package ch.eugster.events.documents.maps;
 
 import ch.eugster.events.persistence.model.Category;
 
-public class CategoryMap extends AbstractDataMap
+public class CategoryMap extends AbstractDataMap<Category>
 {
 	protected CategoryMap() {
 		super();

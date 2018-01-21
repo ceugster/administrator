@@ -8,7 +8,7 @@ import java.util.Locale;
 import ch.eugster.events.persistence.model.BookingType;
 import ch.eugster.events.persistence.model.Membership;
 
-public class BookingTypeMap extends AbstractDataMap
+public class BookingTypeMap extends AbstractDataMap<BookingType>
 {
 	private static NumberFormat amountFormatter;
 
@@ -29,8 +29,6 @@ public class BookingTypeMap extends AbstractDataMap
 		{
 			setProperty(key.getKey(), key.getValue(bookingType));
 		}
-		// setProperties(new
-		// CourseMap(bookingType.getCourse()).getProperties());
 	}
 
 	protected BookingTypeMap() {
@@ -39,7 +37,7 @@ public class BookingTypeMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		CODE, NAME, ANNULATION_CHARGE, MAX_AGE, MEMBERSHIP, PRICE;
+		CODE, NAME, ANNULATION_CHARGE, MAX_AGE, MEMBERSHIP, PRICE, PARTICIPANT_COUNT;
 
 		@Override
 		public String getDescription()
@@ -56,7 +54,7 @@ public class BookingTypeMap extends AbstractDataMap
 				}
 				case ANNULATION_CHARGE:
 				{
-					return "Annulationsgebühren";
+					return "Annullationsgebühren";
 				}
 				case MAX_AGE:
 				{
@@ -69,6 +67,10 @@ public class BookingTypeMap extends AbstractDataMap
 				case PRICE:
 				{
 					return "Preis";
+				}
+				case PARTICIPANT_COUNT:
+				{
+					return "Anzahl";
 				}
 				default:
 				{
@@ -106,6 +108,10 @@ public class BookingTypeMap extends AbstractDataMap
 				{
 					return "booking_type_price";
 				}
+				case PARTICIPANT_COUNT:
+				{
+					return "count";
+				}
 				default:
 				{
 					throw new RuntimeException("Invalid key");
@@ -128,7 +134,7 @@ public class BookingTypeMap extends AbstractDataMap
 				}
 				case ANNULATION_CHARGE:
 				{
-					return "Annulationsgebühren";
+					return "Annullationsgebühren";
 				}
 				case MAX_AGE:
 				{
@@ -141,6 +147,10 @@ public class BookingTypeMap extends AbstractDataMap
 				case PRICE:
 				{
 					return "Preis";
+				}
+				case PARTICIPANT_COUNT:
+				{
+					return "Anzahl";
 				}
 				default:
 				{
@@ -182,6 +192,10 @@ public class BookingTypeMap extends AbstractDataMap
 				case PRICE:
 				{
 					return amountFormatter.format(bookingType.getPrice());
+				}
+				case PARTICIPANT_COUNT:
+				{
+					return integerFormatter.format(bookingType.getCourse().getParticipantsCount(bookingType));
 				}
 				default:
 				{
