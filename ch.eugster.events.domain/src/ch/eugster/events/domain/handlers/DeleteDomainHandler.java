@@ -18,17 +18,17 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class DeleteDomainHandler extends AbstractHandler
 {
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private ConnectionService connectionService;
 
 	public DeleteDomainHandler()
 	{
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
 		{
 			@Override
-			public Object addingService(final ServiceReference reference)
+			public ConnectionService addingService(final ServiceReference<ConnectionService> reference)
 			{
 				connectionService = (ConnectionService) super.addingService(reference);
 				setBaseEnabled(connectionService != null);
@@ -36,7 +36,7 @@ public class DeleteDomainHandler extends AbstractHandler
 			}
 
 			@Override
-			public void removedService(final ServiceReference reference, final Object service)
+			public void removedService(final ServiceReference<ConnectionService> reference, final ConnectionService service)
 			{
 				super.removedService(reference, service);
 				setBaseEnabled(false);

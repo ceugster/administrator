@@ -98,7 +98,7 @@ public class OdfDomPreferencePage extends FieldEditorPreferencePage implements I
 	@Override
 	public void init(final IWorkbench workbench)
 	{
-		IPreferenceStore store = new ScopedPreferenceStore(new InstanceScope(), Activator.getDefault().getBundle()
+		IPreferenceStore store = new ScopedPreferenceStore(InstanceScope.INSTANCE, Activator.getDefault().getBundle()
 				.getSymbolicName());
 		this.setPreferenceStore(store);
 		this.setDescription("Einstellungen Open Document Format");

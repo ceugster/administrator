@@ -40,7 +40,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 		this.setHeader(sheet, timeFormat.format(Calendar.getInstance().getTime()), Header.RIGHT);
 	}
 
-	private void addRow(final DataMapKey[] keys, final DataMap dataMap, final Sheet sheet, final int rowIndex,
+	private void addRow(final DataMapKey[] keys, final DataMap<?> dataMap, final Sheet sheet, final int rowIndex,
 			final CellStyle style, final Font font)
 	{
 		Row row = this.createRow(sheet, (short) rowIndex);
@@ -84,7 +84,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 //	}
 
 	@Override
-	public IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap[] maps)
+	public IStatus buildDocument(IProgressMonitor monitor, final DataMapKey[] keys, final DataMap<?>[] maps)
 	{
 		IStatus status = Status.OK_STATUS;
 		try
@@ -98,7 +98,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 
 			int counter = 0;
 			Sheet sheet = null;
-			for (DataMap map : maps)
+			for (DataMap<?> map : maps)
 			{
 				if (counter == 0)
 				{
@@ -111,9 +111,9 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 				this.addRow(keys, map, sheet, ++counter, style, normal);
 				monitor.worked(1);
 			}
-			this.packColumns(sheet, 0, keys.length);
 			if (maps.length > 0)
 			{
+				this.packColumns(sheet, 0, keys.length);
 				this.showDocument(workbook);
 			}
 		}
@@ -130,7 +130,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 	}
 
 	@Override
-	public IStatus buildDocument(IProgressMonitor monitor, File file, DataMap[] map)
+	public IStatus buildDocument(IProgressMonitor monitor, File file, DataMap<?>[] map)
 	{
 		return Status.CANCEL_STATUS;
 	}
@@ -142,7 +142,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 //	}
 
 	@Override
-	public IStatus buildDocument(IProgressMonitor monitor, final File file, final DataMap map)
+	public IStatus buildDocument(IProgressMonitor monitor, final File file, final DataMap<?> map)
 	{
 		return Status.CANCEL_STATUS;
 	}
@@ -238,7 +238,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 	{
 		IStatus status = Status.OK_STATUS;
 
-		IPreferenceStore store = new ScopedPreferenceStore(new InstanceScope(), Activator.getDefault().getBundle()
+		IPreferenceStore store = new ScopedPreferenceStore(InstanceScope.INSTANCE, Activator.getDefault().getBundle()
 				.getSymbolicName());
 		String path = store.getString(PreferenceConstants.KEY_SPREADSHEET_PATH);
 
