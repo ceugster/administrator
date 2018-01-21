@@ -5,7 +5,7 @@ Bundle-SymbolicName: ch.eugster.events.member;singleton:=true
 Bundle-Version: 1.0.2.qualifier
 Bundle-Activator: ch.eugster.events.member.Activator
 Bundle-Vendor: Christian Eugster
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.eugster.events.persistence.events,
  ch.eugster.events.persistence.exceptions,
@@ -41,3 +41,9 @@ Import-Package: ch.eugster.events.persistence.events,
  org.eclipse.ui.plugin,
  org.osgi.framework;version="1.5.0",
  org.osgi.util.tracker;version="1.4.0"
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
+ org.eclipse.core.expressions;bundle-version="3.4.400",
+ org.eclipse.ui;bundle-version="3.8.2",
+ org.eclipse.ui.forms;bundle-version="3.5.200",
+ ch.eugster.poi;bundle-version="1.0.0",
+ org.eclipse.persistence.jpa;bundle-version="2.1.3"

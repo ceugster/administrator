@@ -4,6 +4,11 @@ ch.eugster.events.country/bin
 ch.eugster.events.course.reporting/bin
 ch.eugster.events.documents/bin
 ch.eugster.events.domain/bin
+ch.eugster.events.donation/bin
+ch.eugster.events.guide/bin
+ch.eugster.events.import/bin
+ch.eugster.events.member/bin
+ch.eugster.events.merge/bin
 ch.eugster.events.persistence/bin
 ch.eugster.events.report.rhino/bin
 ch.eugster.events.report/bin

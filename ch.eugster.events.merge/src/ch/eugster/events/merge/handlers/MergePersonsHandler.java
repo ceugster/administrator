@@ -1,16 +1,12 @@
 package ch.eugster.events.merge.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.TableItem;
-import org.osgi.util.tracker.ServiceTracker;
 
-import ch.eugster.events.merge.Activator;
 import ch.eugster.events.merge.views.PersonView;
 import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.model.Donation;
@@ -19,9 +15,9 @@ import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Member;
 import ch.eugster.events.persistence.model.Participant;
 import ch.eugster.events.persistence.queries.LinkPersonAddressQuery;
-import ch.eugster.events.persistence.service.ConnectionService;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 
-public class MergePersonsHandler extends AbstractHandler implements IHandler
+public class MergePersonsHandler extends ConnectionServiceDependentAbstractHandler
 {
 
 	@Override
@@ -87,7 +83,7 @@ public class MergePersonsHandler extends AbstractHandler implements IHandler
 							if (!exists(selectedLink, addressGroupMember))
 							{
 								link.removeAddressGroupMember(addressGroupMember);
-								addressGroupMember.setParent(selectedLink, selectedLink.getAddress());
+								addressGroupMember.setLink(selectedLink);
 								selectedLink.addAddressGroupMember(addressGroupMember);
 							}
 						}
@@ -118,20 +114,15 @@ public class MergePersonsHandler extends AbstractHandler implements IHandler
 							selectedLink.addParticipant(participant);
 						}
 
-						ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle()
-								.getBundleContext(), ConnectionService.class.getName(), null);
-						tracker.open();
-						ConnectionService service = (ConnectionService) tracker.getService();
-						if (service != null)
+						if (connectionService != null)
 						{
-							LinkPersonAddressQuery query = (LinkPersonAddressQuery) service
+							LinkPersonAddressQuery query = (LinkPersonAddressQuery) connectionService
 									.getQuery(LinkPersonAddress.class);
 							link.setDeleted(true);
 							link.getPerson().setDeleted(true);
 							link = query.merge(link);
 							selectedLink = query.merge(selectedLink);
 						}
-						tracker.close();
 					}
 				}
 			}

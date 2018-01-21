@@ -834,7 +834,6 @@ ch.eugster.events.donation.feature/build.properties -text
 ch.eugster.events.donation.feature/feature.xml -text
 ch.eugster.events.donation/.classpath -text
 ch.eugster.events.donation/.project -text
-ch.eugster.events.donation/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.donation/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.donation/META-INF/MANIFEST.MF -text
 ch.eugster.events.donation/build.properties -text
@@ -855,10 +854,22 @@ ch.eugster.events.donation/icons/save_16.png -text
 ch.eugster.events.donation/icons/save_grey_16.png -text
 ch.eugster.events.donation/plugin.xml -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/Activator.java -text
-ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationAddressListDialog.java -text
+ch.eugster.events.donation/src/ch/eugster/events/donation/DomainContentProvider.java -text svneol=unset#text/plain
+ch.eugster.events.donation/src/ch/eugster/events/donation/DomainFilter.java -text svneol=unset#text/plain
+ch.eugster.events.donation/src/ch/eugster/events/donation/DomainLabelProvider.java -text svneol=unset#text/plain
+ch.eugster.events.donation/src/ch/eugster/events/donation/PurposeContentProvider.java -text svneol=unset#text/plain
+ch.eugster.events.donation/src/ch/eugster/events/donation/PurposeFilter.java -text svneol=unset#text/plain
+ch.eugster.events.donation/src/ch/eugster/events/donation/PurposeLabelProvider.java -text svneol=unset#text/plain
+ch.eugster.events.donation/src/ch/eugster/events/donation/YearContentProvider.java -text svneol=unset#text/plain
+ch.eugster.events.donation/src/ch/eugster/events/donation/YearLabelProvider.java -text svneol=unset#text/plain
+ch.eugster.events.donation/src/ch/eugster/events/donation/YearSorter.java -text svneol=unset#text/plain
 ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationConfirmationDialog.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationDialog.java -text
-ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationListDialog.java -text
+ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationListDialog.java -text svneol=unset#text/plain
+ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonatorListDialog.java -text
+ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/SelectedDonationListDialog.java -text
+ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/SelectedDonationsAddressListDialog.java -text svneol=unset#text/plain
+ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/SelectedDonatorListDialog.java -text svneol=unset#text/plain
 ch.eugster.events.donation/src/ch/eugster/events/donation/editors/DonationDomainContentProvider.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/editors/DonationDomainLabelProvider.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/editors/DonationDomainSorter.java -text
@@ -935,7 +946,6 @@ ch.eugster.events.import.feature/build.properties -text
 ch.eugster.events.import.feature/feature.xml -text
 ch.eugster.events.import/.classpath -text
 ch.eugster.events.import/.project -text
-ch.eugster.events.import/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.import/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.import/META-INF/MANIFEST.MF -text
 ch.eugster.events.import/build.properties -text
@@ -955,7 +965,6 @@ ch.eugster.events.member.feature/build.properties -text
 ch.eugster.events.member.feature/feature.xml -text
 ch.eugster.events.member/.classpath -text
 ch.eugster.events.member/.project -text
-ch.eugster.events.member/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.member/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.member/META-INF/MANIFEST.MF -text
 ch.eugster.events.member/build.properties -text
@@ -972,6 +981,7 @@ ch.eugster.events.member/icons/reset_grey_16.png -text
 ch.eugster.events.member/icons/save_16.png -text
 ch.eugster.events.member/icons/save_grey_16.png -text
 ch.eugster.events.member/icons/synchronize.png -text
+ch.eugster.events.member/icons/synchronize_48.jpg -text
 ch.eugster.events.member/plugin.xml -text
 ch.eugster.events.member/src/ch/eugster/events/member/Activator.java -text
 ch.eugster.events.member/src/ch/eugster/events/member/dialog/MemberDialog.java -text
@@ -993,12 +1003,12 @@ ch.eugster.events.member/src/ch/eugster/events/member/views/MembershipSorter.jav
 ch.eugster.events.member/src/ch/eugster/events/member/views/MembershipView.java -text
 ch.eugster.events.member/src/ch/eugster/events/member/wizards/ImportMemberSelectSourceFileWizardPage.java -text
 ch.eugster.events.member/src/ch/eugster/events/member/wizards/ImportMemberWizard.java -text
+ch.eugster.events.member/src/ch/eugster/events/member/wizards/SelectPersonWizardPage.java -text svneol=unset#text/plain
 ch.eugster.events.merge.feature/.project -text
 ch.eugster.events.merge.feature/build.properties -text
 ch.eugster.events.merge.feature/feature.xml -text
 ch.eugster.events.merge/.classpath -text
 ch.eugster.events.merge/.project -text
-ch.eugster.events.merge/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.merge/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.merge/META-INF/MANIFEST.MF -text
 ch.eugster.events.merge/build.properties -text

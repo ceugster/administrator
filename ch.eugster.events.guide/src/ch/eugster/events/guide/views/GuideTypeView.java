@@ -44,7 +44,7 @@ public class GuideTypeView extends AbstractEntityView implements IDoubleClickLis
 
 	private TableViewer viewer;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private IContextActivation ctxActivation;
 
@@ -133,11 +133,11 @@ public class GuideTypeView extends AbstractEntityView implements IDoubleClickLis
 
 		this.getSite().setSelectionProvider(this.viewer);
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public ConnectionService addingService(ServiceReference<ConnectionService> reference)
 			{
 				final ConnectionService connectionService = (ConnectionService) super.addingService(reference);
 				Display display = Display.getCurrent();
@@ -158,7 +158,7 @@ public class GuideTypeView extends AbstractEntityView implements IDoubleClickLis
 			}
 
 			@Override
-			public void removedService(ServiceReference reference, Object service)
+			public void removedService(ServiceReference<ConnectionService> reference, ConnectionService service)
 			{
 				Display display = Display.getCurrent();
 				if (display == null)

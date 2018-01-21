@@ -1,5 +1,7 @@
 package ch.eugster.events.member;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -45,6 +47,13 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
+	}
+
+	@Override
+	protected void initializeImageRegistry(final ImageRegistry imageRegistry)
+	{
+		super.initializeImageRegistry(imageRegistry);
+		imageRegistry.put("SYNCHRONIZE", ImageDescriptor.createFromURL(getBundle().getEntry("/icons/synchronize_48.jpg")));
 	}
 
 }

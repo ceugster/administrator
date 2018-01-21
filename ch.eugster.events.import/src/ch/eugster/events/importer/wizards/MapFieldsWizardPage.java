@@ -92,7 +92,7 @@ public class MapFieldsWizardPage extends WizardPage implements IPageChangedListe
 				Row row = wizard.getSheet().getRow(wizard.getSheet().getFirstRowNum());
 				if (this.membershipQuery == null)
 				{
-					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class.getName(), null);
+					ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class, null);
 					tracker.open();
 					try
 					{

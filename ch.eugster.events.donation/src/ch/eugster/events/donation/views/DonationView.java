@@ -6,10 +6,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Currency;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -18,7 +16,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -27,7 +24,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -60,8 +56,20 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.donation.Activator;
-import ch.eugster.events.donation.dialogs.DonationAddressListDialog;
+import ch.eugster.events.donation.DomainContentProvider;
+import ch.eugster.events.donation.DomainFilter;
+import ch.eugster.events.donation.DomainLabelProvider;
+import ch.eugster.events.donation.PurposeContentProvider;
+import ch.eugster.events.donation.PurposeFilter;
+import ch.eugster.events.donation.PurposeLabelProvider;
+import ch.eugster.events.donation.YearContentProvider;
+import ch.eugster.events.donation.YearLabelProvider;
+import ch.eugster.events.donation.YearSorter;
+import ch.eugster.events.donation.dialogs.DonatorListDialog;
 import ch.eugster.events.donation.dialogs.DonationConfirmationDialog;
+import ch.eugster.events.donation.dialogs.DonationListDialog;
+import ch.eugster.events.donation.dialogs.SelectedDonatorListDialog;
+import ch.eugster.events.donation.dialogs.SelectedDonationListDialog;
 import ch.eugster.events.donation.editors.DonationEditor;
 import ch.eugster.events.donation.editors.DonationEditorInput;
 import ch.eugster.events.persistence.events.EntityMediator;
@@ -77,7 +85,6 @@ import ch.eugster.events.persistence.model.DonationYear;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.queries.DomainQuery;
 import ch.eugster.events.persistence.queries.DonationPurposeQuery;
-import ch.eugster.events.persistence.queries.DonationQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 import ch.eugster.events.ui.views.AbstractEntityView;
 
@@ -89,9 +96,9 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 
 	private Button printConfirmation;
 	
-	private Button generateList;
+	private Button generateDonationList;
 
-	private Button buildList;
+	private Button generateAddressList;
 
 	private ComboViewer purposeViewer;
 
@@ -109,7 +116,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 
 	private static NumberFormat nf;
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private ConnectionService connectionService;
 
@@ -138,6 +145,9 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 	@Override
 	public void createPartControl(final Composite parent)
 	{
+		final PurposeFilter purposeFilter = new PurposeFilter();
+		final DomainFilter domainFilter = new DomainFilter();
+
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 
@@ -160,43 +170,6 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		yearViewer.setLabelProvider(new YearLabelProvider());
 		yearViewer.setSorter(new YearSorter());
 
-		// buildList = new Button(composite, SWT.PUSH);
-		// buildList.setImage(Activator.getDefault().getImageRegistry().get("LIST"));
-		// buildList.setLayoutData(new GridData());
-		// buildList.addSelectionListener(new SelectionListener()
-		// {
-		// @Override
-		// public void widgetSelected(SelectionEvent e)
-		// {
-		// IStructuredSelection ssel = (IStructuredSelection)
-		// yearViewer.getSelection();
-		// DonationYear year = (DonationYear) ssel.getFirstElement();
-		// ssel = (IStructuredSelection) purposeViewer.getSelection();
-		// DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
-		// if (purpose != null)
-		// {
-		// purpose = purpose.getId() == null ? null : purpose;
-		// }
-		// ssel = (IStructuredSelection) domainViewer.getSelection();
-		// Domain domain = (Domain) ssel.getFirstElement();
-		// if (domain != null)
-		// {
-		// domain = domain.getName().equals("Alle") ? null : domain;
-		// }
-		//
-		// DonationAddressListDialog dialog = new DonationAddressListDialog(
-		// DonationView.this.getSite().getShell(), year, purpose, domain,
-		// personText.getText());
-		// dialog.open();
-		// }
-		//
-		// @Override
-		// public void widgetDefaultSelected(SelectionEvent e)
-		// {
-		// widgetSelected(e);
-		// }
-		// });
-
 		label = new Label(selectorComposite, SWT.None);
 		label.setText("Zweckfilter");
 		label.setLayoutData(new GridData());
@@ -212,6 +185,20 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		purposeViewer.setContentProvider(new PurposeContentProvider(allPurposes));
 		purposeViewer.setLabelProvider(new PurposeLabelProvider());
 		purposeViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
+		purposeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) 
+			{
+				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
+				DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
+				purpose = purpose == null || purpose.getId() == null ? null : purpose;
+				purposeFilter.setSelectedPurpose(purpose);
+				settings.put("donation.view.purpose.id", purpose == null ? Long.valueOf(0L) : (purpose.getId() == null ? Long.valueOf(0L) : purpose.getId()));
+				donationViewer.refresh();
+				setDonationCount(donationViewer.getTable().getItemCount());
+			}
+		});
 
 		label = new Label(selectorComposite, SWT.None);
 		label.setText("Domänenfilter");
@@ -225,20 +212,39 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		combo.setCursor(this.getSite().getShell().getDisplay().getSystemCursor(Cursor.DEFAULT_CURSOR));
 
 		allAndEmptyDomains.add(Domain.newInstance("Alle"));
-		allAndEmptyDomains.add(Domain.newInstance("Keine"));
+		allAndEmptyDomains.add(Domain.newInstance("Ohne Domäne"));
 
 		domainViewer = new ComboViewer(combo);
 		domainViewer.setContentProvider(new DomainContentProvider(allAndEmptyDomains));
 		domainViewer.setLabelProvider(new DomainLabelProvider());
 		domainViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
 		domainViewer.setInput(connectionService);
-
+		domainViewer.addSelectionChangedListener(new ISelectionChangedListener() 
+		{
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) 
+			{
+				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
+				Domain domain = (Domain) ssel.getFirstElement();
+				if (domain == null || domain.getName().equals("Alle")) 
+				{
+					domain = null;
+				}
+				Long domainId = domain == null ? Long.valueOf(0L) : (domain.getId() == null ? Long.valueOf(0L) : domain.getId());
+				settings.put("donation.view.domain.id", domainId);
+				domainFilter.setSelectedDomain(domain);
+				donationViewer.refresh();
+				setDonationCount(donationViewer.getTable().getItemCount());
+			}
+		});
+		
 		label = new Label(selectorComposite, SWT.None);
 		label.setText("Personenfilter");
 		label.setLayoutData(new GridData());
 
 		personText = new Text(selectorComposite, SWT.SINGLE | SWT.BORDER);
 		personText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		final PersonFilter personFilter = new PersonFilter(personText);
 
 		clearText = new Button(selectorComposite, SWT.PUSH);
 		clearText.setLayoutData(new GridData());
@@ -266,10 +272,6 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		table.setHeaderVisible(true);
 
 		final DonationSorter sorter = new DonationSorter();
-
-		PersonFilter personFilter = new PersonFilter(personText);
-		PurposeFilter purposeFilter = new PurposeFilter();
-		DomainFilter domainFilter = new DomainFilter();
 
 		donationViewer = new TableViewer(table);
 		donationViewer.setContentProvider(new DonationTableViewerContentProvider());
@@ -376,7 +378,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 			}
 
 		});
-		this.configureColumn("Domäne", order++, tableViewerColumn.getColumn(), sorter);
+		this.configureColumn("Ort", order++, tableViewerColumn.getColumn(), sorter);
 
 		tableViewerColumn = new TableViewerColumn(donationViewer, SWT.LEFT);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
@@ -392,7 +394,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 			}
 
 		});
-		this.configureColumn("Ort", order++, tableViewerColumn.getColumn(), sorter);
+		this.configureColumn("Domäne", order++, tableViewerColumn.getColumn(), sorter);
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 3;
@@ -439,32 +441,73 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 			}
 		});
 
-		generateList = new Button(actionComposite, SWT.PUSH);
-		generateList.setImage(Activator.getDefault().getImageRegistry().get("LIST"));
-		generateList.setToolTipText("Liste exportieren");
-		generateList.setLayoutData(new GridData());
-		generateList.addSelectionListener(new SelectionListener()
+		generateDonationList = new Button(actionComposite, SWT.PUSH);
+		generateDonationList.setImage(Activator.getDefault().getImageRegistry().get("LIST"));
+		generateDonationList.setToolTipText("Spendenliste exportieren");
+		generateDonationList.setLayoutData(new GridData());
+		generateDonationList.addSelectionListener(new SelectionListener()
 		{
 			@Override
 			public void widgetSelected(SelectionEvent e)
 			{
-				IStructuredSelection ssel = (IStructuredSelection) yearViewer.getSelection();
-				DonationYear year = (DonationYear) ssel.getFirstElement();
-				ssel = (IStructuredSelection) purposeViewer.getSelection();
-				DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
-				if (purpose != null)
+				if (donationViewer.getSelection().isEmpty())
 				{
-					purpose = purpose.getId() == null ? null : purpose;
+					DonationYear[] years = ((YearContentProvider)yearViewer.getContentProvider()).getEntries();
+					IStructuredSelection ssel = (IStructuredSelection) yearViewer.getSelection();
+					DonationYear year = (DonationYear) ssel.getFirstElement();
+					DonationPurpose[] purposes = ((PurposeContentProvider)purposeViewer.getContentProvider()).getEntries();
+					ssel = (IStructuredSelection) purposeViewer.getSelection();
+					DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
+					Domain[] domains = ((DomainContentProvider)domainViewer.getContentProvider()).getEntries();
+					ssel = (IStructuredSelection) domainViewer.getSelection();
+					Domain domain = (Domain) ssel.getFirstElement();
+					DonationListDialog dialog = new DonationListDialog(DonationView.this.getSite()
+								.getShell(), connectionService, years, year, purposes, purpose, domains, domain, personText.getText());
+					dialog.open();
 				}
-				ssel = (IStructuredSelection) domainViewer.getSelection();
-				Domain domain = (Domain) ssel.getFirstElement();
-				if (domain != null)
+				else
 				{
-					domain = domain.getName().equals("Alle") ? null : domain;
+					SelectedDonationListDialog dialog = new SelectedDonationListDialog(DonationView.this.getSite().getShell(), (StructuredSelection) donationViewer.getSelection());
+					dialog.open();
 				}
-				DonationAddressListDialog dialog = new DonationAddressListDialog(DonationView.this.getSite()
-						.getShell(), year, purpose, domain, personText.getText());
-				dialog.open();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e)
+			{
+				widgetSelected(e);
+			}
+		});
+		
+		generateAddressList = new Button(actionComposite, SWT.PUSH);
+		generateAddressList.setImage(Activator.getDefault().getImageRegistry().get("LIST"));
+		generateAddressList.setToolTipText("Personenliste exportieren");
+		generateAddressList.setLayoutData(new GridData());
+		generateAddressList.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				if (donationViewer.getSelection().isEmpty())
+				{
+					DonationYear[] years = ((YearContentProvider)yearViewer.getContentProvider()).getEntries();
+					IStructuredSelection ssel = (IStructuredSelection) yearViewer.getSelection();
+					DonationYear year = (DonationYear) ssel.getFirstElement();
+					DonationPurpose[] purposes = ((PurposeContentProvider)purposeViewer.getContentProvider()).getEntries();
+					ssel = (IStructuredSelection) purposeViewer.getSelection();
+					DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
+					Domain[] domains = ((DomainContentProvider)domainViewer.getContentProvider()).getEntries();
+					ssel = (IStructuredSelection) domainViewer.getSelection();
+					Domain domain = (Domain) ssel.getFirstElement();
+					DonatorListDialog dialog = new DonatorListDialog(DonationView.this.getSite()
+								.getShell(), connectionService, years, year, purposes, purpose, domains, domain, personText.getText());
+					dialog.open();
+				}
+				else
+				{
+					SelectedDonatorListDialog dialog = new SelectedDonatorListDialog(DonationView.this.getSite().getShell(), (StructuredSelection) donationViewer.getSelection());
+					dialog.open();
+				}
 			}
 
 			@Override
@@ -477,8 +520,6 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		this.createContextMenu();
 
 		yearViewer.addSelectionChangedListener(this);
-		purposeViewer.addSelectionChangedListener(purposeFilter);
-		domainViewer.addSelectionChangedListener(domainFilter);
 		personText.addModifyListener(new ModifyListener()
 		{
 			@Override
@@ -492,11 +533,11 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 
 		this.getSite().setSelectionProvider(donationViewer);
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
 		{
 			@Override
-			public Object addingService(final ServiceReference reference)
+			public ConnectionService addingService(final ServiceReference<ConnectionService> reference)
 			{
 				connectionService = (ConnectionService) super.addingService(reference);
 				UIJob job = new UIJob("")
@@ -531,8 +572,12 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 							domainViewer.setSelection(new StructuredSelection(new Domain[] { domain }));
 						}
 						yearViewer.setInput(connectionService);
-						DonationYear year = new DonationYear(GregorianCalendar.getInstance().get(Calendar.YEAR));
-						yearViewer.setSelection(new StructuredSelection(new DonationYear[] { year }));
+						if (yearViewer.getCombo().getItemCount() > 0)
+						{
+							DonationYear year = (DonationYear) yearViewer.getElementAt(0);
+							yearViewer.setSelection(new StructuredSelection(new DonationYear[] { year }));
+						}
+						printConfirmation.setEnabled(!yearViewer.getSelection().isEmpty());
 						packColumns();
 						return Status.OK_STATUS;
 					}
@@ -542,7 +587,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 			}
 
 			@Override
-			public void removedService(final ServiceReference reference, final Object service)
+			public void removedService(final ServiceReference<ConnectionService> reference, final ConnectionService service)
 			{
 				connectionService = null;
 				Display display = Display.getCurrent();
@@ -756,131 +801,6 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		return donationViewer;
 	}
 
-	private class YearContentProvider extends ArrayContentProvider
-	{
-		@Override
-		public Object[] getElements(Object inputElement)
-		{
-			if (inputElement instanceof ConnectionService)
-			{
-				ConnectionService connectionService = (ConnectionService) inputElement;
-				DonationQuery query = (DonationQuery) connectionService.getQuery(Donation.class);
-				List<DonationYear> years = query.selectYears();
-				return years.toArray(new DonationYear[0]);
-			}
-			return new DonationYear[0];
-		}
-	}
-
-	private class YearLabelProvider extends LabelProvider
-	{
-		@Override
-		public String getText(Object element)
-		{
-			if (element instanceof DonationYear)
-			{
-				DonationYear donationYear = (DonationYear) element;
-				return Integer.toString(donationYear.getYear());
-			}
-			return "";
-		}
-
-	}
-
-	private class PurposeContentProvider extends ArrayContentProvider
-	{
-		private DonationPurpose allPurposes;
-
-		public PurposeContentProvider(DonationPurpose allPurposes)
-		{
-			this.allPurposes = allPurposes;
-		}
-
-		@Override
-		public Object[] getElements(Object inputElement)
-		{
-			if (inputElement instanceof ConnectionService)
-			{
-				List<DonationPurpose> purposes = new ArrayList<DonationPurpose>();
-				purposes.add(allPurposes);
-				ConnectionService connectionService = (ConnectionService) inputElement;
-				DonationPurposeQuery query = (DonationPurposeQuery) connectionService.getQuery(DonationPurpose.class);
-				purposes.addAll(query.selectAll());
-				return purposes.toArray(new DonationPurpose[0]);
-			}
-			return new DonationPurpose[0];
-		}
-	}
-
-	private class PurposeLabelProvider extends LabelProvider
-	{
-		@Override
-		public String getText(Object element)
-		{
-			if (element instanceof DonationPurpose)
-			{
-				DonationPurpose purpose = (DonationPurpose) element;
-				return purpose.getName();
-			}
-			return "";
-		}
-	}
-
-	private class DomainContentProvider extends ArrayContentProvider
-	{
-		private List<Domain> allAndEmptyDomains;
-
-		public DomainContentProvider(List<Domain> allAndEmptyDomains)
-		{
-			this.allAndEmptyDomains = allAndEmptyDomains;
-		}
-
-		@Override
-		public Object[] getElements(Object inputElement)
-		{
-			if (inputElement instanceof ConnectionService)
-			{
-				List<Domain> domains = new ArrayList<Domain>();
-				domains.addAll(allAndEmptyDomains);
-				ConnectionService connectionService = (ConnectionService) inputElement;
-				DomainQuery query = (DomainQuery) connectionService.getQuery(Domain.class);
-				domains.addAll(query.selectAll());
-				return domains.toArray(new Domain[0]);
-			}
-			return new Domain[0];
-		}
-	}
-
-	private class DomainLabelProvider extends LabelProvider
-	{
-		@Override
-		public String getText(Object element)
-		{
-			if (element instanceof Domain)
-			{
-				Domain domain = (Domain) element;
-				return domain.getName();
-			}
-			return "";
-		}
-	}
-
-	private class YearSorter extends ViewerSorter
-	{
-		@Override
-		public int compare(final Viewer viewer, final Object e1, final Object e2)
-		{
-			if (e1 instanceof DonationYear && e2 instanceof DonationYear)
-			{
-				DonationYear d1 = (DonationYear) e1;
-				DonationYear d2 = (DonationYear) e2;
-
-				return Integer.valueOf(d2.getYear()).compareTo(Integer.valueOf(d1.getYear()));
-			}
-			return 0;
-		}
-	}
-
 	private class DonationSorter extends ViewerSorter
 	{
 		private boolean asc = true;
@@ -1041,89 +961,6 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 				}
 			}
 			return false;
-		}
-	}
-
-	private class PurposeFilter extends ViewerFilter implements ISelectionChangedListener
-	{
-		private DonationPurpose purpose;
-
-		@Override
-		public boolean select(Viewer viewer, Object parentElement, Object element)
-		{
-			if (purpose == null)
-			{
-				return true;
-			}
-			if (element instanceof Donation)
-			{
-				Donation donation = (Donation) element;
-				return donation.getPurpose().getId().equals(purpose.getId());
-			}
-			return false;
-		}
-
-		@Override
-		public void selectionChanged(SelectionChangedEvent event)
-		{
-			if (event.getSelectionProvider().equals(purposeViewer))
-			{
-				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
-				DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
-				PurposeFilter.this.purpose = purpose == null || purpose.getId() == null ? null : purpose;
-			}
-			settings.put("donation.view.purpose.id", this.purpose == null ? Long.valueOf(0L)
-					: (this.purpose.getId() == null ? Long.valueOf(0L) : this.purpose.getId()));
-			donationViewer.refresh();
-			setDonationCount(donationViewer.getTable().getItemCount());
-		}
-
-	}
-
-	private class DomainFilter extends ViewerFilter implements ISelectionChangedListener
-	{
-		private Domain domain;
-
-		@Override
-		public boolean select(Viewer viewer, Object parentElement, Object element)
-		{
-			if (domain == null)
-			{
-				return true;
-			}
-			if (element instanceof Donation)
-			{
-				Donation donation = (Donation) element;
-				if (domain.getName().equals("Keine"))
-				{
-					return donation.getDomain() == null;
-				}
-				return donation.getDomain() != null && donation.getDomain().getId().equals(domain.getId());
-			}
-			return false;
-		}
-
-		@Override
-		public void selectionChanged(SelectionChangedEvent event)
-		{
-			if (event.getSelectionProvider().equals(domainViewer))
-			{
-				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
-				Domain domain = (Domain) ssel.getFirstElement();
-				if (domain == null || domain.getName().equals("Alle"))
-				{
-					this.domain = null;
-				}
-				else
-				{
-					this.domain = domain;
-				}
-				Long domainId = this.domain == null ? Long.valueOf(0L) : (this.domain.getId() == null ? Long
-						.valueOf(0L) : this.domain.getId());
-				settings.put("donation.view.domain.id", domainId);
-				donationViewer.refresh();
-				setDonationCount(donationViewer.getTable().getItemCount());
-			}
 		}
 	}
 }
