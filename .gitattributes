@@ -139,7 +139,7 @@ ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/AddressG
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/AddressGroupMemberView.java -text svneol=unset#text/plain
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/AddressGroupSorter.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/AddressGroupView.java -text
-ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/PersonAddressGroupMemberSorter.java -text
+ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/PersonAddressGroupMemberSorter.java -text svneol=unset#text/plain
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/PersonAddressGroupMemberTreeContentProvider.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/PersonAddressGroupMemberTreeLabelProvider.java -text
 ch.eugster.events.addressgroup/src/ch/eugster/events/addressgroup/views/PersonAddressGroupMemberView.java -text
