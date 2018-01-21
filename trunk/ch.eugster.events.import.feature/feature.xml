@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ch.eugster.events.importer.feature"
-      label="Import Feature"
+      label="Modul Mitgliederimport"
       version="1.0.0.qualifier"
       provider-name="Christian Eugster">
 
@@ -213,13 +213,13 @@ litigation.
    </license>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime" version="3.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui" version="3.6.2" match="greaterOrEqual"/>
       <import plugin="ch.eugster.poi" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.expressions" version="3.4.200" match="greaterOrEqual"/>
       <import plugin="ch.eugster.events.documents"/>
       <import plugin="ch.eugster.events.persistence"/>
       <import plugin="ch.eugster.events.ui"/>
+      <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.400" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.8.2" match="greaterOrEqual"/>
    </requires>
 
    <plugin

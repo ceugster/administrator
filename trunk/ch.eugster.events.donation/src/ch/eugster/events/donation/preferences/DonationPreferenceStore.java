@@ -9,7 +9,7 @@ public class DonationPreferenceStore extends ScopedPreferenceStore
 {
 	public DonationPreferenceStore()
 	{
-		super(new InstanceScope(), Activator.PLUGIN_ID);
+		super(InstanceScope.INSTANCE, Activator.PLUGIN_ID);
 	}
 
 	//	@Override

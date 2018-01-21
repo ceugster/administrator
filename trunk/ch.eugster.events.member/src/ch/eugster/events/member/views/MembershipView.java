@@ -2,8 +2,6 @@ package ch.eugster.events.member.views;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.CellLabelProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
@@ -40,7 +38,7 @@ public class MembershipView extends AbstractEntityView implements ISelectionList
 {
 	public static final String ID = "ch.eugster.events.member.membershipView";
 
-	private ServiceTracker connectionServiceTracker;
+	private ServiceTracker<ConnectionService, ConnectionService> connectionServiceTracker;
 
 	private TableViewer viewer;
 
@@ -69,16 +67,6 @@ public class MembershipView extends AbstractEntityView implements ISelectionList
 		this.viewer.setContentProvider(new MembershipContentProvider());
 		this.viewer.setSorter(new MembershipSorter());
 		this.viewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
-		this.viewer.addDoubleClickListener(new IDoubleClickListener()
-		{
-
-			@Override
-			public void doubleClick(DoubleClickEvent event)
-			{
-				// TODO Auto-generated method stub
-
-			}
-		});
 
 		TableViewerColumn tableViewerColumn = new TableViewerColumn(this.viewer, SWT.NONE);
 		tableViewerColumn.setLabelProvider(new CellLabelProvider()
@@ -118,11 +106,11 @@ public class MembershipView extends AbstractEntityView implements ISelectionList
 
 		this.getSite().setSelectionProvider(this.viewer);
 
-		connectionServiceTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class.getName(), null)
+		connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null)
 		{
 			@Override
-			public Object addingService(ServiceReference reference)
+			public ConnectionService addingService(ServiceReference<ConnectionService> reference)
 			{
 				final ConnectionService connectionService = (ConnectionService) super.addingService(reference);
 				Display display = Display.getCurrent();
@@ -143,7 +131,7 @@ public class MembershipView extends AbstractEntityView implements ISelectionList
 			}
 
 			@Override
-			public void removedService(ServiceReference reference, Object service)
+			public void removedService(ServiceReference<ConnectionService> reference, ConnectionService service)
 			{
 				Display display = Display.getCurrent();
 				if (display == null)
@@ -230,8 +218,6 @@ public class MembershipView extends AbstractEntityView implements ISelectionList
 					this.setInput(null);
 			}
 		}
-		// TODO Auto-generated method stub
-
 	}
 
 }
