@@ -36,10 +36,16 @@ public class GenerateFormLetterHandler extends AbstractHandler implements IHandl
 	@Override
 	public void setEnabled(final Object evaluationContext)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				DocumentBuilderService.class.getName(), null);
+		ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(),
+				DocumentBuilderService.class, null);
 		tracker.open();
-		setBaseEnabled(tracker.getService() != null);
-		tracker.close();
+		try
+		{
+			setBaseEnabled(tracker.getService() != null);
+		}
+		finally
+		{
+			tracker.close();
+		}
 	}
 }

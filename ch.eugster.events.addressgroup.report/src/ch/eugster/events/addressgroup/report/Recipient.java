@@ -36,11 +36,11 @@ public class Recipient implements Comparable<Recipient>
 	public Recipient(final AddressGroupMember member)
 	{
 		this.code = member.getCopiedFrom() == null ? "" : member.getCopiedFrom().getCode();
-		if (member.getLink() == null)
+		if (member.isValidAddressMember())
 		{
 			loadData(member.getAddress());
 		}
-		else
+		else if (member.isValidLinkMember())
 		{
 			loadData(member.getLink());
 		}
