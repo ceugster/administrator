@@ -7,7 +7,8 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import ch.eugster.events.persistence.formatters.PersonFormatter;
@@ -19,12 +20,14 @@ import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.User;
 
-public class CourseMap extends AbstractDataMap
+public class CourseMap extends AbstractDataMap<Course>
 {
 	private static DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
 
 	private static NumberFormat integerFormatter = DecimalFormat.getIntegerInstance();
 
+	private Course course;
+	
 	protected CourseMap() {
 		super();
 	}
@@ -36,6 +39,8 @@ public class CourseMap extends AbstractDataMap
 
 	public CourseMap(final Course course, final boolean loadTables)
 	{
+		this.course = course;
+		
 		for (Key key : Key.values())
 		{
 			setProperty(key.getKey(), key.getValue(course));
@@ -110,7 +115,7 @@ public class CourseMap extends AbstractDataMap
 
 	public enum Key implements DataMapKey
 	{
-		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, COST_NOTE, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM, PREREQUISITES, DATE_RANGE, DATE_RANGE_WITH_WEEKDAY_CODE, SUBSTITUTION_DATE_RANGE, SUBSTITUTION_DATE_RANGE_WITH_WEEKDAY_CODE, ALL_LOCATIONS, GUIDE_WITH_PROFESSION, ALL_BOOKING_TYPES, ADVANCE_NOTICE_DATE, ADVANCE_NOTICE_DONE_DATE;
+		ANNULATION_DATE, BOARDING, CODE, CONTENTS, DESCRIPTION, INFO_MEETING, INFORMATION, FIRST_DATE, INVITATION_DATE, INVITATION_DONE_DATE, LAST_ANNULATION_DATE, LAST_BOOKING_DATE, LAST_DATE, LODGING, MATERIAL_ORGANIZER, MATERIAL_PARTICIPANTS, MAX_AGE, MAX_PARTICIPANTS, MIN_AGE, MIN_PARTICIPANTS, PARTICIPANT_COUNT, PURPOSE, REALIZATION, COST_NOTE, RESPONSIBLE_USER, SEX_CONSTRAINT, STATE, TARGET_PUBLIC, TEASER, TITLE, PAYMENT_TERM, PREREQUISITES, SORTABLE_DATE, DATE_RANGE, DATE_RANGE_WITH_WEEKDAY_CODE, SUBSTITUTION_DATE_RANGE, SUBSTITUTION_DATE_RANGE_WITH_WEEKDAY_CODE, ALL_LOCATIONS, GUIDE_WITH_PROFESSION, ALL_BOOKING_TYPES, ADVANCE_NOTICE_DATE, ADVANCE_NOTICE_DONE_DATE;
 
 		@Override
 		public String getDescription()
@@ -127,7 +132,7 @@ public class CourseMap extends AbstractDataMap
 			}
 			case ANNULATION_DATE:
 			{
-				return "Datum Annulation";
+				return "Datum Annullation";
 			}
 			case BOARDING:
 			{
@@ -144,6 +149,10 @@ public class CourseMap extends AbstractDataMap
 			case COST_NOTE:
 			{
 				return "Bemerkungen Kurskosten";
+			}
+			case SORTABLE_DATE:
+			{
+				return "Sortierdatum";
 			}
 			case DATE_RANGE:
 			{
@@ -192,7 +201,7 @@ public class CourseMap extends AbstractDataMap
 			}
 			case LAST_ANNULATION_DATE:
 			{
-				return "Spätestes Kursannulationsdatum";
+				return "Spätestes Kursannullationsdatum";
 			}
 			case LAST_BOOKING_DATE:
 			{
@@ -438,6 +447,10 @@ public class CourseMap extends AbstractDataMap
 			{
 				return "course_prerequisites";
 			}
+			case SORTABLE_DATE:
+			{
+				return "course_date_range_sort";
+			}
 			case DATE_RANGE:
 			{
 				return "course_date_range";
@@ -476,7 +489,7 @@ public class CourseMap extends AbstractDataMap
 			}
 			case ANNULATION_DATE:
 			{
-				return "Annulation";
+				return "Annullation";
 			}
 			case BOARDING:
 			{
@@ -528,7 +541,7 @@ public class CourseMap extends AbstractDataMap
 			}
 			case LAST_ANNULATION_DATE:
 			{
-				return "Kursannulation bis";
+				return "Kursannullation bis";
 			}
 			case LAST_BOOKING_DATE:
 			{
@@ -613,6 +626,10 @@ public class CourseMap extends AbstractDataMap
 			case PREREQUISITES:
 			{
 				return "Voraussetzungen";
+			}
+			case SORTABLE_DATE:
+			{
+				return "Sortierdatum";
 			}
 			case DATE_RANGE:
 			{
@@ -850,6 +867,11 @@ public class CourseMap extends AbstractDataMap
 			case PREREQUISITES:
 			{
 				return course.getPrerequisites();
+			}
+			case SORTABLE_DATE:
+			{
+				Date date = course.getFirstDate() == null ? null : course.getFirstDate().getTime();
+				return date == null ? "" : SimpleDateFormat.getDateTimeInstance().format(course.getFirstDate().getTime());
 			}
 			case DATE_RANGE:
 			{
@@ -1090,13 +1112,13 @@ public class CourseMap extends AbstractDataMap
 			}
 		}
 
-		public List<DataMap> getTableMaps(final Course course)
+		public List<DataMap<?>> getTableMaps(final Course course)
 		{
 			switch (this)
 			{
 				case BOOKINGS:
 				{
-					List<DataMap> tableMaps = new ArrayList<DataMap>();
+					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 					List<Booking> bookings = course.getBookings();
 					for (Booking booking : bookings)
 					{
@@ -1109,7 +1131,7 @@ public class CourseMap extends AbstractDataMap
 				}
 				case BOOKING_TYPES:
 				{
-					List<DataMap> tableMaps = new ArrayList<DataMap>();
+					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 					List<BookingType> bookingTypes = course.getBookingTypes();
 					for (BookingType bookingType : bookingTypes)
 					{
@@ -1122,7 +1144,7 @@ public class CourseMap extends AbstractDataMap
 				}
 				case DETAILS:
 				{
-					List<DataMap> tableMaps = new ArrayList<DataMap>();
+					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 					List<CourseDetail> details = course.getCourseDetails();
 					for (CourseDetail detail : details)
 					{
@@ -1135,8 +1157,9 @@ public class CourseMap extends AbstractDataMap
 				}
 				case GUIDES:
 				{
-					List<DataMap> tableMaps = new ArrayList<DataMap>();
+					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 					List<CourseGuide> guides = course.getCourseGuides();
+					Collections.sort(guides);
 					for (CourseGuide guide : guides)
 					{
 						if (!guide.isDeleted())
@@ -1158,5 +1181,28 @@ public class CourseMap extends AbstractDataMap
 	protected DataMapKey[] getKeys() 
 	{
 		return Key.values();
+	}
+
+	@Override
+	public int compareTo(DataMap<Course> other) 
+	{
+		CourseMap otherMap = (CourseMap) other;
+		Calendar value1 =  this.course == null ? null :  this.course.getFirstDate();
+		Calendar value2 = otherMap.course == null ? null : otherMap.course.getFirstDate();
+		Date date1 = value1 == null ? null : value1.getTime();
+		Date date2 = value2 == null ? null : value2.getTime();
+		if (date1 == null && date2 == null)
+		{
+			return 0;
+		}
+		if (date1 == null)
+		{
+			return -1;
+		}
+		if (date2 == null)
+		{
+			return 1;
+		}
+		return date1.compareTo(date2);
 	}
 }

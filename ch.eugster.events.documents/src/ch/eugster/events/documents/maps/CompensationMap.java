@@ -7,7 +7,7 @@ import java.util.Locale;
 
 import ch.eugster.events.persistence.model.Compensation;
 
-public class CompensationMap extends AbstractDataMap
+public class CompensationMap extends AbstractDataMap<Compensation>
 {
 	protected CompensationMap() {
 		super();

@@ -2,7 +2,7 @@ package ch.eugster.events.documents.maps;
 
 import ch.eugster.events.persistence.model.Domain;
 
-public class DomainMap extends AbstractDataMap
+public class DomainMap extends AbstractDataMap<Domain>
 {
 	protected DomainMap()
 	{

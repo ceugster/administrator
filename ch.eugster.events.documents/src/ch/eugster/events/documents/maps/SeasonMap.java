@@ -6,7 +6,7 @@ import java.util.Calendar;
 
 import ch.eugster.events.persistence.model.Season;
 
-public class SeasonMap extends AbstractDataMap
+public class SeasonMap extends AbstractDataMap<Season>
 {
 	private static DateFormat dateFormatter = SimpleDateFormat.getDateInstance();
 

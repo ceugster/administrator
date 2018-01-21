@@ -14,12 +14,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import ch.eugster.events.persistence.formatters.PersonFormatter;
+import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.GuideType;
 import ch.eugster.events.persistence.model.TodoEntry;
 
-public class TodoMap extends AbstractDataMap {
+public class TodoMap extends AbstractDataMap<AbstractEntity> {
 
 	private static DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -70,52 +71,6 @@ public class TodoMap extends AbstractDataMap {
 		return Key.getKeys();
 	}
 
-//	private class CourseGuideEntry implements DataMapKey>
-//	{
-//		private CourseGuide courseGuide;
-//		
-//		public CourseGuideKey(CourseGuide courseGuide)
-//		{
-//			this.courseGuide = courseGuide;
-//		}
-//
-//		@Override
-//		public String getDescription() 
-//		{
-//			return courseGuide.getGuideType().getDescription();
-//		}
-//
-//		@Override
-//		public String getKey() 
-//		{
-//			return "guide.type." + courseGuide.getGuideType().getId().toString();
-//		}
-//
-//		@Override
-//		public String getName() 
-//		{
-//			return courseGuide.getGuideType().getName();
-//		}
-//		
-//		public void setValue(String value)
-//		{
-//			this.courseTypeNames = value;
-//		}
-//		
-//		public String getValue()
-//		{
-//			return this.courseTypeNames;
-//		}
-//
-//		@Override
-//		public int compareTo(CourseGuideEntry other) 
-//		{
-//			String code1 = this.courseGuide.getGuideType().getCode();
-//			String code2 = other.courseGuide.getGuideType().getCode();
-//			return code1.compareTo(code2);
-//		}
-//	}
-		
 	private static class GuideTypeKey implements DataMapKey, Comparable<GuideTypeKey>
 	{
 		private GuideType guideType;

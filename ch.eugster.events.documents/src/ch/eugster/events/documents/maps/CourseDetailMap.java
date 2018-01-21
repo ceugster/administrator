@@ -6,7 +6,7 @@ import java.util.Calendar;
 
 import ch.eugster.events.persistence.model.CourseDetail;
 
-public class CourseDetailMap extends AbstractDataMap
+public class CourseDetailMap extends AbstractDataMap<CourseDetail>
 {
 	private static final DateFormat dateTimeFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 

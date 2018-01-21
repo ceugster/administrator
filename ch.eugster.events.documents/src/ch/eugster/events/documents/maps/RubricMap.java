@@ -2,7 +2,7 @@ package ch.eugster.events.documents.maps;
 
 import ch.eugster.events.persistence.model.Rubric;
 
-public class RubricMap extends AbstractDataMap
+public class RubricMap extends AbstractDataMap<Rubric>
 {
 	protected RubricMap() {
 		super();

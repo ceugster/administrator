@@ -11,7 +11,7 @@ import ch.eugster.events.persistence.model.CourseDetail;
 import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.GuideType;
 
-public class CourseGuideMap extends AbstractDataMap
+public class CourseGuideMap extends AbstractDataMap<CourseGuide>
 {
 	protected CourseGuideMap() {
 		super();
@@ -64,8 +64,8 @@ public class CourseGuideMap extends AbstractDataMap
 		printCell(writer, "#pcompensation", TableKey.COMPENSATIONS_CHARGES.getName());
 		endTableRow(writer);
 		startTableRow(writer);
-		printCell(writer, null, TableKey.OTHER_COURSE_GUIDES.getKey());
-		printCell(writer, "#course_guide", TableKey.OTHER_COURSE_GUIDES.getName());
+		printCell(writer, null, TableKey.COURSE_GUIDES.getKey());
+		printCell(writer, "#course_guide", TableKey.COURSE_GUIDES.getName());
 		endTableRow(writer);
 		startTableRow(writer);
 		printCell(writer, null, TableKey.COURSE_DETAILS.getKey());
@@ -225,7 +225,7 @@ public class CourseGuideMap extends AbstractDataMap
 
 	public enum TableKey implements DataMapKey
 	{
-		COMPENSATIONS, COMPENSATIONS_SALARY, COMPENSATIONS_CHARGES, OTHER_COURSE_GUIDES, COURSE_DETAILS, COURSE_BOOKING_TYPES;
+		COMPENSATIONS, COMPENSATIONS_SALARY, COMPENSATIONS_CHARGES, COURSE_GUIDES, COURSE_DETAILS, COURSE_BOOKING_TYPES;
 
 		@Override
 		public String getDescription()
@@ -244,7 +244,7 @@ public class CourseGuideMap extends AbstractDataMap
 			{
 				return "Spesentabelle";
 			}
-			case OTHER_COURSE_GUIDES:
+			case COURSE_GUIDES:
 			{
 				return "Kursleitungstabelle";
 			}
@@ -280,9 +280,9 @@ public class CourseGuideMap extends AbstractDataMap
 			{
 				return "table_compensations_charges";
 			}
-			case OTHER_COURSE_GUIDES:
+			case COURSE_GUIDES:
 			{
-				return "table_other_course_guides";
+				return "table_course_guides";
 			}
 			case COURSE_DETAILS:
 			{
@@ -316,7 +316,7 @@ public class CourseGuideMap extends AbstractDataMap
 			{
 				return "Spesentabelle";
 			}
-			case OTHER_COURSE_GUIDES:
+			case COURSE_GUIDES:
 			{
 				return "Kursleitertabelle";
 			}
@@ -335,9 +335,9 @@ public class CourseGuideMap extends AbstractDataMap
 			}
 		}
 
-		public List<DataMap> getTableMaps(final CourseGuide courseGuide)
+		public List<DataMap<?>> getTableMaps(final CourseGuide courseGuide)
 		{
-			List<DataMap> tableMaps = new ArrayList<DataMap>();
+			List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
 			switch (this)
 			{
 			case COMPENSATIONS:
@@ -383,15 +383,12 @@ public class CourseGuideMap extends AbstractDataMap
 				}
 				break;
 			}
-			case OTHER_COURSE_GUIDES:
+			case COURSE_GUIDES:
 			{
 				List<CourseGuide> courseGuides = courseGuide.getCourse().getCourseGuides();
 				for (CourseGuide otherCourseGuide : courseGuides)
 				{
-					if (!otherCourseGuide.getId().equals(courseGuide.getId()))
-					{
-						tableMaps.add(new CourseGuideMap(otherCourseGuide, false));
-					}
+					tableMaps.add(new CourseGuideMap(otherCourseGuide, false));
 				}
 				break;
 			}
