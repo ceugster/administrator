@@ -1,7 +1,6 @@
 package ch.eugster.events.utilities.console.database.manipulator;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +28,7 @@ public class DoubleAddressGroupMemberEntriesDeleter implements CommandProvider
 
 	public void _deletedoubleaddressgroupmemberentries(final CommandInterpreter commandInterpreter)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getContext(), ConnectionService.class.getName(), null);
+		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getContext(), ConnectionService.class, null);
 		tracker.open();
 		try
 		{
@@ -86,21 +85,22 @@ public class DoubleAddressGroupMemberEntriesDeleter implements CommandProvider
 			List<AddressGroupMember> addressGroupMembers = addressGroup.getAddressGroupMembers();
 			for (AddressGroupMember addressGroupMember : addressGroupMembers)
 			{
-				String id = (addressGroupMember.getLink() == null || addressGroupMember.getLink().isDeleted() || addressGroupMember
-						.getLink().getPerson().isDeleted()) ? "A" + addressGroupMember.getAddress().getId() : "P"
-						+ addressGroupMember.getLink().getId();
-				AddressGroupMember member = members.get(id);
-				if (member == null)
+				if (addressGroupMember.isValid())
 				{
-					members.put(id, addressGroupMember);
-					counter++;
-				}
-				else
-				{
-					doubleCounter++;
-					addressGroupMember.setUpdated(calendar);
-					addressGroupMember.setDeleted(true);
-					deleted = true;
+					String id = addressGroupMember.isValidAddressMember() ? "A" + addressGroupMember.getAddress().getId() : (addressGroupMember.isValidLinkMember() ? "P" + addressGroupMember.getLink().getId() : null);
+					AddressGroupMember member = members.get(id);
+					if (member == null)
+					{
+						members.put(id, addressGroupMember);
+						counter++;
+					}
+					else
+					{
+						doubleCounter++;
+						addressGroupMember.setUpdated(calendar);
+						addressGroupMember.setDeleted(true);
+						deleted = true;
+					}
 				}
 			}
 			if (deleted)

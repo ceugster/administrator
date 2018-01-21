@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ch.eugster.events.report.feature"
-      label="Report Services"
+      label="Modul Report Services"
       version="1.0.0.qualifier"
       provider-name="Christian Eugster">
 
@@ -213,11 +213,11 @@ litigation.
    </license>
 
    <requires>
-      <import plugin="ch.eugster.events.report.commons" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="ch.eugster.events.report.pdf" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime" version="3.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui" version="3.6.2" match="greaterOrEqual"/>
-      <import plugin="ch.eugster.events.persistence" version="1.0.10" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.8.2" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.report.commons" version="1.0.2" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.report.pdf" version="1.0.2" match="greaterOrEqual"/>
+      <import plugin="ch.eugster.events.persistence"/>
    </requires>
 
    <plugin

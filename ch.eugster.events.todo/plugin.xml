@@ -5,7 +5,6 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
-            category="todo"
             class="ch.eugster.events.todo.views.TodoView"
             id="ch.eugster.events.todo.views.TodoView"
             name="Pendenzen"

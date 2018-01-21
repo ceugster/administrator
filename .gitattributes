@@ -1441,7 +1441,6 @@ ch.eugster.events.person/src/org/iban4j/bban/package-info.java -text
 ch.eugster.events.person/src/org/iban4j/package-info.java -text
 ch.eugster.events.report.commons/.classpath -text
 ch.eugster.events.report.commons/.project -text
-ch.eugster.events.report.commons/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.report.commons/META-INF/MANIFEST.MF -text
 ch.eugster.events.report.commons/build.properties -text
 ch.eugster.events.report.commons/lib/commons-LICENSE.txt -text
@@ -1457,7 +1456,6 @@ ch.eugster.events.report.feature/build.properties -text
 ch.eugster.events.report.feature/feature.xml -text
 ch.eugster.events.report.pdf/.classpath -text
 ch.eugster.events.report.pdf/.project -text
-ch.eugster.events.report.pdf/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.report.pdf/META-INF/MANIFEST.MF -text
 ch.eugster.events.report.pdf/build.properties -text
 ch.eugster.events.report.pdf/lib/iText-2.1.7-LICENSE.txt -text
@@ -1465,7 +1463,6 @@ ch.eugster.events.report.pdf/lib/iText-2.1.7.js1.jar -text
 ch.eugster.events.report.pdf/src/ch/eugster/colibri/report/pdf/Activator.java -text
 ch.eugster.events.report.rhino/.classpath -text
 ch.eugster.events.report.rhino/.project -text
-ch.eugster.events.report.rhino/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.report.rhino/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.report.rhino/META-INF/MANIFEST.MF -text
 ch.eugster.events.report.rhino/build.properties -text
@@ -1475,7 +1472,6 @@ ch.eugster.events.report.rhino/src/ch/eugster/events/report/rhino/Activator.java
 ch.eugster.events.report/.classpath -text
 ch.eugster.events.report/.project -text
 ch.eugster.events.report/.settings/org.eclipse.core.resources.prefs -text
-ch.eugster.events.report/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.report/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.report/META-INF/MANIFEST.MF -text
 ch.eugster.events.report/build.properties -text
@@ -1505,6 +1501,13 @@ ch.eugster.events.report/icons/zoomplus.gif -text
 ch.eugster.events.report/icons/zoomplusd.gif -text
 ch.eugster.events.report/labels/Avery[!!-~]Zweckform[!!-~]3422[!!-~]3x8.jrxml -text
 ch.eugster.events.report/labels/Endisch[!!-~]A4[!!-~]3x11.jrxml -text
+ch.eugster.events.report/lib/commons-LICENSE.txt -text svneol=unset#text/plain
+ch.eugster.events.report/lib/commons-NOTICE.txt -text svneol=unset#text/plain
+ch.eugster.events.report/lib/commons-beanutils-1.8.0.jar -text
+ch.eugster.events.report/lib/commons-collections-2.1.1.jar -text
+ch.eugster.events.report/lib/commons-digester-2.1.jar -text
+ch.eugster.events.report/lib/commons-javaflow-20060411.jar -text
+ch.eugster.events.report/lib/commons-logging-1.1.1.jar -text
 ch.eugster.events.report/lib/jasperreports-4.8.0.jar -text
 ch.eugster.events.report/lib/jdt-compiler-3.1.1-LICENSE.html -text svneol=unset#text/plain
 ch.eugster.events.report/lib/jdt-compiler-3.1.1.jar -text
@@ -1622,7 +1625,6 @@ ch.eugster.events.todo.feature/build.properties -text
 ch.eugster.events.todo.feature/feature.xml -text
 ch.eugster.events.todo/.classpath -text
 ch.eugster.events.todo/.project -text
-ch.eugster.events.todo/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.todo/META-INF/MANIFEST.MF -text
 ch.eugster.events.todo/OSGI-INF/service-component.xml -text
 ch.eugster.events.todo/build.properties -text
@@ -1732,11 +1734,11 @@ ch.eugster.events.utilities.console.feature/build.properties -text
 ch.eugster.events.utilities.console.feature/feature.xml -text
 ch.eugster.events.utilities.console/.classpath -text
 ch.eugster.events.utilities.console/.project -text
-ch.eugster.events.utilities.console/.settings/org.eclipse.jdt.core.prefs -text
 ch.eugster.events.utilities.console/.settings/org.eclipse.pde.core.prefs -text
 ch.eugster.events.utilities.console/META-INF/MANIFEST.MF -text
 ch.eugster.events.utilities.console/build.properties -text
 ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/Activator.java -text
+ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/database/manipulator/CopyAllTeachersToNewAddressGroup.java -text svneol=unset#text/plain
 ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/database/manipulator/DoubleAddressGroupMemberEntriesDeleter.java -text
 ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/database/manipulator/LawFolderUpdater.java -text
 ch.eugster.events.utilities.console/src/ch/eugster/events/utilities/console/database/manipulator/PersonWithoutChildrenRemover.java -text

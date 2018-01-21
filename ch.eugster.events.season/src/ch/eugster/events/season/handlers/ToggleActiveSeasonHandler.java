@@ -1,23 +1,18 @@
 package ch.eugster.events.season.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.model.Season;
 import ch.eugster.events.persistence.queries.SeasonQuery;
-import ch.eugster.events.persistence.service.ConnectionService;
-import ch.eugster.events.season.Activator;
+import ch.eugster.events.ui.handlers.ConnectionServiceDependentAbstractHandler;
 
-public class ToggleActiveSeasonHandler extends AbstractHandler implements IHandler
+public class ToggleActiveSeasonHandler extends ConnectionServiceDependentAbstractHandler
 {
-
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException
 	{
@@ -33,10 +28,6 @@ public class ToggleActiveSeasonHandler extends AbstractHandler implements IHandl
 					Season season = (Season) ssel.getFirstElement();
 					season.setClosed(!season.isClosed());
 
-					ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-							ConnectionService.class.getName(), null);
-					tracker.open();
-					ConnectionService connectionService = (ConnectionService) tracker.getService();
 					if (connectionService != null)
 					{
 						SeasonQuery query = (SeasonQuery) connectionService.getQuery(Season.class);
