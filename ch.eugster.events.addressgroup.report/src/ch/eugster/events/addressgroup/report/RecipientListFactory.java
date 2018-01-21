@@ -41,7 +41,7 @@ public class RecipientListFactory
 	{
 		boolean added = false;
 		Recipient recipient = null;
-		if (member.getLink() == null)
+		if (member.isValidAddressMember())
 		{
 			if (!recipients.containsKey(member.getAddress().getEmail()))
 			{
@@ -50,7 +50,7 @@ public class RecipientListFactory
 				added = true;
 			}
 		}
-		else
+		else if (member.isValidLinkMember())
 		{
 			if (EmailHelper.getInstance().isValidAddress(member.getLink().getEmail()))
 			{

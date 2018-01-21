@@ -27,7 +27,7 @@ public class PhoneListFactory
 	{
 		boolean added = false;
 		PhoneListEntry entry = null;
-		if (member.getLink() == null)
+		if (member.isValidAddressMember())
 		{
 			if (!entries.containsKey("A" + member.getAddress().getId().toString()))
 			{
@@ -36,7 +36,7 @@ public class PhoneListFactory
 				added = true;
 			}
 		}
-		else
+		else if (member.isValidLinkMember())
 		{
 			if (!entries.containsKey("L" + member.getLink().getId().toString()))
 			{

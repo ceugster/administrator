@@ -51,11 +51,6 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 			{
 				this.extract((AddressGroup) element, filter);
 			}
-			// else if (element instanceof AddressGroupLink)
-			// {
-			// this.extract(((AddressGroupLink)
-			// element).getChild());
-			// }
 			else if (element instanceof AddressGroupMember)
 			{
 				this.extract((AddressGroupMember) element, filter);
@@ -99,11 +94,11 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 
 	private boolean export(final Format format, final File file)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{
@@ -127,26 +122,19 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 
 	private void extract(final AddressGroup addressGroup, Filter filter)
 	{
-		if (!addressGroup.isDeleted())
+		if (addressGroup.isValid())
 		{
 			List<AddressGroupMember> addressGroupMembers = addressGroup.getAddressGroupMembers();
 			for (AddressGroupMember addressGroupMember : addressGroupMembers)
 			{
 				this.extract(addressGroupMember, filter);
 			}
-			// for (AddressGroupLink link : addressGroup.getChildren())
-			// {
-			// if (!link.isDeleted() && !link.getChild().isDeleted())
-			// {
-			// extract(link.getChild());
-			// }
-			// }
 		}
 	}
 
 	private void extract(final AddressGroupCategory category, Filter filter)
 	{
-		if (!category.isDeleted())
+		if (category.isValid())
 		{
 			List<AddressGroup> addressGroups = category.getAddressGroups();
 			for (AddressGroup addressGroup : addressGroups)
@@ -158,35 +146,32 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 
 	private void extract(final AddressGroupMember member, Filter filter)
 	{
-		if (!member.isDeleted())
+		if (member.isValid())
 		{
-			if ((member.getLink() != null && !member.getLink().isDeleted()) || !member.getAddress().isDeleted())
+			boolean added = false;
+			if (filter.equals(Filter.ALL))
 			{
-				boolean added = false;
-				if (filter.equals(Filter.ALL))
-				{
-					added = RecipientListFactory.addRecipient(member);
-				}
-				else if (filter.equals(Filter.ONLY_WITH_EMAILS))
-				{
-					added = RecipientListFactory.addRecipientWithEmails(member);
+				added = RecipientListFactory.addRecipient(member);
+			}
+			else if (filter.equals(Filter.ONLY_WITH_EMAILS))
+			{
+				added = RecipientListFactory.addRecipientWithEmails(member);
 
-				}
-				if (added)
-				{
-					RecipientListFactory.addAddressGroup(member.getAddressGroup());
-				}
+			}
+			if (added)
+			{
+				RecipientListFactory.addAddressGroup(member.getAddressGroup());
 			}
 		}
 	}
 
 	private boolean preview()
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{
@@ -210,11 +195,11 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 
 	private boolean print(final boolean showPrintDialog)
 	{
-		ServiceTracker tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(),
-				ReportService.class.getName(), null);
+		ServiceTracker<ReportService, ReportService> tracker = new ServiceTracker<ReportService, ReportService>(Activator.getDefault().getBundle().getBundleContext(),
+				ReportService.class, null);
+		tracker.open();
 		try
 		{
-			tracker.open();
 			ReportService reportService = (ReportService) tracker.getService();
 			if (reportService != null)
 			{

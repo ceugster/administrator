@@ -39,11 +39,11 @@ public class PhoneListEntry implements Comparable<PhoneListEntry>
 	 */
 	public PhoneListEntry(final AddressGroupMember member)
 	{
-		if (member.getLink() == null)
+		if (member.isValidAddressMember())
 		{
 			loadData(member.getAddress());
 		}
-		else
+		else if (member.isValidLinkMember())
 		{
 			loadData(member.getLink());
 		}
