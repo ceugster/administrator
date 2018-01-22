@@ -1,5 +1,7 @@
 package ch.eugster.events.addressgroup.views;
 
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +9,9 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -47,6 +52,7 @@ import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressGroup;
 import ch.eugster.events.persistence.model.AddressGroupCategory;
 import ch.eugster.events.persistence.model.AddressGroupMember;
+import ch.eugster.events.persistence.model.AddressGroupMemberCapable;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Person;
@@ -70,70 +76,94 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 
 	private final Map<Long, Monitor> monitors = new HashMap<Long, Monitor>();
 
-	private AbstractEntity parent;
+	private AddressGroupMemberCapable parent;
 	
+//	private void checkParents()
+//	{
+//		System.out.println("Start checking: " + new SimpleDateFormat("HH:mm:ss.SSS").format(GregorianCalendar.getInstance().getTime()));
+//		this.addressGroupViewer.expandAll();
+//		TreeItem[] domainItems = this.addressGroupViewer.getTree().getItems();
+//		
+//		for (TreeItem domainItem : domainItems)
+//		{
+//			Object element = domainItem.getData();
+//			if (element instanceof Domain)
+//			{
+//				Domain domain = (Domain) element;
+//				this.addressGroupViewer.setSubtreeChecked(domain, false);
+//
+//				int checkedCategories = 0;
+//				int grayCheckedCategories = 0;
+//				TreeItem[] categoryItems = domainItem.getItems();
+//				for (TreeItem categoryItem : categoryItems)
+//				{
+//					element = categoryItem.getData();
+//					if (element instanceof AddressGroupCategory)
+//					{
+//						AddressGroupCategory category = (AddressGroupCategory) element;
+//						int checked = 0;
+//						TreeItem[] addressGroupItems = categoryItem.getItems();
+//						for (TreeItem addressGroupItem : addressGroupItems)
+//						{
+//							element = addressGroupItem.getData();
+//							if (element instanceof AddressGroup)
+//							{
+//								AddressGroup addressGroup = (AddressGroup) element;
+//								Monitor monitor = this.monitors.get(addressGroup.getId());
+//								if (monitor != null && monitor.isValid())
+//								{
+//									if (monitor.checked)
+//									{
+//										checked++;
+//									}
+//								}
+//								this.addressGroupViewer.setChecked(addressGroup, monitor != null &&  monitor.isValid() && monitor.checked);
+//							}
+//						}
+//						if (checked == addressGroupItems.length)
+//						{
+//							checkedCategories++;
+//							this.addressGroupViewer.setChecked(category, true);
+//						}
+//						else if (checked > 0)
+//						{
+//							grayCheckedCategories++;
+//							this.addressGroupViewer.setGrayChecked(category, true);
+//						}
+//					}
+//				}
+//				if (checkedCategories > 0 && checkedCategories == categoryItems.length)
+//				{
+//					this.addressGroupViewer.setChecked(domain, true);
+//				}
+//				else if (grayCheckedCategories > 0)
+//				{
+//					this.addressGroupViewer.setGrayChecked(domain, true);
+//				}
+//			}
+//		}
+//		System.out.println("End checking: " + new SimpleDateFormat("HH:mm:ss.SSS").format(GregorianCalendar.getInstance().getTime()));
+//	}
+
 	private void checkParents()
 	{
+		System.out.println("Start checking: " + new SimpleDateFormat("HH:mm:ss.SSS").format(GregorianCalendar.getInstance().getTime()));
 		this.addressGroupViewer.expandAll();
 		TreeItem[] domainItems = this.addressGroupViewer.getTree().getItems();
 		for (TreeItem domainItem : domainItems)
 		{
 			Object element = domainItem.getData();
-			if (element instanceof Domain)
+			this.addressGroupViewer.setSubtreeChecked(element, false);
+		}
+		if (this.parent != null)
+		{
+			List<AddressGroupMember> members = this.parent.getAddressGroupMembers();
+			for (AddressGroupMember member : members)
 			{
-				Domain domain = (Domain) element;
-				this.addressGroupViewer.setSubtreeChecked(domain, false);
-
-				int checkedCategories = 0;
-				int grayCheckedCategories = 0;
-				TreeItem[] categoryItems = domainItem.getItems();
-				for (TreeItem categoryItem : categoryItems)
-				{
-					element = categoryItem.getData();
-					if (element instanceof AddressGroupCategory)
-					{
-						AddressGroupCategory category = (AddressGroupCategory) element;
-						int checked = 0;
-						TreeItem[] addressGroupItems = categoryItem.getItems();
-						for (TreeItem addressGroupItem : addressGroupItems)
-						{
-							element = addressGroupItem.getData();
-							if (element instanceof AddressGroup)
-							{
-								AddressGroup addressGroup = (AddressGroup) element;
-								Monitor monitor = this.monitors.get(addressGroup.getId());
-								if (monitor != null && monitor.isValid())
-								{
-									if (monitor.checked)
-									{
-										checked++;
-									}
-								}
-								this.addressGroupViewer.setChecked(addressGroup, monitor != null &&  monitor.isValid() && monitor.checked);
-							}
-						}
-						if (checked == addressGroupItems.length)
-						{
-							checkedCategories++;
-							this.addressGroupViewer.setChecked(category, true);
-						}
-						else if (checked > 0)
-						{
-							grayCheckedCategories++;
-							this.addressGroupViewer.setGrayChecked(category, true);
-						}
-					}
-				}
-				if (checkedCategories > 0 && checkedCategories == categoryItems.length)
-				{
-					this.addressGroupViewer.setChecked(domain, true);
-				}
-				else if (grayCheckedCategories > 0)
-				{
-					this.addressGroupViewer.setGrayChecked(domain, true);
-				}
+				this.addressGroupViewer.setChecked(member.getAddressGroup(), true);
 			}
 		}
+		System.out.println("End checking: " + new SimpleDateFormat("HH:mm:ss.SSS").format(GregorianCalendar.getInstance().getTime()));
 	}
 
 	@Override
@@ -250,7 +280,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 				}
 				else if (object instanceof LinkPersonAddress || object instanceof Address)
 				{
-					this.parent = (AbstractEntity) object;
+					this.parent = (AddressGroupMemberCapable) object;
 				}
 			}
 		}
@@ -407,17 +437,17 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 
 	public void reset()
 	{
-		this.getSite().getShell().getDisplay().asyncExec(new Runnable() 
+		PersonAddressGroupMemberView.this.addressGroupViewer.getTree().setEnabled(false);
+		PersonAddressGroupMemberView.this.monitors.clear();
+		PersonAddressGroupMemberView.this.current.clear();
+
+		Job job = new Job("reset")
 		{
 			@Override
-			public void run()
+			public IStatus run(IProgressMonitor progressMonitor)
 			{
-				PersonAddressGroupMemberView.this.addressGroupViewer.getTree().setEnabled(false);
-				PersonAddressGroupMemberView.this.monitors.clear();
-				PersonAddressGroupMemberView.this.current.clear();
-
+				System.out.println("Start reset job: " + new SimpleDateFormat("HH:mm:ss.SSS").format(GregorianCalendar.getInstance().getTime()));
 				List<AddressGroupMember> members = null;
-
 				ConnectionService service = (ConnectionService) connectionServiceTracker.getService();
 				if (service != null)
 				{
@@ -450,17 +480,36 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 						}
 					}
 				}
-				PersonAddressGroupMemberView.this.checkParents();
-				PersonAddressGroupMemberView.this.setDirty(false);
-				PersonAddressGroupMemberView.this.addressGroupViewer.refresh();
-				PersonAddressGroupMemberView.this.addressGroupViewer.getTree().setEnabled(PersonAddressGroupMemberView.this.parent != null);
+				System.out.println("End reset job: " + new SimpleDateFormat("HH:mm:ss.SSS").format(GregorianCalendar.getInstance().getTime()));
+				return Status.OK_STATUS;
+			}
+		};
+		job.addJobChangeListener(new JobChangeAdapter() {
+
+			@Override
+			public void done(IJobChangeEvent event)
+			{
+				getSite().getShell().getDisplay().asyncExec(new Runnable() 
+				{
+					@Override
+					public void run()
+					{
+						PersonAddressGroupMemberView.this.checkParents();
+						PersonAddressGroupMemberView.this.addressGroupViewer.refresh();
+						PersonAddressGroupMemberView.this.addressGroupViewer.getTree().setEnabled(PersonAddressGroupMemberView.this.parent != null);
+						PersonAddressGroupMemberView.this.setDirty(false);
+					}
+				});
+				super.done(event);
 			}
 		});
+		job.schedule();
 	}
 	
 	@Override
 	public void selectionChanged(final IWorkbenchPart part, final ISelection selection)
 	{
+		System.out.println("Start selection changed: " + new SimpleDateFormat("HH:mm:ss.SSS").format(GregorianCalendar.getInstance().getTime()));
 		if (this.dirty)
 		{
 			if (MessageDialog.openQuestion(this.getSite().getShell(), "Änderungen speichern", "Sie haben Änderungen an den aktuellen Adressgruppen vorgenommen. Sollen diese Änderungen gespeichert werden?"))
@@ -483,13 +532,9 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 					Person person = (Person) ssel.getFirstElement();
 					this.parent = person.getDefaultLink();
 				}
-				else if (entity instanceof LinkPersonAddress)
+				else if (entity instanceof LinkPersonAddress || entity instanceof Address)
 				{
-					this.parent = (LinkPersonAddress) ssel.getFirstElement();
-				}
-				else if (entity instanceof Address)
-				{
-					this.parent = (Address) ssel.getFirstElement();
+					this.parent = (AddressGroupMemberCapable) ssel.getFirstElement();
 				}
 			}
 			else
@@ -498,6 +543,7 @@ public class PersonAddressGroupMemberView extends AbstractEntityView implements 
 			}
 		}
 		reset();
+		System.out.println("End selection changed: " + new SimpleDateFormat("HH:mm:ss.SSS").format(GregorianCalendar.getInstance().getTime()));
 	}
 
 	private boolean selectionChanged(AbstractEntity entity)
