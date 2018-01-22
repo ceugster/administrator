@@ -31,7 +31,7 @@ import javax.persistence.TableGenerator;
 		@AttributeOverride(name = "updated", column = @Column(name = "pa_link_updated")),
 		@AttributeOverride(name = "deleted", column = @Column(name = "pa_link_deleted")),
 		@AttributeOverride(name = "version", column = @Column(name = "pa_link_version")) })
-public class LinkPersonAddress extends AbstractEntity implements Donator
+public class LinkPersonAddress extends AbstractEntity implements Donator, AddressGroupMemberCapable
 {
 	/**
 	 * References
@@ -129,6 +129,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		address.addLink(this);
 	}
 
+	@Override
 	public void addAddressGroupMember(final AddressGroupMember member)
 	{
 		this.propertyChangeSupport.firePropertyChange("addressGroupMembers", this.addressGroupMembers,
@@ -172,12 +173,8 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		return this.address;
 	}
 
+	@Override
 	public List<AddressGroupMember> getAddressGroupMembers()
-	{
-		return this.addressGroupMembers;
-	}
-
-	public List<AddressGroupMember> getValidAddressGroupMembers()
 	{
 		List<AddressGroupMember> members = new ArrayList<AddressGroupMember>();
 		for (AddressGroupMember member : this.addressGroupMembers)
@@ -408,6 +405,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator
 		return false;
 	}
 
+	@Override
 	public void removeAddressGroupMember(final AddressGroupMember member)
 	{
 		this.propertyChangeSupport.firePropertyChange("addressGroupMembers", this.addressGroupMembers,
