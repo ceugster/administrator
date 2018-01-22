@@ -1097,6 +1097,7 @@ ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/AddressGro
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/AddressGroupCategory.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/AddressGroupLink.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/AddressGroupMember.java -text
+ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/AddressGroupMemberCapable.java -text svneol=unset#text/plain
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/AddressSalutation.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/AddressType.java -text
 ch.eugster.events.persistence/src/ch/eugster/events/persistence/model/Appliance.java -text

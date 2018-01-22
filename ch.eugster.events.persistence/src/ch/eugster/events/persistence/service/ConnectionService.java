@@ -6,6 +6,7 @@ import org.eclipse.persistence.sessions.Session;
 import org.osgi.service.component.ComponentContext;
 
 import ch.eugster.events.persistence.model.AbstractEntity;
+import ch.eugster.events.persistence.model.IEntity;
 import ch.eugster.events.persistence.queries.AbstractEntityQuery;
 
 public interface ConnectionService
@@ -22,7 +23,7 @@ public interface ConnectionService
 
 	AbstractEntity find(Class<AbstractEntity> clazz, Long id);
 
-	AbstractEntity refresh(AbstractEntity entity);
+	AbstractEntity refresh(IEntity entity);
 
 	void log(int level, String message);
 }

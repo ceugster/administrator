@@ -219,7 +219,7 @@ public class Person extends AbstractEntity
 		List<LinkPersonAddress> links = this.getActiveLinks();
 		for (LinkPersonAddress link : links)
 		{
-			members.addAll(link.getValidAddressGroupMembers());
+			members.addAll(link.getAddressGroupMembers());
 		}
 		return members;
 	}
