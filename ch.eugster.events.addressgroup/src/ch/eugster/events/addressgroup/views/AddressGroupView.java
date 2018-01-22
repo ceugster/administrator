@@ -213,24 +213,6 @@ public class AddressGroupView extends AbstractEntityView implements IDoubleClick
 					@Override
 					public void run()
 					{
-//						if (domainViewer == null)
-//						{
-//							DomainQuery query = (DomainQuery) connectionService.getQuery(Domain.class);
-//							Domain[] domains = query.selectAll().toArray(new Domain[0]);
-//							if (domains.length > 0)
-//							{
-//								AddressGroupView.this.singleDomain = domains[0];
-//								AddressGroupView.this.addressGroupViewer.setInput(singleDomain);
-//							}
-//						}
-//						else
-//						{
-//							domainViewer.setInput(connectionService);
-//							if (User.getCurrent().getDomain() != null)
-//							{
-//								domainViewer.setSelection(new StructuredSelection(User.getCurrent().getDomain()));
-//							}
-//						}
 						AddressGroupView.this.addressGroupViewer.setInput(connectionService);
 					}
 				});
@@ -240,21 +222,6 @@ public class AddressGroupView extends AbstractEntityView implements IDoubleClick
 			@Override
 			public void removedService(final ServiceReference<ConnectionService> reference, final ConnectionService service)
 			{
-//				if (domainViewer == null)
-//				{
-//					AddressGroupView.this.singleDomain = null;
-//					if (AddressGroupView.this.addressGroupViewer.getContentProvider() != null)
-//					{
-//						AddressGroupView.this.addressGroupViewer.setInput(singleDomain);
-//					}
-//				}
-//				else
-//				{
-//					if (domainViewer.getContentProvider() != null)
-//					{
-//						domainViewer.setInput(null);
-//					}
-//				}
 				super.removedService(reference, service);
 			}
 
