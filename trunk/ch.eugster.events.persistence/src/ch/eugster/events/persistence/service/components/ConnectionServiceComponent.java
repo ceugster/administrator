@@ -56,6 +56,7 @@ import ch.eugster.events.persistence.model.FieldExtension;
 import ch.eugster.events.persistence.model.GlobalSettings;
 import ch.eugster.events.persistence.model.Guide;
 import ch.eugster.events.persistence.model.GuideType;
+import ch.eugster.events.persistence.model.IEntity;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.Member;
 import ch.eugster.events.persistence.model.Membership;
@@ -569,9 +570,9 @@ public class ConnectionServiceComponent implements ConnectionService
 		return this.getEntityManager().find(clazz, id);
 	}
 
-	public AbstractEntity refresh(AbstractEntity entity)
+	public AbstractEntity refresh(IEntity entity)
 	{
 		this.getEntityManager().refresh(entity);
-		return entity;
+		return (AbstractEntity) entity;
 	}
 }
