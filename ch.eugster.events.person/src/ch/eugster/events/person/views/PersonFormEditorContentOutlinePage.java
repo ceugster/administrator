@@ -496,7 +496,7 @@ public class PersonFormEditorContentOutlinePage extends ContentOutlinePage imple
 				{
 					FormEditorLinkPage page = (FormEditorLinkPage) this.currentPage;
 					LinkPersonAddress link = page.getLink();
-					members = link.getValidAddressGroupMembers();
+					members = link.getAddressGroupMembers();
 				}
 				if (members != null && !members.isEmpty())
 				{

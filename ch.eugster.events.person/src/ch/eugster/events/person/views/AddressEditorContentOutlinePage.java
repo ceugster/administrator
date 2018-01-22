@@ -437,7 +437,7 @@ public class AddressEditorContentOutlinePage extends ContentOutlinePage implemen
 		public Object[] getChildren()
 		{
 			this.map.clear();
-			List<AddressGroupMember> members = ((AddressEditorInput) currentAddressEditor.getEditorInput()).getEntity().getAddressAddressGroupMembers();
+			List<AddressGroupMember> members = ((AddressEditorInput) currentAddressEditor.getEditorInput()).getEntity().getAddressGroupMembers();
 			for (AddressGroupMember member : members)
 			{
 				AddressGroupCategoryContainer container = map.get(member.getAddressGroup().getAddressGroupCategory().getId());
