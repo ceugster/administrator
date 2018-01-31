@@ -162,14 +162,15 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 					{
 						name1 = map1.getProperty("person_firstname");
 						name2 = map2.getProperty("person_firstname");
-						return compareStrings(name1, name2);
+						result = compareStrings(name1, name2);
+						if (result == 0)
+						{
+							name1 = map1.getProperty("address_name");
+							name2 = map2.getProperty("address_name");
+							result = compareStrings(name1, name2);
+						}
 					}
-					else
-					{
-						name1 = map1.getProperty("address_name");
-						name2 = map2.getProperty("address_name");
-						return name1.toLowerCase().compareTo(name2.toLowerCase());
-					}
+					return result;
 				}
 			});
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
