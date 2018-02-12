@@ -81,6 +81,12 @@ public class TodoMap extends AbstractDataMap<AbstractEntity> {
 		}
 
 		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
+
+		@Override
 		public String getDescription() 
 		{
 			return guideType.getDescription();
@@ -132,6 +138,12 @@ public class TodoMap extends AbstractDataMap<AbstractEntity> {
 			return guideTypes;
 		}
 		
+		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
+
 		public static DataMapKey[] getKeys()
 		{
 			List<DataMapKey> keys = new ArrayList<DataMapKey>();

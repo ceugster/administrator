@@ -1,5 +1,6 @@
 package ch.eugster.events.documents.maps;
 
+import java.sql.Date;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -437,6 +438,28 @@ public class DonationMap extends AbstractDataMap<Donation>
 					throw new RuntimeException("Invalid key");
 				}
 			}
+		}
+
+		@Override
+		public Class<?> getType()
+		{
+			if (this.equals(AMOUNT))
+			{
+				return Double.class;
+			}
+			if (this.equals(YEAR))
+			{
+				return Integer.class;
+			}
+			if (this.equals(DATE))
+			{
+				return Date.class;
+			}
+			if (this.equals(ID))
+			{
+				return Long.class;
+			}
+			return String.class;
 		}
 	}
 

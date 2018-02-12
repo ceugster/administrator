@@ -33,6 +33,12 @@ public class CourseDetailMap extends AbstractDataMap<CourseDetail>
 		START_DATE_TIME, START_DATE, START_TIME, END_DATE_TIME, END_DATE, END_TIME, JOURNEY, LOCATION, MEETING_POINT, SUBSTITUTION_START_DATE_TIME, SUBSTITUTION_START_DATE, SUBSTITUTION_START_TIME, SUBSTITUTION_END_DATE_TIME, SUBSTITUTION_END_DATE, SUBSTITUTION_END_TIME;
 
 		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
+
+		@Override
 		public String getDescription()
 		{
 			switch (this)

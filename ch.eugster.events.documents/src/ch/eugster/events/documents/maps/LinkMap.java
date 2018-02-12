@@ -154,6 +154,12 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 		PHONE, EMAIL, FUNCTION, MAILING_ADDRESS, TOTAL_DONATIONS, MEMBER, COURSE_VISITS;
 
 		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
+
+		@Override
 		public String getDescription()
 		{
 			switch (this)

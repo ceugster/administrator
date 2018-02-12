@@ -338,5 +338,11 @@ public class AddressGroupMemberMap extends AbstractDataMap<AddressGroupMember>
 				}
 			}
 		}
+
+		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
 	}
 }
