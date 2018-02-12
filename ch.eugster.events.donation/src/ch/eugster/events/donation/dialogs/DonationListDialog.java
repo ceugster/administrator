@@ -394,7 +394,7 @@ public class DonationListDialog extends TitleAreaDialog
 					@Override
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 					{
-						IStatus status = Status.OK_STATUS;
+						IStatus status = Status.CANCEL_STATUS;
 						ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle()
 								.getBundleContext(), DocumentBuilderService.class, null);
 						try
@@ -413,7 +413,7 @@ public class DonationListDialog extends TitleAreaDialog
 										DocumentBuilderService builderService = service;
 										status = builderService.buildDocument(new SubProgressMonitor(monitor,
 												dataMaps.length), getKeys(), dataMaps);
-										if (status.isOK())
+										if (status.isOK() || status.getSeverity() == IStatus.ERROR)
 										{
 											break;
 										}
@@ -428,12 +428,16 @@ public class DonationListDialog extends TitleAreaDialog
 							}
 							else
 							{
-								status = new Status(IStatus.ERROR,
+								status = new Status(IStatus.CANCEL,
 										Activator.getDefault().getBundle().getSymbolicName(), MSG_NO_SERVICE_AVAILABLE);
 							}
 						}
 						finally
 						{
+							if (!status.isOK())
+							{
+								MessageDialog.openInformation(getShell(), "Information", status.getMessage());
+							}
 							tracker.close();
 						}
 					}
