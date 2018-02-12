@@ -18,6 +18,12 @@ public class BookingTypeKey implements DataMapKey, Comparable<BookingTypeKey>
 	}
 	
 	@Override
+	public Class<?> getType()
+	{
+		return String.class;
+	}
+
+	@Override
 	public String getDescription() 
 	{
 		return this.description;

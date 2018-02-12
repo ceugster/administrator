@@ -18,21 +18,21 @@ public class DonationYear implements IEntity
 		this.year = year;
 	}
 
-	public static DonationYear all()
-	{
-		return new DonationYear(0);
-	}
+// r533	public static DonationYear all()
+//	{
+//		return new DonationYear(0);
+//	}
 
 	@Override
 	public Long getId()
 	{
 		return null;
 	}
-
-	public boolean isAll()
-	{
-		return year == 0;
-	}
+// r533
+//	public boolean isAll()
+//	{
+//		return year == 0;
+//	}
 	
 	@Override
 	public boolean isDeleted()

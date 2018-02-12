@@ -5,6 +5,8 @@ public interface DataMapKey
 	String getDescription();
 
 	String getKey();
+	
+	Class<?> getType();
 
 	String getName();
 }

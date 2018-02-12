@@ -38,6 +38,12 @@ public class CompensationMap extends AbstractDataMap<Compensation>
 		AMOUNT, TYPE;
 
 		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
+
+		@Override
 		public String getDescription()
 		{
 			switch (this)

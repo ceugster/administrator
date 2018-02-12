@@ -77,6 +77,12 @@ public class PersonMap extends AbstractDataMap<Person>
 		ID, SALUTATION, TITLE, FIRSTNAME, LASTNAME, PROFESSION, PHONE, EMAIL, WEBSITE, SEX, BIRTHDATE, FORM, POLITE, NOTE;
 
 		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
+
+		@Override
 		public String getDescription()
 		{
 			switch (this)

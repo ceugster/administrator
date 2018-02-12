@@ -43,10 +43,11 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 	private void addRow(final DataMapKey[] keys, final DataMap<?> dataMap, final Sheet sheet, final int rowIndex,
 			final CellStyle style, final Font font)
 	{
+		// This is a data row
 		Row row = this.createRow(sheet, (short) rowIndex);
 		for (int i = 0; i < keys.length; i++)
 		{
-			this.createCell(row, (short) i, dataMap.getProperty(keys[i].getKey()), font, style);
+			this.createCell(row, (short) i, keys[i].getType(), dataMap.getProperty(keys[i].getKey()), font, style);
 		}
 	}
 
@@ -54,10 +55,10 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 			final CellStyle style, final Font font)
 	{
 		Row row = this.createRow(sheet, (short) rowIndex);
-
+		// This is the title row
 		for (int i = 0; i < keys.length; i++)
 		{
-			this.createCell(row, (short) i, keys[i].getName(), font, style);
+			this.createCell(row, (short) i, String.class, keys[i].getName(), font, style);
 		}
 	}
 
@@ -146,32 +147,80 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 	{
 		return Status.CANCEL_STATUS;
 	}
-
-	protected void createCell(final Row row, final int col, final Double value, final Font font,
+	
+	private void createCell(final Row row, final int col, Class<?> type, String value, final Font font,
 			final CellStyle style)
 	{
-		Cell cell = row.createCell(col);
-		cell.setCellStyle(style);
-		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-		cell.setCellValue(value);
-	}
-
-	protected void createCell(final Row row, final int col, String value, final Font font,
-			final CellStyle style)
-	{
-		if (value == null)
-		{
-			value = "";
-		}
-		RichTextString string = new XSSFRichTextString(value);
-		string.applyFont(font);
 		Cell cell = row.createCell(col);
 		if (value.contains("\n"))
+		{
 			style.setWrapText(true);
+		}
 		cell.setCellStyle(style);
-		cell.setCellValue(string);
+
+		if (type.equals(Integer.class))
+		{
+			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			cell.setCellValue(value);
+		}
+		else if (type.equals(Double.class))
+		{
+			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			cell.setCellValue(value);
+		}
+		else
+		{
+			// String!
+			if (value == null) value = "";
+			RichTextString string = new XSSFRichTextString(value);
+			string.applyFont(font);
+			cell.setCellValue(string);
+		}
 	}
 
+//	private void createCell(final Row row, final int col, final Integer value, final Font font,
+//			final CellStyle style)
+//	{
+//		Cell cell = row.createCell(col);
+//		cell.setCellStyle(style);
+//		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+//		cell.setCellValue(value);
+//	}
+//
+//	private void createCell(final Row row, final int col, final Double value, final Font font,
+//			final CellStyle style)
+//	{
+//		Cell cell = row.createCell(col);
+//		cell.setCellStyle(style);
+//		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+//		cell.setCellValue(value);
+//	}
+//
+//	protected void createCell(final Row row, final int col, final Date value, final Font font,
+//			final CellStyle style)
+//	{
+//		Cell cell = row.createCell(col);
+//		cell.setCellStyle(style);
+//		cell.setCellType(Cell.);
+//		cell.setCellValue(value);
+//	}
+//
+//	protected void createCell(final Row row, final int col, String value, final Font font,
+//			final CellStyle style)
+//	{
+//		if (value == null)
+//		{
+//			value = "";
+//		}
+//		RichTextString string = new XSSFRichTextString(value);
+//		string.applyFont(font);
+//		Cell cell = row.createCell(col);
+//		if (value.contains("\n"))
+//			style.setWrapText(true);
+//		cell.setCellStyle(style);
+//		cell.setCellValue(string);
+//	}
+//
 	protected Font createFont(final Workbook workbook, final String name, final short type, final short height)
 	{
 		Font font = workbook.createFont();

@@ -559,6 +559,12 @@ public class AddressMap extends AbstractDataMap<Address>
 				}
 			}
 		}
+
+		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
 	}
 
 	public enum TableKey

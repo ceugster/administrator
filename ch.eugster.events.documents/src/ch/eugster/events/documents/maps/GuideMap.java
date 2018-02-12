@@ -35,6 +35,12 @@ public class GuideMap extends AbstractDataMap<Guide>
 		DESCRIPTION, PHONE;
 
 		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
+
+		@Override
 		public String getDescription()
 		{
 			switch (this)

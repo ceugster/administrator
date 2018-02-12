@@ -21,6 +21,12 @@ public class RubricMap extends AbstractDataMap<Rubric>
 		CODE, NAME, DESCRIPTION;
 
 		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
+
+		@Override
 		public String getDescription()
 		{
 			switch (this)

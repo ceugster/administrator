@@ -53,6 +53,12 @@ public class ParticipantMap extends AbstractDataMap<Participant>
 		ID, BOOKING_TYPE_CODE, BOOKING_TYPE_NAME, PRICE, ANOTHER_LINE, SALUTATION, POLITE, COUNT, AMOUNT;
 
 		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
+
+		@Override
 		public String getDescription()
 		{
 			switch (this)

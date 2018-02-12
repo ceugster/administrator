@@ -27,6 +27,12 @@ public class SeasonMap extends AbstractDataMap<Season>
 		CODE, TITLE, START, END;
 
 		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
+
+		@Override
 		public String getDescription()
 		{
 			switch (this)

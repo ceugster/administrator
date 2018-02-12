@@ -35,4 +35,10 @@ public class ExtendedFieldKey implements DataMapKey
 		return name;
 	}
 
+	@Override
+	public Class<?> getType()
+	{
+		return String.class;
+	}
+
 }

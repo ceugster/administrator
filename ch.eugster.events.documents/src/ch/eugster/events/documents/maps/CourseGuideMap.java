@@ -79,6 +79,12 @@ public class CourseGuideMap extends AbstractDataMap<CourseGuide>
 		GUIDE_TYPE, PHONE, STATE, NOTE, EMAIL;
 
 		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
+
+		@Override
 		public String getDescription()
 		{
 			switch (this)
@@ -226,6 +232,12 @@ public class CourseGuideMap extends AbstractDataMap<CourseGuide>
 	public enum TableKey implements DataMapKey
 	{
 		COMPENSATIONS, COMPENSATIONS_SALARY, COMPENSATIONS_CHARGES, COURSE_GUIDES, COURSE_DETAILS, COURSE_BOOKING_TYPES;
+
+		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
 
 		@Override
 		public String getDescription()
