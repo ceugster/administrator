@@ -454,6 +454,12 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 			}
 		}
+
+		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
 	}
 
 	public enum TableKey implements DataMapKey
@@ -482,6 +488,12 @@ public class BookingMap extends AbstractDataMap<Booking>
 					throw new RuntimeException("Invalid key");
 				}
 			}
+		}
+
+		@Override
+		public Class<?> getType()
+		{
+			return String.class;
 		}
 
 		@Override

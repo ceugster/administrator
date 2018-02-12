@@ -22,6 +22,12 @@ public class DomainMap extends AbstractDataMap<Domain>
 		CODE, NAME, DESCRIPTION;
 
 		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
+
+		@Override
 		public String getDescription()
 		{
 			switch (this)

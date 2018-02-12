@@ -126,5 +126,11 @@ public class AddressGroupCategoryMap extends AbstractDataMap<AddressGroupCategor
 				}
 			}
 		}
+
+		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
 	}
 }

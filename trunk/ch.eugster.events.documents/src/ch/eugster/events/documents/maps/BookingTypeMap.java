@@ -80,6 +80,12 @@ public class BookingTypeMap extends AbstractDataMap<BookingType>
 		}
 
 		@Override
+		public Class<?> getType()
+		{
+			return String.class;
+		}
+
+		@Override
 		public String getKey()
 		{
 			switch (this)

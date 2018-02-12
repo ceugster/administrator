@@ -12,13 +12,12 @@ public class YearLabelProvider extends LabelProvider
 		if (element instanceof DonationYear)
 		{
 			DonationYear donationYear = (DonationYear) element;
-			if (donationYear.isAll())
-			{
-				return "Alle";
-			}
+// r533			if (donationYear.isAll())
+//			{
+//				return "Alle";
+//			}
 			return Integer.toString(donationYear.getYear());
 		}
 		return "";
 	}
-
 }
