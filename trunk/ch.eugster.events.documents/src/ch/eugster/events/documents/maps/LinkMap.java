@@ -324,7 +324,10 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 						{
 							if (domain == null || (donation.getDomain() != null && domain.equals(donation.getDomain())))
 							{
-								totalAmount += donation.getAmount();
+								if (year == null || (year.intValue() == donation.getDonationYear()))
+								{
+									totalAmount += donation.getAmount();
+								}
 							}
 						}
 					}
