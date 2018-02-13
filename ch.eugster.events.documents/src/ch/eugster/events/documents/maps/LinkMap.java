@@ -37,7 +37,11 @@ import ch.eugster.events.persistence.service.ConnectionService;
 public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 {
 	private static NumberFormat amountFormatter = null;
-
+	
+	private Integer year;
+	
+	private Domain domain;
+	
 	protected LinkMap() {
 		super();
 	}
@@ -54,6 +58,9 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 
 	public LinkMap(final LinkPersonAddress link, final Integer year, DonationPurpose purpose, Domain domain, boolean isGroup)
 	{
+		this.year = year;
+		this.domain = domain;
+		
 		if (amountFormatter == null)
 		{
 			amountFormatter = DecimalFormat.getNumberInstance();
@@ -67,6 +74,9 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 		this.setProperties(new AddressMap(link.getAddress(), isGroup).getProperties());
 		this.setProperties(new PersonMap(link.getPerson()).getProperties());
 
+		Key.domain = this.domain;
+		Key.year = this.year;
+		
 		for (Key key : Key.values())
 		{
 			if (year == null)
@@ -75,7 +85,7 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 			}
 			else
 			{
-				this.setProperty(key.getKey(), key.getValue(link, year.intValue()));
+				this.setProperty(key.getKey(), key.getValue(link));
 			}
 		}
 
@@ -152,6 +162,10 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 	public enum Key implements DataMapKey
 	{
 		PHONE, EMAIL, FUNCTION, MAILING_ADDRESS, TOTAL_DONATIONS, MEMBER, COURSE_VISITS;
+		
+		public static Domain domain;
+		
+		public static Integer year;
 
 		@Override
 		public Class<?> getType()
@@ -308,7 +322,10 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 					{
 						if (!donation.isDeleted())
 						{
-							totalAmount += donation.getAmount();
+							if (domain == null || (donation.getDomain() != null && domain.equals(donation.getDomain())))
+							{
+								totalAmount += donation.getAmount();
+							}
 						}
 					}
 					return amountFormatter.format(totalAmount);
@@ -370,100 +387,6 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 				}
 			}
 		}
-
-		public String getValue(final LinkPersonAddress link, final int year)
-		{
-			switch (this)
-			{
-				case PHONE:
-				{
-					return LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(
-							link.getAddress().getCountry(), link.getPhone());
-				}
-				case EMAIL:
-				{
-					return link.getEmail();
-				}
-				case FUNCTION:
-				{
-					return link.getFunction();
-				}
-				case MAILING_ADDRESS:
-				{
-					return LinkPersonAddressFormatter.getInstance().getLabel(link);
-				}
-				case TOTAL_DONATIONS:
-				{
-					double totalAmount = 0D;
-					List<Donation> donations = link.getPerson().getDonations();
-					for (Donation donation : donations)
-					{
-						if (!donation.isDeleted())
-						{
-							if (year == donation.getDonationYear())
-							{
-								totalAmount += donation.getAmount();
-							}
-						}
-					}
-					return amountFormatter.format(totalAmount);
-				}
-				case MEMBER:
-				{
-					StringBuilder builder = new StringBuilder();
-					Member[] members = link.getMembers().toArray(new Member[0]);
-					for (int i = 0; i < members.length; i++)
-					{
-						builder = builder.append(members[i].getMembership().getName());
-						if (i < members.length - 1)
-						{
-							builder = builder.append(", ");
-						}
-					}
-					return builder.toString();
-				}
-				case COURSE_VISITS:
-				{
-					List<Participant> participants = link.getParticipants();
-					Map<Long, String> courses = new HashMap<Long, String>();
-					for (Participant participant: participants)
-					{
-						if (!participant.isDeleted() && !participant.getBooking().isDeleted() && !participant.getBooking().getCourse().isDeleted())
-						{
-							if (participant.getBooking().getBookingState(participant.getBooking().getCourse().getState()).equals(BookingForthcomingState.BOOKED))
-							{
-								Course course = participant.getBooking().getCourse();
-								List<CourseDetail> details = course.getCourseDetails();
-								Calendar start = details.isEmpty() ? null : details.get(0).getStart();
-								String title = course.getTitle();
-								String date = start == null ? "ohne Datum" : SimpleDateFormat.getInstance().format(start.getTime());
-								courses.put(participant.getLink().getId(), title + " (" + date + ", angemelded)\n");
-							}
-							else if (participant.getBooking().getBookingState(participant.getBooking().getCourse().getState()).equals(BookingDoneState.PARTICIPATED))
-							{
-								Course course = participant.getBooking().getCourse();
-								List<CourseDetail> details = course.getCourseDetails();
-								Calendar start = details.isEmpty() ? null : details.get(0).getStart();
-								String title = course.getTitle();
-								String date = start == null ? "ohne Datum" : SimpleDateFormat.getInstance().format(start.getTime());
-								courses.put(participant.getLink().getId(), title + " (" + date + ", teilgenommen)\n");
-							}
-						}
-					}
-					Collection<String> values = courses.values();
-					StringBuilder builder = new StringBuilder();
-					for (String value : values)
-					{
-						builder = builder.append(value);
-					}
-					return builder.toString();
-				}
-				default:
-				{
-					throw new RuntimeException("Invalid key");
-				}
-			}
-		}
 	}
 
 	public enum TableKey
@@ -511,7 +434,13 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 					List<Donation> donations = link.getPerson().getDonations();
 					for (Donation donation : donations)
 					{
-						addDonation(donation, tableMaps, year, purpose, domain);
+						if (domain == null || (donation.getDomain() != null && domain.equals(donation.getDomain())))
+						{
+							if (year == null || year.intValue() == donation.getDonationYear())
+							{
+								addDonation(donation, tableMaps, year, purpose, domain);
+							}
+						}
 					}
 					return tableMaps;
 				}
