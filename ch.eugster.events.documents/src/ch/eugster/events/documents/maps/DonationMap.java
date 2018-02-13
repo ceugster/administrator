@@ -1,10 +1,10 @@
 package ch.eugster.events.documents.maps;
 
-import java.sql.Date;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -453,7 +453,7 @@ public class DonationMap extends AbstractDataMap<Donation>
 			}
 			if (this.equals(DATE))
 			{
-				return Date.class;
+				return Calendar.class;
 			}
 			if (this.equals(ID))
 			{
