@@ -152,21 +152,17 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 			final CellStyle style)
 	{
 		Cell cell = row.createCell(col);
-		if (value != null && value.contains("\n"))
-		{
-			style.setWrapText(true);
-		}
 		cell.setCellStyle(style);
-
 		if (type.equals(Double.class))
 		{
 			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-			cell.setCellValue(Double.valueOf(value));
+			cell.setCellValue(value == null || value.isEmpty() ? 0D : Double.valueOf(value));
 		}
 		else
 		{
-			// String!
-			if (value == null) value = "";
+			// Treat all other as string!
+			value = value == null ? "" : value;
+			style.setWrapText(value.contains("\n"));
 			RichTextString string = new XSSFRichTextString(value);
 			string.applyFont(font);
 			cell.setCellValue(string);
