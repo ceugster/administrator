@@ -13,26 +13,16 @@ public class DonationYear implements IEntity
 {
 	private final int year;
 
-	public DonationYear(int year)
+	public DonationYear(final int year)
 	{
 		this.year = year;
 	}
-
-// r533	public static DonationYear all()
-//	{
-//		return new DonationYear(0);
-//	}
 
 	@Override
 	public Long getId()
 	{
 		return null;
 	}
-// r533
-//	public boolean isAll()
-//	{
-//		return year == 0;
-//	}
 	
 	@Override
 	public boolean isDeleted()
@@ -42,21 +32,21 @@ public class DonationYear implements IEntity
 
 	public int getYear()
 	{
-		return year;
+		return this.year;
 	}
 
 	public List<Donation> getDonations()
 	{
-		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+		final ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class, null);
 		tracker.open();
 		try
 		{
-			ConnectionService service = (ConnectionService) tracker.getService();
+			final ConnectionService service = tracker.getService();
 			if (service != null)
 			{
-				DonationQuery query = (DonationQuery) service.getQuery(Donation.class);
-				return query.selectByYear(Integer.valueOf(year));
+				final DonationQuery query = (DonationQuery) service.getQuery(Donation.class);
+				return query.selectByYear(Integer.valueOf(this.year));
 			}
 		}
 		finally
@@ -67,7 +57,7 @@ public class DonationYear implements IEntity
 	}
 
 	@Override
-	public boolean equals(Object other)
+	public boolean equals(final Object other)
 	{
 		if (other instanceof DonationYear)
 		{

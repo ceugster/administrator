@@ -64,8 +64,8 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class DonationListDialog extends TitleAreaDialog
 {
-	private ConnectionService connectionService;
-	
+	private final ConnectionService connectionService;
+
 	private ComboViewer yearFromViewer;
 
 	private ComboViewer yearToViewer;
@@ -73,29 +73,33 @@ public class DonationListDialog extends TitleAreaDialog
 	private ComboViewer purposeViewer;
 
 	private ComboViewer domainViewer;
-	
+
 	private Text name;
 
-	private DonationPurpose allPurposes = DonationPurpose.newInstance("Alle");
-	
-	private List<Domain> allAndEmptyDomains = new ArrayList<Domain>();
+	private ComboViewer excludeYearViewer;
 
-	private DonationYear[] donationYears;
-	
+	private final DonationPurpose allPurposes = DonationPurpose.newInstance("Alle");
+
+	private final List<Domain> allAndEmptyDomains = new ArrayList<Domain>();
+
+	private final DonationYear[] donationYears;
+
 	private DonationYear selectedFromDonationYear;
 
 	private DonationYear selectedToDonationYear;
 
-	private DonationPurpose[] donationPurposes;
-	
+	private DonationYear excludeYear;
+
+	private final DonationPurpose[] donationPurposes;
+
 	private DonationPurpose selectedDonationPurpose;
 
-	private Domain[] domains;
-	
+	private final Domain[] domains;
+
 	private Domain selectedDomain;
 
 	private String selectedName;
-	
+
 	/*
 	 * Common
 	 */
@@ -114,7 +118,7 @@ public class DonationListDialog extends TitleAreaDialog
 
 	private boolean isPageComplete = false;
 
-	public DonationListDialog(final Shell parentShell, final ConnectionService connectionService, final DonationYear[] donationYears, final DonationYear selectedDonationYear, final DonationPurpose[] donationPurposes, final DonationPurpose selectedDonationPurpose, final Domain[] domains, final Domain selectedDomain, String selectedName)
+	public DonationListDialog(final Shell parentShell, final ConnectionService connectionService, final DonationYear[] donationYears, final DonationYear selectedDonationYear, final DonationPurpose[] donationPurposes, final DonationPurpose selectedDonationPurpose, final Domain[] domains, final Domain selectedDomain, final String selectedName)
 	{
 		super(parentShell);
 		this.connectionService = connectionService;
@@ -131,10 +135,10 @@ public class DonationListDialog extends TitleAreaDialog
 	@Override
 	protected Control createDialogArea(final Composite parent)
 	{
-		this.setTitle(DIALOG_TITLE);
+		this.setTitle(DonationListDialog.DIALOG_TITLE);
 		this.setMessage();
 
-		Composite composite = new Composite(parent, SWT.NONE);
+		final Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout(4, false));
 
@@ -147,35 +151,26 @@ public class DonationListDialog extends TitleAreaDialog
 		Combo combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		combo.setLayoutData(gridData);
 
-		yearFromViewer = new ComboViewer(combo);
-		yearFromViewer.setContentProvider(new YearContentProvider());
-// r533		yearViewer.setContentProvider(new YearContentProvider(DonationYear.all()));
-		yearFromViewer.setLabelProvider(new YearLabelProvider());
-		yearFromViewer.setSorter(new YearSorter());
-		yearFromViewer.setInput(this.donationYears);
-		yearFromViewer.addSelectionChangedListener(new ISelectionChangedListener()
+		this.yearFromViewer = new ComboViewer(combo);
+		this.yearFromViewer.setContentProvider(new YearContentProvider());
+		this.yearFromViewer.setLabelProvider(new YearLabelProvider());
+		this.yearFromViewer.setSorter(new YearSorter());
+		this.yearFromViewer.setInput(this.donationYears);
+		this.yearFromViewer.addSelectionChangedListener(new ISelectionChangedListener()
 		{
 			@Override
-			public void selectionChanged(SelectionChangedEvent event) 
+			public void selectionChanged(final SelectionChangedEvent event)
 			{
-				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
-// r533			if (ssel.isEmpty())
-// 				if (ssel.isEmpty() || ((DonationYear) ssel.getFirstElement()).isAll())
-//				{
-//					selectedFromDonationYear = null;
-//				}
-//				else
-//				{
-				selectedFromDonationYear = (DonationYear) ssel.getFirstElement();
-				IStructuredSelection toSsel = (IStructuredSelection) yearToViewer.getSelection();
+				final IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
+				DonationListDialog.this.selectedFromDonationYear = (DonationYear) ssel.getFirstElement();
+				final IStructuredSelection toSsel = (IStructuredSelection) DonationListDialog.this.yearToViewer.getSelection();
 				if (toSsel.isEmpty() || ((DonationYear) toSsel.getFirstElement()).getYear() > ((DonationYear) ssel.getFirstElement()).getYear())
 				{
-					yearToViewer.setSelection(ssel);
+					DonationListDialog.this.yearToViewer.setSelection(ssel);
 				}
-//				}
 			}
 		});
-		
+
 		label = new Label(composite, SWT.None);
 		label.setText("bis");
 		label.setLayoutData(new GridData());
@@ -185,61 +180,85 @@ public class DonationListDialog extends TitleAreaDialog
 		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		combo.setLayoutData(gridData);
 
-		yearToViewer = new ComboViewer(combo);
-		yearToViewer.setContentProvider(new YearContentProvider());
-// r533		yearViewer.setContentProvider(new YearContentProvider(DonationYear.all()));
-		yearToViewer.setLabelProvider(new YearLabelProvider());
-		yearToViewer.setSorter(new YearSorter());
-		yearToViewer.setInput(this.donationYears);
-		yearToViewer.addSelectionChangedListener(new ISelectionChangedListener()
+		this.yearToViewer = new ComboViewer(combo);
+		this.yearToViewer.setContentProvider(new YearContentProvider());
+		this.yearToViewer.setLabelProvider(new YearLabelProvider());
+		this.yearToViewer.setSorter(new YearSorter());
+		this.yearToViewer.setInput(this.donationYears);
+		this.yearToViewer.addSelectionChangedListener(new ISelectionChangedListener()
 		{
 			@Override
-			public void selectionChanged(SelectionChangedEvent event) 
+			public void selectionChanged(final SelectionChangedEvent event)
 			{
-				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
-// r533			if (ssel.isEmpty())
-// 				if (ssel.isEmpty() || ((DonationYear) ssel.getFirstElement()).isAll())
-//				{
-//					selectedFromDonationYear = null;
-//				}
-//				else
-//				{
-				selectedToDonationYear = (DonationYear) ssel.getFirstElement();
-				IStructuredSelection fromSsel = (IStructuredSelection) yearFromViewer.getSelection();
+				final IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
+				DonationListDialog.this.selectedToDonationYear = (DonationYear) ssel.getFirstElement();
+				final IStructuredSelection fromSsel = (IStructuredSelection) DonationListDialog.this.yearFromViewer.getSelection();
 				if (fromSsel.isEmpty() || ((DonationYear) fromSsel.getFirstElement()).getYear() > ((DonationYear) ssel.getFirstElement()).getYear())
 				{
-					yearFromViewer.setSelection(ssel);
+					DonationListDialog.this.yearFromViewer.setSelection(ssel);
 				}
-//				}
 			}
 		});
-		yearFromViewer.setSelection(new StructuredSelection(new DonationYear[] { this.selectedFromDonationYear }));
-		
+		this.yearFromViewer.setSelection(new StructuredSelection(new DonationYear[] { this.selectedFromDonationYear }));
+
+		label = new Label(composite, SWT.None);
+		label.setText("Spender von");
+		label.setLayoutData(new GridData());
+
+		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		combo.setCursor(this.getShell().getDisplay().getSystemCursor(Cursor.DEFAULT_CURSOR));
+
+		this.excludeYearViewer = new ComboViewer(combo);
+		this.excludeYearViewer.setContentProvider(new YearContentProvider());
+		this.excludeYearViewer.setLabelProvider(new YearLabelProvider());
+		this.excludeYearViewer.setSorter(new YearSorter());
+		this.excludeYearViewer.setInput(this.donationYears);
+		this.excludeYear = new DonationYear(0);
+		this.excludeYearViewer.insert(this.excludeYear, 0);
+		this.excludeYearViewer.addSelectionChangedListener(new ISelectionChangedListener()
+		{
+			@Override
+			public void selectionChanged(final SelectionChangedEvent event)
+			{
+				final IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
+				DonationListDialog.this.excludeYear = (DonationYear) ssel.getFirstElement();
+			}
+		});
+		this.excludeYearViewer.setSelection(new StructuredSelection(new DonationYear[] { this.excludeYear }));
+
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+
+		label = new Label(composite, SWT.None);
+		label.setText("ausschliessen");
+		label.setLayoutData(gridData);
+
 		label = new Label(composite, SWT.None);
 		label.setText("Zweckfilter");
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 3;
-		
+
 		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		combo.setLayoutData(gridData);
 		combo.setCursor(this.getShell().getDisplay().getSystemCursor(Cursor.DEFAULT_CURSOR));
 
-		purposeViewer = new ComboViewer(combo);
-		purposeViewer.setContentProvider(new PurposeContentProvider(allPurposes));
-		purposeViewer.setLabelProvider(new PurposeLabelProvider());
-		purposeViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
-		purposeViewer.setInput(this.donationPurposes);
-		purposeViewer.addSelectionChangedListener(new ISelectionChangedListener()
+		this.purposeViewer = new ComboViewer(combo);
+		this.purposeViewer.setContentProvider(new PurposeContentProvider(this.allPurposes));
+		this.purposeViewer.setLabelProvider(new PurposeLabelProvider());
+		this.purposeViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
+		this.purposeViewer.setInput(this.donationPurposes);
+		this.purposeViewer.addSelectionChangedListener(new ISelectionChangedListener()
 		{
 			@Override
-			public void selectionChanged(SelectionChangedEvent event) 
+			public void selectionChanged(final SelectionChangedEvent event)
 			{
-				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
+				final IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
 				if (ssel.isEmpty() || ((DonationPurpose) ssel.getFirstElement()).getId() == null)
 				{
-					DonationListDialog.this.selectedDonationPurpose= null;
+					DonationListDialog.this.selectedDonationPurpose = null;
 				}
 				else
 				{
@@ -247,7 +266,7 @@ public class DonationListDialog extends TitleAreaDialog
 				}
 			}
 		});
-		purposeViewer.setSelection(new StructuredSelection(new DonationPurpose[] { this.selectedDonationPurpose }));
+		this.purposeViewer.setSelection(new StructuredSelection(new DonationPurpose[] { this.selectedDonationPurpose }));
 
 		label = new Label(composite, SWT.None);
 		label.setText("Domänenfilter");
@@ -260,23 +279,23 @@ public class DonationListDialog extends TitleAreaDialog
 		combo.setLayoutData(gridData);
 		combo.setCursor(this.getShell().getDisplay().getSystemCursor(Cursor.DEFAULT_CURSOR));
 
-		allAndEmptyDomains.add(Domain.newInstance("Alle"));
-		allAndEmptyDomains.add(Domain.newInstance("Keine"));
+		this.allAndEmptyDomains.add(Domain.newInstance("Alle"));
+		this.allAndEmptyDomains.add(Domain.newInstance("Keine"));
 
-		domainViewer = new ComboViewer(combo);
-		domainViewer.setContentProvider(new DomainContentProvider(allAndEmptyDomains));
-		domainViewer.setLabelProvider(new DomainLabelProvider());
-		domainViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
-		domainViewer.setInput(this.domains);
-		domainViewer.addSelectionChangedListener(new ISelectionChangedListener()
+		this.domainViewer = new ComboViewer(combo);
+		this.domainViewer.setContentProvider(new DomainContentProvider(this.allAndEmptyDomains));
+		this.domainViewer.setLabelProvider(new DomainLabelProvider());
+		this.domainViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
+		this.domainViewer.setInput(this.domains);
+		this.domainViewer.addSelectionChangedListener(new ISelectionChangedListener()
 		{
 			@Override
-			public void selectionChanged(SelectionChangedEvent event) 
+			public void selectionChanged(final SelectionChangedEvent event)
 			{
-				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
+				final IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
 				if (ssel.isEmpty() || ((Domain) ssel.getFirstElement()).getName().equals("Alle"))
 				{
-					DonationListDialog.this.selectedDomain= null;
+					DonationListDialog.this.selectedDomain = null;
 				}
 				else
 				{
@@ -284,7 +303,7 @@ public class DonationListDialog extends TitleAreaDialog
 				}
 			}
 		});
-		domainViewer.setSelection(new StructuredSelection(new Domain[] { this.selectedDomain }));
+		this.domainViewer.setSelection(new StructuredSelection(new Domain[] { this.selectedDomain }));
 
 		label = new Label(composite, SWT.None);
 		label.setText("Namenfilter");
@@ -293,24 +312,24 @@ public class DonationListDialog extends TitleAreaDialog
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 3;
 
-		name = new Text(composite, SWT.BORDER);
-		name.setLayoutData(gridData);
-		name.setText(selectedName);
-		name.addModifyListener(new ModifyListener() 
+		this.name = new Text(composite, SWT.BORDER);
+		this.name.setLayoutData(gridData);
+		this.name.setText(this.selectedName);
+		this.name.addModifyListener(new ModifyListener()
 		{
 			@Override
-			public void modifyText(ModifyEvent e) 
+			public void modifyText(final ModifyEvent e)
 			{
-				selectedName = name.getText();
+				DonationListDialog.this.selectedName = DonationListDialog.this.name.getText();
 			}
 		});
-		
+
 		return parent;
 	}
 
 	private DataMapKey[] getKeys()
 	{
-		List<DataMapKey> keys = new ArrayList<DataMapKey>();
+		final List<DataMapKey> keys = new ArrayList<DataMapKey>();
 		keys.add(DonationMap.Key.TYPE);
 		keys.add(DonationMap.Key.ID);
 		keys.add(PersonMap.Key.SEX);
@@ -353,12 +372,10 @@ public class DonationListDialog extends TitleAreaDialog
 
 	private void buildDocument()
 	{
-		final DataMap<?>[] dataMaps = createDataMaps();
+		final DataMap<?>[] dataMaps = this.createDataMaps();
 		if (dataMaps.length == 0)
 		{
-			MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-					MSG_TITLE_NO_BOOKINGS, null, "Die Auswahl enthält keine auswertbaren Elemente.",
-					MessageDialog.INFORMATION, new String[] { "OK" }, 0);
+			final MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), DonationListDialog.MSG_TITLE_NO_BOOKINGS, null, "Die Auswahl enthält keine auswertbaren Elemente.", MessageDialog.INFORMATION, new String[] { "OK" }, 0);
 			dialog.open();
 		}
 		else
@@ -366,53 +383,50 @@ public class DonationListDialog extends TitleAreaDialog
 			Arrays.sort(dataMaps, new Comparator<DataMap<?>>()
 			{
 				@Override
-				public int compare(DataMap<?> map1, DataMap<?> map2)
+				public int compare(final DataMap<?> map1, final DataMap<?> map2)
 				{
 					String name1 = map1.getProperty("person_lastname");
 					String name2 = map2.getProperty("person_lastname");
-					int result = compareStrings(name1, name2);
+					int result = DonationListDialog.this.compareStrings(name1, name2);
 					if (result == 0)
 					{
 						name1 = map1.getProperty("person_firstname");
 						name2 = map2.getProperty("person_firstname");
-						result = compareStrings(name1, name2);
+						result = DonationListDialog.this.compareStrings(name1, name2);
 						if (result == 0)
 						{
 							name1 = map1.getProperty("address_name");
 							name2 = map2.getProperty("address_name");
-							return compareStrings(name1, name2);
+							return DonationListDialog.this.compareStrings(name1, name2);
 						}
 					}
 					return result;
 				}
 			});
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+			final ProgressMonitorDialog dialog = new ProgressMonitorDialog(this.getShell());
 			try
 			{
 				dialog.run(true, true, new IRunnableWithProgress()
 				{
 					@Override
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
+					public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 					{
 						IStatus status = Status.CANCEL_STATUS;
-						ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle()
-								.getBundleContext(), DocumentBuilderService.class, null);
+						final ServiceTracker<DocumentBuilderService, DocumentBuilderService> tracker = new ServiceTracker<DocumentBuilderService, DocumentBuilderService>(Activator.getDefault().getBundle().getBundleContext(), DocumentBuilderService.class, null);
 						try
 						{
 							tracker.open();
-							ServiceReference<DocumentBuilderService>[] references = tracker.getServiceReferences();
+							final ServiceReference<DocumentBuilderService>[] references = tracker.getServiceReferences();
 							if (references != null)
 							{
 								try
 								{
 									monitor.beginTask("Dokument wird erstellt...", references.length);
-									for (ServiceReference<DocumentBuilderService> reference : references)
+									for (final ServiceReference<DocumentBuilderService> reference : references)
 									{
-										DocumentBuilderService service = (DocumentBuilderService) tracker
-												.getService(reference);
-										DocumentBuilderService builderService = service;
-										status = builderService.buildDocument(new SubProgressMonitor(monitor,
-												dataMaps.length), getKeys(), dataMaps);
+										final DocumentBuilderService service = tracker.getService(reference);
+										final DocumentBuilderService builderService = service;
+										status = builderService.buildDocument(new SubProgressMonitor(monitor, dataMaps.length), DonationListDialog.this.getKeys(), dataMaps);
 										if (status.isOK() || status.getSeverity() == IStatus.ERROR)
 										{
 											break;
@@ -428,27 +442,25 @@ public class DonationListDialog extends TitleAreaDialog
 							}
 							else
 							{
-								status = new Status(IStatus.CANCEL,
-										Activator.getDefault().getBundle().getSymbolicName(), MSG_NO_SERVICE_AVAILABLE);
+								status = new Status(IStatus.CANCEL, Activator.getDefault().getBundle().getSymbolicName(), DonationListDialog.MSG_NO_SERVICE_AVAILABLE);
 							}
 						}
 						finally
 						{
 							if (!status.isOK())
 							{
-								MessageDialog.openInformation(getShell(), "Information", status.getMessage());
+								MessageDialog.openInformation(DonationListDialog.this.getShell(), "Information", status.getMessage());
 							}
 							tracker.close();
 						}
 					}
 				});
 			}
-			catch (InvocationTargetException e)
+			catch (final InvocationTargetException e)
 			{
-				MessageDialog.openError(getShell(), "Fehler",
-						"Bei der Verarbeitung ist ein Fehler aufgetreten.\n(" + e.getLocalizedMessage() + ")");
+				MessageDialog.openError(this.getShell(), "Fehler", "Bei der Verarbeitung ist ein Fehler aufgetreten.\n(" + e.getLocalizedMessage() + ")");
 			}
-			catch (InterruptedException e)
+			catch (final InterruptedException e)
 			{
 			}
 		}
@@ -470,20 +482,20 @@ public class DonationListDialog extends TitleAreaDialog
 	@Override
 	protected void createButtonsForButtonBar(final Composite parent)
 	{
-		this.createButton(parent, IDialogConstants.OK_ID, OK_BUTTON_TEXT, true);
-		this.createButton(parent, IDialogConstants.CANCEL_ID, CANCEL_BUTTON_TEXT, false);
+		this.createButton(parent, IDialogConstants.OK_ID, DonationListDialog.OK_BUTTON_TEXT, true);
+		this.createButton(parent, IDialogConstants.CANCEL_ID, DonationListDialog.CANCEL_BUTTON_TEXT, false);
 	}
 
 	private DataMap<?>[] createDataMaps()
 	{
-		Map<String, DataMap<?>> dataMaps = new HashMap<String, DataMap<?>>();
-		DonationQuery query = (DonationQuery) connectionService.getQuery(Donation.class);
+		final Map<String, DataMap<?>> dataMaps = new HashMap<String, DataMap<?>>();
+		final DonationQuery query = (DonationQuery) this.connectionService.getQuery(Donation.class);
 		List<Donation> donations = query.selectByYearRangePurposeDomain(this.selectedFromDonationYear, this.selectedToDonationYear, this.selectedDonationPurpose, this.selectedDomain);
-		for (Donation donation : donations)
+		for (final Donation donation : donations)
 		{
-			if (printDonation(donation))
+			if (this.printDonation(donation))
 			{
-				DonationMap map = new DonationMap(donation);
+				final DonationMap map = new DonationMap(donation);
 				if (donation.getLink() == null || !donation.getLink().isValid())
 				{
 					map.setProperties(new AddressMap(donation.getAddress()).getProperties());
@@ -495,26 +507,37 @@ public class DonationListDialog extends TitleAreaDialog
 				dataMaps.put(donation.getId().toString(), map);
 			}
 		}
+		if (this.excludeYear.getYear() > 0)
+		{
+			donations = query.selectByYear(this.excludeYear);
+			for (final Donation donation : donations)
+			{
+				if (this.printDonation(donation))
+				{
+					dataMaps.remove(donation.getId().toString());
+				}
+			}
+		}
 		return dataMaps.values().toArray(new DataMap<?>[0]);
 	}
 
-	private boolean isNameValid(Donation donation)
+	private boolean isNameValid(final Donation donation)
 	{
-		if (selectedName == null || selectedName.isEmpty())
+		if (this.selectedName == null || this.selectedName.isEmpty())
 		{
 			return true;
 		}
-		if (donation.getAddress().getName().toLowerCase().contains(selectedName.toLowerCase()))
+		if (donation.getAddress().getName().toLowerCase().contains(this.selectedName.toLowerCase()))
 		{
 			return true;
 		}
 		if (donation.getLink() != null)
 		{
-			if (donation.getLink().getPerson().getFirstname().toLowerCase().contains(selectedName.toLowerCase()))
+			if (donation.getLink().getPerson().getFirstname().toLowerCase().contains(this.selectedName.toLowerCase()))
 			{
 				return true;
 			}
-			if (donation.getLink().getPerson().getLastname().toLowerCase().contains(selectedName.toLowerCase()))
+			if (donation.getLink().getPerson().getLastname().toLowerCase().contains(this.selectedName.toLowerCase()))
 			{
 				return true;
 			}
@@ -522,20 +545,20 @@ public class DonationListDialog extends TitleAreaDialog
 		return false;
 	}
 
-	private boolean printDonation(Donation donation)
+	private boolean printDonation(final Donation donation)
 	{
 		if (!donation.isValid())
 		{
 			return false;
 		}
-		if (selectedDonationPurpose == null && selectedDomain == null)
+		if (this.selectedDonationPurpose == null && this.selectedDomain == null)
 		{
-			return isNameValid(donation);
+			return this.isNameValid(donation);
 		}
 
-		if (selectedDonationPurpose == null)
+		if (this.selectedDonationPurpose == null)
 		{
-			if (selectedDomain.getId() != null)
+			if (this.selectedDomain.getId() != null)
 			{
 				if (donation.getDomain() == null)
 				{
@@ -543,9 +566,9 @@ public class DonationListDialog extends TitleAreaDialog
 				}
 				else
 				{
-					if (selectedDomain.getId().equals(donation.getDomain().getId()))
+					if (this.selectedDomain.getId().equals(donation.getDomain().getId()))
 					{
-						return isNameValid(donation);
+						return this.isNameValid(donation);
 					}
 					else
 					{
@@ -554,19 +577,19 @@ public class DonationListDialog extends TitleAreaDialog
 				}
 			}
 		}
-		if (selectedDomain == null)
+		if (this.selectedDomain == null)
 		{
-			return donation.getPurpose().getId().equals(selectedDonationPurpose.getId());
+			return donation.getPurpose().getId().equals(this.selectedDonationPurpose.getId());
 		}
 		if (donation.getDomain() == null || donation.getPurpose() == null)
 		{
 			return false;
 		}
-		if (donation.getDomain() != null && selectedDomain.getId().equals(donation.getDomain().getId()))
+		if (donation.getDomain() != null && this.selectedDomain.getId().equals(donation.getDomain().getId()))
 		{
-			if (donation.getPurpose().getId().equals(selectedDonationPurpose.getId()))
+			if (donation.getPurpose().getId().equals(this.selectedDonationPurpose.getId()))
 			{
-				return isNameValid(donation);
+				return this.isNameValid(donation);
 			}
 		}
 		return false;
@@ -580,7 +603,7 @@ public class DonationListDialog extends TitleAreaDialog
 	@Override
 	protected void okPressed()
 	{
-		buildDocument();
+		this.buildDocument();
 		super.okPressed();
 	}
 

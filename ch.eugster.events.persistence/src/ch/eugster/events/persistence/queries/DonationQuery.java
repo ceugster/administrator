@@ -10,6 +10,7 @@ import org.eclipse.persistence.queries.ReadAllQuery;
 import org.eclipse.persistence.queries.ReportQuery;
 import org.eclipse.persistence.queries.ReportQueryResult;
 
+import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.Donation;
 import ch.eugster.events.persistence.model.DonationPurpose;
@@ -19,27 +20,42 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class DonationQuery extends AbstractEntityQuery<Donation>
 {
-
-	public DonationQuery(ConnectionService connectionService)
+	public DonationQuery(final ConnectionService connectionService)
 	{
 		super(connectionService);
 	}
 
-	public List<Donation> selectByLink(LinkPersonAddress link)
+	public List<Donation> selectByLink(final LinkPersonAddress link)
 	{
-		Expression expression = new ExpressionBuilder(Donation.class).get("link").equal(link);
-		return select(Donation.class, expression);
+		final Expression expression = new ExpressionBuilder(Donation.class).get("link").equal(link);
+		return this.select(Donation.class, expression);
 	}
 
+	public List<Donation> selectByAddress(final Address address)
+	{
+		final Expression expression = new ExpressionBuilder(Donation.class).get("address").equal(address);
+		return this.select(Donation.class, expression);
+	}
+
+	public List<Donation> selectByYear(final DonationYear donationYear)
+	{
+		Expression donationExpression = new ExpressionBuilder(Donation.class).get("deleted").equal(false);
+		if (donationYear.getYear() != 0)
+		{
+			donationExpression = donationExpression.and(new ExpressionBuilder().get("year").equal(donationYear.getYear()));
+		}
+		return this.select(Donation.class, donationExpression);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<String> selectPurposes()
 	{
-		ReportQuery query = new ReportQuery();
+		final ReportQuery query = new ReportQuery();
 		query.setJPQLString("SELECT DISTINCT d.purpose FROM Donation AS d");
-		return (List<String>) connectionService.getSession().executeQuery(query);
+		return (List<String>) this.connectionService.getSession().executeQuery(query);
 	}
 
-	public List<Donation> selectByYearPurposeDomain(DonationYear year, DonationPurpose purpose, Domain domain)
+	public List<Donation> selectByYearPurposeDomain(final DonationYear year, final DonationPurpose purpose, final Domain domain)
 	{
 		Expression donationExpression = new ExpressionBuilder(Donation.class).get("deleted").equal(false);
 		if (year != null)
@@ -61,11 +77,11 @@ public class DonationQuery extends AbstractEntityQuery<Donation>
 				donationExpression = donationExpression.and(new ExpressionBuilder().get("domain").equal(domain));
 			}
 		}
-		List<Donation> donations = super.select(Donation.class, donationExpression);
+		final List<Donation> donations = super.select(Donation.class, donationExpression);
 		return donations;
 	}
 	
-	public List<Donation> selectByYearRangePurposeDomain(DonationYear fromYear, DonationYear toYear, DonationPurpose purpose, Domain domain)
+	public List<Donation> selectByYearRangePurposeDomain(final DonationYear fromYear, final DonationYear toYear, final DonationPurpose purpose, final Domain domain)
 	{
 		Expression donationExpression = new ExpressionBuilder(Donation.class).get("deleted").equal(false);
 		donationExpression = donationExpression.and(new ExpressionBuilder().get("year").between(fromYear.getYear(), toYear.getYear()));
@@ -84,23 +100,23 @@ public class DonationQuery extends AbstractEntityQuery<Donation>
 				donationExpression = donationExpression.and(new ExpressionBuilder().get("domain").equal(domain));
 			}
 		}
-		List<Donation> donations = super.select(Donation.class, donationExpression);
+		final List<Donation> donations = super.select(Donation.class, donationExpression);
 		return donations;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<DonationYear> selectYears()
 	{
-		Expression expression = new ExpressionBuilder();
-		ReportQuery query = new ReportQuery(Donation.class, expression);
+		final Expression expression = new ExpressionBuilder();
+		final ReportQuery query = new ReportQuery(Donation.class, expression);
 		query.addAttribute("year", expression.get("year"), Integer.class);
 		query.setDistinctState(ObjectLevelReadQuery.USE_DISTINCT);
-		List<ReportQueryResult> results = (List<ReportQueryResult>) connectionService.getSession()
+		final List<ReportQueryResult> results = (List<ReportQueryResult>) this.connectionService.getSession()
 				.executeQuery(query);
-		List<DonationYear> years = new ArrayList<DonationYear>();
-		for (ReportQueryResult result : results)
+		final List<DonationYear> years = new ArrayList<DonationYear>();
+		for (final ReportQueryResult result : results)
 		{
-			Integer year = (Integer) result.get("year");
+			final Integer year = (Integer) result.get("year");
 			if (year != null && year > 0)
 			{
 				years.add(new DonationYear(year));
@@ -111,35 +127,35 @@ public class DonationQuery extends AbstractEntityQuery<Donation>
 
 	public List<Donation> selectValids()
 	{
-		Expression expression = new ExpressionBuilder(Donation.class).get("deleted").equal(false);
+		final Expression expression = new ExpressionBuilder(Donation.class).get("deleted").equal(false);
 //		Expression donator = new ExpressionBuilder().get("link").isNull();
 //		Expression validDonator = new ExpressionBuilder().get("link").get("deleted").equal(false);
 //		validDonator = validDonator.and(new ExpressionBuilder().get("link").get("person").get("deleted").equal(false));
 //		validDonator = validDonator.and(new ExpressionBuilder().get("link").get("address").get("deleted").equal(false));
 //		donator = donator.or(validDonator);
 //		expression = expression.and(donator).and(new ExpressionBuilder().get("address").get("deleted").equal(false));
-		return select(Donation.class, expression);
+		return this.select(Donation.class, expression);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Donation> selectByYear(Integer year)
+	public List<Donation> selectByYear(final Integer year)
 	{
-		ReadAllQuery query = new ReadAllQuery(Donation.class);
-		ExpressionBuilder builder = query.getExpressionBuilder();
-		Expression expression = builder.get("year").equal(year);
+		final ReadAllQuery query = new ReadAllQuery(Donation.class);
+		final ExpressionBuilder builder = query.getExpressionBuilder();
+		final Expression expression = builder.get("year").equal(year);
 		query.setSelectionCriteria(expression);
-		List<Donation> donations = (List<Donation>) connectionService.getSession().executeQuery(query);
+		final List<Donation> donations = (List<Donation>) this.connectionService.getSession().executeQuery(query);
 		return donations;
 	}
 
-	public int countByYear(Integer year)
+	public int countByYear(final Integer year)
 	{
-		ExpressionBuilder builder = new ExpressionBuilder();
-		ReportQuery query = new ReportQuery(Donation.class, builder);
+		final ExpressionBuilder builder = new ExpressionBuilder();
+		final ReportQuery query = new ReportQuery(Donation.class, builder);
 		query.setSelectionCriteria(builder.get("year").equal(year.intValue()));
 		query.addCount();
 		query.returnSingleValue();
-		Long result = (Long) connectionService.getSession().executeQuery(query);
+		final Long result = (Long) this.connectionService.getSession().executeQuery(query);
 		return result.intValue();
 	}
 

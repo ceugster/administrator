@@ -865,6 +865,7 @@ ch.eugster.events.donation/src/ch/eugster/events/donation/YearLabelProvider.java
 ch.eugster.events.donation/src/ch/eugster/events/donation/YearSorter.java -text svneol=unset#text/plain
 ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationConfirmationDialog.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationDialog.java -text
+ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationLetterDialog.java -text svneol=unset#text/plain
 ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonationListDialog.java -text svneol=unset#text/plain
 ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/DonatorListDialog.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/dialogs/SelectedDonationListDialog.java -text
