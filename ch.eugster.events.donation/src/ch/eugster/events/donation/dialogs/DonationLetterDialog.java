@@ -1,6 +1,7 @@
 package ch.eugster.events.donation.dialogs;
 
 import java.awt.Cursor;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,11 +28,17 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -59,10 +66,13 @@ import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.Donation;
 import ch.eugster.events.persistence.model.DonationPurpose;
 import ch.eugster.events.persistence.model.DonationYear;
+import ch.eugster.events.persistence.model.User;
+import ch.eugster.events.persistence.model.UserProperty;
 import ch.eugster.events.persistence.queries.DonationQuery;
+import ch.eugster.events.persistence.queries.UserQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
-public class DonatorListDialog extends TitleAreaDialog
+public class DonationLetterDialog extends TitleAreaDialog
 {
 	private final ConnectionService connectionService;
 
@@ -70,13 +80,17 @@ public class DonatorListDialog extends TitleAreaDialog
 
 	private ComboViewer yearToViewer;
 
+	private ComboViewer excludeYearViewer;
+
 	private ComboViewer purposeViewer;
 
 	private ComboViewer domainViewer;
 
 	private Text name;
 
-	private ComboViewer excludeYearViewer;
+	private Text template;
+
+	private Button selectTemplate;
 
 	private final DonationPurpose allPurposes = DonationPurpose.newInstance("Alle");
 
@@ -89,7 +103,7 @@ public class DonatorListDialog extends TitleAreaDialog
 	private DonationYear selectedToDonationYear;
 
 	private DonationYear excludeYear;
-	
+
 	private final DonationPurpose[] donationPurposes;
 
 	private DonationPurpose selectedDonationPurpose;
@@ -99,6 +113,10 @@ public class DonatorListDialog extends TitleAreaDialog
 	private Domain selectedDomain;
 
 	private String selectedName;
+	
+	private UserProperty userPropertyTemplatePath;
+
+	
 	/*
 	 * Common
 	 */
@@ -117,7 +135,7 @@ public class DonatorListDialog extends TitleAreaDialog
 
 	private boolean isPageComplete = false;
 
-	public DonatorListDialog(final Shell parentShell, final ConnectionService connectionService, final DonationYear[] donationYears, final DonationYear selectedDonationYear, final DonationPurpose[] donationPurposes, final DonationPurpose selectedDonationPurpose, final Domain[] domains, final Domain selectedDomain, final String selectedName)
+	public DonationLetterDialog(final Shell parentShell, final ConnectionService connectionService, final DonationYear[] donationYears, final DonationYear selectedDonationYear, final DonationPurpose[] donationPurposes, final DonationPurpose selectedDonationPurpose, final Domain[] domains, final Domain selectedDomain, final String selectedName)
 	{
 		super(parentShell);
 		this.connectionService = connectionService;
@@ -134,12 +152,12 @@ public class DonatorListDialog extends TitleAreaDialog
 	@Override
 	protected Control createDialogArea(final Composite parent)
 	{
-		this.setTitle(DonatorListDialog.DIALOG_TITLE);
+		this.setTitle(DonationLetterDialog.DIALOG_TITLE);
 		this.setMessage();
 
 		final Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setLayout(new GridLayout(4, false));
+		composite.setLayout(new GridLayout(5, false));
 
 		Label label = new Label(composite, SWT.None);
 		label.setText("Von");
@@ -161,11 +179,11 @@ public class DonatorListDialog extends TitleAreaDialog
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
 				final IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
-				DonatorListDialog.this.selectedFromDonationYear = (DonationYear) ssel.getFirstElement();
-				final IStructuredSelection toSsel = (IStructuredSelection) DonatorListDialog.this.yearToViewer.getSelection();
+				DonationLetterDialog.this.selectedFromDonationYear = (DonationYear) ssel.getFirstElement();
+				final IStructuredSelection toSsel = (IStructuredSelection) DonationLetterDialog.this.yearToViewer.getSelection();
 				if (toSsel.isEmpty() || ((DonationYear) toSsel.getFirstElement()).getYear() < ((DonationYear) ssel.getFirstElement()).getYear())
 				{
-					DonatorListDialog.this.yearToViewer.setSelection(ssel);
+					DonationLetterDialog.this.yearToViewer.setSelection(ssel);
 				}
 			}
 		});
@@ -175,6 +193,7 @@ public class DonatorListDialog extends TitleAreaDialog
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
 
 		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		combo.setLayoutData(gridData);
@@ -190,11 +209,11 @@ public class DonatorListDialog extends TitleAreaDialog
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
 				final IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
-				DonatorListDialog.this.selectedToDonationYear = (DonationYear) ssel.getFirstElement();
-				final IStructuredSelection fromSsel = (IStructuredSelection) DonatorListDialog.this.yearFromViewer.getSelection();
+				DonationLetterDialog.this.selectedToDonationYear = (DonationYear) ssel.getFirstElement();
+				final IStructuredSelection fromSsel = (IStructuredSelection) DonationLetterDialog.this.yearFromViewer.getSelection();
 				if (fromSsel.isEmpty() || ((DonationYear) fromSsel.getFirstElement()).getYear() > ((DonationYear) ssel.getFirstElement()).getYear())
 				{
-					DonatorListDialog.this.yearFromViewer.setSelection(ssel);
+					DonationLetterDialog.this.yearFromViewer.setSelection(ssel);
 				}
 			}
 		});
@@ -221,13 +240,13 @@ public class DonatorListDialog extends TitleAreaDialog
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
 				final IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
-				DonatorListDialog.this.excludeYear = (DonationYear) ssel.getFirstElement();
+				DonationLetterDialog.this.excludeYear = (DonationYear) ssel.getFirstElement();
 			}
 		});
 		this.excludeYearViewer.setSelection(new StructuredSelection(new DonationYear[] { this.excludeYear }));
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
+		gridData.horizontalSpan = 3;
 
 		label = new Label(composite, SWT.None);
 		label.setText("ausschliessen");
@@ -238,7 +257,7 @@ public class DonatorListDialog extends TitleAreaDialog
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 3;
+		gridData.horizontalSpan = 4;
 
 		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		combo.setLayoutData(gridData);
@@ -257,11 +276,11 @@ public class DonatorListDialog extends TitleAreaDialog
 				final IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
 				if (ssel.isEmpty() || ((DonationPurpose) ssel.getFirstElement()).getId() == null)
 				{
-					DonatorListDialog.this.selectedDonationPurpose = null;
+					DonationLetterDialog.this.selectedDonationPurpose = null;
 				}
 				else
 				{
-					DonatorListDialog.this.selectedDonationPurpose = (DonationPurpose) ssel.getFirstElement();
+					DonationLetterDialog.this.selectedDonationPurpose = (DonationPurpose) ssel.getFirstElement();
 				}
 			}
 		});
@@ -272,7 +291,7 @@ public class DonatorListDialog extends TitleAreaDialog
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 3;
+		gridData.horizontalSpan = 4;
 
 		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		combo.setLayoutData(gridData);
@@ -294,11 +313,11 @@ public class DonatorListDialog extends TitleAreaDialog
 				final IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
 				if (ssel.isEmpty() || ((Domain) ssel.getFirstElement()).getName().equals("Alle"))
 				{
-					DonatorListDialog.this.selectedDomain = null;
+					DonationLetterDialog.this.selectedDomain = null;
 				}
 				else
 				{
-					DonatorListDialog.this.selectedDomain = (Domain) ssel.getFirstElement();
+					DonationLetterDialog.this.selectedDomain = (Domain) ssel.getFirstElement();
 				}
 			}
 		});
@@ -309,7 +328,7 @@ public class DonatorListDialog extends TitleAreaDialog
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 3;
+		gridData.horizontalSpan = 4;
 
 		this.name = new Text(composite, SWT.BORDER);
 		this.name.setLayoutData(gridData);
@@ -319,10 +338,72 @@ public class DonatorListDialog extends TitleAreaDialog
 			@Override
 			public void modifyText(final ModifyEvent e)
 			{
-				DonatorListDialog.this.selectedName = DonatorListDialog.this.name.getText();
+				DonationLetterDialog.this.selectedName = DonationLetterDialog.this.name.getText();
 			}
 		});
 
+		File file = null;
+		if (User.getCurrent() != null)
+		{
+			this.userPropertyTemplatePath = User.getCurrent().getProperty(
+					UserProperty.Property.DONATION_CONFIRMATION_TEMPLATE_PATH.key());
+			if (this.userPropertyTemplatePath == null)
+			{
+				this.userPropertyTemplatePath = UserProperty.newInstance(User.getCurrent());
+				this.userPropertyTemplatePath.setKey(UserProperty.Property.DONATION_CONFIRMATION_TEMPLATE_PATH.key());
+				this.userPropertyTemplatePath.setValue(System.getProperty("user.home"));
+			}
+			file = new File(this.userPropertyTemplatePath.getValue());
+		}
+
+		label = new Label(composite, SWT.None);
+		label.setText("Briefvorlage");
+		label.setLayoutData(new GridData());
+
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 3;
+
+		this.template = new Text(composite, SWT.BORDER);
+		this.template.setLayoutData(gridData);
+		this.template.setText(file == null ? "" : file.getAbsolutePath());
+		this.template.addVerifyListener(new VerifyListener()
+		{
+			@Override
+			public void verifyText(final VerifyEvent e)
+			{
+				final boolean isFile = new File(e.text).isFile();
+				DonationLetterDialog.this.getButton(IDialogConstants.OK_ID).setEnabled(isFile);
+				DonationLetterDialog.this.userPropertyTemplatePath.setValue(isFile ? e.text : "");
+			}
+		});
+
+		this.selectTemplate = new Button(composite, SWT.PUSH);
+		this.selectTemplate.setLayoutData(new GridData());
+		this.selectTemplate.setText("...");
+		this.selectTemplate.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetSelected(final SelectionEvent e)
+			{
+				final FileDialog dialog = new FileDialog(DonationLetterDialog.this.getShell());
+				dialog.setFilterPath(DonationLetterDialog.this.template.getText());
+				dialog.setFilterExtensions(new String[] { "*.odt" });
+				dialog.setText("Auswahl Vorlage");
+				final String path = dialog.open();
+				if (path != null)
+				{
+					DonationLetterDialog.this.template.setText(path);
+					DonationLetterDialog.this.userPropertyTemplatePath.setValue(path);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent e)
+			{
+				this.widgetSelected(e);
+			}
+		});
+		
 		return parent;
 	}
 
@@ -374,7 +455,7 @@ public class DonatorListDialog extends TitleAreaDialog
 		final DataMap<?>[] dataMaps = this.createDataMaps();
 		if (dataMaps.length == 0)
 		{
-			final MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), DonatorListDialog.MSG_TITLE_NO_BOOKINGS, null, "Die Auswahl enthält keine auswertbaren Elemente.", MessageDialog.INFORMATION, new String[] { "OK" }, 0);
+			final MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), DonationLetterDialog.MSG_TITLE_NO_BOOKINGS, null, "Die Auswahl enthält keine auswertbaren Elemente.", MessageDialog.INFORMATION, new String[] { "OK" }, 0);
 			dialog.open();
 		}
 		else
@@ -386,17 +467,17 @@ public class DonatorListDialog extends TitleAreaDialog
 				{
 					String name1 = map1.getProperty("person_lastname");
 					String name2 = map2.getProperty("person_lastname");
-					int result = DonatorListDialog.this.compareStrings(name1, name2);
+					int result = DonationLetterDialog.this.compareStrings(name1, name2);
 					if (result == 0)
 					{
 						name1 = map1.getProperty("person_firstname");
 						name2 = map2.getProperty("person_firstname");
-						result = DonatorListDialog.this.compareStrings(name1, name2);
+						result = DonationLetterDialog.this.compareStrings(name1, name2);
 						if (result == 0)
 						{
 							name1 = map1.getProperty("address_name");
 							name2 = map2.getProperty("address_name");
-							return DonatorListDialog.this.compareStrings(name1, name2);
+							return DonationLetterDialog.this.compareStrings(name1, name2);
 						}
 					}
 					return result;
@@ -425,7 +506,7 @@ public class DonatorListDialog extends TitleAreaDialog
 									{
 										final DocumentBuilderService service = tracker.getService(reference);
 										final DocumentBuilderService builderService = service;
-										status = builderService.buildDocument(new SubProgressMonitor(monitor, dataMaps.length), DonatorListDialog.this.getKeys(), dataMaps);
+										status = builderService.buildDocument(new SubProgressMonitor(monitor, dataMaps.length), DonationLetterDialog.this.getKeys(), dataMaps);
 										if (status.isOK())
 										{
 											break;
@@ -441,7 +522,7 @@ public class DonatorListDialog extends TitleAreaDialog
 							}
 							else
 							{
-								status = new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), DonatorListDialog.MSG_NO_SERVICE_AVAILABLE);
+								status = new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), DonationLetterDialog.MSG_NO_SERVICE_AVAILABLE);
 							}
 						}
 						finally
@@ -477,8 +558,9 @@ public class DonatorListDialog extends TitleAreaDialog
 	@Override
 	protected void createButtonsForButtonBar(final Composite parent)
 	{
-		this.createButton(parent, IDialogConstants.OK_ID, DonatorListDialog.OK_BUTTON_TEXT, true);
-		this.createButton(parent, IDialogConstants.CANCEL_ID, DonatorListDialog.CANCEL_BUTTON_TEXT, false);
+		this.createButton(parent, IDialogConstants.OK_ID, DonationLetterDialog.OK_BUTTON_TEXT, true);
+		this.createButton(parent, IDialogConstants.CANCEL_ID, DonationLetterDialog.CANCEL_BUTTON_TEXT, false);
+		this.getButton(IDialogConstants.OK_ID).setEnabled(this.userPropertyTemplatePath.getValue() == null || this.userPropertyTemplatePath.getValue().isEmpty() ? false : new File(this.userPropertyTemplatePath.getValue()).isFile());
 	}
 
 	private DataMap<?>[] createDataMaps()
@@ -605,6 +687,7 @@ public class DonatorListDialog extends TitleAreaDialog
 	@Override
 	protected void okPressed()
 	{
+		this.setUserPath();
 		this.buildDocument();
 		super.okPressed();
 	}
@@ -629,4 +712,28 @@ public class DonatorListDialog extends TitleAreaDialog
 		if (this.getButton(IDialogConstants.OK_ID) != null)
 			this.getButton(IDialogConstants.OK_ID).setEnabled(this.isPageComplete);
 	}
+
+	private void setUserPath()
+	{
+		final ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+				ConnectionService.class, null);
+		try
+		{
+			tracker.open();
+			final Object service = tracker.getService();
+			if (service instanceof ConnectionService)
+			{
+				this.userPropertyTemplatePath.setUser(User.getCurrent());
+				final ConnectionService connectionService = (ConnectionService) service;
+				User.getCurrent().setProperty(this.userPropertyTemplatePath);
+				final UserQuery query = (UserQuery) connectionService.getQuery(User.class);
+				User.setCurrent(query.merge(User.getCurrent()));
+			}
+		}
+		finally
+		{
+			tracker.close();
+		}
+	}
+
 }
