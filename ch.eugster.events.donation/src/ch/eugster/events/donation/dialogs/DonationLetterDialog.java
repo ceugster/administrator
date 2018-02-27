@@ -504,9 +504,12 @@ public class DonationLetterDialog extends TitleAreaDialog
 									monitor.beginTask("Dokument wird erstellt...", references.length);
 									for (final ServiceReference<DocumentBuilderService> reference : references)
 									{
-										final DocumentBuilderService service = tracker.getService(reference);
+										final DocumentBuilderService service = tracker
+												.getService(reference);
 										final DocumentBuilderService builderService = service;
-										status = builderService.buildDocument(new SubProgressMonitor(monitor, dataMaps.length), DonationLetterDialog.this.getKeys(), dataMaps);
+										status = builderService.buildDocument(new SubProgressMonitor(monitor,
+												dataMaps.length), new File(DonationLetterDialog.this.userPropertyTemplatePath.getValue()),
+												dataMaps);
 										if (status.isOK())
 										{
 											break;
