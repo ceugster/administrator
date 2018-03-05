@@ -81,7 +81,7 @@ public class DonationQuery extends AbstractEntityQuery<Donation>
 		return donations;
 	}
 	
-	public List<Donation> selectByYearRangePurposeDomain(final DonationYear fromYear, final DonationYear toYear, final DonationPurpose purpose, final Domain domain)
+	public List<Donation> selectByYearRangePurposeDomainName(final DonationYear fromYear, final DonationYear toYear, final DonationPurpose purpose, final Domain domain, final String name)
 	{
 		Expression donationExpression = new ExpressionBuilder(Donation.class).get("deleted").equal(false);
 		donationExpression = donationExpression.and(new ExpressionBuilder().get("year").between(fromYear.getYear(), toYear.getYear()));
@@ -99,6 +99,12 @@ public class DonationQuery extends AbstractEntityQuery<Donation>
 			{
 				donationExpression = donationExpression.and(new ExpressionBuilder().get("domain").equal(domain));
 			}
+		}
+		if (!name.isEmpty())
+		{
+			final Expression linkNameExpression = new ExpressionBuilder().get("link").notNull().and((new ExpressionBuilder().get("link").get("person").get("lastname").containsSubstringIgnoringCase(name)).or(new ExpressionBuilder().get("link").get("person").get("firstname").containsSubstringIgnoringCase(name)));
+			final Expression addressNameExpression = new ExpressionBuilder().get("address").notNull().and(new ExpressionBuilder().get("address").get("name").containsSubstringIgnoringCase(name));
+			donationExpression = donationExpression.and((linkNameExpression.or(addressNameExpression)));
 		}
 		final List<Donation> donations = super.select(Donation.class, donationExpression);
 		return donations;

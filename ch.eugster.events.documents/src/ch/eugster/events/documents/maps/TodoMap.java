@@ -1,7 +1,5 @@
 package ch.eugster.events.documents.maps;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -20,32 +18,29 @@ import ch.eugster.events.persistence.model.CourseGuide;
 import ch.eugster.events.persistence.model.GuideType;
 import ch.eugster.events.persistence.model.TodoEntry;
 
-public class TodoMap extends AbstractDataMap<AbstractEntity> {
+public class TodoMap extends AbstractDataMap<AbstractEntity>
+{
+	private final Map<String, String> guideTypes = new HashMap<String, String>();
 
-	private static DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
-
-	private static DateFormat dateTimeFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-
-	private Map<String, String> guideTypes = new HashMap<String, String>();
-
-	protected TodoMap() {
+	protected TodoMap()
+	{
 		super();
 	}
 
 	public TodoMap(final TodoEntry todoEntry)
 	{
-		for (TodoMap.Key key : Key.values())
+		for (final TodoMap.Key key : Key.values())
 		{
-			setProperty(key.getKey(), key.getValue(todoEntry));
+			this.setProperty(key.getKey(), key.getValue(todoEntry));
 		}
 		if (todoEntry.getEntity() instanceof Course)
 		{
-			Course course = (Course) todoEntry.getEntity();
-			List<CourseGuide> courseGuides = course.getCourseGuides();
+			final Course course = (Course) todoEntry.getEntity();
+			final List<CourseGuide> courseGuides = course.getCourseGuides();
 			for (final CourseGuide courseGuide : courseGuides)
 			{
-				String key = "guide.type." + courseGuide.getGuideType().getId().toString();
-				String value = this.guideTypes.remove(key);
+				final String key = "guide.type." + courseGuide.getGuideType().getId().toString();
+				final String value = this.guideTypes.remove(key);
 				StringBuilder builder = new StringBuilder(value == null ? "" : value + "\n");
 				builder = builder.append(PersonFormatter.getInstance().formatLastnameFirstname(courseGuide.getGuide().getLink().getPerson()));
 				this.guideTypes.put(key, builder.toString());
@@ -55,27 +50,27 @@ public class TodoMap extends AbstractDataMap<AbstractEntity> {
 					Key.putGuideType(courseGuide.getGuideType());
 				}
 			}
-			Set<Entry<String, String>> entries = this.guideTypes.entrySet();
-			Iterator<Entry<String, String>> guides = entries.iterator();
+			final Set<Entry<String, String>> entries = this.guideTypes.entrySet();
+			final Iterator<Entry<String, String>> guides = entries.iterator();
 			while (guides.hasNext())
 			{
-				Entry<String, String> guide = guides.next();
-				setProperty(guide.getKey(), guide.getValue());
+				final Entry<String, String> guide = guides.next();
+				this.setProperty(guide.getKey(), guide.getValue());
 			}
 		}
 	}
 
 	@Override
-	protected DataMapKey[] getKeys() 
+	protected DataMapKey[] getKeys()
 	{
 		return Key.getKeys();
 	}
 
 	private static class GuideTypeKey implements DataMapKey, Comparable<GuideTypeKey>
 	{
-		private GuideType guideType;
-		
-		public GuideTypeKey(GuideType guideType)
+		private final GuideType guideType;
+
+		public GuideTypeKey(final GuideType guideType)
 		{
 			this.guideType = guideType;
 		}
@@ -87,57 +82,58 @@ public class TodoMap extends AbstractDataMap<AbstractEntity> {
 		}
 
 		@Override
-		public String getDescription() 
+		public String getDescription()
 		{
-			return guideType.getDescription();
+			return this.guideType.getDescription();
 		}
 
 		@Override
-		public String getKey() 
+		public String getKey()
 		{
-			return "guide.type." + guideType.getId().toString();
+			return "guide.type." + this.guideType.getId().toString();
 		}
 
 		@Override
-		public String getName() 
+		public String getName()
 		{
-			return guideType.getName();
+			return this.guideType.getName();
 		}
+
 		@Override
-		public int compareTo(GuideTypeKey other) 
+		public int compareTo(final GuideTypeKey other)
 		{
-			String code1 = this.guideType.getCode();
-			String code2 = other.guideType.getCode();
+			final String code1 = this.guideType.getCode();
+			final String code2 = other.guideType.getCode();
 			return code1.compareTo(code2);
 		}
 	}
-		
+
 	public enum Key implements DataMapKey
 	{
 		DUE_DATE, TODO_TYPE, TITLE, COURSE_DATE;
 
 		private static Map<Long, GuideType> guideTypes = new HashMap<Long, GuideType>();
-		
+
 		public static void clearGuideTypes()
 		{
-			guideTypes.clear();
+			Key.guideTypes.clear();
 		}
 
-		public static GuideType getGuideType(Long key)
+		public static GuideType getGuideType(final Long key)
 		{
-			return guideTypes.get(key);
+			return Key.guideTypes.get(key);
 		}
-		
-		public static void putGuideType(GuideType guideType)
+
+		public static void putGuideType(final GuideType guideType)
 		{
-			guideTypes.put(guideType.getId(), guideType);
+			Key.guideTypes.put(guideType.getId(), guideType);
 		}
-		
+
 		public static Map<Long, GuideType> getGuideTypes()
 		{
-			return guideTypes;
+			return Key.guideTypes;
 		}
-		
+
 		@Override
 		public Class<?> getType()
 		{
@@ -146,29 +142,29 @@ public class TodoMap extends AbstractDataMap<AbstractEntity> {
 
 		public static DataMapKey[] getKeys()
 		{
-			List<DataMapKey> keys = new ArrayList<DataMapKey>();
-			for (DataMapKey key : Key.values())
+			final List<DataMapKey> keys = new ArrayList<DataMapKey>();
+			for (final DataMapKey key : Key.values())
 			{
 				keys.add(key);
 			}
-			GuideType[] types = Key.guideTypes.values().toArray(new GuideType[0]);
-			Arrays.sort(types, new Comparator<GuideType>() 
+			final GuideType[] types = Key.guideTypes.values().toArray(new GuideType[0]);
+			Arrays.sort(types, new Comparator<GuideType>()
 			{
 				@Override
-				public int compare(GuideType type1, GuideType type2) 
+				public int compare(final GuideType type1, final GuideType type2)
 				{
 					return type1.getCode().compareTo(type2.getCode());
 				}
 			});
-			for (GuideType type : types)
+			for (final GuideType type : types)
 			{
 				keys.add(new GuideTypeKey(type));
 			}
 			return keys.toArray(new DataMapKey[0]);
 		}
-		
+
 		@Override
-		public String getDescription() 
+		public String getDescription()
 		{
 			switch (this)
 			{
@@ -195,13 +191,13 @@ public class TodoMap extends AbstractDataMap<AbstractEntity> {
 			}
 		}
 
-		public String getValue(TodoEntry entry) 
+		public String getValue(final TodoEntry entry)
 		{
 			switch (this)
 			{
 			case DUE_DATE:
 			{
-				return dateFormatter.format(entry.getDueDate().getTime());
+				return AbstractDataMap.getDateFormatter().format(entry.getDueDate().getTime());
 			}
 			case TODO_TYPE:
 			{
@@ -215,8 +211,8 @@ public class TodoMap extends AbstractDataMap<AbstractEntity> {
 			{
 				if (entry.getEntity() instanceof Course)
 				{
-					Calendar calendar = ((Course) entry.getEntity()).getFirstDate();
-					return calendar == null ? "" : dateTimeFormatter.format(calendar.getTime());
+					final Calendar calendar = ((Course) entry.getEntity()).getFirstDate();
+					return calendar == null ? "" : AbstractDataMap.getDateTimeFormatter().format(calendar.getTime());
 				}
 				return "";
 			}
@@ -228,7 +224,7 @@ public class TodoMap extends AbstractDataMap<AbstractEntity> {
 		}
 
 		@Override
-		public String getKey() 
+		public String getKey()
 		{
 			switch (this)
 			{
@@ -256,7 +252,7 @@ public class TodoMap extends AbstractDataMap<AbstractEntity> {
 		}
 
 		@Override
-		public String getName() 
+		public String getName()
 		{
 			switch (this)
 			{
@@ -282,6 +278,6 @@ public class TodoMap extends AbstractDataMap<AbstractEntity> {
 			}
 			}
 		}
-		
+
 	}
 }

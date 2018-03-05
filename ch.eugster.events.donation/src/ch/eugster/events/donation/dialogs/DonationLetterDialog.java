@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -46,12 +47,12 @@ import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
+import ch.eugster.events.documents.maps.AbstractDataMap;
 import ch.eugster.events.documents.maps.AddressMap;
+import ch.eugster.events.documents.maps.AddressMap.TableKey;
 import ch.eugster.events.documents.maps.DataMap;
-import ch.eugster.events.documents.maps.DataMapKey;
 import ch.eugster.events.documents.maps.DonationMap;
 import ch.eugster.events.documents.maps.LinkMap;
-import ch.eugster.events.documents.maps.PersonMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.donation.Activator;
 import ch.eugster.events.donation.DomainContentProvider;
@@ -131,7 +132,7 @@ public class DonationLetterDialog extends TitleAreaDialog
 
 	private static final String CANCEL_BUTTON_TEXT = "Abbrechen";
 
-	private static final String DIALOG_TITLE = "Spenderliste";
+	private static final String DIALOG_TITLE = "Spendenbriefe";
 
 	private boolean isPageComplete = false;
 
@@ -157,16 +158,14 @@ public class DonationLetterDialog extends TitleAreaDialog
 
 		final Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setLayout(new GridLayout(5, false));
+		composite.setLayout(new GridLayout(4, false));
 
 		Label label = new Label(composite, SWT.None);
 		label.setText("Von");
 		label.setLayoutData(new GridData());
 
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-
 		Combo combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
-		combo.setLayoutData(gridData);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		this.yearFromViewer = new ComboViewer(combo);
 		this.yearFromViewer.setContentProvider(new YearContentProvider());
@@ -192,11 +191,8 @@ public class DonationLetterDialog extends TitleAreaDialog
 		label.setText("bis");
 		label.setLayoutData(new GridData());
 
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
-
 		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
-		combo.setLayoutData(gridData);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		this.yearToViewer = new ComboViewer(combo);
 		this.yearToViewer.setContentProvider(new YearContentProvider());
@@ -245,8 +241,8 @@ public class DonationLetterDialog extends TitleAreaDialog
 		});
 		this.excludeYearViewer.setSelection(new StructuredSelection(new DonationYear[] { this.excludeYear }));
 
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 3;
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
 
 		label = new Label(composite, SWT.None);
 		label.setText("ausschliessen");
@@ -257,7 +253,7 @@ public class DonationLetterDialog extends TitleAreaDialog
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 4;
+		gridData.horizontalSpan = 3;
 
 		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		combo.setLayoutData(gridData);
@@ -291,7 +287,7 @@ public class DonationLetterDialog extends TitleAreaDialog
 		label.setLayoutData(new GridData());
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 4;
+		gridData.horizontalSpan = 3;
 
 		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		combo.setLayoutData(gridData);
@@ -326,12 +322,21 @@ public class DonationLetterDialog extends TitleAreaDialog
 		label = new Label(composite, SWT.None);
 		label.setText("Namenfilter");
 		label.setLayoutData(new GridData());
-
+		
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 4;
+		gridData.horizontalSpan = 3;
 
-		this.name = new Text(composite, SWT.BORDER);
-		this.name.setLayoutData(gridData);
+		GridLayout layout = new GridLayout(2, false);
+		layout.verticalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		
+		final Composite nameComposite = new Composite(composite, SWT.NONE);
+		nameComposite.setLayoutData(gridData);
+		nameComposite.setLayout(layout);
+		
+		this.name = new Text(nameComposite, SWT.BORDER);
+		this.name.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.name.setText(this.selectedName);
 		this.name.addModifyListener(new ModifyListener()
 		{
@@ -339,6 +344,18 @@ public class DonationLetterDialog extends TitleAreaDialog
 			public void modifyText(final ModifyEvent e)
 			{
 				DonationLetterDialog.this.selectedName = DonationLetterDialog.this.name.getText();
+			}
+		});
+		
+		final Button clearName = new Button(nameComposite, SWT.PUSH);
+		clearName.setLayoutData(new GridData());
+		clearName.setImage(Activator.getDefault().getImageRegistry().get("CLEAR"));
+		clearName.addSelectionListener(new SelectionAdapter() 
+		{
+			@Override
+			public void widgetSelected(final SelectionEvent e)
+			{
+				DonationLetterDialog.this.name.setText("");
 			}
 		});
 
@@ -359,12 +376,21 @@ public class DonationLetterDialog extends TitleAreaDialog
 		label = new Label(composite, SWT.None);
 		label.setText("Briefvorlage");
 		label.setLayoutData(new GridData());
-
+		
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 3;
 
-		this.template = new Text(composite, SWT.BORDER);
-		this.template.setLayoutData(gridData);
+		layout = new GridLayout(2, false);
+		layout.verticalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		
+		final Composite pathComposite = new Composite(composite, SWT.NONE);
+		pathComposite.setLayoutData(gridData);
+		pathComposite.setLayout(layout);
+		
+		this.template = new Text(pathComposite, SWT.BORDER);
+		this.template.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.template.setText(file == null ? "" : file.getAbsolutePath());
 		this.template.addVerifyListener(new VerifyListener()
 		{
@@ -377,9 +403,9 @@ public class DonationLetterDialog extends TitleAreaDialog
 			}
 		});
 
-		this.selectTemplate = new Button(composite, SWT.PUSH);
+		this.selectTemplate = new Button(pathComposite, SWT.PUSH);
 		this.selectTemplate.setLayoutData(new GridData());
-		this.selectTemplate.setText("...");
+		this.selectTemplate.setImage(Activator.getDefault().getImageRegistry().get("LOAD_LETTER"));
 		this.selectTemplate.addSelectionListener(new SelectionListener()
 		{
 			@Override
@@ -404,50 +430,7 @@ public class DonationLetterDialog extends TitleAreaDialog
 			}
 		});
 		
-		return parent;
-	}
-
-	private DataMapKey[] getKeys()
-	{
-		final List<DataMapKey> keys = new ArrayList<DataMapKey>();
-		keys.add(DonationMap.Key.TYPE);
-		keys.add(DonationMap.Key.ID);
-		keys.add(PersonMap.Key.SEX);
-		keys.add(PersonMap.Key.FORM);
-		keys.add(DonationMap.Key.SALUTATION);
-		keys.add(PersonMap.Key.TITLE);
-		keys.add(PersonMap.Key.FIRSTNAME);
-		keys.add(PersonMap.Key.LASTNAME);
-		keys.add(AddressMap.Key.NAME);
-		keys.add(DonationMap.Key.ANOTHER_LINE);
-		keys.add(PersonMap.Key.BIRTHDATE);
-		keys.add(PersonMap.Key.PROFESSION);
-		keys.add(LinkMap.Key.FUNCTION);
-		keys.add(LinkMap.Key.PHONE);
-		keys.add(AddressMap.Key.PHONE);
-		keys.add(PersonMap.Key.PHONE);
-		keys.add(AddressMap.Key.FAX);
-		keys.add(PersonMap.Key.EMAIL);
-		keys.add(LinkMap.Key.EMAIL);
-		keys.add(AddressMap.Key.EMAIL);
-		keys.add(PersonMap.Key.WEBSITE);
-		keys.add(AddressMap.Key.WEBSITE);
-		keys.add(AddressMap.Key.ADDRESS);
-		keys.add(AddressMap.Key.POB);
-		keys.add(AddressMap.Key.COUNTRY);
-		keys.add(AddressMap.Key.ZIP);
-		keys.add(AddressMap.Key.CITY);
-		keys.add(AddressMap.Key.COUNTY);
-		keys.add(DonationMap.Key.POLITE);
-		keys.add(LinkMap.Key.MEMBER);
-		keys.add(PersonMap.Key.NOTE);
-		keys.add(DonationMap.Key.POLITE);
-		keys.add(DonationMap.Key.YEAR);
-		keys.add(DonationMap.Key.PURPOSE_CODE);
-		keys.add(DonationMap.Key.PURPOSE_NAME);
-		keys.add(DonationMap.Key.DATE);
-		keys.add(DonationMap.Key.AMOUNT);
-		return keys.toArray(new DataMapKey[0]);
+		return composite;
 	}
 
 	private void buildDocument()
@@ -570,22 +553,50 @@ public class DonationLetterDialog extends TitleAreaDialog
 	{
 		final Map<String, DataMap<?>> dataMaps = new HashMap<String, DataMap<?>>();
 		final DonationQuery query = (DonationQuery) this.connectionService.getQuery(Donation.class);
-		List<Donation> donations = query.selectByYearRangePurposeDomain(this.selectedFromDonationYear, this.selectedToDonationYear, this.selectedDonationPurpose, this.selectedDomain);
+		List<Donation> donations = query.selectByYearRangePurposeDomainName(this.selectedFromDonationYear, this.selectedToDonationYear, this.selectedDonationPurpose, this.selectedDomain, this.selectedName);
 		for (final Donation donation : donations)
 		{
 			if (this.printDonation(donation))
 			{
 				if (donation.getLink() == null || !donation.getLink().isValid())
 				{
-					final DataMap<?> map = new AddressMap(donation.getAddress());
-					dataMaps.put("A" + donation.getAddress().getId(), map);
+					DataMap<?> map = dataMaps.get("A" + donation.getAddress().getId());
+					if (map == null)
+					{
+						map = new AddressMap(donation.getAddress(), donation.getYear(), donation.getPurpose(), donation.getDomain(), false);
+						dataMaps.put("A" + donation.getAddress().getId(), map);
+					}
+					else
+					{
+						map.getTableMaps(TableKey.DONATIONS.getKey()).add(new DonationMap(donation));
+					}
 				}
 				else
 				{
-					final DataMap<?> map = new LinkMap(donation.getLink());
-					dataMaps.put("P" + donation.getLink().getId(), map);
+					DataMap<?> map = dataMaps.get("P" + donation.getLink().getId());
+					if (map == null)
+					{
+						map = new LinkMap(donation.getLink(), donation.getYear(), donation.getPurpose(), donation.getDomain(), false);
+						dataMaps.put("P" + donation.getLink().getId(), map);
+					}
+					else
+					{
+						map.getTableMaps(TableKey.DONATIONS.getKey()).add(new DonationMap(donation));
+					}
 				}
 			}
+		}
+		for (final DataMap<?> dataMap : dataMaps.values())
+		{
+			double amount = 0d;
+			final List<DataMap<?>> tableMaps = dataMap.getTableMaps(TableKey.DONATIONS.getKey());
+			for (final DataMap<?> tableMap : tableMaps)
+			{
+				final DonationMap donationMap = (DonationMap) tableMap;
+				amount = amount + donationMap.getAmount();
+			}
+			dataMap.setProperty(LinkMap.Key.TOTAL_DONATIONS.getKey(), AbstractDataMap.getAmountFormatter().format(amount));
+
 		}
 		if (this.excludeYear.getYear() > 0)
 		{

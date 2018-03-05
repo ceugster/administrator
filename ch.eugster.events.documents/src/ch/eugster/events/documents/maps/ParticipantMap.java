@@ -1,10 +1,6 @@
 package ch.eugster.events.documents.maps;
 
 import java.io.Writer;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Currency;
-import java.util.Locale;
 
 import ch.eugster.events.persistence.formatters.PersonFormatter;
 import ch.eugster.events.persistence.model.Participant;
@@ -12,22 +8,13 @@ import ch.eugster.events.persistence.model.Person;
 
 public class ParticipantMap extends AbstractDataMap<Participant>
 {
-	private static NumberFormat numberFormatter;
-
 	protected ParticipantMap() {
 		super();
 	}
 
 	public ParticipantMap(final Participant participant)
 	{
-		if (numberFormatter == null)
-		{
-			Currency currency = Currency.getInstance(Locale.getDefault());
-			numberFormatter = DecimalFormat.getNumberInstance();
-			numberFormatter.setMaximumFractionDigits(currency.getDefaultFractionDigits());
-			numberFormatter.setMinimumFractionDigits(currency.getDefaultFractionDigits());
-		}
-		for (Key key : Key.values())
+		for (final Key key : Key.values())
 		{
 			this.setProperty(key.getKey(), key.getValue(participant));
 		}
@@ -35,17 +22,18 @@ public class ParticipantMap extends AbstractDataMap<Participant>
 		this.setProperties(new BookingTypeMap(participant.getBookingType()).getProperties());
 	}
 
-	protected void printReferences(Writer writer)
+	@Override
+	protected void printReferences(final Writer writer)
 	{
-		printHeader(writer, 2, "Referenzen");
-		startTable(writer, 0);
-		startTableRow(writer);
-		printCell(writer, "#link", "Link Person/Adresse");
-		endTableRow(writer);
-		startTableRow(writer);
-		printCell(writer, "#booking_type", "Buchungsart");
-		endTableRow(writer);
-		endTable(writer);
+		this.printHeader(writer, 2, "Referenzen");
+		this.startTable(writer, 0);
+		this.startTableRow(writer);
+		this.printCell(writer, "#link", "Link Person/Adresse");
+		this.endTableRow(writer);
+		this.startTableRow(writer);
+		this.printCell(writer, "#booking_type", "Buchungsart");
+		this.endTableRow(writer);
+		this.endTable(writer);
 	}
 
 	public enum Key implements DataMapKey
@@ -232,11 +220,11 @@ public class ParticipantMap extends AbstractDataMap<Participant>
 					{
 						return "";
 					}
-					return numberFormatter.format(participant.getPrice());
+					return AbstractDataMap.getAmountFormatter().format(participant.getPrice());
 				}
 				case COUNT:
 				{
-					return DecimalFormat.getIntegerInstance().format(participant.getCount());
+					return AbstractDataMap.getIntegerFormatter().format(participant.getCount());
 				}
 				case AMOUNT:
 				{
@@ -244,7 +232,7 @@ public class ParticipantMap extends AbstractDataMap<Participant>
 					{
 						return "";
 					}
-					return numberFormatter.format(participant.getBookingType().getPrice() * participant.getCount());
+					return AbstractDataMap.getAmountFormatter().format(participant.getBookingType().getPrice() * participant.getCount());
 				}
 				case ANOTHER_LINE:
 				{
@@ -252,12 +240,12 @@ public class ParticipantMap extends AbstractDataMap<Participant>
 				}
 				case SALUTATION:
 				{
-					Person person = participant.getLink().getPerson();
+					final Person person = participant.getLink().getPerson();
 					return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
 				}
 				case POLITE:
 				{
-					Person person = participant.getLink().getPerson();
+					final Person person = participant.getLink().getPerson();
 					return person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
 							.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
 				}

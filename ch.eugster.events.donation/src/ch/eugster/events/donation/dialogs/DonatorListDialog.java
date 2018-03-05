@@ -27,8 +27,11 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -139,16 +142,14 @@ public class DonatorListDialog extends TitleAreaDialog
 
 		final Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setLayout(new GridLayout(4, false));
+		composite.setLayout(new GridLayout(4, true));
 
 		Label label = new Label(composite, SWT.None);
 		label.setText("Von");
 		label.setLayoutData(new GridData());
 
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-
 		Combo combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
-		combo.setLayoutData(gridData);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		this.yearFromViewer = new ComboViewer(combo);
 		this.yearFromViewer.setContentProvider(new YearContentProvider());
@@ -174,10 +175,8 @@ public class DonatorListDialog extends TitleAreaDialog
 		label.setText("bis");
 		label.setLayoutData(new GridData());
 
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-
 		combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
-		combo.setLayoutData(gridData);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		this.yearToViewer = new ComboViewer(combo);
 		this.yearToViewer.setContentProvider(new YearContentProvider());
@@ -226,7 +225,7 @@ public class DonatorListDialog extends TitleAreaDialog
 		});
 		this.excludeYearViewer.setSelection(new StructuredSelection(new DonationYear[] { this.excludeYear }));
 
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
 
 		label = new Label(composite, SWT.None);
@@ -311,8 +310,18 @@ public class DonatorListDialog extends TitleAreaDialog
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 3;
 
-		this.name = new Text(composite, SWT.BORDER);
-		this.name.setLayoutData(gridData);
+		final GridLayout layout = new GridLayout(2, false);
+		layout.verticalSpacing = 0;
+		layout.horizontalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		
+		final Composite nameComposite = new Composite(composite, SWT.NONE);
+		nameComposite.setLayoutData(gridData);
+		nameComposite.setLayout(layout);
+		
+		this.name = new Text(nameComposite, SWT.BORDER);
+		this.name.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.name.setText(this.selectedName);
 		this.name.addModifyListener(new ModifyListener()
 		{
@@ -322,8 +331,20 @@ public class DonatorListDialog extends TitleAreaDialog
 				DonatorListDialog.this.selectedName = DonatorListDialog.this.name.getText();
 			}
 		});
+		
+		final Button clearName = new Button(nameComposite, SWT.PUSH);
+		clearName.setLayoutData(new GridData());
+		clearName.setImage(Activator.getDefault().getImageRegistry().get("CLEAR"));
+		clearName.addSelectionListener(new SelectionAdapter() 
+		{
+			@Override
+			public void widgetSelected(final SelectionEvent e)
+			{
+				DonatorListDialog.this.name.setText("");
+			}
+		});
 
-		return parent;
+		return composite;
 	}
 
 	private DataMapKey[] getKeys()
@@ -485,7 +506,7 @@ public class DonatorListDialog extends TitleAreaDialog
 	{
 		final Map<String, DataMap<?>> dataMaps = new HashMap<String, DataMap<?>>();
 		final DonationQuery query = (DonationQuery) this.connectionService.getQuery(Donation.class);
-		List<Donation> donations = query.selectByYearRangePurposeDomain(this.selectedFromDonationYear, this.selectedToDonationYear, this.selectedDonationPurpose, this.selectedDomain);
+		List<Donation> donations = query.selectByYearRangePurposeDomainName(this.selectedFromDonationYear, this.selectedToDonationYear, this.selectedDonationPurpose, this.selectedDomain, this.selectedName);
 		for (final Donation donation : donations)
 		{
 			if (this.printDonation(donation))

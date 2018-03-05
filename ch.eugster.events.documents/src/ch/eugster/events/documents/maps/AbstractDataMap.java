@@ -2,9 +2,14 @@ package ch.eugster.events.documents.maps;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -13,21 +18,79 @@ import ch.eugster.events.persistence.model.AbstractEntity;
 
 public abstract class AbstractDataMap<T extends AbstractEntity> implements DataMap<T>
 {
-	private Properties properties = new Properties();
+	private static DateFormat dateTimeFormatter;
 
-	private Map<String, List<DataMap<?>>> tableMaps = new HashMap<String, List<DataMap<?>>>();
+	private static DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
 
-	public static DataMap<?> getDataMap(Class<? extends AbstractDataMap<?>> clazz)
+	private static DateFormat timeFormatter = new SimpleDateFormat("HH:mm");
+
+	private static NumberFormat integerFormatter;
+
+	private static NumberFormat amountFormatter;
+	
+	public static NumberFormat getAmountFormatter()
+	{
+		if (AbstractDataMap.amountFormatter == null)
+		{
+			AbstractDataMap.amountFormatter = NumberFormat.getNumberInstance();
+			AbstractDataMap.amountFormatter.setMinimumFractionDigits(Currency.getInstance(Locale.getDefault()).getDefaultFractionDigits());
+			AbstractDataMap.amountFormatter.setMaximumFractionDigits(Currency.getInstance(Locale.getDefault()).getDefaultFractionDigits());
+			AbstractDataMap.amountFormatter.setGroupingUsed(true);
+		}
+		return AbstractDataMap.amountFormatter;
+	};
+	
+	public static DateFormat getDateTimeFormatter()
+	{
+		if (AbstractDataMap.dateTimeFormatter == null)
+		{
+			AbstractDataMap.dateTimeFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+		}
+		return AbstractDataMap.dateTimeFormatter;
+	}
+		
+	public static DateFormat getDateFormatter()
+	{
+		if (AbstractDataMap.dateFormatter == null)
+		{
+			AbstractDataMap.dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
+		}
+		return AbstractDataMap.dateFormatter;
+	}
+		
+	public static DateFormat getTimeFormatter()
+	{
+		if (AbstractDataMap.timeFormatter == null)
+		{
+			AbstractDataMap.timeFormatter = new SimpleDateFormat("HH:mm");
+		}
+		return AbstractDataMap.timeFormatter;
+	}
+		
+	public static NumberFormat getIntegerFormatter()
+	{
+		if (AbstractDataMap.integerFormatter == null)
+		{
+			AbstractDataMap.integerFormatter = NumberFormat.getIntegerInstance();
+		}
+		return AbstractDataMap.integerFormatter;
+	}
+
+	private final Properties properties = new Properties();
+
+	private final Map<String, List<DataMap<?>>> tableMaps = new HashMap<String, List<DataMap<?>>>();
+
+	public static DataMap<?> getDataMap(final Class<? extends AbstractDataMap<?>> clazz)
 	{
 		DataMap<?> map = null;
 		try 
 		{
 			map = clazz.newInstance();
 		} 
-		catch (InstantiationException e) 
+		catch (final InstantiationException e) 
 		{
 		} 
-		catch (IllegalAccessException e) 
+		catch (final IllegalAccessException e) 
 		{
 		}
 		return map;
@@ -43,6 +106,7 @@ public abstract class AbstractDataMap<T extends AbstractEntity> implements DataM
 		this.tableMaps.put(key, dataMaps);
 	}
 
+	@Override
 	public Properties getProperties()
 	{
 		return this.properties;
@@ -51,132 +115,134 @@ public abstract class AbstractDataMap<T extends AbstractEntity> implements DataM
 	@Override
 	public String getProperty(final String key)
 	{
-		return properties.getProperty(key);
+		return this.properties.getProperty(key);
 	}
 
 	@Override
 	public String getProperty(final String key, final String defaultValue)
 	{
-		String value = getProperty(key);
+		final String value = this.getProperty(key);
 		return value == null ? defaultValue : value;
 	}
 
 	@Override
 	public List<DataMap<?>> getTableMaps(final String key)
 	{
-		List<DataMap<?>> list = tableMaps.get(key);
+		final List<DataMap<?>> list = this.tableMaps.get(key);
 		return list == null ? new ArrayList<DataMap<?>>() : list;
 	}
 
 	public void setProperties(final Properties properties)
 	{
-		Set<String> keys = properties.stringPropertyNames();
-		for (String key : keys)
+		final Set<String> keys = properties.stringPropertyNames();
+		for (final String key : keys)
 		{
 			this.properties.setProperty(key, properties.getProperty(key));
 		}
 	}
 
+	@Override
 	public void setProperty(final String key, final String value)
 	{
-		properties.setProperty(key, value);
+		this.properties.setProperty(key, value);
 	}
 
 	@Override
-	public int compareTo(DataMap<T> other) 
+	public int compareTo(final DataMap<T> other) 
 	{
 		return 0;
 	}
 
 	protected abstract DataMapKey[] getKeys();
 
-	public void printHTML(Writer writer, String key, String value)
+	@Override
+	public void printHTML(final Writer writer, final String key, final String value)
 	{
-		printHeader(writer, 1, key, value);
-		printKeys(writer);
-		printReferences(writer);
-		printTables(writer);
-		endTable(writer);
+		this.printHeader(writer, 1, key, value);
+		this.printKeys(writer);
+		this.printReferences(writer);
+		this.printTables(writer);
+		this.endTable(writer);
 
 	}
 	
-	protected void printKeys(Writer writer)
+	protected void printKeys(final Writer writer)
 	{
 		this.printHeader(writer, 2, "Schlüsselwörter");
-		startTable(writer, 0);
-		startTableRow(writer);
-		printHeaderCell(writer, "Bezeichnung");
-		printHeaderCell(writer, "Bedeutung");
-		endTableRow(writer);
-		for (DataMapKey key : getKeys())
+		this.startTable(writer, 0);
+		this.startTableRow(writer);
+		this.printHeaderCell(writer, "Bezeichnung");
+		this.printHeaderCell(writer, "Bedeutung");
+		this.endTableRow(writer);
+		for (final DataMapKey key : this.getKeys())
 		{
-			startTableRow(writer);
-			printCell(writer, key.getKey());
-			printCell(writer, key.getDescription());
-			endTableRow(writer);
+			this.startTableRow(writer);
+			this.printCell(writer, key.getKey());
+			this.printCell(writer, key.getDescription());
+			this.endTableRow(writer);
 		}
-		endTable(writer);
+		this.endTable(writer);
 	}
 
-	protected void printReferences(Writer writer)
+	protected void printReferences(final Writer writer)
 	{
 		
 	}
 
-	protected void printTables(Writer writer)
+	protected void printTables(final Writer writer)
 	{
 		
 	}
 
-	protected void startTableRow(Writer writer)
+	protected void startTableRow(final Writer writer)
 	{
 		try
 		{
 			writer.write("\t\t\t<tr>\n");
 		}
-		catch (IOException e)
+		catch (final IOException e)
 		{
 
 		}
 	}
 
-	protected void endTableRow(Writer writer)
+	protected void endTableRow(final Writer writer)
 	{
 		try
 		{
 			writer.write("\t\t\t</tr>\n");
 		}
-		catch (IOException e)
+		catch (final IOException e)
 		{
 
 		}
 	}
 
-	protected void startTable(Writer writer, int border)
+	protected void startTable(final Writer writer, final int border)
 	{
 		try
 		{
 			writer.write("\t\t\t<table border\"" + border + "\">\n");
 		}
-		catch (IOException e)
+		catch (final IOException e)
 		{
 
 		}
 	}
 
-	protected void endTable(Writer writer)
+	protected void endTable(final Writer writer)
 	{
 		try
 		{
 			writer.write("\t\t</table>\n");
 		}
-		catch (IOException e)
+		catch (final IOException e)
 		{
 
 		}
 	}
 
-	protected void printHeaderCell(Writer writer, String value)
+	protected void printHeaderCell(final Writer writer, final String value)
 	{
 		try
 		{
@@ -184,18 +250,18 @@ public abstract class AbstractDataMap<T extends AbstractEntity> implements DataM
 			writer.write("\t\t\t\t\t" + value + "\n");
 			writer.write("\t\t\t\t</th>\n");
 		}
-		catch (IOException e)
+		catch (final IOException e)
 		{
 
 		}
 	}
 
-	protected void printCell(Writer writer, String value)
+	protected void printCell(final Writer writer, final String value)
 	{
-		printCell(writer, null, value);
+		this.printCell(writer, null, value);
 	}
 
-	protected void printCell(Writer writer, String ref, String value)
+	protected void printCell(final Writer writer, final String ref, final String value)
 	{
 		try
 		{
@@ -204,25 +270,25 @@ public abstract class AbstractDataMap<T extends AbstractEntity> implements DataM
 					+ (ref == null ? "" : "</a>") + "\n");
 			writer.write("\t\t\t\t</td>\n");
 		}
-		catch (IOException e)
+		catch (final IOException e)
 		{
 
 		}
 	}
 
-	protected void printHeader(Writer writer, int level, String title)
+	protected void printHeader(final Writer writer, final int level, final String title)
 	{
-		printHeader(writer, level, null, title);
+		this.printHeader(writer, level, null, title);
 	}
 
-	protected void printHeader(Writer writer, int level, String ref, String title)
+	protected void printHeader(final Writer writer, final int level, final String ref, final String title)
 	{
 		try
 		{
 			writer.write("\t\t<h" + level + ">" + (ref == null ? "" : "<a name=\"" + ref + "\">") + title
 					+ (ref == null ? "" : "</a>") + "</h" + level + ">\n");
 		}
-		catch (IOException e)
+		catch (final IOException e)
 		{
 
 		}
@@ -237,12 +303,12 @@ public abstract class AbstractDataMap<T extends AbstractEntity> implements DataM
 	{
 		SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY;
 		
-		public static Weekday getWeekday(int dayOfWeek)
+		public static Weekday getWeekday(final int dayOfWeek)
 		{
 			return Weekday.values()[dayOfWeek];
 		}
 		
-		public String getWeekday(WeekdayType weekdayType)
+		public String getWeekday(final WeekdayType weekdayType)
 		{
 			if (weekdayType == null) return "";
 			switch(weekdayType)
@@ -354,12 +420,12 @@ public abstract class AbstractDataMap<T extends AbstractEntity> implements DataM
 	{
 		JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER;
 		
-		public static Month getMonth(int monthNumber)
+		public static Month getMonth(final int monthNumber)
 		{
 			return Month.values()[monthNumber];
 		}
 		
-		public String getMonth(MonthType monthType)
+		public String getMonth(final MonthType monthType)
 		{
 			if (monthType == null) return "";
 			switch(monthType)

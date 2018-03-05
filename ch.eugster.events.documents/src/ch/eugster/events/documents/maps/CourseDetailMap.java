@@ -1,28 +1,20 @@
 package ch.eugster.events.documents.maps;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import ch.eugster.events.persistence.model.CourseDetail;
 
 public class CourseDetailMap extends AbstractDataMap<CourseDetail>
 {
-	private static final DateFormat dateTimeFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-
-	private static final DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
-
-	private static final DateFormat timeFormatter = new SimpleDateFormat("HH:mm");
-
 	protected CourseDetailMap() {
 		super();
 	}
 
 	public CourseDetailMap(final CourseDetail courseDetail)
 	{
-		for (Key key : Key.values())
+		for (final Key key : Key.values())
 		{
-			setProperty(key.getKey(), key.getValue(courseDetail));
+			this.setProperty(key.getKey(), key.getValue(courseDetail));
 		}
 		// setProperties(new
 		// CourseMap(courseDetail.getCourse()).getProperties());
@@ -254,31 +246,31 @@ public class CourseDetailMap extends AbstractDataMap<CourseDetail>
 			}
 		}
 
-		private String getDateTime(Calendar calendar)
+		private String getDateTime(final Calendar calendar)
 		{
 			if (calendar == null)
 			{
 				return "";
 			}
-			return dateTimeFormatter.format(calendar.getTime());
+			return AbstractDataMap.getDateTimeFormatter().format(calendar.getTime());
 		}
 
-		private String getDate(Calendar calendar)
+		private String getDate(final Calendar calendar)
 		{
 			if (calendar == null)
 			{
 				return "";
 			}
-			return dateFormatter.format(calendar.getTime());
+			return AbstractDataMap.getDateFormatter().format(calendar.getTime());
 		}
 
-		private String getTime(Calendar calendar)
+		private String getTime(final Calendar calendar)
 		{
 			if (calendar == null)
 			{
 				return "";
 			}
-			return timeFormatter.format(calendar.getTime());
+			return AbstractDataMap.getTimeFormatter().format(calendar.getTime());
 		}
 
 		public String getValue(final CourseDetail courseDetail)
@@ -287,27 +279,27 @@ public class CourseDetailMap extends AbstractDataMap<CourseDetail>
 			{
 				case START_DATE_TIME:
 				{
-					return getDateTime(courseDetail.getStart());
+					return this.getDateTime(courseDetail.getStart());
 				}
 				case START_DATE:
 				{
-					return getDate(courseDetail.getStart());
+					return this.getDate(courseDetail.getStart());
 				}
 				case START_TIME:
 				{
-					return getTime(courseDetail.getStart());
+					return this.getTime(courseDetail.getStart());
 				}
 				case END_DATE_TIME:
 				{
-					return getDateTime(courseDetail.getEnd());
+					return this.getDateTime(courseDetail.getEnd());
 				}
 				case END_DATE:
 				{
-					return getDate(courseDetail.getEnd());
+					return this.getDate(courseDetail.getEnd());
 				}
 				case END_TIME:
 				{
-					return getTime(courseDetail.getEnd());
+					return this.getTime(courseDetail.getEnd());
 				}
 				case JOURNEY:
 				{
@@ -323,33 +315,33 @@ public class CourseDetailMap extends AbstractDataMap<CourseDetail>
 				}
 				case SUBSTITUTION_START_DATE_TIME:
 				{
-					Calendar calendar = courseDetail.getSubstituteStart();
-					return calendar == null ? "" : getDateTime(courseDetail.getSubstituteStart());
+					final Calendar calendar = courseDetail.getSubstituteStart();
+					return calendar == null ? "" : this.getDateTime(courseDetail.getSubstituteStart());
 				}
 				case SUBSTITUTION_START_DATE:
 				{
-					Calendar calendar = courseDetail.getSubstituteStart();
-					return calendar == null ? "" : getDate(courseDetail.getSubstituteStart());
+					final Calendar calendar = courseDetail.getSubstituteStart();
+					return calendar == null ? "" : this.getDate(courseDetail.getSubstituteStart());
 				}
 				case SUBSTITUTION_START_TIME:
 				{
-					Calendar calendar = courseDetail.getSubstituteStart();
-					return calendar == null ? "" : getTime(courseDetail.getSubstituteStart());
+					final Calendar calendar = courseDetail.getSubstituteStart();
+					return calendar == null ? "" : this.getTime(courseDetail.getSubstituteStart());
 				}
 				case SUBSTITUTION_END_DATE_TIME:
 				{
-					Calendar calendar = courseDetail.getSubstituteStart();
-					return calendar == null ? "" : getDateTime(courseDetail.getSubstituteEnd());
+					final Calendar calendar = courseDetail.getSubstituteStart();
+					return calendar == null ? "" : this.getDateTime(courseDetail.getSubstituteEnd());
 				}
 				case SUBSTITUTION_END_DATE:
 				{
-					Calendar calendar = courseDetail.getSubstituteStart();
-					return calendar == null ? "" : getDate(courseDetail.getSubstituteEnd());
+					final Calendar calendar = courseDetail.getSubstituteStart();
+					return calendar == null ? "" : this.getDate(courseDetail.getSubstituteEnd());
 				}
 				case SUBSTITUTION_END_TIME:
 				{
-					Calendar calendar = courseDetail.getSubstituteStart();
-					return calendar == null ? "" : getTime(courseDetail.getSubstituteEnd());
+					final Calendar calendar = courseDetail.getSubstituteStart();
+					return calendar == null ? "" : this.getTime(courseDetail.getSubstituteEnd());
 				}
 				default:
 				{

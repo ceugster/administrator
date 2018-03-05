@@ -14,6 +14,8 @@ public interface DataMap<T extends AbstractEntity> extends Comparable<DataMap<T>
 
 	String getProperty(String key, String defaultValue);
 
+	void setProperty(String key, String value);
+	
 	List<DataMap<?>> getTableMaps(String key);
 	
 	void printHTML(Writer writer, String ref, String title);

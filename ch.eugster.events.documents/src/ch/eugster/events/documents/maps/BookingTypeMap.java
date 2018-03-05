@@ -1,33 +1,15 @@
 package ch.eugster.events.documents.maps;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Currency;
-import java.util.Locale;
-
 import ch.eugster.events.persistence.model.BookingType;
 import ch.eugster.events.persistence.model.Membership;
 
 public class BookingTypeMap extends AbstractDataMap<BookingType>
 {
-	private static NumberFormat amountFormatter;
-
-	private static NumberFormat integerFormatter = DecimalFormat.getIntegerInstance();
-
 	public BookingTypeMap(final BookingType bookingType)
 	{
-		if (amountFormatter == null)
+		for (final Key key : Key.values())
 		{
-			amountFormatter = DecimalFormat.getNumberInstance();
-			amountFormatter.setMinimumFractionDigits(Currency.getInstance(Locale.getDefault())
-					.getDefaultFractionDigits());
-			amountFormatter.setMaximumFractionDigits(Currency.getInstance(Locale.getDefault())
-					.getDefaultFractionDigits());
-			amountFormatter.setGroupingUsed(true);
-		}
-		for (Key key : Key.values())
-		{
-			setProperty(key.getKey(), key.getValue(bookingType));
+			this.setProperty(key.getKey(), key.getValue(bookingType));
 		}
 	}
 
@@ -184,24 +166,24 @@ public class BookingTypeMap extends AbstractDataMap<BookingType>
 				}
 				case ANNULATION_CHARGE:
 				{
-					return amountFormatter.format(bookingType.getAnnulationCharges());
+					return AbstractDataMap.getAmountFormatter().format(bookingType.getAnnulationCharges());
 				}
 				case MAX_AGE:
 				{
-					return integerFormatter.format(bookingType.getMaxAge());
+					return AbstractDataMap.getIntegerFormatter().format(bookingType.getMaxAge());
 				}
 				case MEMBERSHIP:
 				{
-					Membership membership = bookingType.getMembership();
+					final Membership membership = bookingType.getMembership();
 					return membership == null ? "" : membership.getName();
 				}
 				case PRICE:
 				{
-					return amountFormatter.format(bookingType.getPrice());
+					return AbstractDataMap.getAmountFormatter().format(bookingType.getPrice());
 				}
 				case PARTICIPANT_COUNT:
 				{
-					return integerFormatter.format(bookingType.getCourse().getParticipantsCount(bookingType));
+					return AbstractDataMap.getIntegerFormatter().format(bookingType.getCourse().getParticipantsCount(bookingType));
 				}
 				default:
 				{

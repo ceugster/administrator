@@ -1,10 +1,5 @@
 package ch.eugster.events.documents.maps;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Currency;
-import java.util.Locale;
-
 import ch.eugster.events.persistence.model.Compensation;
 
 public class CompensationMap extends AbstractDataMap<Compensation>
@@ -13,22 +8,11 @@ public class CompensationMap extends AbstractDataMap<Compensation>
 		super();
 	}
 
-	private static NumberFormat amountFormatter;
-
 	public CompensationMap(final Compensation compensation)
 	{
-		if (amountFormatter == null)
+		for (final Key key : Key.values())
 		{
-			amountFormatter = DecimalFormat.getNumberInstance();
-			amountFormatter.setMinimumFractionDigits(Currency.getInstance(Locale.getDefault())
-					.getDefaultFractionDigits());
-			amountFormatter.setMaximumFractionDigits(Currency.getInstance(Locale.getDefault())
-					.getDefaultFractionDigits());
-			amountFormatter.setGroupingUsed(true);
-		}
-		for (Key key : Key.values())
-		{
-			setProperty(key.getKey(), key.getValue(compensation));
+			this.setProperty(key.getKey(), key.getValue(compensation));
 		}
 		this.setProperties(new CourseGuideMap(compensation.getCourseGuide(), false).getProperties());
 	}
@@ -109,7 +93,7 @@ public class CompensationMap extends AbstractDataMap<Compensation>
 			{
 				case AMOUNT:
 				{
-					return amountFormatter.format(compensation.getAmount());
+					return AbstractDataMap.getAmountFormatter().format(compensation.getAmount());
 				}
 				case TYPE:
 				{

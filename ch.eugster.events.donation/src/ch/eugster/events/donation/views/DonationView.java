@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -94,7 +95,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 	private ComboViewer yearViewer;
 
 	private Button printConfirmation;
-	
+
 	private Button generateDonationList;
 
 	private Button generateAddressList;
@@ -109,6 +110,8 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 
 	private TableViewer donationViewer;
 
+	private Button clearDonationViewerSelection;
+	
 	private Label donationCount;
 
 	private static DateFormat df = SimpleDateFormat.getDateInstance();
@@ -153,7 +156,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		final Composite selectorComposite = new Composite(composite, SWT.NULL);
 		selectorComposite.setLayout(new GridLayout(3, false));
 		selectorComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		Label label = new Label(selectorComposite, SWT.None);
 		label.setText("Auswahl Jahr");
 		label.setLayoutData(new GridData());
@@ -184,10 +187,11 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		this.purposeViewer.setContentProvider(new PurposeContentProvider(this.allPurposes));
 		this.purposeViewer.setLabelProvider(new PurposeLabelProvider());
 		this.purposeViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
-		this.purposeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		this.purposeViewer.addSelectionChangedListener(new ISelectionChangedListener()
+		{
 
 			@Override
-			public void selectionChanged(final SelectionChangedEvent event) 
+			public void selectionChanged(final SelectionChangedEvent event)
 			{
 				final IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
 				DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
@@ -218,14 +222,14 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		this.domainViewer.setLabelProvider(new DomainLabelProvider());
 		this.domainViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
 		this.domainViewer.setInput(this.connectionService);
-		this.domainViewer.addSelectionChangedListener(new ISelectionChangedListener() 
+		this.domainViewer.addSelectionChangedListener(new ISelectionChangedListener()
 		{
 			@Override
-			public void selectionChanged(final SelectionChangedEvent event) 
+			public void selectionChanged(final SelectionChangedEvent event)
 			{
 				final IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
 				Domain domain = (Domain) ssel.getFirstElement();
-				if (domain == null || domain.getName().equals("Alle")) 
+				if (domain == null || domain.getName().equals("Alle"))
 				{
 					domain = null;
 				}
@@ -236,7 +240,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 				DonationView.this.setDonationCount(DonationView.this.donationViewer.getTable().getItemCount());
 			}
 		});
-		
+
 		label = new Label(selectorComposite, SWT.None);
 		label.setText("Personenfilter");
 		label.setLayoutData(new GridData());
@@ -274,9 +278,16 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 
 		this.donationViewer = new TableViewer(table);
 		this.donationViewer.setContentProvider(new DonationTableViewerContentProvider());
-		this.donationViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter(), personFilter, purposeFilter,
-				domainFilter });
+		this.donationViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter(), personFilter, purposeFilter, domainFilter });
 		this.donationViewer.addDoubleClickListener(this);
+		this.donationViewer.addSelectionChangedListener(new ISelectionChangedListener()
+		{
+			@Override
+			public void selectionChanged(final SelectionChangedEvent event)
+			{
+				DonationView.this.clearDonationViewerSelection.setEnabled(!event.getSelection().isEmpty());
+			}
+		});
 		this.donationViewer.setSorter(sorter);
 
 		int order = 0;
@@ -323,8 +334,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 				{
 					final Donation donation = (Donation) cell.getElement();
 					final DonationPurpose purpose = donation.getPurpose();
-					cell.setText(purpose.getCode().isEmpty() ? purpose.getName() : purpose.getCode() + " - "
-							+ purpose.getName());
+					cell.setText(purpose.getCode().isEmpty() ? purpose.getName() : purpose.getCode() + " - " + purpose.getName());
 				}
 			}
 
@@ -402,9 +412,9 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		this.donationCount.setLayoutData(gridData);
 
 		final Composite actionComposite = new Composite(composite, SWT.NONE);
-		actionComposite.setLayout(new GridLayout(3, false));
+		actionComposite.setLayout(new GridLayout(5, false));
 		actionComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		this.printConfirmation = new Button(actionComposite, SWT.PUSH);
 		this.printConfirmation.setToolTipText("Spendenbestätigung drucken");
 		this.printConfirmation.setImage(Activator.getDefault().getImageRegistry().get("PRINT"));
@@ -414,17 +424,20 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 			@Override
 			public void widgetSelected(final SelectionEvent e)
 			{
-				final DonationYear[] years = ((YearContentProvider)DonationView.this.yearViewer.getContentProvider()).getEntries();
+				final DonationYear[] years = ((YearContentProvider) DonationView.this.yearViewer.getContentProvider()).getEntries();
 				IStructuredSelection ssel = (IStructuredSelection) DonationView.this.yearViewer.getSelection();
 				final DonationYear year = (DonationYear) ssel.getFirstElement();
-				final DonationPurpose[] purposes = ((PurposeContentProvider)DonationView.this.purposeViewer.getContentProvider()).getEntries();
+				final DonationPurpose[] purposes = ((PurposeContentProvider) DonationView.this.purposeViewer.getContentProvider()).getEntries();
 				ssel = (IStructuredSelection) DonationView.this.purposeViewer.getSelection();
 				final DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
-				final Domain[] domains = ((DomainContentProvider)DonationView.this.domainViewer.getContentProvider()).getEntries();
+				final Domain[] domains = ((DomainContentProvider) DonationView.this.domainViewer.getContentProvider()).getEntries();
 				ssel = (IStructuredSelection) DonationView.this.domainViewer.getSelection();
 				final Domain domain = (Domain) ssel.getFirstElement();
-				final DonationLetterDialog dialog = new DonationLetterDialog(DonationView.this.getSite()
-							.getShell(), DonationView.this.connectionService, years, year, purposes, purpose, domains, domain, DonationView.this.personText.getText());
+				final DonationLetterDialog dialog = new DonationLetterDialog(DonationView.this.getSite().getShell(), DonationView.this.connectionService, years, year, purposes, purpose, domains, domain, DonationView.this.personText.getText());
+				// final DonationConfirmationDialog dialog = new
+				// DonationConfirmationDialog(DonationView.this.getSite()
+				// .getShell(), year, purpose, domain,
+				// DonationView.this.personText.getText());
 				dialog.open();
 			}
 
@@ -446,17 +459,16 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 			{
 				if (DonationView.this.donationViewer.getSelection().isEmpty())
 				{
-					final DonationYear[] years = ((YearContentProvider)DonationView.this.yearViewer.getContentProvider()).getEntries();
+					final DonationYear[] years = ((YearContentProvider) DonationView.this.yearViewer.getContentProvider()).getEntries();
 					IStructuredSelection ssel = (IStructuredSelection) DonationView.this.yearViewer.getSelection();
 					final DonationYear year = (DonationYear) ssel.getFirstElement();
-					final DonationPurpose[] purposes = ((PurposeContentProvider)DonationView.this.purposeViewer.getContentProvider()).getEntries();
+					final DonationPurpose[] purposes = ((PurposeContentProvider) DonationView.this.purposeViewer.getContentProvider()).getEntries();
 					ssel = (IStructuredSelection) DonationView.this.purposeViewer.getSelection();
 					final DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
-					final Domain[] domains = ((DomainContentProvider)DonationView.this.domainViewer.getContentProvider()).getEntries();
+					final Domain[] domains = ((DomainContentProvider) DonationView.this.domainViewer.getContentProvider()).getEntries();
 					ssel = (IStructuredSelection) DonationView.this.domainViewer.getSelection();
 					final Domain domain = (Domain) ssel.getFirstElement();
-					final DonationListDialog dialog = new DonationListDialog(DonationView.this.getSite()
-								.getShell(), DonationView.this.connectionService, years, year, purposes, purpose, domains, domain, DonationView.this.personText.getText());
+					final DonationListDialog dialog = new DonationListDialog(DonationView.this.getSite().getShell(), DonationView.this.connectionService, years, year, purposes, purpose, domains, domain, DonationView.this.personText.getText());
 					dialog.open();
 				}
 				else
@@ -472,7 +484,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 				this.widgetSelected(e);
 			}
 		});
-		
+
 		this.generateAddressList = new Button(actionComposite, SWT.PUSH);
 		this.generateAddressList.setImage(Activator.getDefault().getImageRegistry().get("LIST"));
 		this.generateAddressList.setToolTipText("Personenliste exportieren");
@@ -484,17 +496,16 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 			{
 				if (DonationView.this.donationViewer.getSelection().isEmpty())
 				{
-					final DonationYear[] years = ((YearContentProvider)DonationView.this.yearViewer.getContentProvider()).getEntries();
+					final DonationYear[] years = ((YearContentProvider) DonationView.this.yearViewer.getContentProvider()).getEntries();
 					IStructuredSelection ssel = (IStructuredSelection) DonationView.this.yearViewer.getSelection();
 					final DonationYear year = (DonationYear) ssel.getFirstElement();
-					final DonationPurpose[] purposes = ((PurposeContentProvider)DonationView.this.purposeViewer.getContentProvider()).getEntries();
+					final DonationPurpose[] purposes = ((PurposeContentProvider) DonationView.this.purposeViewer.getContentProvider()).getEntries();
 					ssel = (IStructuredSelection) DonationView.this.purposeViewer.getSelection();
 					final DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
-					final Domain[] domains = ((DomainContentProvider)DonationView.this.domainViewer.getContentProvider()).getEntries();
+					final Domain[] domains = ((DomainContentProvider) DonationView.this.domainViewer.getContentProvider()).getEntries();
 					ssel = (IStructuredSelection) DonationView.this.domainViewer.getSelection();
 					final Domain domain = (Domain) ssel.getFirstElement();
-					final DonatorListDialog dialog = new DonatorListDialog(DonationView.this.getSite()
-								.getShell(), DonationView.this.connectionService, years, year, purposes, purpose, domains, domain, DonationView.this.personText.getText());
+					final DonatorListDialog dialog = new DonatorListDialog(DonationView.this.getSite().getShell(), DonationView.this.connectionService, years, year, purposes, purpose, domains, domain, DonationView.this.personText.getText());
 					dialog.open();
 				}
 				else
@@ -510,7 +521,23 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 				this.widgetSelected(e);
 			}
 		});
-		
+
+		final Label emptyLabel = new Label(actionComposite, SWT.None);
+		emptyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		this.clearDonationViewerSelection = new Button(actionComposite, SWT.PUSH);
+		this.clearDonationViewerSelection.setLayoutData(new GridData());
+		this.clearDonationViewerSelection.setImage(Activator.getDefault().getImageRegistry().get("CLEAR"));
+		this.clearDonationViewerSelection.setToolTipText("Selektierung in der Spendenliste aufheben");
+		this.clearDonationViewerSelection.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(final SelectionEvent e)
+			{
+				DonationView.this.donationViewer.setSelection(new StructuredSelection());
+			}
+		});
+
 		this.createContextMenu();
 
 		this.yearViewer.addSelectionChangedListener(this);
@@ -527,8 +554,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 
 		this.getSite().setSelectionProvider(this.donationViewer);
 
-		this.connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
-				ConnectionService.class, null)
+		this.connectionServiceTracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(), ConnectionService.class, null)
 		{
 			@Override
 			public ConnectionService addingService(final ServiceReference<ConnectionService> reference)
@@ -541,8 +567,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 					{
 						DonationView.this.purposeViewer.setInput(DonationView.this.connectionService);
 						final long purposeId = DonationView.this.settings.getLong("donation.view.purpose.id");
-						final DonationPurposeQuery purposeQuery = (DonationPurposeQuery) DonationView.this.connectionService
-								.getQuery(DonationPurpose.class);
+						final DonationPurposeQuery purposeQuery = (DonationPurposeQuery) DonationView.this.connectionService.getQuery(DonationPurpose.class);
 						final DonationPurpose purpose = purposeQuery.find(DonationPurpose.class, Long.valueOf(purposeId));
 						if (purpose == null)
 						{
@@ -558,8 +583,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 						final Domain domain = domainQuery.find(Domain.class, Long.valueOf(domainId));
 						if (domain == null)
 						{
-							DonationView.this.domainViewer.setSelection(new StructuredSelection(new Domain[] { DonationView.this.allAndEmptyDomains
-									.iterator().next() }));
+							DonationView.this.domainViewer.setSelection(new StructuredSelection(new Domain[] { DonationView.this.allAndEmptyDomains.iterator().next() }));
 						}
 						else
 						{
@@ -605,10 +629,10 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 
 		};
 		this.connectionServiceTracker.open();
+		this.clearDonationViewerSelection.setEnabled(!this.donationViewer.getSelection().isEmpty());
 	}
 
-	private void configureColumn(final String name, final int order, final TableColumn tableColumn,
-			final DonationSorter sorter)
+	private void configureColumn(final String name, final int order, final TableColumn tableColumn, final DonationSorter sorter)
 	{
 		tableColumn.setText(name);
 		tableColumn.setResizable(true);
@@ -658,8 +682,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 	{
 		try
 		{
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-					.openEditor(new DonationEditorInput(donation), DonationEditor.ID, true);
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new DonationEditorInput(donation), DonationEditor.ID, true);
 		}
 		catch (final PartInitException e)
 		{
@@ -811,48 +834,44 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 
 				switch (this.column)
 				{
-					case 0:
-					{
-						final Date dd1 = d1.getDonationDate().getTime();
-						final Date dd2 = d2.getDonationDate().getTime();
-						return this.compareDates(dd1, dd2);
-					}
-					case 1:
-					{
-						return this.compareAmounts(Double.valueOf(d1.getAmount()), Double.valueOf(d2.getAmount()));
-					}
-					case 2:
-					{
-						final String p1 = d1.getPurpose() == null ? "" : d1.getPurpose().getName();
-						final String p2 = d2.getPurpose() == null ? "" : d2.getPurpose().getName();
-						return this.compareStrings(p1, p2);
-					}
-					case 3:
-					{
-						final String name1 = DonationFormatter.getInstance().formatDonatorName(d1);
-						final String name2 = DonationFormatter.getInstance().formatDonatorName(d2);
-						return this.compareStrings(name1, name2);
-					}
-					case 4:
-					{
-						final String a1 = AddressFormatter.getInstance().formatAddressLine(
-								d1.getLink() == null ? d1.getAddress() : d1.getLink().getAddress());
-						final String a2 = AddressFormatter.getInstance().formatAddressLine(
-								d2.getLink() == null ? d2.getAddress() : d2.getLink().getAddress());
-						return this.compareStrings(a1, a2);
-					}
-					case 5:
-					{
-						final String c1 = AddressFormatter.getInstance().formatCityLine(
-								d1.getLink() == null ? d1.getAddress() : d1.getLink().getAddress());
-						final String c2 = AddressFormatter.getInstance().formatCityLine(
-								d2.getLink() == null ? d2.getAddress() : d2.getLink().getAddress());
-						return this.compareStrings(c1, c2);
-					}
-					default:
-					{
-						return 0;
-					}
+				case 0:
+				{
+					final Date dd1 = d1.getDonationDate().getTime();
+					final Date dd2 = d2.getDonationDate().getTime();
+					return this.compareDates(dd1, dd2);
+				}
+				case 1:
+				{
+					return this.compareAmounts(Double.valueOf(d1.getAmount()), Double.valueOf(d2.getAmount()));
+				}
+				case 2:
+				{
+					final String p1 = d1.getPurpose() == null ? "" : d1.getPurpose().getName();
+					final String p2 = d2.getPurpose() == null ? "" : d2.getPurpose().getName();
+					return this.compareStrings(p1, p2);
+				}
+				case 3:
+				{
+					final String name1 = DonationFormatter.getInstance().formatDonatorName(d1);
+					final String name2 = DonationFormatter.getInstance().formatDonatorName(d2);
+					return this.compareStrings(name1, name2);
+				}
+				case 4:
+				{
+					final String a1 = AddressFormatter.getInstance().formatAddressLine(d1.getLink() == null ? d1.getAddress() : d1.getLink().getAddress());
+					final String a2 = AddressFormatter.getInstance().formatAddressLine(d2.getLink() == null ? d2.getAddress() : d2.getLink().getAddress());
+					return this.compareStrings(a1, a2);
+				}
+				case 5:
+				{
+					final String c1 = AddressFormatter.getInstance().formatCityLine(d1.getLink() == null ? d1.getAddress() : d1.getLink().getAddress());
+					final String c2 = AddressFormatter.getInstance().formatCityLine(d2.getLink() == null ? d2.getAddress() : d2.getLink().getAddress());
+					return this.compareStrings(c1, c2);
+				}
+				default:
+				{
+					return 0;
+				}
 				}
 			}
 			return 0;
@@ -948,8 +967,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 					if (!select && donation.getLink() != null)
 					{
 						final Person person = donation.getLink().getPerson();
-						select = person.getLastname().toLowerCase().contains(name)
-								|| person.getFirstname().toLowerCase().contains(name);
+						select = person.getLastname().toLowerCase().contains(name) || person.getFirstname().toLowerCase().contains(name);
 					}
 					return select;
 				}
