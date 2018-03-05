@@ -1,12 +1,8 @@
 package ch.eugster.events.documents.maps;
 
 import java.io.Writer;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
-import java.util.Locale;
 
 import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.model.Address;
@@ -18,8 +14,6 @@ import ch.eugster.events.persistence.model.Member;
 
 public class AddressMap extends AbstractDataMap<Address>
 {
-	private static NumberFormat amountFormatter = null;
-
 	protected AddressMap() {
 		super();
 	}
@@ -29,24 +23,14 @@ public class AddressMap extends AbstractDataMap<Address>
 		this(address, null, null, null, false);
 	}
 
-	public AddressMap(final Address address, boolean isGroup)
+	public AddressMap(final Address address, final boolean isGroup)
 	{
 		this(address, null, null, null, isGroup);
 	}
 
-	public AddressMap(final Address address, final Integer year, DonationPurpose purpose, Domain domain, boolean isGroup)
+	public AddressMap(final Address address, final Integer year, final DonationPurpose purpose, final Domain domain, final boolean isGroup)
 	{
-		if (amountFormatter == null)
-		{
-			amountFormatter = DecimalFormat.getNumberInstance();
-			amountFormatter.setMinimumFractionDigits(Currency.getInstance(Locale.getDefault())
-					.getDefaultFractionDigits());
-			amountFormatter.setMaximumFractionDigits(Currency.getInstance(Locale.getDefault())
-					.getDefaultFractionDigits());
-			amountFormatter.setGroupingUsed(true);
-		}
-
-		for (Key key : Key.values())
+		for (final Key key : Key.values())
 		{
 			if (year == null)
 			{
@@ -58,22 +42,23 @@ public class AddressMap extends AbstractDataMap<Address>
 			}
 		}
 
-		for (TableKey key : TableKey.values())
+		for (final TableKey key : TableKey.values())
 		{
 			this.addTableMaps(key.getKey(), key.getTableMaps(address, year, purpose, domain));
 		}
 
 	}
 
-	protected void printTables(Writer writer)
+	@Override
+	protected void printTables(final Writer writer)
 	{
-		printHeader(writer, 2, "Tabellen");
-		startTable(writer, 0);
-		startTableRow(writer);
-		printCell(writer, null, TableKey.DONATIONS.getKey());
-		printCell(writer, "#donation", "Spenden");
-		endTableRow(writer);
-		endTable(writer);
+		this.printHeader(writer, 2, "Tabellen");
+		this.startTable(writer, 0);
+		this.startTableRow(writer);
+		this.printCell(writer, null, TableKey.DONATIONS.getKey());
+		this.printCell(writer, "#donation", "Spenden");
+		this.endTableRow(writer);
+		this.endTable(writer);
 	}
 
 	public enum Key implements DataMapKey
@@ -332,7 +317,7 @@ public class AddressMap extends AbstractDataMap<Address>
 			}
 		}
 
-		public String getValue(final Address address, boolean isGroup)
+		public String getValue(final Address address, final boolean isGroup)
 		{
 			switch (this)
 			{
@@ -390,7 +375,7 @@ public class AddressMap extends AbstractDataMap<Address>
 				}
 				case SALUTATION:
 				{
-					AddressSalutation salutation = address.getSalutation();
+					final AddressSalutation salutation = address.getSalutation();
 					return salutation == null ? "" : salutation.getSalutation();
 				}
 				case EMAIL:
@@ -403,7 +388,7 @@ public class AddressMap extends AbstractDataMap<Address>
 				}
 				case POLITE:
 				{
-					AddressSalutation salutation = address.getSalutation();
+					final AddressSalutation salutation = address.getSalutation();
 					return salutation == null ? "" : salutation.getPolite();
 				}
 				case MAILING_ADDRESS:
@@ -416,21 +401,12 @@ public class AddressMap extends AbstractDataMap<Address>
 				}
 				case TOTAL_DONATIONS:
 				{
-					double totalAmount = 0D;
-					List<Donation> donations = address.getDonations();
-					for (Donation donation : donations)
-					{
-						if (!donation.isDeleted())
-						{
-							totalAmount += donation.getAmount();
-						}
-					}
-					return amountFormatter.format(totalAmount);
+					return "0";
 				}
 				case MEMBER:
 				{
 					StringBuilder builder = new StringBuilder();
-					Member[] members = address.getMembers().toArray(new Member[0]);
+					final Member[] members = address.getMembers().toArray(new Member[0]);
 					for (int i = 0; i < members.length; i++)
 					{
 						builder = builder.append(members[i].getMembership().getName());
@@ -452,7 +428,7 @@ public class AddressMap extends AbstractDataMap<Address>
 			}
 		}
 
-		public String getValue(final Address address, final int year, boolean isGroup)
+		public String getValue(final Address address, final int year, final boolean isGroup)
 		{
 			switch (this)
 			{
@@ -495,7 +471,7 @@ public class AddressMap extends AbstractDataMap<Address>
 				}
 				case SALUTATION:
 				{
-					AddressSalutation salutation = address.getSalutation();
+					final AddressSalutation salutation = address.getSalutation();
 					return salutation == null ? "" : salutation.getSalutation();
 				}
 				case EMAIL:
@@ -508,7 +484,7 @@ public class AddressMap extends AbstractDataMap<Address>
 				}
 				case POLITE:
 				{
-					AddressSalutation salutation = address.getSalutation();
+					final AddressSalutation salutation = address.getSalutation();
 					return salutation == null ? "" : salutation.getPolite();
 				}
 				case MAILING_ADDRESS:
@@ -521,24 +497,12 @@ public class AddressMap extends AbstractDataMap<Address>
 				}
 				case TOTAL_DONATIONS:
 				{
-					double totalAmount = 0D;
-					List<Donation> donations = address.getDonations();
-					for (Donation donation : donations)
-					{
-						if (!donation.isDeleted())
-						{
-							if (year == donation.getDonationYear())
-							{
-								totalAmount += donation.getAmount();
-							}
-						}
-					}
-					return amountFormatter.format(totalAmount);
+					return "0";
 				}
 				case MEMBER:
 				{
 					StringBuilder builder = new StringBuilder();
-					Member[] members = address.getMembers().toArray(new Member[0]);
+					final Member[] members = address.getMembers().toArray(new Member[0]);
 					for (int i = 0; i < members.length; i++)
 					{
 						builder = builder.append(members[i].getMembership().getName());
@@ -616,18 +580,18 @@ public class AddressMap extends AbstractDataMap<Address>
 			}
 		}
 
-		public List<DataMap<?>> getTableMaps(final Address address, final Integer year, DonationPurpose purpose,
-				Domain domain)
+		public List<DataMap<?>> getTableMaps(final Address address, final Integer year, final DonationPurpose purpose,
+				final Domain domain)
 		{
 			switch (this)
 			{
 				case DONATIONS:
 				{
-					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
-					List<Donation> donations = address.getDonations();
-					for (Donation donation : donations)
+					final List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
+					final List<Donation> donations = address.getDonations();
+					for (final Donation donation : donations)
 					{
-						addDonation(donation, tableMaps, year, purpose, domain);
+						this.addDonation(donation, tableMaps, year, purpose, domain);
 					}
 					return tableMaps;
 				}
@@ -638,10 +602,10 @@ public class AddressMap extends AbstractDataMap<Address>
 			}
 		}
 
-		private void addDonation(Donation donation, List<DataMap<?>> tableMaps, Integer year, DonationPurpose purpose,
-				Domain domain)
+		private void addDonation(final Donation donation, final List<DataMap<?>> tableMaps, final Integer year, final DonationPurpose purpose,
+				final Domain domain)
 		{
-			if (printDonation(donation, purpose, domain))
+			if (this.printDonation(donation, purpose, domain))
 			{
 				if (year == null)
 				{
@@ -657,7 +621,7 @@ public class AddressMap extends AbstractDataMap<Address>
 			}
 		}
 
-		private boolean printDonation(Donation donation, DonationPurpose purpose, Domain domain)
+		private boolean printDonation(final Donation donation, final DonationPurpose purpose, final Domain domain)
 		{
 			if (donation.isDeleted())
 			{

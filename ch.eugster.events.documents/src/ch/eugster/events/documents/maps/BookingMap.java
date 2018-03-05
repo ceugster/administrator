@@ -1,15 +1,9 @@
 package ch.eugster.events.documents.maps;
 
 import java.io.Writer;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Currency;
 import java.util.List;
-import java.util.Locale;
 
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.BookingType;
@@ -20,12 +14,6 @@ import ch.eugster.events.persistence.model.Participant;
 
 public class BookingMap extends AbstractDataMap<Booking>
 {
-	private static NumberFormat amountFormatter = null;
-
-	private static DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-
-	private static NumberFormat integerFormatter = DecimalFormat.getIntegerInstance();
-
 	protected BookingMap() {
 		super();
 	}
@@ -37,16 +25,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 
 	public BookingMap(final Booking booking, final boolean loadTables)
 	{
-		if (amountFormatter == null)
-		{
-			amountFormatter = DecimalFormat.getNumberInstance();
-			amountFormatter.setMinimumFractionDigits(Currency.getInstance(Locale.getDefault())
-					.getDefaultFractionDigits());
-			amountFormatter.setMaximumFractionDigits(Currency.getInstance(Locale.getDefault())
-					.getDefaultFractionDigits());
-			amountFormatter.setGroupingUsed(true);
-		}
-		for (Key key : Key.values())
+		for (final Key key : Key.values())
 		{
 			this.setProperty(key.getKey(), key.getValue(booking));
 		}
@@ -54,7 +33,7 @@ public class BookingMap extends AbstractDataMap<Booking>
 		this.setProperties(new CourseMap(booking.getCourse()).getProperties());
 		if (loadTables)
 		{
-			for (TableKey key : TableKey.values())
+			for (final TableKey key : TableKey.values())
 			{
 				this.addTableMaps(key.getKey(), key.getTableMaps(booking));
 			}
@@ -63,36 +42,38 @@ public class BookingMap extends AbstractDataMap<Booking>
 //		this.addTableMaps(TableKey.COURSE_DETAILS.getName(), TableKey.COURSE_DETAILS.getTableMaps(booking));
 	}
 
-	protected void printReferences(Writer writer)
+	@Override
+	protected void printReferences(final Writer writer)
 	{
-		printHeader(writer, 2, "Referenzen");
-		startTable(writer, 0);
-		startTableRow(writer);
-		printCell(writer, "#participant", "Teilnehmer");
-		endTableRow(writer);
-		startTableRow(writer);
-		printCell(writer, "#course", "Kurs");
-		endTableRow(writer);
-		endTable(writer);
+		this.printHeader(writer, 2, "Referenzen");
+		this.startTable(writer, 0);
+		this.startTableRow(writer);
+		this.printCell(writer, "#participant", "Teilnehmer");
+		this.endTableRow(writer);
+		this.startTableRow(writer);
+		this.printCell(writer, "#course", "Kurs");
+		this.endTableRow(writer);
+		this.endTable(writer);
 	}
 
-	protected void printTables(Writer writer)
+	@Override
+	protected void printTables(final Writer writer)
 	{
-		printHeader(writer, 2, "Tabellen");
-		startTable(writer, 0);
-		startTableRow(writer);
-		printCell(writer, null, TableKey.PARTICIPANTS.getKey());
-		printCell(writer, "#participant", "Teilnehmer");
-		endTableRow(writer);
-		startTableRow(writer);
-		printCell(writer, null, TableKey.COURSE_DETAILS.getKey());
-		printCell(writer, "#course_detail", "Kursdetails");
-		endTableRow(writer);
-		startTableRow(writer);
-		printCell(writer, null, TableKey.COURSE_GUIDES.getKey());
-		printCell(writer, "#course_guide", "Kursleitungen");
-		endTableRow(writer);
-		endTable(writer);
+		this.printHeader(writer, 2, "Tabellen");
+		this.startTable(writer, 0);
+		this.startTableRow(writer);
+		this.printCell(writer, null, TableKey.PARTICIPANTS.getKey());
+		this.printCell(writer, "#participant", "Teilnehmer");
+		this.endTableRow(writer);
+		this.startTableRow(writer);
+		this.printCell(writer, null, TableKey.COURSE_DETAILS.getKey());
+		this.printCell(writer, "#course_detail", "Kursdetails");
+		this.endTableRow(writer);
+		this.startTableRow(writer);
+		this.printCell(writer, null, TableKey.COURSE_GUIDES.getKey());
+		this.printCell(writer, "#course_guide", "Kursleitungen");
+		this.endTableRow(writer);
+		this.endTable(writer);
 	}
 
 	public enum Key implements DataMapKey
@@ -357,56 +338,56 @@ public class BookingMap extends AbstractDataMap<Booking>
 			{
 				case AMOUNT_DETAILED:
 				{
-					String amount = amountFormatter.format(booking.getAmount());
-					List<BookingType> bookingTypes = booking.getCourse().getBookingTypes();
-					for (BookingType bookingType : bookingTypes)
+					String amount = AbstractDataMap.getAmountFormatter().format(booking.getAmount());
+					final List<BookingType> bookingTypes = booking.getCourse().getBookingTypes();
+					for (final BookingType bookingType : bookingTypes)
 					{
-						int participantCount = booking.countParticipants(bookingType);
+						final int participantCount = booking.countParticipants(bookingType);
 						if (participantCount > 0)
 						{
-							amount = amount + ", " + participantCount + " x " + bookingType.getName() + " à " + amountFormatter.format(bookingType.getPrice());
+							amount = amount + ", " + participantCount + " x " + bookingType.getName() + " à " + AbstractDataMap.getAmountFormatter().format(bookingType.getPrice());
 						}
 					}
 					return amount;
 				}
 				case AMOUNT:
 				{
-					return amountFormatter.format(booking.getAmount());
+					return AbstractDataMap.getAmountFormatter().format(booking.getAmount());
 				}
 				case ANNULATION_STATE:
 				{
-					IBookingState state = booking.getAnnulatedState();
+					final IBookingState state = booking.getAnnulatedState();
 					return state == null ? "" : state.toString();
 				}
 				case BOOKING_CONFIRMATION_SENT_DATE:
 				{
-					Calendar calendar = booking.getBookingConfirmationSentDate();
-					return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+					final Calendar calendar = booking.getBookingConfirmationSentDate();
+					return calendar == null ? "" : AbstractDataMap.getDateTimeFormatter().format(calendar.getTime());
 				}
 				case BOOKING_STATE:
 				{
-					IBookingState state = booking.getBookingState(booking.getCourse().getState());
+					final IBookingState state = booking.getBookingState(booking.getCourse().getState());
 					return state == null ? "" : state.toString();
 				}
 				case BOOKING_DATE:
 				{
-					Calendar calendar = booking.getDate();
-					return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+					final Calendar calendar = booking.getDate();
+					return calendar == null ? "" : AbstractDataMap.getDateTimeFormatter().format(calendar.getTime());
 				}
 				case DONE_STATE:
 				{
-					IBookingState state = booking.getDoneState();
+					final IBookingState state = booking.getDoneState();
 					return state == null ? "" : state.toString();
 				}
 				case FORTHCOMING_STATE:
 				{
-					IBookingState state = booking.getForthcomingState();
+					final IBookingState state = booking.getForthcomingState();
 					return state == null ? "" : state.toString();
 				}
 				case INVITATION_SENT_DATE:
 				{
-					Calendar calendar = booking.getInvitationSentDate();
-					return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+					final Calendar calendar = booking.getInvitationSentDate();
+					return calendar == null ? "" : AbstractDataMap.getDateTimeFormatter().format(calendar.getTime());
 				}
 				case NOTE:
 				{
@@ -414,34 +395,34 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case PARTICIPANT_COUNT:
 				{
-					return integerFormatter.format(booking.getParticipantCount());
+					return AbstractDataMap.getIntegerFormatter().format(booking.getParticipantCount());
 				}
 				case PARTICIPATION_CONFIRMATION_SENT_DATE:
 				{
-					Calendar calendar = booking.getParticipationConfirmationSentDate();
-					return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+					final Calendar calendar = booking.getParticipationConfirmationSentDate();
+					return calendar == null ? "" : AbstractDataMap.getDateTimeFormatter().format(calendar.getTime());
 				}
 				case PAYED_AMOUNT:
 				{
-					return amountFormatter.format(booking.getPayAmount());
+					return AbstractDataMap.getAmountFormatter().format(booking.getPayAmount());
 				}
 				case PAYED_BACK_AMOUNT:
 				{
-					return amountFormatter.format(booking.getPayBackAmount());
+					return AbstractDataMap.getAmountFormatter().format(booking.getPayBackAmount());
 				}
 				case PAYED_DATE:
 				{
-					Calendar calendar = booking.getPayDate();
-					return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+					final Calendar calendar = booking.getPayDate();
+					return calendar == null ? "" : AbstractDataMap.getDateTimeFormatter().format(calendar.getTime());
 				}
 				case PAYED_BACK_DATE:
 				{
-					Calendar calendar = booking.getPayBackDate();
-					return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+					final Calendar calendar = booking.getPayBackDate();
+					return calendar == null ? "" : AbstractDataMap.getDateTimeFormatter().format(calendar.getTime());
 				}
 				case STATE:
 				{
-					IBookingState state = booking.getState();
+					final IBookingState state = booking.getState();
 					return state == null ? "" : state.toString();
 				}
 				case PAYMENT_TERM:
@@ -550,9 +531,9 @@ public class BookingMap extends AbstractDataMap<Booking>
 			{
 				case PARTICIPANTS:
 				{
-					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
-					List<Participant> participants = booking.getParticipants();
-					for (Participant participant : participants)
+					final List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
+					final List<Participant> participants = booking.getParticipants();
+					for (final Participant participant : participants)
 					{
 						tableMaps.add(new ParticipantMap(participant));
 					}
@@ -560,9 +541,9 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case COURSE_DETAILS:
 				{
-					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
-					List<CourseDetail> courseDetails = booking.getCourse().getCourseDetails();
-					for (CourseDetail courseDetail : courseDetails)
+					final List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
+					final List<CourseDetail> courseDetails = booking.getCourse().getCourseDetails();
+					for (final CourseDetail courseDetail : courseDetails)
 					{
 						tableMaps.add(new CourseDetailMap(courseDetail));
 					}
@@ -570,9 +551,9 @@ public class BookingMap extends AbstractDataMap<Booking>
 				}
 				case COURSE_GUIDES:
 				{
-					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
-					List<CourseGuide> courseGuides = booking.getCourse().getCourseGuides();
-					for (CourseGuide courseGuide : courseGuides)
+					final List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
+					final List<CourseGuide> courseGuides = booking.getCourse().getCourseGuides();
+					for (final CourseGuide courseGuide : courseGuides)
 					{
 						tableMaps.add(new CourseGuideMap(courseGuide, false));
 					}

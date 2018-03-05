@@ -1,24 +1,20 @@
 package ch.eugster.events.documents.maps;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import ch.eugster.events.persistence.model.Season;
 
 public class SeasonMap extends AbstractDataMap<Season>
 {
-	private static DateFormat dateFormatter = SimpleDateFormat.getDateInstance();
-
 	protected SeasonMap() {
 		super();
 	}
 
 	public SeasonMap(final Season season)
 	{
-		for (Key key : Key.values())
+		for (final Key key : Key.values())
 		{
-			setProperty(key.getKey(), key.getValue(season));
+			this.setProperty(key.getKey(), key.getValue(season));
 		}
 	}
 
@@ -130,13 +126,13 @@ public class SeasonMap extends AbstractDataMap<Season>
 				}
 				case START:
 				{
-					Calendar calendar = season.getStart();
-					return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+					final Calendar calendar = season.getStart();
+					return calendar == null ? "" : AbstractDataMap.getDateFormatter().format(calendar.getTime());
 				}
 				case END:
 				{
-					Calendar calendar = season.getEnd();
-					return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+					final Calendar calendar = season.getEnd();
+					return calendar == null ? "" : AbstractDataMap.getDateFormatter().format(calendar.getTime());
 				}
 				default:
 				{
