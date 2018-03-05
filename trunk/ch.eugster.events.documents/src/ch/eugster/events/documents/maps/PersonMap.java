@@ -1,7 +1,5 @@
 package ch.eugster.events.documents.maps;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +7,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.documents.Activator;
 import ch.eugster.events.persistence.formatters.PersonFormatter;
+import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.FieldExtension;
 import ch.eugster.events.persistence.model.FieldExtensionTarget;
 import ch.eugster.events.persistence.model.Person;
@@ -18,8 +17,6 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class PersonMap extends AbstractDataMap<Person>
 {
-	private static final DateFormat dateFormatter = SimpleDateFormat.getDateInstance();
-
 	protected PersonMap()
 	{
 		super();
@@ -27,18 +24,18 @@ public class PersonMap extends AbstractDataMap<Person>
 	
 	public PersonMap(final Person person)
 	{
-		for (Key key : Key.values())
+		for (final Key key : Key.values())
 		{
 			this.setProperty(key.getKey(), key.getValue(person));
 		}
-		List<PersonExtendedField> extendedFields = person.getExtendedFields();
-		for (PersonExtendedField extendedField : extendedFields)
+		final List<PersonExtendedField> extendedFields = person.getExtendedFields();
+		for (final PersonExtendedField extendedField : extendedFields)
 		{
-			ExtendedFieldKey key = new ExtendedFieldKey(extendedField.getFieldExtension());
+			final ExtendedFieldKey key = new ExtendedFieldKey(extendedField.getFieldExtension());
 			if (!extendedField.getFieldExtension().isDeleted())
 			{
-				String value = extendedField.isDeleted() ? PersonExtendedField.stringValueOf(extendedField
-						.getFieldExtension().getDefaultValue()) : PersonExtendedField.stringValueOf(extendedField
+				final String value = extendedField.isDeleted() ? AbstractEntity.stringValueOf(extendedField
+						.getFieldExtension().getDefaultValue()) : AbstractEntity.stringValueOf(extendedField
 						.getValue());
 				this.setProperty(key.getKey(), value);
 			}
@@ -47,19 +44,19 @@ public class PersonMap extends AbstractDataMap<Person>
 
 	public static List<DataMapKey> getExtendedFieldKeys()
 	{
-		List<DataMapKey> keys = new ArrayList<DataMapKey>();
-		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundleContext(),
+		final List<DataMapKey> keys = new ArrayList<DataMapKey>();
+		final ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundleContext(),
 				ConnectionService.class, null);
 		tracker.open();
 		try
 		{
-			Object service = tracker.getService();
+			final Object service = tracker.getService();
 			if (service instanceof ConnectionService)
 			{
-				ConnectionService connectionService = (ConnectionService) service;
-				FieldExtensionQuery query = (FieldExtensionQuery) connectionService.getQuery(FieldExtension.class);
-				List<FieldExtension> fieldExtensions = query.selectByTarget(FieldExtensionTarget.PERSON, false);
-				for (FieldExtension fieldExtension : fieldExtensions)
+				final ConnectionService connectionService = (ConnectionService) service;
+				final FieldExtensionQuery query = (FieldExtensionQuery) connectionService.getQuery(FieldExtension.class);
+				final List<FieldExtension> fieldExtensions = query.selectByTarget(FieldExtensionTarget.PERSON, false);
+				for (final FieldExtension fieldExtension : fieldExtensions)
 				{
 					keys.add(new ExtendedFieldKey(fieldExtension));
 				}
@@ -346,7 +343,7 @@ public class PersonMap extends AbstractDataMap<Person>
 					}
 					else
 					{
-						return dateFormatter.format(person.getBirthday());
+						return AbstractDataMap.getDateFormatter().format(person.getBirthday());
 					}
 				}
 				case FORM:

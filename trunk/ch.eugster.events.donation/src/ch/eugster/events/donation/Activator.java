@@ -32,10 +32,10 @@ public class Activator extends AbstractUIPlugin
 	 * )
 	 */
 	@Override
-	public void start(BundleContext context) throws Exception
+	public void start(final BundleContext context) throws Exception
 	{
 		super.start(context);
-		plugin = this;
+		Activator.plugin = this;
 	}
 
 	/*
@@ -46,9 +46,9 @@ public class Activator extends AbstractUIPlugin
 	 * )
 	 */
 	@Override
-	public void stop(BundleContext context) throws Exception
+	public void stop(final BundleContext context) throws Exception
 	{
-		plugin = null;
+		Activator.plugin = null;
 		super.stop(context);
 	}
 
@@ -59,17 +59,18 @@ public class Activator extends AbstractUIPlugin
 	 */
 	public static Activator getDefault()
 	{
-		return plugin;
+		return Activator.plugin;
 	}
 
 	@Override
-	protected void initializeImageRegistry(ImageRegistry imageRegistry)
+	protected void initializeImageRegistry(final ImageRegistry imageRegistry)
 	{
 		super.initializeImageRegistry(imageRegistry);
 		imageRegistry.put("MONEY", ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/money.png")));
 		imageRegistry.put("CLEAR", ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/clear_16.png")));
 		imageRegistry.put("PRINT", ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/print_16.png")));
 		imageRegistry.put("LIST", ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/list_16.png")));
+		imageRegistry.put("LOAD_LETTER", ImageDescriptor.createFromURL(this.getBundle().getEntry("/icons/page_16.png")));
 	}
 
 }

@@ -2,8 +2,6 @@ package ch.eugster.events.documents.maps;
 
 import java.io.Writer;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,10 +20,6 @@ import ch.eugster.events.persistence.model.User;
 
 public class CourseMap extends AbstractDataMap<Course>
 {
-	private static DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
-
-	private static NumberFormat integerFormatter = DecimalFormat.getIntegerInstance();
-
 	private Course course;
 	
 	protected CourseMap() {
@@ -41,9 +35,9 @@ public class CourseMap extends AbstractDataMap<Course>
 	{
 		this.course = course;
 		
-		for (Key key : Key.values())
+		for (final Key key : Key.values())
 		{
-			setProperty(key.getKey(), key.getValue(course));
+			this.setProperty(key.getKey(), key.getValue(course));
 		}
 		if (course.getCategory() != null)
 		{
@@ -63,7 +57,7 @@ public class CourseMap extends AbstractDataMap<Course>
 		}
 		if (loadTables)
 		{
-			for (TableKey key : TableKey.values())
+			for (final TableKey key : TableKey.values())
 			{
 				this.addTableMaps(key.getKey(), key.getTableMaps(course));
 			}
@@ -71,46 +65,48 @@ public class CourseMap extends AbstractDataMap<Course>
 
 	}
 
-	protected void printReferences(Writer writer)
+	@Override
+	protected void printReferences(final Writer writer)
 	{
-		printHeader(writer, 2, "Referenzen");
-		startTable(writer, 0);
-		startTableRow(writer);
-		printCell(writer, "#season", "Seasons");
-		endTableRow(writer);
-		startTableRow(writer);
-		printCell(writer, "#category", "Kurskategorien");
-		endTableRow(writer);
-		startTableRow(writer);
-		printCell(writer, "#rubric", "Kursrubriken");
-		endTableRow(writer);
-		startTableRow(writer);
-		printCell(writer, "#domain", "Domänen");
-		endTableRow(writer);
-		endTable(writer);
+		this.printHeader(writer, 2, "Referenzen");
+		this.startTable(writer, 0);
+		this.startTableRow(writer);
+		this.printCell(writer, "#season", "Seasons");
+		this.endTableRow(writer);
+		this.startTableRow(writer);
+		this.printCell(writer, "#category", "Kurskategorien");
+		this.endTableRow(writer);
+		this.startTableRow(writer);
+		this.printCell(writer, "#rubric", "Kursrubriken");
+		this.endTableRow(writer);
+		this.startTableRow(writer);
+		this.printCell(writer, "#domain", "Domänen");
+		this.endTableRow(writer);
+		this.endTable(writer);
 	}
 
-	protected void printTables(Writer writer)
+	@Override
+	protected void printTables(final Writer writer)
 	{
-		printHeader(writer, 2, "Tabellen");
-		startTable(writer, 0);
-		startTableRow(writer);
-		printCell(writer, null, TableKey.BOOKINGS.getKey());
-		printCell(writer, "#booking", TableKey.BOOKINGS.getName());
-		endTableRow(writer);
-		startTableRow(writer);
-		printCell(writer, null, TableKey.BOOKING_TYPES.getKey());
-		printCell(writer, "#booking_type", TableKey.BOOKING_TYPES.getName());
-		endTableRow(writer);
-		startTableRow(writer);
-		printCell(writer, null, TableKey.DETAILS.getKey());
-		printCell(writer, "#course_detail", TableKey.DETAILS.getName());
-		endTableRow(writer);
-		startTableRow(writer);
-		printCell(writer, null, TableKey.GUIDES.getKey());
-		printCell(writer, "#course_guide", TableKey.GUIDES.getName());
-		endTableRow(writer);
-		endTable(writer);
+		this.printHeader(writer, 2, "Tabellen");
+		this.startTable(writer, 0);
+		this.startTableRow(writer);
+		this.printCell(writer, null, TableKey.BOOKINGS.getKey());
+		this.printCell(writer, "#booking", TableKey.BOOKINGS.getName());
+		this.endTableRow(writer);
+		this.startTableRow(writer);
+		this.printCell(writer, null, TableKey.BOOKING_TYPES.getKey());
+		this.printCell(writer, "#booking_type", TableKey.BOOKING_TYPES.getName());
+		this.endTableRow(writer);
+		this.startTableRow(writer);
+		this.printCell(writer, null, TableKey.DETAILS.getKey());
+		this.printCell(writer, "#course_detail", TableKey.DETAILS.getName());
+		this.endTableRow(writer);
+		this.startTableRow(writer);
+		this.printCell(writer, null, TableKey.GUIDES.getKey());
+		this.printCell(writer, "#course_guide", TableKey.GUIDES.getName());
+		this.endTableRow(writer);
+		this.endTable(writer);
 	}
 
 	public enum Key implements DataMapKey
@@ -670,10 +666,9 @@ public class CourseMap extends AbstractDataMap<Course>
 			{
 			case ALL_BOOKING_TYPES:
 			{
-				NumberFormat fmt = DecimalFormat.getCurrencyInstance();
 				StringBuilder builder = new StringBuilder();
-				List<BookingType> bookingTypes = course.getBookingTypes();
-				for (BookingType bookingType : bookingTypes)
+				final List<BookingType> bookingTypes = course.getBookingTypes();
+				for (final BookingType bookingType : bookingTypes)
 				{
 					if (!bookingType.isDeleted())
 					{
@@ -681,7 +676,7 @@ public class CourseMap extends AbstractDataMap<Course>
 						{
 							builder = builder.append(", ");
 						}
-						builder = builder.append(bookingType.getName() + " " + fmt.format(bookingType.getPrice()));
+						builder = builder.append(bookingType.getName() + " " + AbstractDataMap.getAmountFormatter().format(bookingType.getPrice()));
 					}
 				}
 				if (!course.getCostNote().isEmpty())
@@ -692,8 +687,8 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case ANNULATION_DATE:
 			{
-				Calendar calendar = course.getAnnulationDate();
-				return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+				final Calendar calendar = course.getAnnulationDate();
+				return calendar == null ? "" : AbstractDataMap.getDateFormatter().format(calendar.getTime());
 			}
 			case BOARDING:
 			{
@@ -714,8 +709,8 @@ public class CourseMap extends AbstractDataMap<Course>
 			case GUIDE_WITH_PROFESSION:
 			{
 				StringBuilder builder = new StringBuilder();
-				List<CourseGuide> guides = course.getCourseGuides();
-				for (CourseGuide guide : guides)
+				final List<CourseGuide> guides = course.getCourseGuides();
+				for (final CourseGuide guide : guides)
 				{
 					if (!guide.getGuide().isDeleted() && !guide.isDeleted() && guide.getGuideType().isUseInPrints())
 					{
@@ -723,7 +718,7 @@ public class CourseMap extends AbstractDataMap<Course>
 						{
 							builder = builder.append("; ");
 						}
-						Person person = guide.getGuide().getLink().getPerson();
+						final Person person = guide.getGuide().getLink().getPerson();
 						builder = builder.append(PersonFormatter.getInstance().formatFirstnameLastname(person));
 						if (!person.getProfession().isEmpty())
 						{
@@ -743,59 +738,59 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case FIRST_DATE:
 			{
-				Calendar firstDate = course.getFirstDate();
+				final Calendar firstDate = course.getFirstDate();
 				if (firstDate == null)
 				{
 					return "";
 				}
 				if (firstDate.get(Calendar.HOUR_OF_DAY) == 0 && firstDate.get(Calendar.MINUTE) == 0)
 				{
-					return SimpleDateFormat.getDateInstance().format(firstDate.getTime());
+					return DateFormat.getDateInstance().format(firstDate.getTime());
 				}
-				return dateFormatter.format(firstDate.getTime());
+				return AbstractDataMap.getDateFormatter().format(firstDate.getTime());
 			}
 			case INVITATION_DATE:
 			{
-				Calendar calendar = course.getInvitationDate();
-				return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+				final Calendar calendar = course.getInvitationDate();
+				return calendar == null ? "" : AbstractDataMap.getDateFormatter().format(calendar.getTime());
 			}
 			case INVITATION_DONE_DATE:
 			{
-				Calendar calendar = course.getInvitationDoneDate();
-				return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+				final Calendar calendar = course.getInvitationDoneDate();
+				return calendar == null ? "" : AbstractDataMap.getDateFormatter().format(calendar.getTime());
 			}
 			case ADVANCE_NOTICE_DATE:
 			{
-				Calendar calendar = course.getAdvanceNoticeDate();
-				return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+				final Calendar calendar = course.getAdvanceNoticeDate();
+				return calendar == null ? "" : AbstractDataMap.getDateFormatter().format(calendar.getTime());
 			}
 			case ADVANCE_NOTICE_DONE_DATE:
 			{
-				Calendar calendar = course.getAdvanceNoticeDoneDate();
-				return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+				final Calendar calendar = course.getAdvanceNoticeDoneDate();
+				return calendar == null ? "" : AbstractDataMap.getDateFormatter().format(calendar.getTime());
 			}
 			case LAST_ANNULATION_DATE:
 			{
-				Calendar calendar = course.getLastAnnulationDate();
-				return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+				final Calendar calendar = course.getLastAnnulationDate();
+				return calendar == null ? "" : AbstractDataMap.getDateFormatter().format(calendar.getTime());
 			}
 			case LAST_BOOKING_DATE:
 			{
-				Calendar calendar = course.getLastBookingDate();
-				return calendar == null ? "" : dateFormatter.format(calendar.getTime());
+				final Calendar calendar = course.getLastBookingDate();
+				return calendar == null ? "" : AbstractDataMap.getDateFormatter().format(calendar.getTime());
 			}
 			case LAST_DATE:
 			{
-				Calendar lastDate = course.getLastDate();
+				final Calendar lastDate = course.getLastDate();
 				if (lastDate == null)
 				{
 					return "";
 				}
 				if (lastDate.get(Calendar.HOUR_OF_DAY) == 0 && lastDate.get(Calendar.MINUTE) == 0)
 				{
-					return SimpleDateFormat.getDateInstance().format(lastDate.getTime());
+					return DateFormat.getDateInstance().format(lastDate.getTime());
 				}
-				return dateFormatter.format(lastDate.getTime());
+				return AbstractDataMap.getDateFormatter().format(lastDate.getTime());
 			}
 			case LODGING:
 			{
@@ -811,23 +806,23 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case MAX_AGE:
 			{
-				return integerFormatter.format(course.getMaxAge());
+				return AbstractDataMap.getIntegerFormatter().format(course.getMaxAge());
 			}
 			case MAX_PARTICIPANTS:
 			{
-				return integerFormatter.format(course.getMaxParticipants());
+				return AbstractDataMap.getIntegerFormatter().format(course.getMaxParticipants());
 			}
 			case MIN_AGE:
 			{
-				return integerFormatter.format(course.getMinAge());
+				return AbstractDataMap.getIntegerFormatter().format(course.getMinAge());
 			}
 			case MIN_PARTICIPANTS:
 			{
-				return integerFormatter.format(course.getMinParticipants());
+				return AbstractDataMap.getIntegerFormatter().format(course.getMinParticipants());
 			}
 			case PARTICIPANT_COUNT:
 			{
-				return integerFormatter.format(course.getParticipantsCount());
+				return AbstractDataMap.getIntegerFormatter().format(course.getParticipantsCount());
 			}
 			case PURPOSE:
 			{
@@ -843,7 +838,7 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case RESPONSIBLE_USER:
 			{
-				User user = course.getResponsibleUser();
+				final User user = course.getResponsibleUser();
 				return user == null ? "" : user.getFullname();
 			}
 			case SEX_CONSTRAINT:
@@ -876,34 +871,34 @@ public class CourseMap extends AbstractDataMap<Course>
 			}
 			case SORTABLE_DATE:
 			{
-				Date date = course.getFirstDate() == null ? null : course.getFirstDate().getTime();
-				return date == null ? "" : SimpleDateFormat.getDateTimeInstance().format(course.getFirstDate().getTime());
+				final Date date = course.getFirstDate() == null ? null : course.getFirstDate().getTime();
+				return date == null ? "" : DateFormat.getDateTimeInstance().format(course.getFirstDate().getTime());
 			}
 			case DATE_RANGE:
 			{
-				Calendar[] dates = getDates(course);
-				return getDateRange(dates, WeekdayType.NONE);
+				final Calendar[] dates = CourseMap.getDates(course);
+				return CourseMap.getDateRange(dates, WeekdayType.NONE);
 			}
 			case DATE_RANGE_WITH_WEEKDAY_CODE:
 			{
-				Calendar[] dates = getDates(course);
-				return getDateRange(dates, WeekdayType.SHORT);
+				final Calendar[] dates = CourseMap.getDates(course);
+				return CourseMap.getDateRange(dates, WeekdayType.SHORT);
 			}
 			case SUBSTITUTION_DATE_RANGE:
 			{
-				Calendar[] dates = getSubstitutionDates(course);
-				return getDateRange(dates, WeekdayType.NONE);
+				final Calendar[] dates = CourseMap.getSubstitutionDates(course);
+				return CourseMap.getDateRange(dates, WeekdayType.NONE);
 			}
 			case SUBSTITUTION_DATE_RANGE_WITH_WEEKDAY_CODE:
 			{
-				Calendar[] dates = getSubstitutionDates(course);
-				return getDateRange(dates, WeekdayType.SHORT);
+				final Calendar[] dates = CourseMap.getSubstitutionDates(course);
+				return CourseMap.getDateRange(dates, WeekdayType.SHORT);
 			}
 			case ALL_LOCATIONS:
 			{
 				StringBuilder builder = new StringBuilder();
-				List<CourseDetail> details = course.getCourseDetails();
-				for (CourseDetail detail : details)
+				final List<CourseDetail> details = course.getCourseDetails();
+				for (final CourseDetail detail : details)
 				{
 					if (!detail.isDeleted() && !detail.getLocation().isEmpty())
 					{
@@ -928,11 +923,11 @@ public class CourseMap extends AbstractDataMap<Course>
 
 	}
 	
-	public static Calendar[] getDates(Course course)
+	public static Calendar[] getDates(final Course course)
 	{
-		Calendar[] dates = new Calendar[2];
-		List<CourseDetail> details = course.getCourseDetails();
-		for (CourseDetail detail : details)
+		final Calendar[] dates = new Calendar[2];
+		final List<CourseDetail> details = course.getCourseDetails();
+		for (final CourseDetail detail : details)
 		{
 			if (!detail.isDeleted())
 			{
@@ -949,11 +944,11 @@ public class CourseMap extends AbstractDataMap<Course>
 		return dates;
 	}
 
-	public static Calendar[] getSubstitutionDates(Course course)
+	public static Calendar[] getSubstitutionDates(final Course course)
 	{
-		Calendar[] dates = new Calendar[2];
-		List<CourseDetail> details = course.getCourseDetails();
-		for (CourseDetail detail : details)
+		final Calendar[] dates = new Calendar[2];
+		final List<CourseDetail> details = course.getCourseDetails();
+		for (final CourseDetail detail : details)
 		{
 			if (!detail.isDeleted())
 			{
@@ -970,7 +965,7 @@ public class CourseMap extends AbstractDataMap<Course>
 		return dates;
 	}
 
-	public static String getDateRange(Calendar[] dates, WeekdayType weekdayType)
+	public static String getDateRange(final Calendar[] dates, final WeekdayType weekdayType)
 	{
 		if (dates[0] != null && dates[1] != null)
 		{
@@ -980,53 +975,53 @@ public class CourseMap extends AbstractDataMap<Course>
 				{
 					if (dates[0].get(Calendar.DAY_OF_MONTH) == dates[1].get(Calendar.DAY_OF_MONTH))
 					{
-						String start = getFormattedDate(dates[0], "dd. MMMM yyyy, HH:mm", weekdayType);
-						String end = getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
+						final String start = CourseMap.getFormattedDate(dates[0], "dd. MMMM yyyy, HH:mm", weekdayType);
+						final String end = CourseMap.getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
 						return start + " - " + end;
 					}
 					else
 					{
-						String start = getFormattedDate(dates[0], "dd.", weekdayType);
-						String end = getFormattedDate(dates[1], "dd. MMMM yyyy,", weekdayType);
-						String startTime = getFormattedDate(dates[0], "HH:mm", WeekdayType.NONE);
-						String endTime = getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
+						final String start = CourseMap.getFormattedDate(dates[0], "dd.", weekdayType);
+						final String end = CourseMap.getFormattedDate(dates[1], "dd. MMMM yyyy,", weekdayType);
+						final String startTime = CourseMap.getFormattedDate(dates[0], "HH:mm", WeekdayType.NONE);
+						final String endTime = CourseMap.getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
 						return start + " - " + end + " " + startTime + " - " + endTime;
 					}
 				}
 				else
 				{
-					String start = getFormattedDate(dates[0], "dd. MMMM", weekdayType);
-					String end = getFormattedDate(dates[1], "dd. MMMM yyyy,", weekdayType);
-					String startTime = getFormattedDate(dates[0], "HH:mm", WeekdayType.NONE);
-					String endTime = getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
+					final String start = CourseMap.getFormattedDate(dates[0], "dd. MMMM", weekdayType);
+					final String end = CourseMap.getFormattedDate(dates[1], "dd. MMMM yyyy,", weekdayType);
+					final String startTime = CourseMap.getFormattedDate(dates[0], "HH:mm", WeekdayType.NONE);
+					final String endTime = CourseMap.getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
 					return start + " - " + end + " " + startTime + " - " + endTime;
 				}
 			}
 			else
 			{
-				String start = getFormattedDate(dates[0], "dd. MMMM yyyy", weekdayType);
-				String end = getFormattedDate(dates[1], "dd. MMMM yyyy,", weekdayType);
-				String startTime = getFormattedDate(dates[0], "HH:mm", WeekdayType.NONE);
-				String endTime = getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
+				final String start = CourseMap.getFormattedDate(dates[0], "dd. MMMM yyyy", weekdayType);
+				final String end = CourseMap.getFormattedDate(dates[1], "dd. MMMM yyyy,", weekdayType);
+				final String startTime = CourseMap.getFormattedDate(dates[0], "HH:mm", WeekdayType.NONE);
+				final String endTime = CourseMap.getFormattedDate(dates[1], "HH:mm", WeekdayType.NONE);
 				return start + " - " + end + " " + startTime + " - " + endTime;
 			}
 		}
 		if (dates[0] != null)
 		{
-			return getFormattedDate(dates[0], "dd. MMMM yyyy, HH:mm", weekdayType);
+			return CourseMap.getFormattedDate(dates[0], "dd. MMMM yyyy, HH:mm", weekdayType);
 		}
 		if (dates[1] != null)
 		{
-			return getFormattedDate(dates[1], "dd. MMMM yyyy, HH:mm", weekdayType);
+			return CourseMap.getFormattedDate(dates[1], "dd. MMMM yyyy, HH:mm", weekdayType);
 		}
 		return "";
 	}
 
-	public static String getFormattedDate(Calendar date, String format, WeekdayType weekdayType)
+	public static String getFormattedDate(final Calendar date, final String format, final WeekdayType weekdayType)
 	{
-		DateFormat formatter = new SimpleDateFormat(format);
-		String wd = Weekday.getWeekday(date.get(Calendar.DAY_OF_WEEK) - 1).getWeekday(weekdayType);
-		String formattedDate = formatter.format(date.getTime());
+		final DateFormat formatter = new SimpleDateFormat(format);
+		final String wd = Weekday.getWeekday(date.get(Calendar.DAY_OF_WEEK) - 1).getWeekday(weekdayType);
+		final String formattedDate = formatter.format(date.getTime());
 		return (wd.isEmpty() ? "" : wd + ", ") + formattedDate;
 	}
 	
@@ -1130,9 +1125,9 @@ public class CourseMap extends AbstractDataMap<Course>
 			{
 				case BOOKINGS:
 				{
-					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
-					List<Booking> bookings = course.getBookings();
-					for (Booking booking : bookings)
+					final List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
+					final List<Booking> bookings = course.getBookings();
+					for (final Booking booking : bookings)
 					{
 						if (!booking.isDeleted())
 						{
@@ -1143,9 +1138,9 @@ public class CourseMap extends AbstractDataMap<Course>
 				}
 				case BOOKING_TYPES:
 				{
-					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
-					List<BookingType> bookingTypes = course.getBookingTypes();
-					for (BookingType bookingType : bookingTypes)
+					final List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
+					final List<BookingType> bookingTypes = course.getBookingTypes();
+					for (final BookingType bookingType : bookingTypes)
 					{
 						if (!bookingType.isDeleted())
 						{
@@ -1156,9 +1151,9 @@ public class CourseMap extends AbstractDataMap<Course>
 				}
 				case DETAILS:
 				{
-					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
-					List<CourseDetail> details = course.getCourseDetails();
-					for (CourseDetail detail : details)
+					final List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
+					final List<CourseDetail> details = course.getCourseDetails();
+					for (final CourseDetail detail : details)
 					{
 						if (!detail.isDeleted())
 						{
@@ -1169,10 +1164,10 @@ public class CourseMap extends AbstractDataMap<Course>
 				}
 				case GUIDES:
 				{
-					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
-					List<CourseGuide> guides = course.getCourseGuides();
+					final List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
+					final List<CourseGuide> guides = course.getCourseGuides();
 					Collections.sort(guides);
-					for (CourseGuide guide : guides)
+					for (final CourseGuide guide : guides)
 					{
 						if (!guide.isDeleted())
 						{
@@ -1196,13 +1191,13 @@ public class CourseMap extends AbstractDataMap<Course>
 	}
 
 	@Override
-	public int compareTo(DataMap<Course> other) 
+	public int compareTo(final DataMap<Course> other) 
 	{
-		CourseMap otherMap = (CourseMap) other;
-		Calendar value1 =  this.course == null ? null :  this.course.getFirstDate();
-		Calendar value2 = otherMap.course == null ? null : otherMap.course.getFirstDate();
-		Date date1 = value1 == null ? null : value1.getTime();
-		Date date2 = value2 == null ? null : value2.getTime();
+		final CourseMap otherMap = (CourseMap) other;
+		final Calendar value1 =  this.course == null ? null :  this.course.getFirstDate();
+		final Calendar value2 = otherMap.course == null ? null : otherMap.course.getFirstDate();
+		final Date date1 = value1 == null ? null : value1.getTime();
+		final Date date2 = value2 == null ? null : value2.getTime();
 		if (date1 == null && date2 == null)
 		{
 			return 0;

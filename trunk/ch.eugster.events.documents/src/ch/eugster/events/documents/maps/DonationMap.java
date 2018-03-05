@@ -1,12 +1,6 @@
 package ch.eugster.events.documents.maps;
 
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Currency;
-import java.util.Locale;
 
 import ch.eugster.events.persistence.formatters.AddressFormatter;
 import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
@@ -18,29 +12,24 @@ import ch.eugster.events.persistence.model.Person;
 
 public class DonationMap extends AbstractDataMap<Donation>
 {
-	private static final DateFormat dateFormatter = SimpleDateFormat.getDateInstance();
-
-	private static NumberFormat numberFormatter;
-
-	private static NumberFormat integerFormatter = DecimalFormat.getIntegerInstance();
-
+	private double amount;
+	
 	protected DonationMap() {
 		super();
 	}
 
 	public DonationMap(final Donation donation)
 	{
-		if (numberFormatter == null)
-		{
-			Currency currency = Currency.getInstance(Locale.getDefault());
-			numberFormatter = DecimalFormat.getNumberInstance();
-			numberFormatter.setMaximumFractionDigits(currency.getDefaultFractionDigits());
-			numberFormatter.setMinimumFractionDigits(currency.getDefaultFractionDigits());
-		}
-		for (Key key : Key.values())
+		this.amount = donation.getAmount();
+		for (final Key key : Key.values())
 		{
 			this.setProperty(key.getKey(), key.getValue(donation));
 		}
+	}
+	
+	public double getAmount()
+	{
+		return this.amount;
 	}
 
 	public enum Key implements DataMapKey
@@ -287,11 +276,11 @@ public class DonationMap extends AbstractDataMap<Donation>
 					{
 						return "";
 					}
-					return dateFormatter.format(donation.getDonationDate().getTime());
+					return AbstractDataMap.getDateFormatter().format(donation.getDonationDate().getTime());
 				}
 				case AMOUNT:
 				{
-					return numberFormatter.format(donation.getAmount());
+					return AbstractDataMap.getAmountFormatter().format(donation.getAmount());
 				}
 				case PURPOSE_CODE:
 				{
@@ -307,7 +296,7 @@ public class DonationMap extends AbstractDataMap<Donation>
 				}
 				case YEAR:
 				{
-					return integerFormatter.format(donation.getYear());
+					return AbstractDataMap.getIntegerFormatter().format(donation.getYear());
 				}
 				case ANOTHER_LINE:
 				{
@@ -342,7 +331,7 @@ public class DonationMap extends AbstractDataMap<Donation>
 					{
 						if (donation.getAddress().getValidLinks().size() == 1)
 						{
-							Person person = donation.getAddress().getValidLinks().iterator().next().getPerson();
+							final Person person = donation.getAddress().getValidLinks().iterator().next().getPerson();
 							return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
 						}
 						else
@@ -360,7 +349,7 @@ public class DonationMap extends AbstractDataMap<Donation>
 						}
 						else
 						{
-							Person person = donation.getLink().getPerson();
+							final Person person = donation.getLink().getPerson();
 							return person.getSex() == null ? "Fehler!" : person.getSex().getSalutation();
 						}
 					}
@@ -372,13 +361,13 @@ public class DonationMap extends AbstractDataMap<Donation>
 					{
 						if (donation.getAddress().getValidLinks().size() == 1)
 						{
-							Person person = donation.getAddress().getValidLinks().iterator().next().getPerson();
+							final Person person = donation.getAddress().getValidLinks().iterator().next().getPerson();
 							polite = person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
 									.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
 						}
 						else
 						{
-							AddressSalutation salutation = donation.getAddress().getSalutation();
+							final AddressSalutation salutation = donation.getAddress().getSalutation();
 							polite = salutation == null ? "" : salutation.getPolite();
 							if (polite.isEmpty())
 							{
@@ -390,7 +379,7 @@ public class DonationMap extends AbstractDataMap<Donation>
 					{
 						if (donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
 						{
-							AddressSalutation salutation = donation.getAddress().getSalutation();
+							final AddressSalutation salutation = donation.getAddress().getSalutation();
 							polite = salutation == null ? "" : salutation.getPolite();
 							if (polite.isEmpty())
 							{
@@ -399,7 +388,7 @@ public class DonationMap extends AbstractDataMap<Donation>
 						}
 						else
 						{
-							Person person = donation.getLink().getPerson();
+							final Person person = donation.getLink().getPerson();
 							polite = person.getSex() == null ? "Fehler!" : PersonFormatter.getInstance()
 									.replaceSalutationVariables(person, person.getSex().getForm(person.getForm()));
 						}
@@ -412,7 +401,7 @@ public class DonationMap extends AbstractDataMap<Donation>
 					{
 						if (donation.getAddress().getValidLinks().size() == 1)
 						{
-							LinkPersonAddress link = donation.getAddress().getValidLinks().iterator().next();
+							final LinkPersonAddress link = donation.getAddress().getValidLinks().iterator().next();
 							return LinkPersonAddressFormatter.getInstance().getLabel(link);
 						}
 						else
@@ -428,7 +417,7 @@ public class DonationMap extends AbstractDataMap<Donation>
 						}
 						else
 						{
-							LinkPersonAddress link = donation.getLink();
+							final LinkPersonAddress link = donation.getLink();
 							return LinkPersonAddressFormatter.getInstance().getLabel(link);
 						}
 					}

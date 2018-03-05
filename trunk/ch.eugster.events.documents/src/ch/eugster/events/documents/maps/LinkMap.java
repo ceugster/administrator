@@ -1,22 +1,19 @@
 package ch.eugster.events.documents.maps;
 
 import java.io.Writer;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.documents.Activator;
 import ch.eugster.events.persistence.formatters.LinkPersonAddressFormatter;
+import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.BookingDoneState;
 import ch.eugster.events.persistence.model.BookingForthcomingState;
 import ch.eugster.events.persistence.model.Course;
@@ -30,14 +27,11 @@ import ch.eugster.events.persistence.model.LinkPersonAddress;
 import ch.eugster.events.persistence.model.LinkPersonAddressExtendedField;
 import ch.eugster.events.persistence.model.Member;
 import ch.eugster.events.persistence.model.Participant;
-import ch.eugster.events.persistence.model.PersonExtendedField;
 import ch.eugster.events.persistence.queries.FieldExtensionQuery;
 import ch.eugster.events.persistence.service.ConnectionService;
 
 public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 {
-	private static NumberFormat amountFormatter = null;
-	
 	private Integer year;
 	
 	private Domain domain;
@@ -51,33 +45,20 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 		this(link, null, null, null, false);
 	}
 
-	public LinkMap(final LinkPersonAddress link, boolean isGroup)
+	public LinkMap(final LinkPersonAddress link, final boolean isGroup)
 	{
 		this(link, null, null, null, isGroup);
 	}
 
-	public LinkMap(final LinkPersonAddress link, final Integer year, DonationPurpose purpose, Domain domain, boolean isGroup)
+	public LinkMap(final LinkPersonAddress link, final Integer year, final DonationPurpose purpose, final Domain domain, final boolean isGroup)
 	{
-		this.year = year;
-		this.domain = domain;
-		
-		if (amountFormatter == null)
-		{
-			amountFormatter = DecimalFormat.getNumberInstance();
-			amountFormatter.setMinimumFractionDigits(Currency.getInstance(Locale.getDefault())
-					.getDefaultFractionDigits());
-			amountFormatter.setMaximumFractionDigits(Currency.getInstance(Locale.getDefault())
-					.getDefaultFractionDigits());
-			amountFormatter.setGroupingUsed(true);
-		}
-
 		this.setProperties(new AddressMap(link.getAddress(), isGroup).getProperties());
 		this.setProperties(new PersonMap(link.getPerson()).getProperties());
 
 		Key.domain = this.domain;
 		Key.year = this.year;
 		
-		for (Key key : Key.values())
+		for (final Key key : Key.values())
 		{
 			if (year == null)
 			{
@@ -89,19 +70,19 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 			}
 		}
 
-		for (TableKey key : TableKey.values())
+		for (final TableKey key : TableKey.values())
 		{
 			this.addTableMaps(key.getKey(), key.getTableMaps(link, year, purpose, domain));
 		}
 
-		List<LinkPersonAddressExtendedField> extendedFields = link.getExtendedFields();
-		for (LinkPersonAddressExtendedField extendedField : extendedFields)
+		final List<LinkPersonAddressExtendedField> extendedFields = link.getExtendedFields();
+		for (final LinkPersonAddressExtendedField extendedField : extendedFields)
 		{
-			ExtendedFieldKey key = new ExtendedFieldKey(extendedField.getFieldExtension());
+			final ExtendedFieldKey key = new ExtendedFieldKey(extendedField.getFieldExtension());
 			if (!extendedField.getFieldExtension().isDeleted())
 			{
-				String value = extendedField.isDeleted() ? PersonExtendedField.stringValueOf(extendedField
-						.getFieldExtension().getDefaultValue()) : PersonExtendedField.stringValueOf(extendedField
+				final String value = extendedField.isDeleted() ? AbstractEntity.stringValueOf(extendedField
+						.getFieldExtension().getDefaultValue()) : AbstractEntity.stringValueOf(extendedField
 						.getValue());
 				this.setProperty(key.getKey(), value);
 			}
@@ -110,19 +91,19 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 
 	public static List<DataMapKey> getExtendedFieldKeys()
 	{
-		List<DataMapKey> keys = new ArrayList<DataMapKey>();
-		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundleContext(),
+		final List<DataMapKey> keys = new ArrayList<DataMapKey>();
+		final ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundleContext(),
 				ConnectionService.class, null);
 		tracker.open();
 		try
 		{
-			Object service = tracker.getService();
+			final Object service = tracker.getService();
 			if (service instanceof ConnectionService)
 			{
-				ConnectionService connectionService = (ConnectionService) service;
-				FieldExtensionQuery query = (FieldExtensionQuery) connectionService.getQuery(FieldExtension.class);
-				List<FieldExtension> fieldExtensions = query.selectByTarget(FieldExtensionTarget.PA_LINK, false);
-				for (FieldExtension fieldExtension : fieldExtensions)
+				final ConnectionService connectionService = (ConnectionService) service;
+				final FieldExtensionQuery query = (FieldExtensionQuery) connectionService.getQuery(FieldExtension.class);
+				final List<FieldExtension> fieldExtensions = query.selectByTarget(FieldExtensionTarget.PA_LINK, false);
+				for (final FieldExtension fieldExtension : fieldExtensions)
 				{
 					keys.add(new ExtendedFieldKey(fieldExtension));
 				}
@@ -135,28 +116,30 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 		return keys;
 	}
 
-	protected void printReferences(Writer writer)
+	@Override
+	protected void printReferences(final Writer writer)
 	{
-		printHeader(writer, 2, "Referenzen");
-		startTable(writer, 0);
-		startTableRow(writer);
-		printCell(writer, "#person", "Person");
-		endTableRow(writer);
-		startTableRow(writer);
-		printCell(writer, "#address", "Adresse");
-		endTableRow(writer);
-		endTable(writer);
+		this.printHeader(writer, 2, "Referenzen");
+		this.startTable(writer, 0);
+		this.startTableRow(writer);
+		this.printCell(writer, "#person", "Person");
+		this.endTableRow(writer);
+		this.startTableRow(writer);
+		this.printCell(writer, "#address", "Adresse");
+		this.endTableRow(writer);
+		this.endTable(writer);
 	}
 
-	protected void printTables(Writer writer)
+	@Override
+	protected void printTables(final Writer writer)
 	{
-		printHeader(writer, 2, "Tabellen");
-		startTable(writer, 0);
-		startTableRow(writer);
-		printCell(writer, null, TableKey.DONATIONS.getKey());
-		printCell(writer, "#donation", "Spenden");
-		endTableRow(writer);
-		endTable(writer);
+		this.printHeader(writer, 2, "Tabellen");
+		this.startTable(writer, 0);
+		this.startTableRow(writer);
+		this.printCell(writer, null, TableKey.DONATIONS.getKey());
+		this.printCell(writer, "#donation", "Spenden");
+		this.endTableRow(writer);
+		this.endTable(writer);
 	}
 
 	public enum Key implements DataMapKey
@@ -316,27 +299,12 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 				}
 				case TOTAL_DONATIONS:
 				{
-					double totalAmount = 0D;
-					List<Donation> donations = link.getPerson().getDonations();
-					for (Donation donation : donations)
-					{
-						if (!donation.isDeleted())
-						{
-							if (domain == null || (donation.getDomain() != null && domain.equals(donation.getDomain())))
-							{
-								if (year == null || (year.intValue() == donation.getDonationYear()))
-								{
-									totalAmount += donation.getAmount();
-								}
-							}
-						}
-					}
-					return amountFormatter.format(totalAmount);
+					return "0";
 				}
 				case MEMBER:
 				{
 					StringBuilder builder = new StringBuilder();
-					Member[] members = link.getMembers().toArray(new Member[0]);
+					final Member[] members = link.getMembers().toArray(new Member[0]);
 					for (int i = 0; i < members.length; i++)
 					{
 						builder = builder.append(members[i].getMembership().getName());
@@ -349,39 +317,39 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 				}
 				case COURSE_VISITS:
 				{
-					List<Participant> participants = link.getParticipants();
-					Map<Long, String> courses = new HashMap<Long, String>();
-					for (Participant participant: participants)
+					final List<Participant> participants = link.getParticipants();
+					final Map<Long, String> courses = new HashMap<Long, String>();
+					for (final Participant participant: participants)
 					{
 						if (!participant.isDeleted() && !participant.getBooking().isDeleted() && !participant.getBooking().getCourse().isDeleted())
 						{
 							if (participant.getBooking().getBookingState(participant.getBooking().getCourse().getState()).equals(BookingForthcomingState.BOOKED))
 							{
-								Course course = participant.getBooking().getCourse();
-								List<CourseDetail> details = course.getCourseDetails();
-								Calendar start = details.isEmpty() ? null : details.get(0).getStart();
-								String title = course.getTitle();
-								String date = start == null ? "ohne Datum" : SimpleDateFormat.getInstance().format(start.getTime());
+								final Course course = participant.getBooking().getCourse();
+								final List<CourseDetail> details = course.getCourseDetails();
+								final Calendar start = details.isEmpty() ? null : details.get(0).getStart();
+								final String title = course.getTitle();
+								final String date = start == null ? "ohne Datum" : DateFormat.getInstance().format(start.getTime());
 								courses.put(participant.getBooking().getCourse().getId(), title + " (" + date + ", angemelded)\n");
 							}
 							else if (participant.getBooking().getBookingState(participant.getBooking().getCourse().getState()).equals(BookingDoneState.PARTICIPATED))
 							{
-								Course course = participant.getBooking().getCourse();
-								List<CourseDetail> details = course.getCourseDetails();
-								Calendar start = details.isEmpty() ? null : details.get(0).getStart();
-								String title = course.getTitle();
-								String date = start == null ? "ohne Datum" : SimpleDateFormat.getInstance().format(start.getTime());
+								final Course course = participant.getBooking().getCourse();
+								final List<CourseDetail> details = course.getCourseDetails();
+								final Calendar start = details.isEmpty() ? null : details.get(0).getStart();
+								final String title = course.getTitle();
+								final String date = start == null ? "ohne Datum" : DateFormat.getInstance().format(start.getTime());
 								courses.put(participant.getBooking().getCourse().getId(), title + " (" + date + ", teilgenommen)\n");
 							}
 						}
 					}
-					Collection<String> values = courses.values();
+					final Collection<String> values = courses.values();
 					StringBuilder builder = new StringBuilder();
-					for (String value : values)
+					for (final String value : values)
 					{
 						builder = builder.append(value);
 					}
-					String visits = builder.toString();
+					final String visits = builder.toString();
 					return visits.substring(0, visits.isEmpty() ? 0 : visits.length()  - 2);
 				}
 				default:
@@ -426,22 +394,22 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 			}
 		}
 
-		public List<DataMap<?>> getTableMaps(final LinkPersonAddress link, final Integer year, DonationPurpose purpose,
-				Domain domain)
+		public List<DataMap<?>> getTableMaps(final LinkPersonAddress link, final Integer year, final DonationPurpose purpose,
+				final Domain domain)
 		{
 			switch (this)
 			{
 				case DONATIONS:
 				{
-					List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
-					List<Donation> donations = link.getPerson().getDonations();
-					for (Donation donation : donations)
+					final List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
+					final List<Donation> donations = link.getPerson().getDonations();
+					for (final Donation donation : donations)
 					{
 						if (domain == null || (donation.getDomain() != null && domain.equals(donation.getDomain())))
 						{
 							if (year == null || year.intValue() == donation.getDonationYear())
 							{
-								addDonation(donation, tableMaps, year, purpose, domain);
+								this.addDonation(donation, tableMaps, year, purpose, domain);
 							}
 						}
 					}
@@ -454,10 +422,10 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 			}
 		}
 
-		private void addDonation(Donation donation, List<DataMap<?>> tableMaps, Integer year, DonationPurpose purpose,
-				Domain domain)
+		private void addDonation(final Donation donation, final List<DataMap<?>> tableMaps, final Integer year, final DonationPurpose purpose,
+				final Domain domain)
 		{
-			if (printDonation(donation, purpose, domain))
+			if (this.printDonation(donation, purpose, domain))
 			{
 				if (year == null)
 				{
@@ -473,7 +441,7 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 			}
 		}
 
-		private boolean printDonation(Donation donation, DonationPurpose purpose, Domain domain)
+		private boolean printDonation(final Donation donation, final DonationPurpose purpose, final Domain domain)
 		{
 			if (donation.isDeleted())
 			{
