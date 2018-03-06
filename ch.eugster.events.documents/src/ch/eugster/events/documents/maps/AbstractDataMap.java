@@ -35,7 +35,7 @@ public abstract class AbstractDataMap<T extends AbstractEntity> implements DataM
 			AbstractDataMap.amountFormatter = NumberFormat.getNumberInstance();
 			AbstractDataMap.amountFormatter.setMinimumFractionDigits(Currency.getInstance(Locale.getDefault()).getDefaultFractionDigits());
 			AbstractDataMap.amountFormatter.setMaximumFractionDigits(Currency.getInstance(Locale.getDefault()).getDefaultFractionDigits());
-			AbstractDataMap.amountFormatter.setGroupingUsed(true);
+			AbstractDataMap.amountFormatter.setGroupingUsed(false);
 		}
 		return AbstractDataMap.amountFormatter;
 	};
