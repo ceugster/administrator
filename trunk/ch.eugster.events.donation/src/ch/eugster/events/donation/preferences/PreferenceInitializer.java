@@ -12,6 +12,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 
 	public static final String KEY_PRINT_OUT_KEYS = "print.out.file";
 
+	public static final String KEY_DONATION_INPUT_FOR_NUMBER_OF_YEARS_BACK_POSSIBLE = "number.of.years.back";
+
 	public PreferenceInitializer()
 	{
 	}
@@ -19,8 +21,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 	@Override
 	public void initializeDefaultPreferences()
 	{
-		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
-		prefs.put(KEY_DONATION_TEMPLATE, "");
+		final IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
+		prefs.put(PreferenceInitializer.KEY_DONATION_TEMPLATE, "");
+		prefs.put(PreferenceInitializer.KEY_DONATION_INPUT_FOR_NUMBER_OF_YEARS_BACK_POSSIBLE, "10");
 	}
 
 }
