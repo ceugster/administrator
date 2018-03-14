@@ -73,7 +73,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 	 * Contacts
 	 */
 	@OneToMany(cascade = ALL, mappedBy = "link")
-	private List<LinkPersonAddressContact> contacts = new Vector<LinkPersonAddressContact>();
+	private final List<LinkPersonAddressContact> contacts = new Vector<LinkPersonAddressContact>();
 
 	@OneToMany(cascade = ALL, mappedBy = "link")
 	private List<Member> members = new Vector<Member>();
@@ -88,7 +88,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 	private List<Participant> participants = new Vector<Participant>();
 
 	@OneToMany(cascade = ALL, mappedBy = "link")
-	private List<LinkPersonAddressExtendedField> extendedFields = new Vector<LinkPersonAddressExtendedField>();
+	private final List<LinkPersonAddressExtendedField> extendedFields = new Vector<LinkPersonAddressExtendedField>();
 
 	@OneToOne(cascade = ALL, optional = true)
 	@JoinColumn(name = "pa_link_guide_id", referencedColumnName = "guide_id")
@@ -146,6 +146,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 		this.propertyChangeSupport.firePropertyChange("removeContact", this.contacts, this.contacts.remove(contact));
 	}
 
+	@Override
 	public void addDonation(final Donation donation)
 	{
 		this.propertyChangeSupport.firePropertyChange("donations", this.donations, this.donations.add(donation));
@@ -176,8 +177,8 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 	@Override
 	public List<AddressGroupMember> getAddressGroupMembers()
 	{
-		List<AddressGroupMember> members = new ArrayList<AddressGroupMember>();
-		for (AddressGroupMember member : this.addressGroupMembers)
+		final List<AddressGroupMember> members = new ArrayList<AddressGroupMember>();
+		for (final AddressGroupMember member : this.addressGroupMembers)
 		{
 			if (!member.isDeleted() && !member.getAddressGroup().isDeleted())
 			{
@@ -189,13 +190,13 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 
 	public AddressType getAddressType()
 	{
-		return addressType;
+		return this.addressType;
 	}
 	
-	public boolean isInAddressGroup(AddressGroup addressGroup)
+	public boolean isInAddressGroup(final AddressGroup addressGroup)
 	{
-		List<AddressGroupMember> addressGroupMembers = this.getAddressGroupMembers();
-		for (AddressGroupMember addressGroupMember : addressGroupMembers)
+		final List<AddressGroupMember> addressGroupMembers = this.getAddressGroupMembers();
+		for (final AddressGroupMember addressGroupMember : addressGroupMembers)
 		{
 			if (!addressGroupMember.isDeleted() && addressGroupMember.getAddressGroup().getId().equals(addressGroup.getId()))
 			{
@@ -207,13 +208,13 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 
 	public List<LinkPersonAddressContact> getContacts()
 	{
-		return contacts;
+		return this.contacts;
 	}
 
 	public List<LinkPersonAddressContact> getValidContacts()
 	{
-		List<LinkPersonAddressContact> contacts = new ArrayList<LinkPersonAddressContact>();
-		for (LinkPersonAddressContact contact : this.contacts)
+		final List<LinkPersonAddressContact> contacts = new ArrayList<LinkPersonAddressContact>();
+		for (final LinkPersonAddressContact contact : this.contacts)
 		{
 			if (contact.isValid())
 			{
@@ -223,6 +224,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 		return contacts;
 	}
 
+	@Override
 	public List<Donation> getDonations()
 	{
 		return this.donations;
@@ -230,8 +232,8 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 
 	public List<Donation> getValidDonations()
 	{
-		List<Donation> donations = new ArrayList<Donation>();
-		for (Donation donation : this.donations)
+		final List<Donation> donations = new ArrayList<Donation>();
+		for (final Donation donation : this.donations)
 		{
 			if (!donation.isDeleted())
 			{
@@ -241,6 +243,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 		return donations;
 	}
 	
+	@Override
 	public boolean isValid()
 	{
 		return !this.isDeleted() && !this.getPerson().isDeleted();
@@ -248,12 +251,12 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 	
 	public String getEmail()
 	{
-		return stringValueOf(this.email);
+		return AbstractEntity.stringValueOf(this.email);
 	}
 
 	public List<LinkPersonAddressExtendedField> getExtendedFields()
 	{
-		return extendedFields;
+		return this.extendedFields;
 	}
 
 	public String getFunction()
@@ -274,11 +277,14 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 
 	public Member getMember(final Membership membership)
 	{
-		for (Member member : members)
+		for (final Member member : this.members)
 		{
-			if (member.getMembership().getId().equals(membership.getId()))
+			if (!member.isDeleted())
 			{
-				return member;
+				if (member.getMembership().getId().equals(membership.getId()))
+				{
+					return member;
+				}
 			}
 		}
 		return null;
@@ -286,7 +292,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 	
 	public boolean hasValidMembers()
 	{
-		for (Member member : this.members)
+		for (final Member member : this.members)
 		{
 			if (!member.isDeleted())
 			{
@@ -298,7 +304,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 
 	public boolean hasValidDonations()
 	{
-		for (Donation donation : this.donations)
+		for (final Donation donation : this.donations)
 		{
 			if (!donation.isDeleted())
 			{
@@ -310,7 +316,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 
 	public boolean hasValidAddressGroupMembers()
 	{
-		for (AddressGroupMember member : this.addressGroupMembers)
+		for (final AddressGroupMember member : this.addressGroupMembers)
 		{
 			if (!member.isDeleted())
 			{
@@ -322,7 +328,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 
 	public boolean hasValidParticipants()
 	{
-		for (Participant participant : this.participants)
+		for (final Participant participant : this.participants)
 		{
 			if (!participant.isDeleted())
 			{
@@ -339,8 +345,8 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 
 	public List<Member> getValidMembers()
 	{
-		List<Member> members = new ArrayList<Member>();
-		for (Member member : this.members)
+		final List<Member> members = new ArrayList<Member>();
+		for (final Member member : this.members)
 		{
 			if (!member.isDeleted())
 			{
@@ -357,8 +363,8 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 
 	public List<Participant> getValidParticipants()
 	{
-		List<Participant> participants = new ArrayList<Participant>();
-		for (Participant participant : this.participants)
+		final List<Participant> participants = new ArrayList<Participant>();
+		for (final Participant participant : this.participants)
 		{
 			if (!participant.isDeleted())
 			{
@@ -379,23 +385,23 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 
 	public String getPhone()
 	{
-		return stringValueOf(this.phone);
+		return AbstractEntity.stringValueOf(this.phone);
 	}
 
 	public Teacher getTeacher()
 	{
-		return teacher;
+		return this.teacher;
 	}
 
 	public Visitor getVisitor()
 	{
-		return visitor;
+		return this.visitor;
 	}
 
 	public boolean hasDonationsForYear(final int year)
 	{
-		List<Donation> donations = this.getDonations();
-		for (Donation donation : donations)
+		final List<Donation> donations = this.getDonations();
+		for (final Donation donation : donations)
 		{
 			if (!donation.isDeleted() && donation.getDonationDate().get(Calendar.YEAR) == year)
 			{
@@ -417,6 +423,7 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 		this.propertyChangeSupport.firePropertyChange("removeContact", this.contacts, this.contacts.remove(contact));
 	}
 
+	@Override
 	public void removeDonation(final Donation donation)
 	{
 		this.propertyChangeSupport.firePropertyChange("donations", this.donations, this.donations.remove(donation));
@@ -442,14 +449,14 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 	public void setAddress(final Address address)
 	{
 		this.propertyChangeSupport.firePropertyChange("address", this.address, this.address = address);
-		for (Member member : members)
+		for (final Member member : this.members)
 		{
 			if (!member.getAddress().getId().equals(address.getId()))
 			{
 				member.setAddress(address);
 			}
 		}
-		for (Donation donation : this.donations)
+		for (final Donation donation : this.donations)
 		{
 			if (!donation.getAddress().getId().equals(address.getId()))
 			{
@@ -472,11 +479,11 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 	@Override
 	public void setDeleted(final boolean deleted)
 	{
-		for (AddressGroupMember member : this.addressGroupMembers)
+		for (final AddressGroupMember member : this.addressGroupMembers)
 		{
 			member.setDeleted(deleted);
 		}
-		for (Member member : this.members)
+		for (final Member member : this.members)
 		{
 			member.setDeleted(deleted);
 		}
@@ -486,13 +493,13 @@ public class LinkPersonAddress extends AbstractEntity implements Donator, Addres
 		}
 		if (this.guide != null)
 		{
-			guide.setDeleted(deleted);
+			this.guide.setDeleted(deleted);
 		}	
-		for (Donation donation : this.donations)
+		for (final Donation donation : this.donations)
 		{
 			donation.setDeleted(deleted);
 		}
-		for (Participant participant : this.participants)
+		for (final Participant participant : this.participants)
 		{
 			participant.setDeleted(deleted);
 		}
