@@ -2,7 +2,6 @@ package ch.eugster.events.donation.editors;
 
 import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -39,6 +38,7 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.donation.Activator;
+import ch.eugster.events.donation.preferences.PreferenceInitializer;
 import ch.eugster.events.donation.views.DonationPurposeContentProvider;
 import ch.eugster.events.donation.views.DonationPurposeLabelProvider;
 import ch.eugster.events.donation.views.DonationPurposeSorter;
@@ -69,10 +69,10 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 
 	private void createSection(final ScrolledForm parent)
 	{
-		ColumnLayoutData layoutData = new ColumnLayoutData();
+		final ColumnLayoutData layoutData = new ColumnLayoutData();
 		layoutData.widthHint = 200;
 
-		TableWrapLayout sectionLayout = new TableWrapLayout();
+		final TableWrapLayout sectionLayout = new TableWrapLayout();
 		sectionLayout.numColumns = 1;
 
 		this.section = this.formToolkit.createSection(this.scrolledForm.getBody(), ExpandableComposite.EXPANDED
@@ -99,7 +99,7 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 
 	private Control fillSection(final Section parent)
 	{
-		Composite composite = this.formToolkit.createComposite(parent);
+		final Composite composite = this.formToolkit.createComposite(parent);
 		composite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		composite.setLayout(new GridLayout(2, false));
 
@@ -124,10 +124,10 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 		label = this.formToolkit.createLabel(composite, "Betrag", SWT.NONE);
 		label.setLayoutData(new GridData());
 
-		GridData gridData = new GridData();
+		final GridData gridData = new GridData();
 		gridData.widthHint = 72;
 
-		Text amount = this.formToolkit.createText(composite, "", SWT.RIGHT);
+		final Text amount = this.formToolkit.createText(composite, "", SWT.RIGHT);
 		amount.setLayoutData(gridData);
 		amount.addModifyListener(new ModifyListener()
 		{
@@ -143,7 +143,7 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 		this.amount.getControl().addFocusListener(new FocusAdapter()
 		{
 			@Override
-			public void focusGained(FocusEvent e)
+			public void focusGained(final FocusEvent e)
 			{
 				DonationEditor.this.amount.getControl().setSelection(0,
 						DonationEditor.this.amount.getControl().getText().length());
@@ -172,12 +172,12 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 		this.purposeViewer.setLabelProvider(new DonationPurposeLabelProvider());
 		this.purposeViewer.setSorter(new DonationPurposeSorter());
 
-		ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
+		final ServiceTracker<ConnectionService, ConnectionService> tracker = new ServiceTracker<ConnectionService, ConnectionService>(Activator.getDefault().getBundle().getBundleContext(),
 				ConnectionService.class, null);
 		tracker.open();
 		try
 		{
-			ConnectionService service = (ConnectionService) tracker.getService();
+			final ConnectionService service = tracker.getService();
 			this.purposeViewer.setInput(service);
 			this.purposeViewer.addSelectionChangedListener(new ISelectionChangedListener()
 			{
@@ -234,12 +234,12 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 	{
 		if (this.date.getSelection() == null)
 		{
-			return new Message(date);
+			return new Message(this.date);
 		}
 
 		if (((Number) this.amount.getValue()).doubleValue() == 0)
 		{
-			return new Message(amount.getControl());
+			return new Message(this.amount.getControl());
 		}
 
 		if (this.purposeViewer.getSelection().isEmpty())
@@ -258,15 +258,15 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 	@Override
 	protected String getName()
 	{
-		DonationEditorInput input = (DonationEditorInput) this.getEditorInput();
-		Calendar calendar = input.getEntity().getDonationDate();
+		final DonationEditorInput input = (DonationEditorInput) this.getEditorInput();
+		final Calendar calendar = input.getEntity().getDonationDate();
 		return calendar == null ? "Neue Spende" : "Spende: " + DateFormat.getDateInstance().format(calendar.getTime());
 	}
 
 	@Override
 	protected String getText()
 	{
-		DonationEditorInput input = (DonationEditorInput) this.getEditorInput();
+		final DonationEditorInput input = (DonationEditorInput) this.getEditorInput();
 		return DonationFormatter.getInstance().formatDonatorName(input.getEntity());
 	}
 
@@ -280,8 +280,8 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 	@Override
 	protected void loadValues()
 	{
-		DonationEditorInput input = (DonationEditorInput) this.getEditorInput();
-		Donation donation = input.getEntity();
+		final DonationEditorInput input = (DonationEditorInput) this.getEditorInput();
+		final Donation donation = input.getEntity();
 
 		if (donation.getDonationDate() != null)
 		{
@@ -315,12 +315,12 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 			}
 			if (domain == null)
 			{
-				domain = (Domain) domainViewer.getElementAt(0);
+				domain = (Domain) this.domainViewer.getElementAt(0);
 			}
 			if (domain != null)
 			{
-				StructuredSelection ssel = new StructuredSelection(new Domain[] { domain });
-				domainViewer.setSelection(ssel);
+				final StructuredSelection ssel = new StructuredSelection(new Domain[] { domain });
+				this.domainViewer.setSelection(ssel);
 			}
 
 		}
@@ -329,12 +329,12 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 			domain = donation.getDomain();
 			if (domain == null)
 			{
-				domain = (Domain) domainViewer.getElementAt(0);
+				domain = (Domain) this.domainViewer.getElementAt(0);
 			}
 			if (domain != null)
 			{
-				StructuredSelection ssel = new StructuredSelection(new Domain[] { domain });
-				domainViewer.setSelection(ssel);
+				final StructuredSelection ssel = new StructuredSelection(new Domain[] { domain });
+				this.domainViewer.setSelection(ssel);
 			}
 		}
 		this.setDirty(false);
@@ -343,23 +343,23 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 	@Override
 	protected void saveValues()
 	{
-		DonationEditorInput input = (DonationEditorInput) this.getEditorInput();
-		Donation donation = input.getEntity();
+		final DonationEditorInput input = (DonationEditorInput) this.getEditorInput();
+		final Donation donation = input.getEntity();
 
-		Calendar calendar = Calendar.getInstance();
+		final Calendar calendar = Calendar.getInstance();
 		calendar.setTime(this.date.getSelection());
 		donation.setDonationDate(calendar);
 		donation.setYear(calendar.get(Calendar.YEAR));
 
-		double value = ((Number) amount.getValue()).doubleValue();
+		final double value = ((Number) this.amount.getValue()).doubleValue();
 		donation.setAmount(value);
 
 		StructuredSelection ssel = (StructuredSelection) this.purposeViewer.getSelection();
-		DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
+		final DonationPurpose purpose = (DonationPurpose) ssel.getFirstElement();
 		donation.setPurpose(purpose);
 
 		ssel = (StructuredSelection) this.domainViewer.getSelection();
-		Domain domain = ssel.isEmpty() ? Domain.newInstance() : (Domain) ssel.getFirstElement();
+		final Domain domain = ssel.isEmpty() ? Domain.newInstance() : (Domain) ssel.getFirstElement();
 		donation.setDomain((domain == null || domain.getId() == null) ? null : domain);
 	}
 
@@ -378,14 +378,15 @@ public class DonationEditor extends AbstractEntityEditor<Donation>
 			return false;
 		}
 
-		DonationEditorInput input = (DonationEditorInput) this.getEditorInput();
-		Donation donation = input.getEntity();
+		final DonationEditorInput input = (DonationEditorInput) this.getEditorInput();
+		final Donation donation = input.getEntity();
 		if (donation.getId() == null)
 		{
-			Calendar before = GregorianCalendar.getInstance();
-			before.set(Calendar.YEAR, before.get(Calendar.YEAR) - 5);
+			final int yearsBack = Activator.getDefault().getPreferenceStore().getInt(PreferenceInitializer.KEY_DONATION_INPUT_FOR_NUMBER_OF_YEARS_BACK_POSSIBLE);
+			final Calendar before = Calendar.getInstance();
+			before.set(Calendar.YEAR, before.get(Calendar.YEAR) - yearsBack);
 			if (this.date.getSelection().before(before.getTime())
-					|| this.date.getSelection().after(GregorianCalendar.getInstance().getTime()))
+					|| this.date.getSelection().after(Calendar.getInstance().getTime()))
 			{
 				MessageDialog
 						.openError(this.getSite().getShell(), "Ungültiges Datum", "Das Spendendatum ist ungültig.");
