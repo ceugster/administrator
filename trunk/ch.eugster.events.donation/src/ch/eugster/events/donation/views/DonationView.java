@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
@@ -111,7 +112,7 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 	private TableViewer donationViewer;
 
 	private Button clearDonationViewerSelection;
-	
+
 	private Label donationCount;
 
 	private static DateFormat df = SimpleDateFormat.getDateInstance();
@@ -186,6 +187,16 @@ public class DonationView extends AbstractEntityView implements IDoubleClickList
 		this.purposeViewer = new ComboViewer(combo);
 		this.purposeViewer.setContentProvider(new PurposeContentProvider(this.allPurposes));
 		this.purposeViewer.setLabelProvider(new PurposeLabelProvider());
+		this.purposeViewer.setComparator(new ViewerComparator()
+		{
+			@Override
+			public int compare(final Viewer viewer, final Object e1, final Object e2)
+			{
+				final DonationPurpose dp1 = (DonationPurpose) e1;
+				final DonationPurpose dp2 = (DonationPurpose) e2;
+				return Double.valueOf(dp1.getOrder()).compareTo(Double.valueOf(dp2.getOrder()));
+			}
+		});
 		this.purposeViewer.setFilters(new ViewerFilter[] { new DeletedEntityFilter() });
 		this.purposeViewer.addSelectionChangedListener(new ISelectionChangedListener()
 		{
