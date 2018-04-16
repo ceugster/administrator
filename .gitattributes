@@ -900,6 +900,8 @@ ch.eugster.events.donation/src/ch/eugster/events/donation/views/DonationPurposeC
 ch.eugster.events.donation/src/ch/eugster/events/donation/views/DonationPurposeLabelProvider.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/views/DonationPurposeSorter.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/views/DonationPurposeView.java -text
+ch.eugster.events.donation/src/ch/eugster/events/donation/views/DonationPurposeViewerDragListener.java -text svneol=unset#text/plain
+ch.eugster.events.donation/src/ch/eugster/events/donation/views/DonationPurposeViewerDropListener.java -text svneol=unset#text/plain
 ch.eugster.events.donation/src/ch/eugster/events/donation/views/DonationView.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/views/LinkDonationContentProvider.java -text
 ch.eugster.events.donation/src/ch/eugster/events/donation/views/LinkDonationSorter.java -text

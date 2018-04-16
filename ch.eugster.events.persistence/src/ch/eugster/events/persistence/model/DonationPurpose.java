@@ -38,6 +38,10 @@ public class DonationPurpose extends AbstractEntity
 	private String code;
 
 	@Basic
+	@Column(name = "donation_purpose_order")
+	private double order;
+
+	@Basic
 	@Column(name = "donation_purpose_name")
 	private String name;
 
@@ -55,19 +59,24 @@ public class DonationPurpose extends AbstractEntity
 	{
 	}
 
-	private DonationPurpose(String name)
+	private DonationPurpose(final String name)
 	{
 		this.name = name;
 	}
 
 	public void addDonation(final Donation donation)
 	{
-		donations.add(donation);
+		this.donations.add(donation);
 	}
 
 	public String getCode()
 	{
 		return AbstractEntity.stringValueOf(this.code);
+	}
+
+	public double getOrder()
+	{
+		return this.order;
 	}
 
 	public String getDescription()
@@ -77,7 +86,7 @@ public class DonationPurpose extends AbstractEntity
 
 	public List<Donation> getDonations()
 	{
-		return donations;
+		return this.donations;
 	}
 
 	@Override
@@ -94,6 +103,11 @@ public class DonationPurpose extends AbstractEntity
 	public void setCode(final String code)
 	{
 		this.propertyChangeSupport.firePropertyChange("code", this.code, this.code = code);
+	}
+
+	public void setOrder(final double order)
+	{
+		this.propertyChangeSupport.firePropertyChange("order", this.order, this.order = order);
 	}
 
 	public void setDescription(final String description)
@@ -117,7 +131,7 @@ public class DonationPurpose extends AbstractEntity
 		return (DonationPurpose) AbstractEntity.newInstance(new DonationPurpose());
 	}
 
-	public static DonationPurpose newInstance(String name)
+	public static DonationPurpose newInstance(final String name)
 	{
 		return (DonationPurpose) AbstractEntity.newInstance(new DonationPurpose(name));
 	}
