@@ -579,10 +579,10 @@ public class DonationLetterDialog extends TitleAreaDialog
 						map = new LinkMap(donation.getLink(), donation.getYear(), donation.getPurpose(), donation.getDomain(), false);
 						dataMaps.put("P" + donation.getLink().getId(), map);
 					}
-					else
-					{
-						map.getTableMaps(TableKey.DONATIONS.getKey()).add(new DonationMap(donation));
-					}
+//					else
+//					{
+//						map.getTableMaps(TableKey.DONATIONS.getKey()).add(new DonationMap(donation));
+//					}
 				}
 			}
 		}
