@@ -402,7 +402,7 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 				case DONATIONS:
 				{
 					final List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
-					final List<Donation> donations = link.getPerson().getDonations();
+					final List<Donation> donations = link.getDonations();
 					for (final Donation donation : donations)
 					{
 						if (domain == null || (donation.getDomain() != null && domain.equals(donation.getDomain())))
