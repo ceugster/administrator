@@ -3,15 +3,16 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Documents Bundle
 Bundle-SymbolicName: ch.eugster.events.documents;singleton:=true
 Bundle-Version: 1.0.2.qualifier
+Bundle-ClassPath: ch.eugster.events.documents
+Bundle-Activator: ch.eugster.events.documents.Activator
 Bundle-Vendor: Christian Eugster
 Export-Package: ch.eugster.events.documents.maps,
  ch.eugster.events.documents.services
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
+ org.eclipse.ui;bundle-version="3.8.2"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
 Import-Package: ch.eugster.events.persistence.formatters,
  ch.eugster.events.persistence.model,
  ch.eugster.events.persistence.queries,
  ch.eugster.events.persistence.service
-Bundle-ActivationPolicy: lazy
-Bundle-Activator: ch.eugster.events.documents.Activator
-Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
- org.eclipse.ui;bundle-version="3.8.2"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
