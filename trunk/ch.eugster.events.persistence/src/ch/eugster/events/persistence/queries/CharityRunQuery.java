@@ -5,22 +5,21 @@ import java.util.List;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
 
-import ch.eugster.events.persistence.model.AddressGroup;
 import ch.eugster.events.persistence.model.CharityRun;
 import ch.eugster.events.persistence.service.ConnectionService;
 
 public class CharityRunQuery extends AbstractEntityQuery<CharityRun>
 {
 
-	public CharityRunQuery(ConnectionService connectionService)
+	public CharityRunQuery(final ConnectionService connectionService)
 	{
 		super(connectionService);
 	}
 
 	public List<CharityRun> selectActives()
 	{
-		Expression expression = new ExpressionBuilder(CharityRun.class).get("deleted").equal(false);
-		List<CharityRun> charityRuns = select(CharityRun.class, expression);
+		final Expression expression = new ExpressionBuilder(CharityRun.class).get("deleted").equal(false);
+		final List<CharityRun> charityRuns = this.select(CharityRun.class, expression);
 		return charityRuns;
 	}
 
