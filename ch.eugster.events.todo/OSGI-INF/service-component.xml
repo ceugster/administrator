@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="ch.eugster.events.todo.collector.service">
-   <implementation class="ch.eugster.events.todo.service.TodoCollectorService"/>
-   <service>
-      <provide interface="ch.eugster.events.todo.service.TodoCollectorService"/>
-   </service>
-   <reference bind="setConnectionService" cardinality="1..1" interface="ch.eugster.events.persistence.service.ConnectionService" name="ConnectionService" policy="static" unbind="unsetConnectionService"/>
-</scr:component>
