@@ -3,11 +3,17 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Country Plugin
 Bundle-SymbolicName: ch.eugster.events.country;singleton:=true
 Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: ch.eugster.events.country
 Bundle-Activator: ch.eugster.events.country.Activator
 Bundle-Vendor: Christian Eugster
+Export-Package: ch.eugster.events.country.views
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
+ org.eclipse.core.expressions;bundle-version="3.4.400",
+ org.eclipse.ui;bundle-version="3.8.2",
+ org.eclipse.nebula.widgets.formattedtext;bundle-version="1.0.0",
+ org.eclipse.ui.forms;bundle-version="3.5.200"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Export-Package: ch.eugster.events.country.views
 Import-Package: ch.eugster.events.persistence.events,
  ch.eugster.events.persistence.exceptions,
  ch.eugster.events.persistence.filters,
@@ -23,8 +29,3 @@ Import-Package: ch.eugster.events.persistence.events,
  ch.eugster.events.ui.sorters,
  ch.eugster.events.ui.views,
  ch.eugster.events.ui.wizards
-Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
- org.eclipse.core.expressions;bundle-version="3.4.400",
- org.eclipse.ui;bundle-version="3.8.2",
- org.eclipse.nebula.widgets.formattedtext;bundle-version="1.0.0",
- org.eclipse.ui.forms;bundle-version="3.5.200"
