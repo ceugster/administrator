@@ -3,6 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Modul Sponsorlauf
 Bundle-SymbolicName: ch.eugster.events.charity;singleton:=true
 Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: lib/OctaneSDKJava-1.28.0.1-jar-with-dependencies.jar,
+ ch.eugster.events.charity
 Bundle-Activator: ch.eugster.events.charity.Activator
 Bundle-Vendor: Christian Eugster
 Require-Bundle: org.eclipse.ui,
@@ -16,5 +18,3 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.nebula.widgets.formattedtext;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: lib/OctaneSDKJava-1.28.0.1-jar-with-dependencies.jar,
- .
