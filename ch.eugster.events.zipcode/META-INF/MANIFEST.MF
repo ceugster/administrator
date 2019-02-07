@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Module Zipcode
 Bundle-SymbolicName: ch.eugster.events.zipcode;singleton:=true
 Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: ch.eugster.events.zipcode
 Bundle-Activator: ch.eugster.events.zipcode.Activator
 Bundle-Vendor: Christian Eugster
 Require-Bundle: org.eclipse.ui.forms;bundle-version="3.5.2",
@@ -11,7 +12,6 @@ Require-Bundle: org.eclipse.ui.forms;bundle-version="3.5.2",
  org.eclipse.core.expressions;bundle-version="3.4.400",
  org.eclipse.osgi.services;bundle-version="3.3.100",
  org.eclipse.ui;bundle-version="3.8.2"
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: ch.eugster.events.persistence.events,
  ch.eugster.events.persistence.exceptions,
@@ -31,3 +31,4 @@ Import-Package: ch.eugster.events.persistence.events,
  ch.eugster.events.ui.sorters,
  ch.eugster.events.ui.views,
  ch.eugster.events.ui.wizards
+Bundle-ActivationPolicy: lazy
