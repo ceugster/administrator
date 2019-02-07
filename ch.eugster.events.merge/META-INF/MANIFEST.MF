@@ -3,10 +3,13 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Merge Plugin
 Bundle-SymbolicName: ch.eugster.events.merge;singleton:=true
 Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: ch.eugster.events.merge
 Bundle-Activator: ch.eugster.events.merge.Activator
 Bundle-Vendor: Christian Eugster
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
+ org.eclipse.core.expressions;bundle-version="3.4.400",
+ org.eclipse.ui;bundle-version="3.8.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-ActivationPolicy: lazy
 Import-Package: ch.eugster.events.documents.maps,
  ch.eugster.events.documents.services,
  ch.eugster.events.persistence.events,
@@ -24,6 +27,4 @@ Import-Package: ch.eugster.events.documents.maps,
  ch.eugster.events.ui.sorters,
  ch.eugster.events.ui.views,
  ch.eugster.events.ui.wizards
-Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
- org.eclipse.core.expressions;bundle-version="3.4.400",
- org.eclipse.ui;bundle-version="3.8.2"
+Bundle-ActivationPolicy: lazy
