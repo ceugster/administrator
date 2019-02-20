@@ -32,7 +32,7 @@ public class AddressMap extends AbstractDataMap<Address>
 	{
 		for (final Key key : Key.values())
 		{
-			this.setProperty(key.getKey(), key.getValue(donation.getAddress(), false));
+			this.setProperty(key.getKey(), key.getValue(donation, false));
 		}
 
 		this.addTableMaps(TableKey.DONATIONS.getKey(), TableKey.DONATIONS.getTableMaps(donation));
@@ -508,6 +508,118 @@ public class AddressMap extends AbstractDataMap<Address>
 				case TOTAL_DONATIONS:
 				{
 					return "0";
+				}
+				case MEMBER:
+				{
+					StringBuilder builder = new StringBuilder();
+					final Member[] members = address.getMembers().toArray(new Member[0]);
+					for (int i = 0; i < members.length; i++)
+					{
+						builder = builder.append(members[i].getMembership().getName());
+						if (i < members.length - 1)
+						{
+							builder = builder.append(", ");
+						}
+					}
+					return builder.toString();
+				}
+				case NOTES:
+				{
+					return address.getNotes();
+				}
+				default:
+				{
+					throw new RuntimeException("Invalid key");
+				}
+			}
+		}
+
+		public String getValue(final Donation donation, final boolean isGroup)
+		{
+			Address address = donation.getAddress();
+			switch (this)
+			{
+				case NAME:
+				{
+					if (isGroup)
+					{
+						return address.getName();
+					}
+					else
+					{
+						if (address.getSalutation() == null)
+						{
+							return address.getName();
+						}
+						else
+						{
+							return address.getSalutation().isShowAddressNameForPersons() ? address.getName() : "";
+						}
+					}
+				}
+				case ANOTHER_LINE:
+				{
+					return address.getAnotherLine();
+				}
+				case ADDRESS:
+				{
+					return address.getAddress();
+				}
+				case POB:
+				{
+					return address.getPob();
+				}
+				case ZIP:
+				{
+					return address.getZipCode() == null ? address.getZip() : address.getZipCode().getZip();
+				}
+				case CITY:
+				{
+					return address.getCity();
+				}
+				case COUNTRY:
+				{
+					return address.getCountry() == null ? "" : address.getCountry().getIso3166alpha2();
+				}
+				case PHONE:
+				{
+					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(address.getCountry(),
+							address.getPhone());
+				}
+				case FAX:
+				{
+					return AddressFormatter.getInstance().formatPhoneWithOptionalPrefix(address.getCountry(),
+							address.getFax());
+				}
+				case SALUTATION:
+				{
+					final AddressSalutation salutation = address.getSalutation();
+					return salutation == null ? "" : salutation.getSalutation();
+				}
+				case EMAIL:
+				{
+					return address.getEmail();
+				}
+				case WEBSITE:
+				{
+					return address.getWebsite();
+				}
+				case POLITE:
+				{
+					final AddressSalutation salutation = address.getSalutation();
+					return salutation == null ? "" : salutation.getPolite();
+				}
+				case MAILING_ADDRESS:
+				{
+					return AddressFormatter.getInstance().formatAddressLabel(address);
+				}
+				case COUNTY:
+				{
+					return address.getProvince();
+				}
+				case TOTAL_DONATIONS:
+				{
+					return AbstractDataMap.getAmountFormatter().format(donation.getAmount());
 				}
 				case MEMBER:
 				{
