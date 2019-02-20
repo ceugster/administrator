@@ -28,6 +28,16 @@ public class AddressMap extends AbstractDataMap<Address>
 		this(address, null, null, null, isGroup);
 	}
 
+	public AddressMap(Donation donation)
+	{
+		for (final Key key : Key.values())
+		{
+			this.setProperty(key.getKey(), key.getValue(donation.getAddress(), false));
+		}
+
+		this.addTableMaps(TableKey.DONATIONS.getKey(), TableKey.DONATIONS.getTableMaps(donation));
+	}
+	
 	public AddressMap(final Address address, final Integer year, final DonationPurpose purpose, final Domain domain, final boolean isGroup)
 	{
 		for (final Key key : Key.values())
@@ -578,6 +588,13 @@ public class AddressMap extends AbstractDataMap<Address>
 					throw new RuntimeException("Invalid key");
 				}
 			}
+		}
+
+		public List<DataMap<?>> getTableMaps(Donation donation)
+		{
+			final List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
+			tableMaps.add(new DonationMap(donation));
+			return tableMaps;
 		}
 
 		public List<DataMap<?>> getTableMaps(final Address address, final Integer year, final DonationPurpose purpose,

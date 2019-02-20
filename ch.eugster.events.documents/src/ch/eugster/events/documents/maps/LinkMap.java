@@ -21,6 +21,7 @@ import ch.eugster.events.persistence.model.CourseDetail;
 import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.Donation;
 import ch.eugster.events.persistence.model.DonationPurpose;
+import ch.eugster.events.persistence.model.DonationYear;
 import ch.eugster.events.persistence.model.FieldExtension;
 import ch.eugster.events.persistence.model.FieldExtensionTarget;
 import ch.eugster.events.persistence.model.LinkPersonAddress;
@@ -32,47 +33,59 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 {
-	private Integer year;
-	
-	private Domain domain;
-	
 	protected LinkMap() {
 		super();
 	}
 
 	public LinkMap(final LinkPersonAddress link)
 	{
-		this(link, null, null, null, false);
+		this(link, null, null, null, null, false);
 	}
 
 	public LinkMap(final LinkPersonAddress link, final boolean isGroup)
 	{
-		this(link, null, null, null, isGroup);
+		this(link, null, null, null, null, isGroup);
 	}
+	
+	public LinkMap(Donation donation)
+	{
+		this.setProperties(new AddressMap(donation.getLink().getAddress()).getProperties());
+		this.setProperties(new PersonMap(donation.getLink().getPerson()).getProperties());
 
-	public LinkMap(final LinkPersonAddress link, final Integer year, final DonationPurpose purpose, final Domain domain, final boolean isGroup)
+		for (final Key key : Key.values())
+		{
+			this.setProperty(key.getKey(), key.getValue(donation.getLink()));
+		}
+
+		this.addTableMaps(TableKey.DONATIONS.getKey(), TableKey.DONATIONS.getTableMaps(donation));
+
+		final List<LinkPersonAddressExtendedField> extendedFields = donation.getLink().getExtendedFields();
+		for (final LinkPersonAddressExtendedField extendedField : extendedFields)
+		{
+			final ExtendedFieldKey key = new ExtendedFieldKey(extendedField.getFieldExtension());
+			if (!extendedField.getFieldExtension().isDeleted())
+			{
+				final String value = extendedField.isDeleted() ? AbstractEntity.stringValueOf(extendedField
+						.getFieldExtension().getDefaultValue()) : AbstractEntity.stringValueOf(extendedField
+						.getValue());
+				this.setProperty(key.getKey(), value);
+			}
+		}
+	}
+	
+	public LinkMap(final LinkPersonAddress link, final DonationYear selectedFromDonationYear, final DonationYear selectedToDonationYear, final DonationPurpose purpose, final Domain domain, final boolean isGroup)
 	{
 		this.setProperties(new AddressMap(link.getAddress(), isGroup).getProperties());
 		this.setProperties(new PersonMap(link.getPerson()).getProperties());
 
-		Key.domain = this.domain;
-		Key.year = this.year;
-		
 		for (final Key key : Key.values())
 		{
-			if (year == null)
-			{
-				this.setProperty(key.getKey(), key.getValue(link));
-			}
-			else
-			{
-				this.setProperty(key.getKey(), key.getValue(link));
-			}
+			this.setProperty(key.getKey(), key.getValue(link));
 		}
 
 		for (final TableKey key : TableKey.values())
 		{
-			this.addTableMaps(key.getKey(), key.getTableMaps(link, year, purpose, domain));
+			this.addTableMaps(key.getKey(), key.getTableMaps(link, selectedFromDonationYear, selectedToDonationYear, purpose, domain));
 		}
 
 		final List<LinkPersonAddressExtendedField> extendedFields = link.getExtendedFields();
@@ -146,10 +159,6 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 	{
 		PHONE, EMAIL, FUNCTION, MAILING_ADDRESS, TOTAL_DONATIONS, MEMBER, COURSE_VISITS;
 		
-		public static Domain domain;
-		
-		public static Integer year;
-
 		@Override
 		public Class<?> getType()
 		{
@@ -394,7 +403,14 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 			}
 		}
 
-		public List<DataMap<?>> getTableMaps(final LinkPersonAddress link, final Integer year, final DonationPurpose purpose,
+		public List<DataMap<?>> getTableMaps(Donation donation)
+		{
+			final List<DataMap<?>> tableMaps = new ArrayList<DataMap<?>>();
+			tableMaps.add(new DonationMap(donation));
+			return tableMaps;
+		}
+
+		public List<DataMap<?>> getTableMaps(final LinkPersonAddress link, final DonationYear fromYear, final DonationYear toYear, final DonationPurpose purpose,
 				final Domain domain)
 		{
 			switch (this)
@@ -407,9 +423,9 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 					{
 						if (domain == null || (donation.getDomain() != null && domain.equals(donation.getDomain())))
 						{
-							if (year == null || year.intValue() == donation.getDonationYear())
+							if (purpose == null || (donation.getPurpose() != null && purpose.equals(donation.getPurpose())))
 							{
-								this.addDonation(donation, tableMaps, year, purpose, domain);
+								this.addDonation(donation, tableMaps, fromYear, toYear, purpose, domain);
 							}
 						}
 					}
@@ -422,18 +438,14 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 			}
 		}
 
-		private void addDonation(final Donation donation, final List<DataMap<?>> tableMaps, final Integer year, final DonationPurpose purpose,
+		private void addDonation(final Donation donation, final List<DataMap<?>> tableMaps, final DonationYear fromYear, final DonationYear toYear, final DonationPurpose purpose,
 				final Domain domain)
 		{
 			if (this.printDonation(donation, purpose, domain))
 			{
-				if (year == null)
+				if (fromYear == null || donation.getDonationYear() >= fromYear.getYear())
 				{
-					tableMaps.add(new DonationMap(donation));
-				}
-				else
-				{
-					if (donation.getDonationYear() == year.intValue())
+					if (toYear == null || donation.getDonationYear() <= toYear.getYear())
 					{
 						tableMaps.add(new DonationMap(donation));
 					}

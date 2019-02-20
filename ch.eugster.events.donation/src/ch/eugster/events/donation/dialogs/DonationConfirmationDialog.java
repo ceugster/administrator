@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -17,7 +16,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -31,7 +29,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.ServiceReference;
@@ -42,13 +39,7 @@ import ch.eugster.events.documents.maps.DataMap;
 import ch.eugster.events.documents.maps.LinkMap;
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.donation.Activator;
-import ch.eugster.events.persistence.model.Address;
-import ch.eugster.events.persistence.model.Domain;
 import ch.eugster.events.persistence.model.Donation;
-import ch.eugster.events.persistence.model.DonationPurpose;
-import ch.eugster.events.persistence.model.DonationYear;
-import ch.eugster.events.persistence.model.LinkPersonAddress;
-import ch.eugster.events.persistence.model.Person;
 import ch.eugster.events.persistence.model.User;
 import ch.eugster.events.persistence.model.UserProperty;
 import ch.eugster.events.persistence.queries.UserQuery;
@@ -56,7 +47,7 @@ import ch.eugster.events.persistence.service.ConnectionService;
 
 public class DonationConfirmationDialog extends TitleAreaDialog
 {
-	private SelectionMode selectionMode;
+//	private SelectionMode selectionMode;
 
 	private Text documentPath;
 
@@ -67,11 +58,11 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 	/*
 	 * in SelectionMode PERSON, LINK, ADDRESS
 	 */
-	private IStructuredSelection personSelection;
+//	private IStructuredSelection personSelection;
 
-	private Button yearSelector;
+//	private Button yearSelector;
 
-	private Spinner year;
+//	private Spinner year;
 
 	/*
 	 * in SelectionMode DONATIONS
@@ -81,13 +72,13 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 	/*
 	 * in SelectionMode YEAR
 	 */
-	private DonationYear selectedDonationYear;
+//	private DonationYear selectedDonationYear;
 
-	private DonationPurpose selectedDonationPurpose;
+//	private DonationPurpose selectedDonationPurpose;
 
-	private Domain selectedDomain;
+//	private Domain selectedDomain;
 
-	private String selectedName;
+//	private String selectedName;
 
 	private final String message = "Wählen Sie das Dokument, das als Vorlage verwendet werden soll.";
 
@@ -106,41 +97,41 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 	public DonationConfirmationDialog(final Shell parentShell, final Donation[] selectedDonations)
 	{
 		super(parentShell);
-		this.personSelection = null;
+//		this.personSelection = null;
 		this.selectedDonations = selectedDonations;
-		this.selectedDonationYear = null;
-		this.selectedDonationPurpose = null;
-		this.selectedDomain = null;
-		this.selectionMode = SelectionMode.DONATIONS;
+//		this.selectedDonationYear = null;
+//		this.selectedDonationPurpose = null;
+//		this.selectedDomain = null;
+//		this.selectionMode = SelectionMode.DONATIONS;
 	}
 
-	public DonationConfirmationDialog(final Shell parentShell, final DonationYear selectedDonationYear,
-			final DonationPurpose selectedDonationPurpose, final Domain selectedDomain, String selectedName)
-	{
-		super(parentShell);
-		this.personSelection = null;
-		this.selectedDonations = null;
-		this.selectedDonationYear = selectedDonationYear;
-		this.selectedDonationPurpose = selectedDonationPurpose;
-		this.selectedDomain = selectedDomain;
-		this.selectedName = selectedName;
-		this.selectionMode = SelectionMode.YEAR;
-	}
+//	public DonationConfirmationDialog(final Shell parentShell, final DonationYear selectedDonationYear,
+//			final DonationPurpose selectedDonationPurpose, final Domain selectedDomain, String selectedName)
+//	{
+//		super(parentShell);
+//		this.personSelection = null;
+//		this.selectedDonations = null;
+//		this.selectedDonationYear = selectedDonationYear;
+//		this.selectedDonationPurpose = selectedDonationPurpose;
+//		this.selectedDomain = selectedDomain;
+//		this.selectedName = selectedName;
+//		this.selectionMode = SelectionMode.YEAR;
+//	}
 
-	public DonationConfirmationDialog(final Shell parentShell, final IStructuredSelection ssel)
-	{
-		super(parentShell);
-		this.personSelection = ssel;
-		this.selectedDonations = null;
-		this.selectedDonationYear = null;
-		this.selectedDonationPurpose = null;
-		this.selectedDomain = null;
-		this.selectionMode = SelectionMode.PERSON;
-	}
+//	public DonationConfirmationDialog(final Shell parentShell, final IStructuredSelection ssel)
+//	{
+//		super(parentShell);
+//		this.personSelection = ssel;
+//		this.selectedDonations = null;
+//		this.selectedDonationYear = null;
+//		this.selectedDonationPurpose = null;
+//		this.selectedDomain = null;
+//		this.selectionMode = SelectionMode.PERSON;
+//	}
 
 	private void buildDocument()
 	{
-		final DataMap<?>[] dataMaps = createDataMaps(selectionMode);
+		final DataMap<?>[] dataMaps = createDataMaps();
 		if (dataMaps.length == 0)
 		{
 			MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
@@ -260,200 +251,229 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		this.getButton(IDialogConstants.OK_ID).setEnabled(file.isFile());
 	}
 
-	private DataMap<?>[] createDataMaps(SelectionMode selectionMode)
+//	private DataMap<?>[] createDataMaps(SelectionMode selectionMode)
+	private DataMap<?>[] createDataMaps()
 	{
 		Map<String, DataMap<?>> dataMaps = new HashMap<String, DataMap<?>>();
-		if (selectionMode.equals(SelectionMode.PERSON))
-		{
-			Object[] elements = personSelection.toArray();
-			for (Object element : elements)
-			{
-				if (element instanceof LinkPersonAddress)
-				{
-					LinkPersonAddress link = (LinkPersonAddress) element;
-					Integer year = yearSelector == null || !yearSelector.getSelection() ? null : Integer
-							.valueOf(this.year.getSelection());
-					createDataMaps(link, year, selectedDonationPurpose, selectedDomain, dataMaps);
-				}
-				else if (element instanceof Person)
-				{
-					Person person = (Person) element;
-					Integer year = yearSelector == null || !yearSelector.getSelection() ? null : Integer
-							.valueOf(this.year.getSelection());
-					createDataMaps(person.getDefaultLink(), year, selectedDonationPurpose, selectedDomain, dataMaps);
-				}
-				else if (element instanceof Address)
-				{
-					Address address = (Address) element;
-					Integer year = yearSelector == null || !yearSelector.getSelection() ? null : Integer
-							.valueOf(this.year.getSelection());
-					createDataMaps(address, year, selectedDonationPurpose, selectedDomain, dataMaps);
-				}
-			}
-		}
-		else if (selectionMode.equals(SelectionMode.DONATIONS))
-		{
+//		if (selectionMode.equals(SelectionMode.PERSON))
+//		{
+//			Object[] elements = personSelection.toArray();
+//			for (Object element : elements)
+//			{
+//				if (element instanceof LinkPersonAddress)
+//				{
+//					LinkPersonAddress link = (LinkPersonAddress) element;
+//					Integer year = yearSelector == null || !yearSelector.getSelection() ? null : Integer
+//							.valueOf(this.year.getSelection());
+//					createDataMaps(link, year, selectedDonationPurpose, selectedDomain, dataMaps);
+//				}
+//				else if (element instanceof Person)
+//				{
+//					Person person = (Person) element;
+//					Integer year = yearSelector == null || !yearSelector.getSelection() ? null : Integer
+//							.valueOf(this.year.getSelection());
+//					createDataMaps(person.getDefaultLink(), year, selectedDonationPurpose, selectedDomain, dataMaps);
+//				}
+//				else if (element instanceof Address)
+//				{
+//					Address address = (Address) element;
+//					Integer year = yearSelector == null || !yearSelector.getSelection() ? null : Integer
+//							.valueOf(this.year.getSelection());
+//					createDataMaps(address, year, selectedDonationPurpose, selectedDomain, dataMaps);
+//				}
+//			}
+//		}
+//		if (selectionMode.equals(SelectionMode.DONATIONS))
+//		{
 			for (Donation donation : selectedDonations)
 			{
-				createDataMaps(donation, donation.getDonationYear(), selectedDonationPurpose, selectedDomain, dataMaps);
+				createDataMaps(donation, dataMaps);
 
 			}
-		}
-		else if (selectionMode.equals(SelectionMode.YEAR))
-		{
-			createDataMaps(selectedDonationYear, selectedDonationPurpose, selectedDomain, dataMaps);
-		}
+//		}
+//		else if (selectionMode.equals(SelectionMode.YEAR))
+//		{
+//			createDataMaps(selectedDonationYear, selectedDonationPurpose, selectedDomain, dataMaps);
+//		}
 		return dataMaps.values().toArray(new DataMap<?>[0]);
 	}
 
-	private void createDataMaps(final Address address, final Integer year, DonationPurpose purpose, Domain domain,
-			final Map<String, DataMap<?>> dataMaps)
-	{
-		String key = "A" + address.getId().toString();
-		DataMap<?> addressMap = dataMaps.get(key);
-		if (addressMap == null)
-		{
-			if (year != null)
-			{
-				addressMap = new AddressMap(address, year.intValue(), purpose, domain, true);
-			}
-			else
-			{
-				addressMap = new AddressMap(address);
-			}
-			dataMaps.put(key, addressMap);
-		}
-	}
+//	private void createDataMaps(final Address address, final Integer year, DonationPurpose purpose, Domain domain,
+//			final Map<String, DataMap<?>> dataMaps)
+//	{
+//		String key = "A" + address.getId().toString();
+//		DataMap<?> addressMap = dataMaps.get(key);
+//		if (addressMap == null)
+//		{
+//			if (year != null)
+//			{
+//				addressMap = new AddressMap(address, year.intValue(), purpose, domain, true);
+//			}
+//			else
+//			{
+//				addressMap = new AddressMap(address);
+//			}
+//			dataMaps.put(key, addressMap);
+//		}
+//	}
 
-	private void createDataMaps(final Donation donation, final Integer year, DonationPurpose purpose, Domain domain,
-			final Map<String, DataMap<?>> dataMaps)
+//	private void createDataMaps(final Donation donation, final Integer year, DonationPurpose purpose, Domain domain,
+//			final Map<String, DataMap<?>> dataMaps)
+//	{
+//		if (!donation.isDeleted())
+//		{
+//			if (donation.getLink() == null || donation.getLink().isDeleted()
+//					|| donation.getLink().getPerson().isDeleted())
+//			{
+//				createDataMaps(donation.getAddress(), year, purpose, domain, dataMaps);
+//			}
+//			else
+//			{
+//				createDataMaps(donation.getLink(), year, purpose, domain, dataMaps);
+//			}
+//		}
+//	}
+
+	private void createDataMaps(final Donation donation, final Map<String, DataMap<?>> dataMaps)
 	{
 		if (!donation.isDeleted())
 		{
 			if (donation.getLink() == null || donation.getLink().isDeleted()
 					|| donation.getLink().getPerson().isDeleted())
 			{
-				createDataMaps(donation.getAddress(), year, purpose, domain, dataMaps);
+				String key = "A" + donation.getAddress().getId().toString();
+				DataMap<?> addressMap = dataMaps.get(key);
+				if (addressMap == null)
+				{
+					addressMap = new AddressMap(donation);
+					dataMaps.put(key, addressMap);
+				}
 			}
 			else
 			{
-				createDataMaps(donation.getLink(), year, purpose, domain, dataMaps);
-			}
-		}
-	}
-
-	private void createDataMaps(final DonationYear donationYear, DonationPurpose purpose, Domain domain,
-			final Map<String, DataMap<?>> dataMaps)
-	{
-		for (Donation donation : donationYear.getDonations())
-		{
-			if (printDonation(donation))
-			{
-				if (donation.getLink() == null || donation.getLink().isDeleted()
-						|| donation.getLink().getPerson().isDeleted())
+				String key = "P" + donation.getLink().getId().toString();
+				DataMap<?> linkMap = dataMaps.get(key);
+				if (linkMap == null)
 				{
-					createDataMaps(donation, Integer.valueOf(donationYear.getYear()), purpose, domain, dataMaps);
-				}
-				else
-				{
-					createDataMaps(donation, Integer.valueOf(donationYear.getYear()), purpose, domain, dataMaps);
+					linkMap = new LinkMap(donation);
+					dataMaps.put(key, linkMap);
 				}
 			}
 		}
 	}
 
-	private boolean isNameValid(Donation donation)
-	{
-		if (selectedName == null || selectedName.isEmpty())
-		{
-			return true;
-		}
-		if (donation.getAddress().getName().toLowerCase().contains(selectedName.toLowerCase()))
-		{
-			return true;
-		}
-		if (donation.getLink() != null || donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
-		{
-			if (donation.getLink().getPerson().getFirstname().toLowerCase().contains(selectedName.toLowerCase()))
-			{
-				return true;
-			}
-			if (donation.getLink().getPerson().getLastname().toLowerCase().contains(selectedName.toLowerCase()))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+	//	private void createDataMaps(final DonationYear donationYear, DonationPurpose purpose, Domain domain,
+//			final Map<String, DataMap<?>> dataMaps)
+//	{
+//		for (Donation donation : donationYear.getDonations())
+//		{
+//			if (printDonation(donation))
+//			{
+//				if (donation.getLink() == null || donation.getLink().isDeleted()
+//						|| donation.getLink().getPerson().isDeleted())
+//				{
+//					createDataMaps(donation, Integer.valueOf(donationYear.getYear()), purpose, domain, dataMaps);
+//				}
+//				else
+//				{
+//					createDataMaps(donation, Integer.valueOf(donationYear.getYear()), purpose, domain, dataMaps);
+//				}
+//			}
+//		}
+//	}
 
-	private boolean printDonation(Donation donation)
-	{
-		if (donation.isDeleted())
-		{
-			return false;
-		}
-		if (selectedDonationPurpose == null && selectedDomain == null)
-		{
-			return isNameValid(donation);
-		}
+//	private boolean isNameValid(Donation donation)
+//	{
+//		if (selectedName == null || selectedName.isEmpty())
+//		{
+//			return true;
+//		}
+//		if (donation.getAddress().getName().toLowerCase().contains(selectedName.toLowerCase()))
+//		{
+//			return true;
+//		}
+//		if (donation.getLink() != null || donation.getLink().isDeleted() || donation.getLink().getPerson().isDeleted())
+//		{
+//			if (donation.getLink().getPerson().getFirstname().toLowerCase().contains(selectedName.toLowerCase()))
+//			{
+//				return true;
+//			}
+//			if (donation.getLink().getPerson().getLastname().toLowerCase().contains(selectedName.toLowerCase()))
+//			{
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
-		if (selectedDonationPurpose == null)
-		{
-			if (selectedDomain.getId() != null)
-			{
-				if (donation.getDomain() == null)
-				{
-					return false;
-				}
-				else
-				{
-					if (selectedDomain.getId().equals(donation.getDomain().getId()))
-					{
-						return isNameValid(donation);
-					}
-					else
-					{
-						return false;
-					}
-				}
-			}
-		}
-		if (selectedDomain == null)
-		{
-			return donation.getPurpose().getId().equals(selectedDonationPurpose.getId());
-		}
-		if (donation.getDomain() == null || donation.getPurpose() == null)
-		{
-			return false;
-		}
-		if (donation.getDomain() != null && selectedDomain.getId().equals(donation.getDomain().getId()))
-		{
-			if (donation.getPurpose().getId().equals(selectedDonationPurpose.getId()))
-			{
-				return isNameValid(donation);
-			}
-		}
-		return false;
-	}
+//	private boolean printDonation(Donation donation)
+//	{
+//		if (donation.isDeleted())
+//		{
+//			return false;
+//		}
+//		if (selectedDonationPurpose == null && selectedDomain == null)
+//		{
+//			return isNameValid(donation);
+//		}
+//
+//		if (selectedDonationPurpose == null)
+//		{
+//			if (selectedDomain.getId() != null)
+//			{
+//				if (donation.getDomain() == null)
+//				{
+//					return false;
+//				}
+//				else
+//				{
+//					if (selectedDomain.getId().equals(donation.getDomain().getId()))
+//					{
+//						return isNameValid(donation);
+//					}
+//					else
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//		}
+//		if (selectedDomain == null)
+//		{
+//			return donation.getPurpose().getId().equals(selectedDonationPurpose.getId());
+//		}
+//		if (donation.getDomain() == null || donation.getPurpose() == null)
+//		{
+//			return false;
+//		}
+//		if (donation.getDomain() != null && selectedDomain.getId().equals(donation.getDomain().getId()))
+//		{
+//			if (donation.getPurpose().getId().equals(selectedDonationPurpose.getId()))
+//			{
+//				return isNameValid(donation);
+//			}
+//		}
+//		return false;
+//	}
 
-	private void createDataMaps(final LinkPersonAddress link, final Integer year, DonationPurpose purpose,
-			Domain domain, final Map<String, DataMap<?>> dataMaps)
-	{
-		String key = "P" + link.getId().toString();
-		DataMap<?> linkMap = dataMaps.get(key);
-		if (linkMap == null)
-		{
-			if (year != null)
-			{
-				linkMap = new LinkMap(link, year.intValue(), purpose, domain, false);
-			}
-			else
-			{
-				linkMap = new LinkMap(link);
-			}
-			dataMaps.put(key, linkMap);
-		}
-	}
+//	private void createDataMaps(final LinkPersonAddress link, final Integer year, DonationPurpose purpose,
+//			Domain domain, final Map<String, DataMap<?>> dataMaps)
+//	{
+//		String key = "P" + link.getId().toString();
+//		DataMap<?> linkMap = dataMaps.get(key);
+//		if (linkMap == null)
+//		{
+//			if (year != null)
+//			{
+//				linkMap = new LinkMap(link, new DonationYear(year.intValue()), new DonationYear(year.intValue()), purpose, domain, false);
+//			}
+//			else
+//			{
+//				linkMap = new LinkMap(link);
+//			}
+//			dataMaps.put(key, linkMap);
+//		}
+//	}
 
 	@Override
 	protected Control createDialogArea(final Composite parent)
@@ -526,46 +546,46 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 			}
 		});
 
-		if (selectionMode.equals(SelectionMode.PERSON))
-		{
-			yearSelector = new Button(composite, SWT.CHECK);
-			yearSelector.setLayoutData(new GridData());
-			yearSelector.setText("Auswahl Jahr");
-
-			GridData gridData = new GridData();
-			gridData.widthHint = 48;
-			gridData.horizontalSpan = 2;
-
-			year = new Spinner(composite, SWT.None);
-			year.setLayoutData(gridData);
-			year.setDigits(0);
-			year.setMinimum(0);
-			year.setMaximum(Integer.MAX_VALUE);
-			year.setIncrement(1);
-			year.setPageIncrement(10);
-
-			Object[] elements = personSelection.toArray();
-			for (Object element : elements)
-			{
-				if (element instanceof Address)
-				{
-					Address address = (Address) element;
-					setRange(address.getDonations());
-				}
-				else if (element instanceof LinkPersonAddress)
-				{
-					LinkPersonAddress link = (LinkPersonAddress) element;
-					setRange(link.getDonations());
-				}
-				if (element instanceof Person)
-				{
-					Person person = (Person) element;
-					setRange(person.getDonations());
-				}
-			}
-			year.setSelection(year.getMaximum());
-			yearSelector.setSelection(true);
-		}
+//		if (selectionMode.equals(SelectionMode.PERSON))
+//		{
+//			yearSelector = new Button(composite, SWT.CHECK);
+//			yearSelector.setLayoutData(new GridData());
+//			yearSelector.setText("Auswahl Jahr");
+//
+//			GridData gridData = new GridData();
+//			gridData.widthHint = 48;
+//			gridData.horizontalSpan = 2;
+//
+//			year = new Spinner(composite, SWT.None);
+//			year.setLayoutData(gridData);
+//			year.setDigits(0);
+//			year.setMinimum(0);
+//			year.setMaximum(Integer.MAX_VALUE);
+//			year.setIncrement(1);
+//			year.setPageIncrement(10);
+//
+//			Object[] elements = personSelection.toArray();
+//			for (Object element : elements)
+//			{
+//				if (element instanceof Address)
+//				{
+//					Address address = (Address) element;
+//					setRange(address.getDonations());
+//				}
+//				else if (element instanceof LinkPersonAddress)
+//				{
+//					LinkPersonAddress link = (LinkPersonAddress) element;
+//					setRange(link.getDonations());
+//				}
+//				if (element instanceof Person)
+//				{
+//					Person person = (Person) element;
+//					setRange(person.getDonations());
+//				}
+//			}
+//			year.setSelection(year.getMaximum());
+//			yearSelector.setSelection(true);
+//		}
 
 		return parent;
 	}
@@ -604,20 +624,20 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 			this.getButton(IDialogConstants.OK_ID).setEnabled(this.isPageComplete);
 	}
 
-	private void setRange(final List<Donation> donations)
-	{
-		for (Donation donation : donations)
-		{
-			if (year.getMinimum() == 0 || donation.getDonationYear() < year.getMinimum())
-			{
-				year.setMinimum(donation.getDonationYear());
-			}
-			if (year.getMaximum() == Integer.MAX_VALUE || donation.getDonationYear() > year.getMaximum())
-			{
-				year.setMaximum(donation.getDonationYear());
-			}
-		}
-	}
+//	private void setRange(final List<Donation> donations)
+//	{
+//		for (Donation donation : donations)
+//		{
+//			if (year.getMinimum() == 0 || donation.getDonationYear() < year.getMinimum())
+//			{
+//				year.setMinimum(donation.getDonationYear());
+//			}
+//			if (year.getMaximum() == Integer.MAX_VALUE || donation.getDonationYear() > year.getMaximum())
+//			{
+//				year.setMaximum(donation.getDonationYear());
+//			}
+//		}
+//	}
 
 	private void setUserPath()
 	{
@@ -642,8 +662,8 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 		}
 	}
 
-	private enum SelectionMode
-	{
-		DONATIONS, YEAR, PERSON;
-	}
+//	private enum SelectionMode
+//	{
+//		DONATIONS, YEAR, PERSON;
+//	}
 }
