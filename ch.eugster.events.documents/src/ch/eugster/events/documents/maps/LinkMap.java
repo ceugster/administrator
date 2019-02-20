@@ -54,7 +54,7 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 
 		for (final Key key : Key.values())
 		{
-			this.setProperty(key.getKey(), key.getValue(donation.getLink()));
+			this.setProperty(key.getKey(), key.getValue(donation));
 		}
 
 		this.addTableMaps(TableKey.DONATIONS.getKey(), TableKey.DONATIONS.getTableMaps(donation));
@@ -367,8 +367,92 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 				}
 			}
 		}
-	}
 
+		public String getValue(final Donation donation)
+		{
+			LinkPersonAddress link = donation.getLink();
+			switch (this)
+			{
+				case PHONE:
+				{
+					return LinkPersonAddressFormatter.getInstance().formatPhoneWithOptionalPrefix(
+							link.getAddress().getCountry(), link.getPhone());
+				}
+				case EMAIL:
+				{
+					return link.getEmail();
+				}
+				case FUNCTION:
+				{
+					return link.getFunction();
+				}
+				case MAILING_ADDRESS:
+				{
+					return LinkPersonAddressFormatter.getInstance().getLabel(link);
+				}
+				case TOTAL_DONATIONS:
+				{
+					return AbstractDataMap.getAmountFormatter().format(donation.getAmount());
+				}
+				case MEMBER:
+				{
+					StringBuilder builder = new StringBuilder();
+					final Member[] members = link.getMembers().toArray(new Member[0]);
+					for (int i = 0; i < members.length; i++)
+					{
+						builder = builder.append(members[i].getMembership().getName());
+						if (i < members.length - 1)
+						{
+							builder = builder.append(", ");
+						}
+					}
+					return builder.toString();
+				}
+				case COURSE_VISITS:
+				{
+					final List<Participant> participants = link.getParticipants();
+					final Map<Long, String> courses = new HashMap<Long, String>();
+					for (final Participant participant: participants)
+					{
+						if (!participant.isDeleted() && !participant.getBooking().isDeleted() && !participant.getBooking().getCourse().isDeleted())
+						{
+							if (participant.getBooking().getBookingState(participant.getBooking().getCourse().getState()).equals(BookingForthcomingState.BOOKED))
+							{
+								final Course course = participant.getBooking().getCourse();
+								final List<CourseDetail> details = course.getCourseDetails();
+								final Calendar start = details.isEmpty() ? null : details.get(0).getStart();
+								final String title = course.getTitle();
+								final String date = start == null ? "ohne Datum" : DateFormat.getInstance().format(start.getTime());
+								courses.put(participant.getBooking().getCourse().getId(), title + " (" + date + ", angemelded)\n");
+							}
+							else if (participant.getBooking().getBookingState(participant.getBooking().getCourse().getState()).equals(BookingDoneState.PARTICIPATED))
+							{
+								final Course course = participant.getBooking().getCourse();
+								final List<CourseDetail> details = course.getCourseDetails();
+								final Calendar start = details.isEmpty() ? null : details.get(0).getStart();
+								final String title = course.getTitle();
+								final String date = start == null ? "ohne Datum" : DateFormat.getInstance().format(start.getTime());
+								courses.put(participant.getBooking().getCourse().getId(), title + " (" + date + ", teilgenommen)\n");
+							}
+						}
+					}
+					final Collection<String> values = courses.values();
+					StringBuilder builder = new StringBuilder();
+					for (final String value : values)
+					{
+						builder = builder.append(value);
+					}
+					final String visits = builder.toString();
+					return visits.substring(0, visits.isEmpty() ? 0 : visits.length()  - 2);
+				}
+				default:
+				{
+					throw new RuntimeException("Invalid key");
+				}
+			}
+		}
+	}
+	
 	public enum TableKey
 	{
 		DONATIONS;
