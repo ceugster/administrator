@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="false" name="ch.eugster.events.documents.poi.addresslist.spreadsheet.builder.service">
+   <implementation class="ch.eugster.events.documents.poi.internal.services.SpreadsheetBuilderService"/>
+   <property name="target" type="String" value="spreadsheet.address.list"/>
+   <service>
+      <provide interface="ch.eugster.events.documents.services.DocumentBuilderService"/>
+   </service>
+</scr:component>

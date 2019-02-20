@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="false" name="ch.eugster.xml.document.builder.service">
+   <implementation class="ch.eugster.events.documents.xml.internal.services.XmlDocumentBuilderService"/>
+   <service>
+      <provide interface="ch.eugster.events.documents.services.DocumentBuilderService"/>
+   </service>
+</scr:component>
