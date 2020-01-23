@@ -44,11 +44,13 @@ public class AddressMap extends AbstractDataMap<Address>
 		{
 			if (year == null)
 			{
-				this.setProperty(key.getKey(), key.getValue(address, isGroup));
+				String value = key.getValue(address, isGroup);
+				this.setProperty(key.getKey(), value == null ? "" : value);
 			}
 			else
 			{
-				this.setProperty(key.getKey(), key.getValue(address, year.intValue(), isGroup));
+				String value = key.getValue(address, year.intValue(), isGroup);
+				this.setProperty(key.getKey(), value == null ? "" : value);
 			}
 		}
 
@@ -327,7 +329,7 @@ public class AddressMap extends AbstractDataMap<Address>
 			}
 		}
 
-		public String getValue(final Address address, final boolean isGroup)
+		private String getValue(final Address address, final boolean isGroup)
 		{
 			switch (this)
 			{
@@ -438,13 +440,27 @@ public class AddressMap extends AbstractDataMap<Address>
 			}
 		}
 
-		public String getValue(final Address address, final int year, final boolean isGroup)
+		private String getValue(final Address address, final int year, final boolean isGroup)
 		{
 			switch (this)
 			{
 				case NAME:
 				{
-					return isGroup ? address.getName() : (address.getSalutation().isShowAddressNameForPersons() ? address.getName() : "");
+					if (isGroup)
+					{
+						return address.getName();
+					}
+					else
+					{
+						if (address.getSalutation() == null)
+						{
+							return "";
+						}
+						else
+						{
+							return address.getSalutation().isShowAddressNameForPersons() ? address.getName() : "";
+						}
+					}
 				}
 				case ANOTHER_LINE:
 				{
@@ -534,7 +550,7 @@ public class AddressMap extends AbstractDataMap<Address>
 			}
 		}
 
-		public String getValue(final Donation donation, final boolean isGroup)
+		private String getValue(final Donation donation, final boolean isGroup)
 		{
 			Address address = donation.getAddress();
 			switch (this)
