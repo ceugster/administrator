@@ -98,7 +98,7 @@ public class PersonFormEditor extends AbstractEntityFormEditor<Person> implement
 	@SuppressWarnings("unchecked")
 	public List<IFormPage> getPages()
 	{
-		return this.pages;
+		return this.pages == null ? new ArrayList<IFormPage>() : this.pages;
 	}
 
 	@Override
