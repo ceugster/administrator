@@ -3,7 +3,9 @@ package ch.eugster.events.person.editors;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,10 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.eugster.events.persistence.events.EntityAdapter;
@@ -65,7 +71,6 @@ import ch.eugster.events.persistence.model.AbstractEntity;
 import ch.eugster.events.persistence.model.Address;
 import ch.eugster.events.persistence.model.AddressSalutation;
 import ch.eugster.events.persistence.model.Country;
-import ch.eugster.events.persistence.model.Course;
 import ch.eugster.events.persistence.model.GlobalSettings;
 import ch.eugster.events.persistence.model.PersonSettings;
 import ch.eugster.events.persistence.model.ZipCode;
@@ -89,7 +94,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 public class AddressEditor extends AbstractEntityEditor<Address> implements PropertyChangeListener,
-		IContentProposalListener
+		IContentProposalListener, EventHandler
 {
 	public static final String ID = "ch.eugster.events.person.editors.addressEditor";
 
@@ -155,9 +160,14 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	
 	private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
+	private ServiceRegistration<EventHandler> eventHandlerRegistration;
+	
 	public AddressEditor()
 	{
 		super();
+		Dictionary<String, String> properties = new Hashtable<String, String>();
+		properties.put(EventConstants.EVENT_TOPIC, "ch/eugster/events/persistence/merge");		
+		eventHandlerRegistration = Activator.getDefault().getBundle().getBundleContext().registerService(EventHandler.class, this, properties);
 	}
 
 	private void createAddressSection(final ScrolledForm parent)
@@ -373,7 +383,8 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	@Override
 	public void dispose()
 	{
-		EntityMediator.removeListener(Course.class, this);
+		EntityMediator.removeListener(Address.class, this);
+		eventHandlerRegistration.unregister();
 		super.dispose();
 	}
 
@@ -1243,7 +1254,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 	@Override
 	public void postUpdate(final AbstractEntity entity)
 	{
-
+		System.out.println();
 	}
 
 	@Override
@@ -1301,6 +1312,7 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 			address.setCountry(null);
 		}
 		address.setZip(this.zip.getText());
+		address.setZipCode((ZipCode) this.zip.getData("zipCode"));
 		address.setCity(this.city.getText());
 		if (this.provinceViewer.getSelection().isEmpty())
 		{
@@ -1704,5 +1716,11 @@ public class AddressEditor extends AbstractEntityEditor<Address> implements Prop
 		{
 			return this.address;
 		}
+	}
+
+	@Override
+	public void handleEvent(Event arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
