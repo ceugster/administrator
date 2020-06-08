@@ -359,10 +359,10 @@ public class AddressListDialog extends TitleAreaDialog
 			layout.marginWidth = 0;
 			layout.verticalSpacing = 0;
 
-			GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-			gridData.heightHint = 100;
+			GridData gridData = new GridData(GridData.FILL_BOTH);
+//			gridData.heightHint = 120;
 			
-			final ScrolledComposite scrolledComposite = new ScrolledComposite(composite, SWT.BORDER | SWT.SHADOW_ETCHED_IN | SWT.V_SCROLL);
+			final ScrolledComposite scrolledComposite = new ScrolledComposite(composite, SWT.BORDER | SWT.SHADOW_ETCHED_IN | SWT.V_SCROLL | SWT.H_SCROLL);
 			scrolledComposite.addListener(SWT.Resize, new Listener() 
 			{
 				@Override
@@ -380,9 +380,12 @@ public class AddressListDialog extends TitleAreaDialog
 			layout.marginWidth = 0;
 			layout.verticalSpacing = 0;
 
-			Composite mainAddressGroupComposite = new Composite(scrolledComposite, SWT.BORDER);
+			gridData = new GridData(GridData.FILL_HORIZONTAL);
+			//gridData.heightHint = extractedAddressGroups.size() * 46 + 20;
+
+			Composite mainAddressGroupComposite = new Composite(scrolledComposite, SWT.NONE);
 			mainAddressGroupComposite.setLayout(layout);
-			mainAddressGroupComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+			mainAddressGroupComposite.setLayoutData(gridData);
 
 			AddressGroup[] addressGroups = extractedAddressGroups.toArray(new AddressGroup[0]);
 			this.addressGroupLines = new ArrayList<AddressGroupLine>();
@@ -397,6 +400,7 @@ public class AddressListDialog extends TitleAreaDialog
 			scrolledComposite.setExpandHorizontal(true);
 			scrolledComposite.setExpandVertical(true);
 			scrolledComposite.pack();
+			scrolledComposite.layout();
 		}
 		
 		if (EditorSelector.values()[PersonSettings.getInstance().getEditorSelector()]
