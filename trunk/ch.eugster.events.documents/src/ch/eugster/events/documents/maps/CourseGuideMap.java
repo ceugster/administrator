@@ -34,6 +34,11 @@ public class CourseGuideMap extends AbstractDataMap<CourseGuide>
 		}
 	}
 
+	public ch.eugster.events.documents.maps.DataMapKey[] getTableKeys()
+	{
+		return TableKey.values();
+	}
+	
 	protected void printReferences(Writer writer)
 	{
 		printHeader(writer, 2, "Referenzen");

@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -211,13 +210,13 @@ public class ShowSourceWizardPage extends WizardPage implements IPageChangedList
 				while (cells.hasNext())
 				{
 					Cell cell = cells.next();
-					switch (cell.getCellStyle().getAlignment())
+					switch (cell.getCellStyle().getAlignmentEnum())
 					{
-						case CellStyle.ALIGN_CENTER:
+						case CENTER:
 						{
 							columnStyle = SWT.CENTER;
 						}
-						case CellStyle.ALIGN_RIGHT:
+						case RIGHT:
 						{
 							columnStyle = SWT.RIGHT;
 						}

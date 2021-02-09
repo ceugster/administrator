@@ -413,7 +413,7 @@ public class DonationLetterDialog extends TitleAreaDialog
 			{
 				final FileDialog dialog = new FileDialog(DonationLetterDialog.this.getShell());
 				dialog.setFilterPath(DonationLetterDialog.this.template.getText());
-				dialog.setFilterExtensions(new String[] { "*.odt" });
+				dialog.setFilterExtensions(new String[] { "*.odt", "*.docx" });
 				dialog.setText("Auswahl Vorlage");
 				final String path = dialog.open();
 				if (path != null)
