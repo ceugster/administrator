@@ -2,7 +2,7 @@
 <feature
       id="ch.eugster.events.importer.feature"
       label="Modul Mitgliederimport"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="Christian Eugster">
 
    <description>

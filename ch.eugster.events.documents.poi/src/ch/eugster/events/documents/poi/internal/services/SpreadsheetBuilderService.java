@@ -6,8 +6,10 @@ import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.util.Calendar;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -92,10 +94,10 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 		{
 			monitor.beginTask("Dokument wird erstellt...", maps.length);
 			Workbook workbook = this.createWorkbook();
-			CellStyle style = this.createStyle(workbook, new short[] { CellStyle.BORDER_NONE,
-					CellStyle.BORDER_NONE, CellStyle.BORDER_NONE, CellStyle.BORDER_NONE });
-			Font normal = this.createFont(workbook, "Verdana", Font.BOLDWEIGHT_NORMAL, (short) 8);
-			Font bold = this.createFont(workbook, "Verdana", Font.BOLDWEIGHT_BOLD, (short) 8);
+			CellStyle style = this.createStyle(workbook, new BorderStyle[] { BorderStyle.NONE,
+					BorderStyle.NONE, BorderStyle.NONE, BorderStyle.NONE });
+			Font normal = this.createFont(workbook, "Verdana", false, (short) 8);
+			Font bold = this.createFont(workbook, "Verdana", true, (short) 8);
 
 			int counter = 0;
 			Sheet sheet = null;
@@ -155,7 +157,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 		cell.setCellStyle(style);
 		if (type.equals(Double.class))
 		{
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			cell.setCellType(CellType.NUMERIC);
 			cell.setCellValue(value == null || value.isEmpty() ? 0D : Double.valueOf(value));
 		}
 		else
@@ -212,10 +214,10 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 //		cell.setCellValue(string);
 //	}
 //
-	protected Font createFont(final Workbook workbook, final String name, final short type, final short height)
+	protected Font createFont(final Workbook workbook, final String name, final boolean bold, final short height)
 	{
 		Font font = workbook.createFont();
-		font.setBoldweight(type);
+		font.setBold(bold);
 		font.setFontName(name);
 		font.setFontHeightInPoints(height);
 		return font;
@@ -231,7 +233,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 		return workbook.createSheet(name);
 	}
 
-	protected CellStyle createStyle(final Workbook workbook, final short[] borders)
+	protected CellStyle createStyle(final Workbook workbook, final BorderStyle[] borders)
 	{
 		CellStyle style = workbook.createCellStyle();
 		style.setBorderTop(borders[0]);

@@ -2,7 +2,7 @@
 <feature
       id="ch.eugster.events.documents.feature"
       label="Module Dokumente"
-      version="1.0.0.qualifier"
+      version="1.0.3.qualifier"
       provider-name="Christian Eugster">
 
    <description url="http://www.example.com/description">

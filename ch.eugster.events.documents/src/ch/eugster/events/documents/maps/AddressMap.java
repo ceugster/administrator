@@ -60,7 +60,12 @@ public class AddressMap extends AbstractDataMap<Address>
 		}
 
 	}
-
+	
+	public ch.eugster.events.documents.maps.DataMapKey[] getTableKeys()
+	{
+		return TableKey.values();
+	}
+	
 	@Override
 	protected void printTables(final Writer writer)
 	{
@@ -669,7 +674,7 @@ public class AddressMap extends AbstractDataMap<Address>
 		}
 	}
 
-	public enum TableKey
+	public enum TableKey implements DataMapKey
 	{
 		DONATIONS;
 
@@ -695,6 +700,36 @@ public class AddressMap extends AbstractDataMap<Address>
 				case DONATIONS:
 				{
 					return "table_donations";
+				}
+				default:
+				{
+					throw new RuntimeException("Invalid key");
+				}
+			}
+		}
+
+		public String getName()
+		{
+			switch (this)
+			{
+				case DONATIONS:
+				{
+					return "Spenden";
+				}
+				default:
+				{
+					throw new RuntimeException("Invalid key");
+				}
+			}
+		}
+
+		public Class<?> getType()
+		{
+			switch (this)
+			{
+				case DONATIONS:
+				{
+					return String.class;
 				}
 				default:
 				{

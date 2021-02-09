@@ -18,5 +18,7 @@ public interface DataMap<T extends AbstractEntity> extends Comparable<DataMap<T>
 	
 	List<DataMap<?>> getTableMaps(String key);
 	
+	ch.eugster.events.documents.maps.DataMapKey[] getTableKeys();
+	
 	void printHTML(Writer writer, String ref, String title);
 }

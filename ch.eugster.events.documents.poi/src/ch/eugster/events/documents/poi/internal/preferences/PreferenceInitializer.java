@@ -10,7 +10,6 @@ import ch.eugster.events.documents.poi.internal.Activator;
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer
 {
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -22,6 +21,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 	{
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		store.setDefault(PreferenceConstants.KEY_SPREADSHEET_PATH, "");
+		store.setDefault(PreferenceConstants.KEY_OFFICE_PACKAGE, "microsoft.office");
+		store.setDefault(PreferenceConstants.KEY_OFFICE_WRITER_PATH, "");
 	}
 
 }

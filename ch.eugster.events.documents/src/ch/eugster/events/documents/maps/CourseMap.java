@@ -65,6 +65,11 @@ public class CourseMap extends AbstractDataMap<Course>
 
 	}
 
+	public ch.eugster.events.documents.maps.DataMapKey[] getTableKeys()
+	{
+		return TableKey.values();
+	}
+	
 	@Override
 	protected void printReferences(final Writer writer)
 	{

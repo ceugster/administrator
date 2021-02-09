@@ -102,6 +102,11 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 		}
 	}
 
+	public ch.eugster.events.documents.maps.DataMapKey[] getTableKeys()
+	{
+		return TableKey.values();
+	}
+	
 	public static List<DataMapKey> getExtendedFieldKeys()
 	{
 		final List<DataMapKey> keys = new ArrayList<DataMapKey>();
@@ -453,7 +458,7 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 		}
 	}
 	
-	public enum TableKey
+	public enum TableKey implements DataMapKey
 	{
 		DONATIONS;
 
@@ -479,6 +484,36 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 				case DONATIONS:
 				{
 					return "table_donations";
+				}
+				default:
+				{
+					throw new RuntimeException("Invalid key");
+				}
+			}
+		}
+
+		public String getName()
+		{
+			switch (this)
+			{
+				case DONATIONS:
+				{
+					return "Spenden";
+				}
+				default:
+				{
+					throw new RuntimeException("Invalid key");
+				}
+			}
+		}
+
+		public Class<?> getType()
+		{
+			switch (this)
+			{
+				case DONATIONS:
+				{
+					return String.class;
 				}
 				default:
 				{

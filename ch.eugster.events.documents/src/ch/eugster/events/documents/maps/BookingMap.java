@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import ch.eugster.events.documents.maps.AddressMap.TableKey;
 import ch.eugster.events.persistence.model.Booking;
 import ch.eugster.events.persistence.model.BookingType;
 import ch.eugster.events.persistence.model.CourseDetail;
@@ -41,7 +42,12 @@ public class BookingMap extends AbstractDataMap<Booking>
 //		this.addTableMaps(TableKey.PARTICIPANTS.getName(), TableKey.PARTICIPANTS.getTableMaps(booking));
 //		this.addTableMaps(TableKey.COURSE_DETAILS.getName(), TableKey.COURSE_DETAILS.getTableMaps(booking));
 	}
-
+	
+	public ch.eugster.events.documents.maps.DataMapKey[] getTableKeys()
+	{
+		return TableKey.values();
+	}
+	
 	@Override
 	protected void printReferences(final Writer writer)
 	{

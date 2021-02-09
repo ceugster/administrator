@@ -2,7 +2,7 @@
 <feature
       id="ch.eugster.poi.feature"
       label="Modul MS Office Manipulation (Based o POI)"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="Christian Eugster"
       plugin="ch.eugster.events.core">
 

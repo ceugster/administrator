@@ -101,6 +101,11 @@ public abstract class AbstractDataMap<T extends AbstractEntity> implements DataM
 		
 	}
 	
+	public ch.eugster.events.documents.maps.DataMapKey[] getTableKeys()
+	{
+		return new ch.eugster.events.documents.maps.DataMapKey[0];
+	}
+	
 	protected void addTableMaps(final String key, final List<DataMap<?>> dataMaps)
 	{
 		this.tableMaps.put(key, dataMaps);

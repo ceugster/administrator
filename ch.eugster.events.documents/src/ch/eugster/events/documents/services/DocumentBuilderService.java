@@ -16,7 +16,7 @@ public interface DocumentBuilderService
 
 //	IStatus buildDocument(IProgressMonitor monitor, File file, Collection<DataMap> maps);
 
-	IStatus buildDocument(IProgressMonitor monitor, File file, DataMap<?>[] map);
+	IStatus buildDocument(IProgressMonitor monitor, File template, DataMap<?>[] maps);
 
-	IStatus buildDocument(IProgressMonitor monitor, File file, DataMap<?> map);
+	IStatus buildDocument(IProgressMonitor monitor, File template, DataMap<?> maps);
 }
