@@ -292,7 +292,7 @@ public class SpreadsheetBuilderService implements DocumentBuilderService
 			workbook.write(fileOut);
 			fileOut.close();
 
-			if (Desktop.isDesktopSupported() && path.isEmpty())
+			if (Desktop.isDesktopSupported())
 			{
 				if (Desktop.getDesktop().isSupported(Desktop.Action.OPEN))
 				{
