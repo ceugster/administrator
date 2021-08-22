@@ -43,7 +43,7 @@ public class TextDocumentBuilderService implements DocumentBuilderService
 	public IStatus buildDocument(IProgressMonitor monitor, DataMapKey[] keys,
 			DataMap<?>[] maps) 
 	{
-		return null;
+		return Status.CANCEL_STATUS;
 	}
 
 	@Override
