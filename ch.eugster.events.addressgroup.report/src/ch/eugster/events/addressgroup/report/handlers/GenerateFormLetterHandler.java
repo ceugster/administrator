@@ -16,7 +16,6 @@ import ch.eugster.events.documents.services.DocumentBuilderService;
 public class GenerateFormLetterHandler extends AbstractHandler implements IHandler
 {
 
-	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
 		if (event.getApplicationContext() instanceof EvaluationContext)

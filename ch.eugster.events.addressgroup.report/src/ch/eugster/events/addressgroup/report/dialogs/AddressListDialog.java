@@ -365,7 +365,6 @@ public class AddressListDialog extends TitleAreaDialog
 			final ScrolledComposite scrolledComposite = new ScrolledComposite(composite, SWT.BORDER | SWT.SHADOW_ETCHED_IN | SWT.V_SCROLL);
 			scrolledComposite.addListener(SWT.Resize, new Listener() 
 			{
-				@Override
 				public void handleEvent(Event event) 
 				{
 					int width = scrolledComposite.getClientArea().width;
@@ -444,13 +443,11 @@ public class AddressListDialog extends TitleAreaDialog
 		shortList.setSelection(settings.getBoolean("short.list.selected"));
 		shortList.addSelectionListener(new SelectionListener() 
 		{
-			@Override
 			public void widgetSelected(SelectionEvent e) 
 			{
 				settings.put("short.list.selected", shortList.getSelection());
 			}
 
-			@Override
 			public void widgetDefaultSelected(SelectionEvent e) 
 			{
 				widgetSelected(e);
@@ -466,13 +463,11 @@ public class AddressListDialog extends TitleAreaDialog
 		courseVisits.setSelection(settings.getBoolean("course.visits.selected"));
 		courseVisits.addSelectionListener(new SelectionListener() 
 		{
-			@Override
 			public void widgetSelected(SelectionEvent e) 
 			{
 				settings.put("course.visits.selected", courseVisits.getSelection());
 			}
 
-			@Override
 			public void widgetDefaultSelected(SelectionEvent e) 
 			{
 				widgetSelected(e);
@@ -574,7 +569,6 @@ public class AddressListDialog extends TitleAreaDialog
 		dataMaps = createDataMaps().toArray(new DataMap[0]);
 		Arrays.sort(dataMaps, new Comparator<DataMap<?>>()
 		{
-			@Override
 			public int compare(DataMap<?> map1, DataMap<?> map2)
 			{
 				if (sortViewer.getSelection() instanceof IStructuredSelection)

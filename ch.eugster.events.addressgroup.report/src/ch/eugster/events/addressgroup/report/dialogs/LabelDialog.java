@@ -112,7 +112,6 @@ public class LabelDialog extends TitleAreaDialog
 		labelViewer.setLabelProvider(new LabelProvider());
 		labelViewer.addPostSelectionChangedListener(new ISelectionChangedListener()
 		{
-			@Override
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
 				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
@@ -169,7 +168,6 @@ public class LabelDialog extends TitleAreaDialog
 		});
 		targetViewer.addPostSelectionChangedListener(new ISelectionChangedListener()
 		{
-			@Override
 			public void selectionChanged(final SelectionChangedEvent event)
 			{
 				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();

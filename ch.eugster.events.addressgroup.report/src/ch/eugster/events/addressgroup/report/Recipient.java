@@ -58,7 +58,6 @@ public class Recipient implements Comparable<Recipient>
 		loadData(member.getLink(), person);
 	}
 
-	@Override
 	public int compareTo(final Recipient other)
 	{
 		Recipient recipient = other;

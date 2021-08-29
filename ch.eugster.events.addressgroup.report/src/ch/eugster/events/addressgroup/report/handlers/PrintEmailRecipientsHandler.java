@@ -59,7 +59,6 @@ public class PrintEmailRecipientsHandler extends AbstractHandler implements IHan
 		return RecipientListFactory.size();
 	}
 
-	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
 		if (EmailHelper.getInstance().isEmailSupported())

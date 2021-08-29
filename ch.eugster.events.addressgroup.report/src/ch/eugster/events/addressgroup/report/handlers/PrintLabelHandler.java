@@ -50,7 +50,6 @@ public class PrintLabelHandler extends AbstractHandler implements IHandler
 		return factory.size();
 	}
 
-	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
 		if (EmailHelper.getInstance().isEmailSupported())

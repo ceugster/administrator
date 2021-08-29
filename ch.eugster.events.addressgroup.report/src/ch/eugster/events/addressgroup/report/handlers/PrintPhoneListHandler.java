@@ -78,7 +78,6 @@ public class PrintPhoneListHandler extends AbstractHandler implements IHandler
 		job.schedule();
 	}
 
-	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
 		if (EmailHelper.getInstance().isEmailSupported())

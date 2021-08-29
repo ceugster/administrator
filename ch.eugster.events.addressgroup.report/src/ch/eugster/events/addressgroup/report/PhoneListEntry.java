@@ -59,7 +59,6 @@ public class PhoneListEntry implements Comparable<PhoneListEntry>
 		loadData(member.getLink(), person);
 	}
 
-	@Override
 	public int compareTo(final PhoneListEntry other)
 	{
 		int comparison = this.getName().compareTo(other.getName());

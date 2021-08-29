@@ -30,7 +30,6 @@ public class SendEmailHandler extends AbstractHandler implements IHandler
 		}
 	}
 
-	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException
 	{
 		if (EmailHelper.getInstance().isEmailSupported())

@@ -230,7 +230,6 @@ public class FormLetterDialog extends TitleAreaDialog
 		documentPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		documentPath.addModifyListener(new ModifyListener()
 		{
-			@Override
 			public void modifyText(final ModifyEvent e)
 			{
 				File file = new File(documentPath.getText());
