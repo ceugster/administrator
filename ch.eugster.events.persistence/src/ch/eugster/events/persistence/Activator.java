@@ -206,6 +206,8 @@ public class Activator extends AbstractUIPlugin
 		properties.put(PersistenceUnitProperties.JDBC_USER, prefs.get(PersistenceUnitProperties.JDBC_USER, "events"));
 		properties.put(PersistenceUnitProperties.JDBC_PASSWORD,
 				prefs.get(PersistenceUnitProperties.JDBC_PASSWORD, "events"));
+		
+		
 
 		properties.put(PersistenceUnitProperties.CLASSLOADER, this.getClass().getClassLoader());
 		/*
