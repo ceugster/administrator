@@ -509,7 +509,7 @@ public class DonationConfirmationDialog extends TitleAreaDialog
 				String path = DonationConfirmationDialog.this.documentPath.getText();
 				FileDialog dialog = new FileDialog(DonationConfirmationDialog.this.getShell());
 				dialog.setFilterPath(path);
-				dialog.setFilterExtensions(new String[] { "*.odt", "*.docx" });
+				dialog.setFilterExtensions(new String[] { "*.odt", "*.doc", "*.docx" });
 				dialog.setText(DIALOG_TITLE);
 				path = dialog.open();
 				if (path != null)
