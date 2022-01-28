@@ -2,7 +2,7 @@
 <feature
       id="ch.eugster.events.donation.feature"
       label="Modul Spendenverwaltung"
-      version="1.0.1.qualifier"
+      version="1.0.5.qualifier"
       provider-name="Christian Eugster">
 
    <description>
