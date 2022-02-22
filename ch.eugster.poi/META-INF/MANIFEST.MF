@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Poi Provider for OSGi
-Bundle-SymbolicName: ch.eugster.poi
+Bundle-SymbolicName: ch.eugster.poi;singleton:=true
 Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
