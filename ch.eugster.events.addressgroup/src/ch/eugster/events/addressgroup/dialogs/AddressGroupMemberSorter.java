@@ -27,13 +27,13 @@ public class AddressGroupMemberSorter extends ViewerSorter
 			boolean checked2 = dialog.isChecked(addressGroup2);
 
 			if (checked1 && checked2)
-				return addressGroup1.getCode().compareTo(addressGroup2.getCode());
+				return addressGroup1.getName().compareTo(addressGroup2.getName());
 			else if (checked1)
 				return -1;
 			else if (checked2)
 				return 1;
 			else
-				return addressGroup1.getCode().compareTo(addressGroup2.getCode());
+				return addressGroup1.getName().compareTo(addressGroup2.getName());
 		}
 
 		return 0;
