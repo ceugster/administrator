@@ -2,7 +2,7 @@
 <feature
       id="ch.eugster.events.addressgroup.feature"
       label="Modul Adressgruppen"
-      version="1.0.0.qualifier"
+      version="1.0.9.qualifier"
       provider-name="Christian Eugster">
 
    <description>
