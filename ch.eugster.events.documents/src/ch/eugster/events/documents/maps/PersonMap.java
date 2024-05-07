@@ -114,7 +114,7 @@ public class PersonMap extends AbstractDataMap<Person>
 				}
 				case EMAIL:
 				{
-					return "Email (Person)";
+					return "Email";
 				}
 				case WEBSITE:
 				{
@@ -250,7 +250,7 @@ public class PersonMap extends AbstractDataMap<Person>
 				}
 				case EMAIL:
 				{
-					return "Email";
+					return "Persönliches Email";
 				}
 				case WEBSITE:
 				{

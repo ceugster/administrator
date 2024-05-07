@@ -2,7 +2,7 @@
 <feature
       id="ch.eugster.events.documents.poi.feature"
       label="Modul Microsoft Office Dokumente"
-      version="1.0.2.qualifier"
+      version="1.0.4.qualifier"
       provider-name="Christian Eugster">
 
    <description>
@@ -240,9 +240,6 @@ litigation.
 
    <plugin
          id="ch.eugster.events.documents.poi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
 </feature>

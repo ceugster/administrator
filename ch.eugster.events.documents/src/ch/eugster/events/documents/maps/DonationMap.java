@@ -32,6 +32,11 @@ public class DonationMap extends AbstractDataMap<Donation>
 		return this.amount;
 	}
 
+	public void addAmount(double amount)
+	{
+		this.amount += amount;
+	}
+
 	public enum Key implements DataMapKey
 	{
 		TYPE, ID, DATE, AMOUNT, PURPOSE_CODE, PURPOSE_NAME, PURPOSE_DESCRIPTION, YEAR, ANOTHER_LINE, SALUTATION, POLITE, MAILING_ADDRESS;;

@@ -907,7 +907,7 @@ public abstract class DatabaseUpdater
 						}
 						if (!this.columnExists(con, "events_category", "category_description"))
 						{
-							ok = this.executeSqlQuery(con, "ALTER TABLE events_category ADD COLUMN category_description");
+							ok = this.executeSqlQuery(con, "ALTER TABLE events_category ADD COLUMN category_description LONGTEXT");
 						}
 					}
 					if (structureVersion == 13)

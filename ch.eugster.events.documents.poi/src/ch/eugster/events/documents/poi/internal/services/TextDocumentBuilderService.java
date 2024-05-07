@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
 import org.osgi.framework.FrameworkUtil;
@@ -34,6 +35,7 @@ import ch.eugster.events.documents.maps.DataMap;
 import ch.eugster.events.documents.maps.DataMapKey;
 import ch.eugster.events.documents.poi.internal.preferences.PreferenceConstants;
 import ch.eugster.events.documents.services.DocumentBuilderService;
+import ch.eugster.events.persistence.service.ConnectionService;
 
 public class TextDocumentBuilderService implements DocumentBuilderService 
 {
@@ -182,5 +184,11 @@ public class TextDocumentBuilderService implements DocumentBuilderService
 	{
 		Runtime.getRuntime().exec(writer + " " + file.getAbsolutePath());
 	}
-	
+
+	@Override
+	public IStatus buildDocument(IProgressMonitor monitor,
+			ConnectionService connectionService, Shell shell) {
+		return Status.CANCEL_STATUS;
+	}
+
 }

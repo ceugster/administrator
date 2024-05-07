@@ -89,11 +89,11 @@ public class AddressMap extends AbstractDataMap<Address>
 			{
 				case NAME:
 				{
-					return "Name (Adresse)";
+					return "Organisation";
 				}
 				case ANOTHER_LINE:
 				{
-					return "Zusatzzeile (Adresse)";
+					return "Zusatzzeile";
 				}
 				case ADDRESS:
 				{
@@ -121,11 +121,11 @@ public class AddressMap extends AbstractDataMap<Address>
 				}
 				case FAX:
 				{
-					return "Fax";
+					return "Fax (Adresse)";
 				}
 				case SALUTATION:
 				{
-					return "Anrede (Adresse)";
+					return "Anrede (Organisation)";
 				}
 				case EMAIL:
 				{
@@ -141,7 +141,7 @@ public class AddressMap extends AbstractDataMap<Address>
 				}
 				case MAILING_ADDRESS:
 				{
-					return "Anschrift (Adresse)";
+					return "Anschrift";
 				}
 				case COUNTY:
 				{
@@ -285,27 +285,27 @@ public class AddressMap extends AbstractDataMap<Address>
 				}
 				case PHONE:
 				{
-					return "Telefon";
+					return "Telefon (Adresse)";
 				}
 				case FAX:
 				{
-					return "Fax";
+					return "Fax (Adresse)";
 				}
 				case SALUTATION:
 				{
-					return "Anrede";
+					return "Anrede (Organisation)";
 				}
 				case EMAIL:
 				{
-					return "Email";
+					return "Email (Adresse)";
 				}
 				case WEBSITE:
 				{
-					return "Website";
+					return "Website (Adresse)";
 				}
 				case POLITE:
 				{
-					return "Briefanrede";
+					return "Briefanrede (Adresse)";
 				}
 				case MAILING_ADDRESS:
 				{

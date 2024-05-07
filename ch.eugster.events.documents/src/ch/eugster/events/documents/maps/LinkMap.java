@@ -177,11 +177,11 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 			{
 				case PHONE:
 				{
-					return "Telefon";
+					return "Direktwahl";
 				}
 				case EMAIL:
 				{
-					return "Email";
+					return "Direktemail";
 				}
 				case FUNCTION:
 				{
@@ -257,11 +257,11 @@ public class LinkMap extends AbstractDataMap<LinkPersonAddress>
 			{
 				case PHONE:
 				{
-					return "Telefon";
+					return "Telefon Direktwahl";
 				}
 				case EMAIL:
 				{
-					return "Email";
+					return "Direktemail";
 				}
 				case FUNCTION:
 				{

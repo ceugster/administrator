@@ -6,6 +6,7 @@ import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
 
 import ch.eugster.events.persistence.model.AddressGroup;
+import ch.eugster.events.persistence.model.AddressGroupMember;
 import ch.eugster.events.persistence.service.ConnectionService;
 
 public class AddressGroupQuery extends AbstractEntityQuery<AddressGroup>
@@ -45,6 +46,14 @@ public class AddressGroupQuery extends AbstractEntityQuery<AddressGroup>
 				return true;
 			}
 		}
+	}
+	
+	public List<AddressGroup> selectValids()
+	{
+		Expression expression = new ExpressionBuilder(AddressGroup.class).get("deleted").equal(false);
+		expression = expression.and(new ExpressionBuilder().get("addressGroupCategory").get("deleted").equal(false));
+		expression = expression.and(new ExpressionBuilder().get("addressGroupCategory").get("domain").get("deleted").equal(false));
+		return select(AddressGroup.class, expression);
 	}
 
 }

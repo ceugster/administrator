@@ -2,6 +2,7 @@ package ch.eugster.events.donation.dialogs;
 
 import java.awt.Cursor;
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -42,6 +43,7 @@ import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
+import ch.eugster.events.documents.maps.AbstractDataMap;
 import ch.eugster.events.documents.maps.AddressMap;
 import ch.eugster.events.documents.maps.DataMap;
 import ch.eugster.events.documents.maps.DataMapKey;
@@ -78,6 +80,8 @@ public class DonationListDialog extends TitleAreaDialog
 	private ComboViewer domainViewer;
 
 	private Text name;
+	
+	private Button summary;
 
 	private ComboViewer excludeYearViewer;
 
@@ -333,6 +337,10 @@ public class DonationListDialog extends TitleAreaDialog
 			}
 		});
 		
+		this.summary = new Button(composite, SWT.CHECK);
+		this.summary.setLayoutData(new GridData());
+		this.summary.setText("Nur Gesamtbetrag angeben");
+		
 		final Button clearName = new Button(nameComposite, SWT.PUSH);
 		clearName.setLayoutData(new GridData());
 		clearName.setImage(Activator.getDefault().getImageRegistry().get("CLEAR"));
@@ -393,7 +401,16 @@ public class DonationListDialog extends TitleAreaDialog
 
 	private void buildDocument()
 	{
-		final DataMap<?>[] dataMaps = this.createDataMaps();
+		DataMap<?>[] maps = null;
+		if (this.summary.getSelection())
+		{
+			maps = this.createSummarizedDataMaps();
+		}
+		else
+		{
+			maps = this.createDataMaps();
+		}
+		final DataMap<?>[] dataMaps = maps;
 		if (dataMaps.length == 0)
 		{
 			final MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), DonationListDialog.MSG_TITLE_NO_BOOKINGS, null, "Die Auswahl enthält keine auswertbaren Elemente.", MessageDialog.INFORMATION, new String[] { "OK" }, 0);
@@ -542,6 +559,92 @@ public class DonationListDialog extends TitleAreaDialog
 		return dataMaps.values().toArray(new DataMap<?>[0]);
 	}
 
+	private DataMap<?>[] createSummarizedDataMaps()
+	{
+		final Map<String, DonationMap> dataMaps = new HashMap<String, DonationMap>();
+		final DonationQuery query = (DonationQuery) this.connectionService.getQuery(Donation.class);
+		List<Donation> donations = query.selectByYearRangePurposeDomainName(this.selectedFromDonationYear, this.selectedToDonationYear, this.selectedDonationPurpose, this.selectedDomain, this.name.getText());
+		for (final Donation donation : donations)
+		{
+			if (this.printDonation(donation))
+			{
+				String key = this.getKey(donation);
+				DonationMap map = dataMaps.get(key);
+				if (map == null)
+				{
+					map = new DonationMap(donation);
+					if (donation.getLink() == null || !donation.getLink().isValid())
+					{
+						map.setProperties(new AddressMap(donation.getAddress()).getProperties());
+					}
+					else
+					{
+						map.setProperties(new LinkMap(donation.getLink()).getProperties());
+					}
+					dataMaps.put(key, map);
+				}
+				else
+				{
+					double amount = 0D;
+					try
+					{
+						amount = Double.parseDouble(map.getProperty(DonationMap.Key.AMOUNT.getKey()));
+					}
+					catch (NumberFormatException e)
+					{
+					}
+					amount = amount += donation.getAmount();
+					map.setProperty(DonationMap.Key.AMOUNT.getKey(), String.valueOf(amount));
+
+					String donationDate = AbstractDataMap.getDateFormatter().format(donation.getDonationDate().getTime());
+					String date = map.getProperty(DonationMap.Key.DATE.getKey());
+					if (date == null || date.isEmpty())
+					{
+						date = donationDate;
+					}
+					else if (!date.contains(donationDate))
+					{
+						date = date + ", " + donationDate;
+					}
+					map.setProperty(DonationMap.Key.DATE.getKey(), date);
+
+					String purpose = map.getProperty(DonationMap.Key.PURPOSE_NAME.getKey());
+					if (!purpose.contains(donation.getPurpose().getName()))
+					{
+						purpose = purpose + ", " + donation.getPurpose().getName();
+						map.setProperty(DonationMap.Key.PURPOSE_NAME.getKey(), purpose);
+					}
+				}
+			}
+		}
+		if (this.excludeYear.getYear() > 0)
+		{
+			donations = query.selectByYear(this.excludeYear);
+			for (final Donation donation : donations)
+			{
+				if (this.printDonation(donation))
+				{
+					dataMaps.remove(donation.getId().toString());
+				}
+			}
+		}
+		return dataMaps.values().toArray(new DataMap<?>[0]);
+	}
+
+	private String getKey(Donation donation)
+	{
+		String id = null;
+		if (donation.getLink() == null || !donation.getLink().isValid())
+		{
+			id = "A" + donation.getAddress().getId().toString();
+		}
+		else
+		{
+			id = "P" + donation.getLink().getId().toString();
+		}
+		return id;
+	}
+	
 	private boolean isNameValid(final Donation donation)
 	{
 		if (this.selectedName == null || this.selectedName.isEmpty())

@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.swt.widgets.Shell;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
@@ -20,6 +21,7 @@ import ch.eugster.events.documents.maps.DataMap;
 import ch.eugster.events.documents.maps.DataMapKey;
 import ch.eugster.events.documents.services.DocumentBuilderService;
 import ch.eugster.events.documents.xml.internal.Activator;
+import ch.eugster.events.persistence.service.ConnectionService;
 
 public class XmlDocumentBuilderService implements DocumentBuilderService
 {
@@ -141,6 +143,12 @@ public class XmlDocumentBuilderService implements DocumentBuilderService
 			monitor.done();
 		}
 		return status;
+	}
+
+	@Override
+	public IStatus buildDocument(IProgressMonitor monitor,
+			ConnectionService connectionService, Shell shell) {
+		return Status.CANCEL_STATUS;
 	}
 
 }

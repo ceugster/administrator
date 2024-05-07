@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -11,6 +12,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.odftoolkit.odfdom.dom.OdfContentDom;
 import org.odftoolkit.odfdom.dom.element.OdfStylableElement;
@@ -37,6 +39,9 @@ import ch.eugster.events.documents.maps.EmptyDataMap;
 import ch.eugster.events.documents.odfdom.internal.Activator;
 import ch.eugster.events.documents.odfdom.internal.preferences.PreferenceInitializer;
 import ch.eugster.events.documents.services.DocumentBuilderService;
+import ch.eugster.events.persistence.model.AddressGroup;
+import ch.eugster.events.persistence.model.AddressGroupCategory;
+import ch.eugster.events.persistence.service.ConnectionService;
 
 public class OdfDocumentBuilderService implements DocumentBuilderService
 {
@@ -417,6 +422,12 @@ public class OdfDocumentBuilderService implements DocumentBuilderService
 	private void showDocumentWithProgram(final String writer, final File file) throws Exception
 	{
 		Runtime.getRuntime().exec(writer + " " + file.getAbsolutePath());
+	}
+
+	@Override
+	public IStatus buildDocument(IProgressMonitor monitor,
+			ConnectionService connectionService, Shell shell) {
+		return Status.CANCEL_STATUS;
 	}
 
 }

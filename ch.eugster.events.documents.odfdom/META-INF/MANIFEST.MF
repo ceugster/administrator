@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Odfdom Plugin
 Bundle-SymbolicName: ch.eugster.events.documents.odfdom;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.2.qualifier
 Bundle-Activator: ch.eugster.events.documents.odfdom.internal.Activator
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -23,6 +23,7 @@ Bundle-ClassPath: lib/simple-odf-0.8.1-incubating.jar,
 Import-Package: ch.eugster.events.documents.maps,
  ch.eugster.events.documents.services,
  ch.eugster.events.persistence.model,
+ ch.eugster.events.persistence.service,
  org.eclipse.core.runtime;version="3.4.0",
  org.eclipse.core.runtime.preferences;version="3.3.0",
  org.eclipse.ui.plugin,
